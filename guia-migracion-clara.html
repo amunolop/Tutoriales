@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Migración Semántica · Test-Driven Polyglot Migration</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;position:relative;line-height:1.7}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+.container{max-width:1100px;margin:0 auto;padding:48px 28px 100px;position:relative;z-index:1}
+
+/* HEADER */
+header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:40px}
+.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+h1{font-family:var(--display);font-size:clamp(26px,4vw,44px);font-weight:700;line-height:1.1}
+h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+.subtitle{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6}
+
+/* TABS */
+.mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:40px;width:fit-content;flex-wrap:wrap}
+.mode-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:10px 18px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:2px solid var(--ink)}
+.mode-btn:last-child{border-right:none}
+.mode-btn:hover{background:var(--surface2);color:var(--ink)}
+.mode-btn.active{background:var(--ink);color:var(--bg)}
+.mode-panel{display:none}
+.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTIONS */
+.sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:36px 0 16px;display:flex;align-items:center;gap:12px}
+.sec-title:first-child{margin-top:0}
+.sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+
+/* CALLOUTS */
+.callout{border-left:4px solid;padding:14px 18px;margin:16px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+.callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}
+.callout.orange strong{color:var(--accent)}
+.callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}
+.callout.green strong{color:var(--accent2)}
+.callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}
+.callout.blue strong{color:var(--accent3)}
+.callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}
+.callout.yellow strong{color:var(--yellow)}
+.callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}
+.callout.purple strong{color:var(--purple)}
+.callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+
+/* STRATEGY CARDS */
+.strategy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.strategy-card{background:linear-gradient(135deg,#faf8f4 0%,#f0ebe0 100%);border:3px solid var(--border);border-radius:8px;padding:24px;transition:all .3s;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.strategy-card:hover{border-color:var(--ink);box-shadow:0 4px 12px rgba(0,0,0,.1);transform:translateY(-2px)}
+.strategy-icon{font-size:32px;margin-bottom:12px}
+.strategy-title{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--ink)}
+.strategy-text{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* PHASE BOXES */
+.phases{display:flex;flex-direction:column;gap:24px}
+.phase{background:linear-gradient(135deg,#faf8f4 0%,#f0ebe0 100%);border:3px solid var(--border);border-radius:8px;padding:32px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.phase.orange{border-color:var(--accent)}
+.phase.blue{border-color:var(--accent3)}
+.phase.green{border-color:var(--accent2)}
+.phase-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--border)}
+.phase-number{width:50px;height:50px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;flex-shrink:0}
+.phase.orange .phase-number{background:var(--accent);color:#fff}
+.phase.blue .phase-number{background:var(--accent3);color:#fff}
+.phase.green .phase-number{background:var(--accent2);color:#fff}
+.phase-info h3{font-family:var(--display);font-size:20px;font-weight:700;margin-bottom:2px}
+.phase-info p{font-size:11px;color:var(--muted)}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:16px 20px;display:grid;grid-template-columns:50px 1fr auto;gap:14px;align-items:start;transition:all .2s}
+.step:hover{border-color:var(--ink);background:rgba(255,255,255,.8)}
+.step-num{width:40px;height:40px;border-radius:6px;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0}
+.step-content h4{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--ink)}
+.step-content p{font-size:11px;color:var(--muted);line-height:1.6}
+.step-tool{padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.5px;white-space:nowrap;align-self:start;border:2px solid}
+.tool-cursor{background:rgba(26,74,138,.08);color:var(--accent3);border-color:var(--accent3)}
+.tool-claude{background:rgba(122,58,205,.08);color:var(--purple);border-color:var(--purple)}
+.tool-terminal{background:rgba(42,110,78,.08);color:var(--accent2);border-color:var(--accent2)}
+
+/* FILE TREE */
+.file-tree{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:24px;margin:20px 0;font-size:12px;line-height:1.9;font-family:var(--mono);overflow-x:auto}
+.file-tree-header{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:16px;font-weight:700}
+.tree-folder{color:var(--accent3);font-weight:600}
+.tree-file{color:var(--ink)}
+.tree-comment{color:var(--muted);font-size:11px}
+
+/* CODE BLOCK */
+.code-block{background:var(--surface);border:2px solid var(--border);border-radius:6px;overflow:hidden;margin:20px 0}
+.code-header{background:var(--surface2);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.code-title{font-size:11px;font-weight:600;color:var(--muted)}
+.code-lang{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);background:rgba(193,68,14,.08);padding:2px 8px;border-radius:3px;border:1px solid rgba(193,68,14,.2)}
+.code-content{padding:20px;overflow-x:auto}
+.code-content pre{margin:0;font-size:12px;line-height:1.7;color:var(--ink2)}
+
+/* TOOLS */
+.tools-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:24px}
+.tool-card{background:linear-gradient(135deg,#faf8f4 0%,#f0ebe0 100%);border:2px solid var(--border);border-radius:8px;padding:24px;transition:all .3s}
+.tool-card:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.tool-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.tool-icon{width:44px;height:44px;border-radius:8px;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.tool-name{font-size:17px;font-weight:700;color:var(--ink)}
+.tool-desc{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:14px}
+.tool-uses{display:flex;flex-direction:column;gap:6px}
+.tool-use{font-size:11px;color:var(--ink2);padding-left:14px;position:relative}
+.tool-use::before{content:'→';position:absolute;left:0;color:var(--accent)}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:40px;margin-top:24px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--accent) 0%,var(--accent2) 100%)}
+.timeline-item{position:relative;margin-bottom:32px}
+.timeline-item::before{content:'';position:absolute;left:-36px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 2px var(--accent)}
+.timeline-content{background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:16px 20px}
+.timeline-content h4{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--ink)}
+.timeline-content p{font-size:11px;color:var(--muted);line-height:1.6}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.check-item{display:flex;align-items:start;gap:12px;padding:14px 18px;background:var(--surface);border:2px solid var(--border);border-radius:6px;transition:all .2s}
+.check-item:hover{border-color:var(--accent2)}
+.check-box{width:18px;height:18px;border:2px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:2px;transition:all .2s}
+.check-item:hover .check-box{border-color:var(--accent2)}
+.check-text{font-size:12px;color:var(--ink);line-height:1.6}
+.check-text strong{color:var(--accent)}
+
+/* META STATS */
+.meta-grid{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin:32px 0}
+.meta-item{display:flex;flex-direction:column;align-items:center;gap:6px}
+.meta-value{font-size:32px;font-weight:700;color:var(--accent);font-family:var(--display)}
+.meta-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:700}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .strategy-grid{grid-template-columns:1fr}
+  .tools-grid{grid-template-columns:1fr}
+  .step{grid-template-columns:1fr}
+  .step-tool{align-self:auto}
+}
+@media(max-width:600px){
+  h1{font-size:28px}
+  .container{padding:40px 20px 80px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<header>
+  <div class="stamp">Migración Semántica Verificada</div>
+  <h1><em>Test-Driven</em><br>Polyglot Migration</h1>
+  <p class="subtitle">// De monolito Java a arquitectura políglota sin perder el comportamiento · Garantizado matemáticamente con tests de integración</p>
+  
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="meta-value">3</div>
+      <div class="meta-label">Fases</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-value">10</div>
+      <div class="meta-label">Pasos</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-value">14</div>
+      <div class="meta-label">Días</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-value">100%</div>
+      <div class="meta-label">Verificado</div>
+    </div>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setView('estrategia')">🎯 Estrategia</button>
+  <button class="mode-btn" onclick="setView('fases')">📋 Fases</button>
+  <button class="mode-btn" onclick="setView('estructura')">📁 Estructura</button>
+  <button class="mode-btn" onclick="setView('herramientas')">⚡ Herramientas</button>
+  <button class="mode-btn" onclick="setView('timeline')">⏱️ Timeline</button>
+  <button class="mode-btn" onclick="setView('checklist')">✅ Checklist</button>
+  <button class="mode-btn" onclick="setView('comandos')">💻 Comandos</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ESTRATEGIA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-estrategia" class="mode-panel active">
+  <div class="sec-title" data-n="1">Migración por Semántica, no por Sintaxis</div>
+  <div class="callout blue">
+    <strong>La clave:</strong> Los tests de integración y los diagramas arquitectónicos son la <strong>fuente de verdad</strong>. El código Java limpio es solo consultoría cuando la IA tiene dudas.
+  </div>
+
+  <div class="strategy-grid">
+    <div class="strategy-card">
+      <div class="strategy-icon">🎯</div>
+      <h3 class="strategy-title">Tests = Contrato</h3>
+      <p class="strategy-text">Los tests de integración Playwright son agnósticos al lenguaje. Si pasan en Java y pasan en Go, el comportamiento es matemáticamente idéntico.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-icon">📐</div>
+      <h3 class="strategy-title">Diagramas = Arquitectura</h3>
+      <p class="strategy-text">Los diagramas Mermaid documentan las decisiones de diseño que no están en el código. El "por qué" de las cosas viaja contigo.</p>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-icon">☕</div>
+      <h3 class="strategy-title">Java = Referencia</h3>
+      <p class="strategy-text">El código Java limpio sirve de consultoría cuando la IA tiene dudas, pero NO se copia línea a línea al nuevo lenguaje.</p>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Por qué funciona</div>
+  <div class="callout green">
+    <strong>La mayoría de migraciones fallan porque:</strong><br>
+    ❌ Reescriben sin tests → "creemos que funciona igual"<br>
+    ❌ Copian código viejo 1:1 → arrastran deuda técnica al nuevo lenguaje<br>
+    ❌ No documentan decisiones → pierden el "por qué" de las cosas
+  </div>
+
+  <div class="callout orange">
+    <strong>Tu enfoque:</strong><br>
+    ✅ Tests = Red de seguridad matemática<br>
+    ✅ Código limpio = Referencia, no plantilla<br>
+    ✅ Diagramas = Conocimiento arquitectónico portable
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- FASES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-fases" class="mode-panel">
+  <div class="sec-title" data-n="1">Las 3 Fases</div>
+  <div class="callout blue">Proceso incremental y verificable en cada paso.</div>
+
+  <div class="phases">
+    <!-- FASE 1 -->
+    <div class="phase orange">
+      <div class="phase-header">
+        <div class="phase-number">1</div>
+        <div class="phase-info">
+          <h3>Red de Seguridad</h3>
+          <p>Blindar el comportamiento actual antes de tocar una línea de código</p>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1.1</div>
+          <div class="step-content">
+            <h4>Estabilizar el Entorno Local</h4>
+            <p>Levantar el servidor Legacy (Tomcat/WildFly) y la base de datos de forma local. Garantizar que la aplicación responde a peticiones HTTP.</p>
+          </div>
+          <div class="step-tool tool-terminal">Terminal</div>
+        </div>
+        <div class="step">
+          <div class="step-num">1.2</div>
+          <div class="step-content">
+            <h4>Generar Tests de Integración (Playwright)</h4>
+            <p>Escribir peticiones HTTP directas contra los Servlets antiguos. Validar códigos de estado, formato de salida (JSON/HTML) y alteraciones en la base de datos. Tratarlo como Caja Negra.</p>
+          </div>
+          <div class="step-tool tool-cursor">Cursor</div>
+        </div>
+        <div class="step">
+          <div class="step-num">1.3</div>
+          <div class="step-content">
+            <h4>Establecer la Línea Base (Baseline)</h4>
+            <p>Ejecutar los tests de Playwright de forma iterativa hasta que pasen en verde al 100%. Esto certifica el comportamiento actual del negocio.</p>
+          </div>
+          <div class="step-tool tool-terminal">npx playwright test</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div class="phase blue">
+      <div class="phase-header">
+        <div class="phase-number">2</div>
+        <div class="phase-info">
+          <h3>Refactorización Java</h3>
+          <p>Limpiar el código Java con la red de seguridad activa</p>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">2.1</div>
+          <div class="step-content">
+            <h4>Extraer Capa de Acceso a Datos (DAOs)</h4>
+            <p>Sacar el código SQL y JDBC incrustado en los Servlets hacia clases DAO o Repositorios independientes.</p>
+          </div>
+          <div class="step-tool tool-cursor">Cursor Composer</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2.2</div>
+          <div class="step-content">
+            <h4>Validar la Integración (Check 1)</h4>
+            <p>Ejecutar la suite de Playwright sin modificar ninguna línea de los tests. Deben seguir en verde. Si alguno falla, la extracción del DAO ha alterado la lógica original.</p>
+          </div>
+          <div class="step-tool tool-terminal">Terminal</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2.3</div>
+          <div class="step-content">
+            <h4>Aplicar Clean Code, SOLID y Jakarta EE</h4>
+            <p>Transformar el Servlet en un controlador limpio. Extraer la lógica de negocio a clases de Servicio e inyectar las dependencias usando anotaciones modernas (@Inject).</p>
+          </div>
+          <div class="step-tool tool-cursor">Cursor Composer</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2.4</div>
+          <div class="step-content">
+            <h4>Validación Definitiva del Refactor (Check 2)</h4>
+            <p>Última ejecución de los tests de Playwright contra el código Java limpio. Si el resultado es positivo, el refactor arquitectónico está garantizado.</p>
+          </div>
+          <div class="step-tool tool-terminal">Terminal</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2.5</div>
+          <div class="step-content">
+            <h4>Generar Diagramas Mermaid</h4>
+            <p>Documentar la arquitectura MDSS, flujos de request y decisiones de diseño en diagramas Mermaid. Estos diagramas son portables al nuevo lenguaje.</p>
+          </div>
+          <div class="step-tool tool-cursor">Cursor</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 3 -->
+    <div class="phase green">
+      <div class="phase-header">
+        <div class="phase-number">3</div>
+        <div class="phase-info">
+          <h3>Salto Políglota</h3>
+          <p>Reescritura en el nuevo lenguaje verificada matemáticamente</p>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">3.1</div>
+          <div class="step-content">
+            <h4>Migrar a Nueva Arquitectura/Lenguaje</h4>
+            <p>Tomar el código Java limpio como mapa exacto para reescribir la API en el nuevo lenguaje. Generar Tests Unitarios automatizados para cada función aislada.</p>
+          </div>
+          <div class="step-tool tool-claude">Claude Code CLI</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3.2</div>
+          <div class="step-content">
+            <h4>Validar el Nuevo Backend (Check 3)</h4>
+            <p>Apuntar los tests de integración originales de Playwright (creados en Fase 1) al puerto del nuevo servidor. El comportamiento externo debe ser matemáticamente idéntico.</p>
+          </div>
+          <div class="step-tool tool-terminal">Terminal</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3.3</div>
+          <div class="step-content">
+            <h4>Despliegue Progresivo (Strangler Fig)</h4>
+            <p>Configurar un proxy inverso (Nginx) para enrutar el tráfico mayoritario hacia el sistema Legacy, desviando progresivamente rutas específicas hacia el nuevo backend validado.</p>
+          </div>
+          <div class="step-tool tool-cursor">Cursor Chat</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ESTRUCTURA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-estructura" class="mode-panel">
+  <div class="sec-title" data-n="1">Organización del Proyecto</div>
+  <div class="callout green">Estructura de carpetas completa para tests de integración, E2E y documentación viva.</div>
+
+  <div class="file-tree">
+    <div class="file-tree-header">Estructura Completa</div>
+    <pre>proyecto-raiz/
+├── <span class="tree-folder">backend/</span>                  <span class="tree-comment">← Sistema Java actual</span>
+│   ├── <span class="tree-folder">src/main/java/...</span>
+│   ├── <span class="tree-file">pom.xml</span>
+│   ├── <span class="tree-file">Dockerfile</span>
+│   └── <span class="tree-file">docker-compose.yml</span>
+│
+├── <span class="tree-folder">frontend/</span>                 <span class="tree-comment">← Aplicación UI</span>
+│   ├── <span class="tree-folder">src/</span>
+│   ├── <span class="tree-file">package.json</span>
+│   └── ...
+│
+├── <span class="tree-folder">tests/</span>                    <span class="tree-comment">← Tests y documentación</span>
+│   ├── <span class="tree-folder">integration/</span>
+│   │   ├── <span class="tree-folder">backend/</span>          <span class="tree-comment">← Tests API pura (sin UI)</span>
+│   │   │   ├── <span class="tree-file">perfil.spec.ts</span>
+│   │   │   ├── <span class="tree-file">login.spec.ts</span>
+│   │   │   └── ...
+│   │   │
+│   │   └── <span class="tree-folder">frontend/</span>         <span class="tree-comment">← Tests componentes aislados</span>
+│   │       ├── <span class="tree-file">ProfileCard.spec.ts</span>
+│   │       └── ...
+│   │
+│   ├── <span class="tree-folder">e2e/</span>                  <span class="tree-comment">← Tests flujo completo</span>
+│   │   ├── <span class="tree-file">user-journey.spec.ts</span>
+│   │   └── ...
+│   │
+│   └── <span class="tree-folder">diagrams/</span>             <span class="tree-comment">← Documentación viva</span>
+│       ├── <span class="tree-file">arquitectura.mmd</span>
+│       ├── <span class="tree-file">flujo-mdss.mmd</span>
+│       └── <span class="tree-file">decisiones.mmd</span>
+│
+├── <span class="tree-file">playwright.config.ts</span>   <span class="tree-comment">← Configuración unificada</span>
+└── <span class="tree-file">package.json</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">playwright.config.ts</div>
+      <div class="code-lang">TypeScript</div>
+    </div>
+    <div class="code-content">
+      <pre>import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  projects: [
+    {
+      name: 'backend-integration',
+      testDir: './tests/integration/backend',
+      use: { baseURL: 'http://localhost' }
+    },
+    {
+      name: 'frontend-integration',
+      testDir: './tests/integration/frontend',
+    },
+    {
+      name: 'e2e',
+      testDir: './tests/e2e',
+      use: { baseURL: 'http://localhost' }
+    }
+  ]
+});</pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Ejemplo de Test de Integración</div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">tests/integration/backend/perfil.spec.ts</div>
+      <div class="code-lang">TypeScript</div>
+    </div>
+    <div class="code-content">
+      <pre>import { test, expect } from '@playwright/test';
+
+test('GET /perfil retorna sesión anónima inicial', async ({ request }) => {
+  const response = await request.get('http://localhost/perfil');
+  
+  expect(response.status()).toBe(200);
+  
+  const body = await response.json();
+  expect(body.username).toBe('anonimo');
+  expect(body.rol).toBe('GUEST');
+  expect(body.ultimoAcceso).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+});
+
+test('POST /perfil actualiza rol y persiste', async ({ request }) => {
+  // Primera petición: crear sesión
+  const res1 = await request.get('http://localhost/perfil');
+  const cookies = res1.headers()['set-cookie'];
+  
+  // Segunda petición: actualizar rol
+  const res2 = await request.post('http://localhost/perfil', {
+    headers: { 'Cookie': cookies },
+    data: { rol: 'ADMIN' }
+  });
+  
+  expect(res2.status()).toBe(200);
+  
+  // Tercera petición: verificar persistencia (simula failover)
+  const res3 = await request.get('http://localhost/perfil', {
+    headers: { 'Cookie': cookies }
+  });
+  
+  const body = await res3.json();
+  expect(body.rol).toBe('ADMIN');
+});</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- HERRAMIENTAS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-herramientas" class="mode-panel">
+  <div class="sec-title" data-n="1">Stack Tecnológico</div>
+  <div class="callout purple">Cursor Composer para preparación, Claude Code CLI para migración masiva.</div>
+
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon">⚡</div>
+        <div class="tool-name">Cursor Composer</div>
+      </div>
+      <div class="tool-desc">Ideal para escribir tests, refactorizar Java, e iterar con feedback visual. Fuerte en diffs lado a lado y context awareness.</div>
+      <div class="tool-uses">
+        <div class="tool-use">Escribir tests de integración Playwright</div>
+        <div class="tool-use">Refactorizar código Java (extraer DAOs, Services)</div>
+        <div class="tool-use">Generar diagramas Mermaid de arquitectura</div>
+        <div class="tool-use">Ajustes finos cuando los tests fallen</div>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon">🤖</div>
+        <div class="tool-name">Claude Code CLI</div>
+      </div>
+      <div class="tool-desc">Ideal para reescritura masiva, batch processing y automatización sin supervisión manual. Genera proyectos completos de 0.</div>
+      <div class="tool-uses">
+        <div class="tool-use">Migración políglota (Java → Go/Rust/Node)</div>
+        <div class="tool-use">Generación de proyectos nuevos completos</div>
+        <div class="tool-use">Workflows largos sin intervención manual</div>
+        <div class="tool-use">Batch processing de múltiples endpoints</div>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon">🎭</div>
+        <div class="tool-name">Playwright</div>
+      </div>
+      <div class="tool-desc">Framework de testing para API e integración. Agnóstico al lenguaje del backend, valida comportamiento HTTP.</div>
+      <div class="tool-uses">
+        <div class="tool-use">Tests de integración backend (API Testing)</div>
+        <div class="tool-use">Tests de componentes frontend aislados</div>
+        <div class="tool-use">Tests E2E con navegador real</div>
+        <div class="tool-use">Validación de cookies, headers, redirects</div>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon">📊</div>
+        <div class="tool-name">Mermaid</div>
+      </div>
+      <div class="tool-desc">Diagramas como código para documentar arquitectura, flujos y decisiones de diseño de forma portable.</div>
+      <div class="tool-uses">
+        <div class="tool-use">Diagramas de arquitectura (componentes + conexiones)</div>
+        <div class="tool-use">Sequence diagrams (flujo temporal de requests)</div>
+        <div class="tool-use">Flowcharts de decisiones arquitectónicas</div>
+        <div class="tool-use">Documentación viva sincronizada con código</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- TIMELINE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-timeline" class="mode-panel">
+  <div class="sec-title" data-n="1">Cronograma Realista</div>
+  <div class="callout yellow">Estimación de tiempos para un proyecto con ~15 endpoints.</div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-content">
+        <h4>Semana 1: Tests de Integración Backend</h4>
+        <p>Escribir tests Playwright para todos los endpoints. Ejecutar hasta verde al 100%. Baseline establecida.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-content">
+        <h4>Día 8-9: Documentación Arquitectónica</h4>
+        <p>Generar diagramas Mermaid de arquitectura MDSS, flujos de request y decisiones de diseño.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-content">
+        <h4>Día 10: Migración con Claude Code CLI</h4>
+        <p>Ejecutar migración políglota. Claude Code lee tests + diagramas y genera el proyecto completo en el nuevo lenguaje.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-content">
+        <h4>Día 11-12: Validación y Ajustes</h4>
+        <p>Apuntar tests Playwright al nuevo backend. Si alguno falla, ajustar con Cursor. Iterar hasta verde.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-content">
+        <h4>Día 13-14: Tests E2E + Strangler Fig</h4>
+        <p>Escribir tests E2E frontend+backend. Configurar Nginx para despliegue progresivo (patrón Strangler Fig).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top:32px">
+    <strong>Resultado:</strong> De 3 meses tradicionales a <strong>14 días</strong> con IA, con <strong>mayor calidad</strong> y <strong>cero riesgo</strong>.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHECKLIST -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-checklist" class="mode-panel">
+  <div class="sec-title" data-n="1">Checklist Pre-Migración</div>
+  <div class="callout orange">Asegúrate de cumplir todos estos puntos antes de ejecutar la migración políglota.</div>
+
+  <div class="checklist">
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">Tests de integración backend cubren <strong>todos los endpoints</strong> (GET, POST, PUT, DELETE)</div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">Tests validan <strong>headers, cookies, códigos de estado</strong>, no solo el body JSON</div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">Diagramas Mermaid documentan <strong>decisiones arquitectónicas</strong> (ej. por qué escritura post-respuesta)</div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">Código Java está <strong>limpio y sin deuda técnica</strong> (DAOs extraídos, SOLID aplicado)</div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">Tienes <strong>logs de producción</strong> para detectar edge cases no cubiertos en tests</div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">CI valida que <strong>diagramas están sincronizados</strong> con docker-compose.yml</div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">Tests cubren <strong>validaciones de negocio</strong> (ej. password incorrecta → 401)</div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">Tests cubren <strong>edge cases</strong> (sesión expirada, sin sessionID, datos inválidos)</div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">Playwright config tiene <strong>3 projects</strong> (backend-integration, frontend-integration, e2e)</div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">Entorno local <strong>levanta con docker-compose up</strong> y todos los servicios responden</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- COMANDOS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-comandos" class="mode-panel">
+  <div class="sec-title" data-n="1">Comandos Esenciales</div>
+  <div class="callout blue">Comandos que ejecutarás durante el proceso.</div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">Instalación de Playwright</div>
+      <div class="code-lang">Bash</div>
+    </div>
+    <div class="code-content">
+      <pre># Inicializar Playwright en el proyecto
+npm init playwright@latest
+
+# Instalar dependencias
+npm install</pre>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">Ejecutar Tests</div>
+      <div class="code-lang">Bash</div>
+    </div>
+    <div class="code-content">
+      <pre># Ejecutar solo tests de backend
+npx playwright test --project=backend-integration
+
+# Ejecutar tests E2E
+npx playwright test --project=e2e
+
+# Ejecutar todos los tests
+npx playwright test
+
+# Ejecutar en modo UI (debug visual)
+npx playwright test --ui
+
+# Ver reporte de resultados
+npx playwright show-report</pre>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">Migración con Claude Code CLI</div>
+      <div class="code-lang">Bash</div>
+    </div>
+    <div class="code-content">
+      <pre># Ejemplo de prompt para Claude Code CLI
+claude-code migrate \
+  --from java \
+  --to go \
+  --contracts "tests/integration/backend/**/*.spec.ts" \
+  --architecture "tests/diagrams/*.mmd" \
+  --reference "backend/src/main/java/" \
+  --output "go-backend/"</pre>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">Levantar Entorno</div>
+      <div class="code-lang">Bash</div>
+    </div>
+    <div class="code-content">
+      <pre># Levantar backend Java actual
+cd backend
+docker-compose up --build
+
+# Levantar nuevo backend (ej. Go)
+cd go-backend
+go run main.go
+
+# Apuntar tests al nuevo backend
+export API_URL=http://localhost:8080
+npx playwright test --project=backend-integration</pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Ejemplos de Diagramas Mermaid</div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">tests/diagrams/arquitectura.mmd</div>
+      <div class="code-lang">Mermaid</div>
+    </div>
+    <div class="code-content">
+      <pre>graph LR
+  Cliente[👤 Cliente] --> Nginx[⚖️ Nginx]
+  Nginx --> Nodo1[Tomcat Nodo 1]
+  Nginx --> Nodo2[Tomcat Nodo 2]
+  
+  Nodo1 --> L1_1[⚡ Caffeine L1]
+  Nodo2 --> L1_2[⚡ Caffeine L1]
+  
+  Nodo1 --> Redis[🗄️ Redis L2]
+  Nodo2 --> Redis</pre>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">tests/diagrams/flujo-mdss.mmd</div>
+      <div class="code-lang">Mermaid</div>
+    </div>
+    <div class="code-content">
+      <pre>sequenceDiagram
+  participant C as Cliente
+  participant N as Nginx
+  participant F as MdssFilter
+  participant L1 as Caffeine L1
+  participant S as Servlet
+  participant R as Redis L2
+  
+  C->>N: GET /perfil
+  N->>F: forward request
+  F->>L1: getIfPresent(sessionId)
+  
+  alt L1 HIT
+    L1-->>F: UserSession (0ms)
+  else L1 MISS
+    F->>R: GET session:abc123
+    R-->>F: JSON (1-2ms)
+    F->>L1: put(sessionId, session)
+  end
+  
+  F->>S: setAttribute("userSession")
+  S->>S: lógica de negocio
+  S-->>F: response ready
+  F-->>C: ✅ HTTP 200 + body
+  
+  Note over F,R: POST-RESPUESTA
+  F->>L1: put(sessionId, session)
+  F->>R: SETEX session:abc123 1800 JSON</pre>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function setView(view) {
+  // Ocultar todos los paneles
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  // Desactivar todos los botones
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  
+  // Activar el panel seleccionado
+  document.getElementById('view-' + view).classList.add('active');
+  // Activar el botón seleccionado
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

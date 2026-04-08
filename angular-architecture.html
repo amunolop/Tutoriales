@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angular — Arquitectura y Funcionamiento</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --surface: #fff;
+    --surface2: #f0ebe0;
+    --border: #d4c9b0;
+    --ink: #1a1410;
+    --ink2: #4a3f30;
+    --muted: #8a7a65;
+    --accent: #c1440e;      /* rojo Angular */
+    --accent2: #2a6e4e;     /* verde */
+    --accent3: #1a4a8a;     /* azul */
+    --accent4: #7a1fa0;     /* morado para DI */
+    --yellow: #e8a020;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Clash Display', 'IBM Plex Mono', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    min-height: 100vh;
+    position: relative;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.5;
+  }
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 28px 100px;
+  }
+  header {
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 24px;
+    margin-bottom: 48px;
+    animation: fadeIn 0.5s ease both;
+  }
+  .stamp {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    padding: 3px 10px;
+    margin-bottom: 14px;
+    transform: rotate(-1deg);
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+    border-bottom: 3px solid var(--accent);
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+  .sec-title {
+    font-family: var(--display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 40px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sec-title::before {
+    content: attr(data-n);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: var(--ink);
+    color: var(--bg);
+    font-size: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .tag {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .tag-component { background: rgba(193,68,14,0.12); color: var(--accent); border: 2px solid var(--accent); }
+  .tag-module { background: rgba(26,74,138,0.12); color: var(--accent3); border: 2px solid var(--accent3); }
+  .tag-service { background: rgba(122,31,160,0.12); color: var(--accent4); border: 2px solid var(--accent4); }
+  .tag-directive { background: rgba(232,160,32,0.12); color: var(--yellow); border: 2px solid var(--yellow); }
+  .tag-pipe { background: rgba(42,110,78,0.12); color: var(--accent2); border: 2px solid var(--accent2); }
+
+  /* Nav de secciones */
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0;
+  }
+  .nav-tab {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    background: none;
+    border: 2px solid transparent;
+    border-bottom: none;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+    position: relative;
+    bottom: -2px;
+  }
+  .nav-tab:hover { color: var(--ink); }
+  .nav-tab.active {
+    color: var(--accent);
+    border-color: var(--border);
+    border-bottom: 2px solid var(--bg);
+    background: var(--bg);
+  }
+  .view-panel { display: none; }
+  .view-panel.active { display: block; }
+
+  /* Cards genéricas */
+  .card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    transition: all 0.2s;
+  }
+  .card:hover { border-color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .card-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* Bloque grande */
+  .big-box {
+    background: linear-gradient(135deg, #faf8f4 0%, #f0ebe0 100%);
+    border: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 28px 32px 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    animation: fadeUp 0.5s 0.1s ease both;
+  }
+  .big-box-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .big-box-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .big-box-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  /* Grid de cards */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+
+  /* Flow arrows */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .flow-node {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    flex: 1;
+    min-width: 100px;
+  }
+  .flow-arrow {
+    color: var(--muted);
+    font-size: 20px;
+    flex-shrink: 0;
+    animation: pulse 2s ease infinite;
+  }
+
+  /* Lifecycle steps */
+  .lifecycle-row {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin: 16px 0;
+  }
+  .lc-step {
+    flex: 1;
+    min-width: 130px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-right-width: 0;
+    padding: 14px 10px;
+    text-align: center;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .lc-step:first-child { border-radius: 6px 0 0 6px; }
+  .lc-step:last-child { border-right-width: 2px; border-radius: 0 6px 6px 0; }
+  .lc-step:hover { background: #fdf9f5; z-index: 1; }
+  .lc-num {
+    font-size: 9px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .lc-name {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .lc-desc {
+    font-size: 9px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  /* Flecha entre lc-steps via pseudo */
+  .lc-step:not(:last-child)::after {
+    content: '›';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--muted);
+    z-index: 2;
+    background: var(--bg);
+    padding: 2px;
+  }
+
+  /* Code blocks */
+  .code-section { margin-top: 32px; }
+  .code-tabs {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+    margin-bottom: 0;
+  }
+  .code-tab {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    border-bottom: none;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+    border-radius: 4px 4px 0 0;
+  }
+  .code-tab.active { background: #1a1410; color: #f5f0e8; border-color: #1a1410; }
+  .code-panel {
+    display: none;
+    background: #1a1410;
+    border: 2px solid #1a1410;
+    border-radius: 0 6px 6px 6px;
+    padding: 24px;
+    overflow-x: auto;
+  }
+  .code-panel.active { display: block; }
+  .code-panel pre {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.8;
+    color: #d4c9b0;
+  }
+  an { color: #e8a020; }
+  kw { color: #c1440e; font-weight: 700; }
+  cl { color: #6ab0f5; }
+  st { color: #7acc8a; }
+  cm { color: #5a504a; font-style: italic; }
+  nu { color: #f0a0c0; }
+  dec { color: #cc8844; }
+
+  /* Layer diagram */
+  .layer-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .layer {
+    padding: 16px 20px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: background 0.2s;
+  }
+  .layer:last-child { border-bottom: none; }
+  .layer:hover { background: #fdf9f5; }
+  .layer-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+  .layer-items {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .layer-item {
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  /* DI tree */
+  .di-tree {
+    padding: 20px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 2;
+  }
+  .di-tree .root { color: var(--accent3); font-weight: 700; }
+  .di-tree .branch { padding-left: 24px; }
+  .di-tree .branch::before {
+    content: '┗━ ';
+    color: var(--muted);
+  }
+  .di-tree .leaf { padding-left: 48px; }
+  .di-tree .leaf::before {
+    content: '┗━ ';
+    color: var(--border);
+  }
+
+  /* Info callout */
+  .callout {
+    display: flex;
+    gap: 12px;
+    background: rgba(193,68,14,0.06);
+    border-left: 4px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin: 20px 0;
+    font-size: 12px;
+    color: var(--ink2);
+    line-height: 1.7;
+  }
+  .callout-icon { font-size: 16px; flex-shrink: 0; }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .change-badge {
+    display: inline-block;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  .badge-zone { background: rgba(42,110,78,0.12); color: var(--accent2); border: 1px solid var(--accent2); }
+  .badge-event { background: rgba(193,68,14,0.12); color: var(--accent); border: 1px solid var(--accent); }
+  .badge-signal { background: rgba(122,31,160,0.12); color: var(--accent4); border: 1px solid var(--accent4); }
+  .badge-async { background: rgba(232,160,32,0.12); color: var(--yellow); border: 1px solid var(--yellow); }
+
+  .mini-badge {
+    display: inline-block;
+    font-size: 8px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="stamp">Frontend Framework</div>
+    <h1>Angular — <em>Arquitectura</em> Core</h1>
+    <p class="subtitle">
+      Framework front-end de Google · TypeScript-first · Componentes, Módulos, Servicios, DI y Change Detection
+    </p>
+  </header>
+
+  <!-- NAV -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showView('overview')">Visión General</button>
+    <button class="nav-tab" onclick="showView('components')">Componentes</button>
+    <button class="nav-tab" onclick="showView('di')">Inyección de Dependencias</button>
+    <button class="nav-tab" onclick="showView('routing')">Routing</button>
+    <button class="nav-tab" onclick="showView('rxjs')">RxJS & Signals</button>
+    <button class="nav-tab" onclick="showView('lifecycle')">Lifecycle</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- VIEW: VISIÓN GENERAL -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div id="view-overview" class="view-panel active">
+
+    <p class="sec-title" data-n="0">¿Qué es Angular?</p>
+
+    <div class="big-box">
+      <div class="big-box-header">
+        <span class="tag tag-module">Framework</span>
+        <span class="big-box-name">Angular</span>
+      </div>
+      <p class="big-box-desc">
+        Plataforma completa para crear SPAs (Single Page Applications). Incluye router, cliente HTTP, formularios, testing y CLI. Todo en un único paquete con TypeScript como lenguaje nativo.
+      </p>
+
+      <!-- Capas -->
+      <div class="layer-stack">
+        <div class="layer">
+          <span class="layer-label" style="color: var(--accent);">Presentación</span>
+          <div class="layer-items">
+            <span class="layer-item" style="background:rgba(193,68,14,0.08); color:var(--accent); border-color:var(--accent);">Components</span>
+            <span class="layer-item" style="background:rgba(193,68,14,0.08); color:var(--accent); border-color:var(--accent);">Templates (HTML)</span>
+            <span class="layer-item" style="background:rgba(193,68,14,0.08); color:var(--accent); border-color:var(--accent);">Directives</span>
+            <span class="layer-item" style="background:rgba(193,68,14,0.08); color:var(--accent); border-color:var(--accent);">Pipes</span>
+          </div>
+        </div>
+        <div class="layer">
+          <span class="layer-label" style="color: var(--accent4);">Lógica</span>
+          <div class="layer-items">
+            <span class="layer-item" style="background:rgba(122,31,160,0.08); color:var(--accent4); border-color:var(--accent4);">Services</span>
+            <span class="layer-item" style="background:rgba(122,31,160,0.08); color:var(--accent4); border-color:var(--accent4);">Guards</span>
+            <span class="layer-item" style="background:rgba(122,31,160,0.08); color:var(--accent4); border-color:var(--accent4);">Interceptors</span>
+            <span class="layer-item" style="background:rgba(122,31,160,0.08); color:var(--accent4); border-color:var(--accent4);">Resolvers</span>
+          </div>
+        </div>
+        <div class="layer">
+          <span class="layer-label" style="color: var(--accent3);">Infraestructura</span>
+          <div class="layer-items">
+            <span class="layer-item" style="background:rgba(26,74,138,0.08); color:var(--accent3); border-color:var(--accent3);">NgModule / Standalone</span>
+            <span class="layer-item" style="background:rgba(26,74,138,0.08); color:var(--accent3); border-color:var(--accent3);">Router</span>
+            <span class="layer-item" style="background:rgba(26,74,138,0.08); color:var(--accent3); border-color:var(--accent3);">HttpClient</span>
+            <span class="layer-item" style="background:rgba(26,74,138,0.08); color:var(--accent3); border-color:var(--accent3);">Injector (DI)</span>
+          </div>
+        </div>
+        <div class="layer">
+          <span class="layer-label" style="color: var(--accent2);">Reactividad</span>
+          <div class="layer-items">
+            <span class="layer-item" style="background:rgba(42,110,78,0.08); color:var(--accent2); border-color:var(--accent2);">RxJS Observables</span>
+            <span class="layer-item" style="background:rgba(42,110,78,0.08); color:var(--accent2); border-color:var(--accent2);">Signals (v17+)</span>
+            <span class="layer-item" style="background:rgba(42,110,78,0.08); color:var(--accent2); border-color:var(--accent2);">Zone.js / Zoneless</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flujo de arranque -->
+    <p class="sec-title" data-n="1">Flujo de arranque de la aplicación</p>
+    <div class="big-box" style="border-color: var(--accent3);">
+      <div class="big-box-header">
+        <span class="tag tag-module">Bootstrap</span>
+        <span class="big-box-name">Del código al DOM</span>
+      </div>
+      <p class="big-box-desc">Desde main.ts hasta que el primer componente se renderiza en pantalla.</p>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+
+        <div style="background:rgba(26,74,138,0.06); border:2px solid var(--accent3); border-radius:6px; padding:14px;">
+          <div style="font-size:9px; color:var(--accent3); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">1. Punto de entrada</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span style="background:rgba(26,74,138,0.12); padding:6px 12px; border-radius:4px; border:1px solid var(--accent3); font-size:11px;">main.ts</span>
+            <span style="color:var(--muted); align-self:center;">→</span>
+            <span style="background:rgba(26,74,138,0.12); padding:6px 12px; border-radius:4px; border:1px solid var(--accent3); font-size:11px;">bootstrapApplication(AppComponent)</span>
+          </div>
+        </div>
+
+        <div style="text-align:center; color:var(--muted); font-size:18px;">↓</div>
+
+        <div style="background:rgba(232,160,32,0.06); border:2px solid var(--yellow); border-radius:6px; padding:14px;">
+          <div style="font-size:9px; color:var(--yellow); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">2. Plataforma e Injector raíz</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span style="background:rgba(232,160,32,0.12); padding:6px 12px; border-radius:4px; border:1px solid var(--yellow); font-size:11px;">PlatformBrowserDynamic</span>
+            <span style="background:rgba(232,160,32,0.12); padding:6px 12px; border-radius:4px; border:1px solid var(--yellow); font-size:11px;">ApplicationRef creado</span>
+            <span style="background:rgba(232,160,32,0.12); padding:6px 12px; border-radius:4px; border:1px solid var(--yellow); font-size:11px;">Root Injector inicializado</span>
+          </div>
+        </div>
+
+        <div style="text-align:center; color:var(--muted); font-size:18px;">↓</div>
+
+        <div style="background:rgba(42,110,78,0.06); border:2px solid var(--accent2); border-radius:6px; padding:14px;">
+          <div style="font-size:9px; color:var(--accent2); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">3. Compilación de templates</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span style="background:rgba(42,110,78,0.12); padding:6px 12px; border-radius:4px; border:1px solid var(--accent2); font-size:11px;">ngcc / Ivy compiler</span>
+            <span style="background:rgba(42,110,78,0.12); padding:6px 12px; border-radius:4px; border:1px solid var(--accent2); font-size:11px;">Templates → funciones JS</span>
+          </div>
+        </div>
+
+        <div style="text-align:center; color:var(--muted); font-size:18px;">↓</div>
+
+        <div style="background:rgba(193,68,14,0.06); border:2px solid var(--accent); border-radius:6px; padding:14px;">
+          <div style="font-size:9px; color:var(--accent); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">4. Renderizado inicial</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span style="background:rgba(193,68,14,0.12); padding:6px 12px; border-radius:4px; border:1px solid var(--accent); font-size:11px;">AppComponent instanciado</span>
+            <span style="background:rgba(193,68,14,0.12); padding:6px 12px; border-radius:4px; border:1px solid var(--accent); font-size:11px;">DOM generado</span>
+            <span style="background:rgba(193,68,14,0.12); padding:6px 12px; border-radius:4px; border:1px solid var(--accent); font-size:11px;">app-root hydrated</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloques pilares -->
+    <p class="sec-title" data-n="2">Los cuatro pilares</p>
+    <div class="grid-2">
+      <div class="card">
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <span class="tag tag-component">Component</span>
+        </div>
+        <div class="card-title">Component</div>
+        <div class="card-desc">Unidad mínima de UI. Encapsula template HTML, estilos CSS y lógica TypeScript. Tiene su propio ciclo de vida y puede comunicarse con el exterior vía <code>@Input</code> / <code>@Output</code>.</div>
+      </div>
+      <div class="card">
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <span class="tag tag-service">Service</span>
+        </div>
+        <div class="card-title">Service + DI</div>
+        <div class="card-desc">Clase con lógica compartida (HTTP, estado, utilidades). Angular los crea una sola vez (singleton) y los inyecta donde se necesiten a través del sistema de Dependency Injection.</div>
+      </div>
+      <div class="card">
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <span class="tag tag-module">Module / Standalone</span>
+        </div>
+        <div class="card-title">Módulos</div>
+        <div class="card-desc">Agrupan componentes, directivas y pipes relacionados. Desde Angular 14+ los <strong>Standalone Components</strong> eliminan la necesidad de NgModule para la mayoría de casos.</div>
+      </div>
+      <div class="card">
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <span class="tag tag-directive">Directives &amp; Pipes</span>
+        </div>
+        <div class="card-title">Directives &amp; Pipes</div>
+        <div class="card-desc">Las <strong>directives</strong> modifican el comportamiento del DOM (<code>*ngIf</code>, <code>*ngFor</code>, <code>@if</code>, <code>@for</code>). Los <strong>pipes</strong> transforman datos en el template (<code>date</code>, <code>currency</code>, <code>async</code>).</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- VIEW: COMPONENTES -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div id="view-components" class="view-panel">
+
+    <p class="sec-title" data-n="0">Anatomía de un Componente</p>
+
+    <div class="big-box">
+      <div class="big-box-header">
+        <span class="tag tag-component">Component</span>
+        <span class="big-box-name">UserCardComponent</span>
+      </div>
+      <p class="big-box-desc">Un componente tiene tres partes: clase TypeScript, template HTML y hoja de estilos. El decorador <code>@Component</code> los une.</p>
+
+      <div style="display:flex; gap:16px; flex-wrap:wrap;">
+        <!-- Clase -->
+        <div style="flex:1; min-width:200px; background:rgba(193,68,14,0.06); border:2px solid var(--accent); border-radius:6px; padding:14px;">
+          <div style="font-size:9px; color:var(--accent); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">Clase TypeScript</div>
+          <ul style="list-style:none; font-size:11px; color:var(--ink2); line-height:2;">
+            <li>• Propiedades y métodos</li>
+            <li>• <code>@Input()</code> recibe datos</li>
+            <li>• <code>@Output()</code> emite eventos</li>
+            <li>• Inyecta servicios via constructor</li>
+            <li>• Implementa hooks de lifecycle</li>
+          </ul>
+        </div>
+        <!-- Connector -->
+        <div style="display:flex; align-items:center; font-size:22px; color:var(--muted);">⇄</div>
+        <!-- Template -->
+        <div style="flex:1; min-width:200px; background:rgba(26,74,138,0.06); border:2px solid var(--accent3); border-radius:6px; padding:14px;">
+          <div style="font-size:9px; color:var(--accent3); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">Template HTML</div>
+          <ul style="list-style:none; font-size:11px; color:var(--ink2); line-height:2;">
+            <li>• Binding <code>{{ "{" }}{ expr }{{ "}" }}</code> (interpolación)</li>
+            <li>• <code>[property]="expr"</code> (one-way)</li>
+            <li>• <code>(event)="handler()"</code> (eventos)</li>
+            <li>• <code>[(ngModel)]</code> (two-way)</li>
+            <li>• Directivas de control de flujo</li>
+          </ul>
+        </div>
+        <!-- Connector -->
+        <div style="display:flex; align-items:center; font-size:22px; color:var(--muted);">+</div>
+        <!-- Estilos -->
+        <div style="flex:1; min-width:200px; background:rgba(42,110,78,0.06); border:2px solid var(--accent2); border-radius:6px; padding:14px;">
+          <div style="font-size:9px; color:var(--accent2); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">Estilos CSS</div>
+          <ul style="list-style:none; font-size:11px; color:var(--ink2); line-height:2;">
+            <li>• Scoped por defecto (Shadow DOM emulado)</li>
+            <li>• <code>ViewEncapsulation.None</code> para global</li>
+            <li>• <code>:host</code> referencia el elemento raíz</li>
+            <li>• Soporte SCSS/LESS nativo via CLI</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input / Output -->
+    <p class="sec-title" data-n="1">Comunicación entre Componentes</p>
+
+    <div class="big-box" style="border-color: var(--accent3);">
+      <div class="big-box-header">
+        <span class="tag tag-module">Comunicación</span>
+        <span class="big-box-name">@Input / @Output / Servicios</span>
+      </div>
+
+      <!-- Diagrama padre-hijo -->
+      <div style="display:flex; flex-direction:column; gap:12px; align-items:center; margin-bottom:20px;">
+        <div style="background:rgba(26,74,138,0.08); border:2px solid var(--accent3); border-radius:6px; padding:14px 20px; min-width:320px; text-align:center;">
+          <span style="font-size:9px; color:var(--accent3); letter-spacing:2px; text-transform:uppercase; font-weight:700;">Padre — ProductListComponent</span>
+          <div style="margin-top:6px; font-size:11px; color:var(--ink2);">
+            <code style="color:var(--accent2);">[product]="item"</code>  
+            <span style="color:var(--muted);">·</span>  
+            <code style="color:var(--accent);">(deleted)="onDelete($event)"</code>
+          </div>
+        </div>
+        <div style="display:flex; gap:40px; font-size:13px; color:var(--muted);">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <span style="font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--accent2);">@Input</span>
+            <span style="animation: pulse 2s infinite;">↓</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <span style="font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--accent);">@Output</span>
+            <span style="animation: pulse 2s infinite;">↑</span>
+          </div>
+        </div>
+        <div style="background:rgba(193,68,14,0.08); border:2px solid var(--accent); border-radius:6px; padding:14px 20px; min-width:320px; text-align:center;">
+          <span style="font-size:9px; color:var(--accent); letter-spacing:2px; text-transform:uppercase; font-weight:700;">Hijo — ProductCardComponent</span>
+          <div style="margin-top:6px; font-size:11px; color:var(--ink2);">
+            <code style="color:var(--accent2);">@Input() product: Product</code>
+            <br>
+            <code style="color:var(--accent);">@Output() deleted = new EventEmitter()</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-icon">💡</span>
+        Para comunicación entre componentes <strong>no relacionados</strong> (sin padre/hijo directo), usa un <strong>Service compartido con Subject/BehaviorSubject</strong> o el nuevo sistema de <strong>Signals</strong>.
+      </div>
+    </div>
+
+    <!-- Change Detection -->
+    <p class="sec-title" data-n="2">Change Detection</p>
+    <div class="grid-2">
+      <div class="card">
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <span class="change-badge badge-zone">Default (Zone.js)</span>
+        </div>
+        <div class="card-title">ChangeDetectionStrategy.Default</div>
+        <div class="card-desc">Zone.js intercepta todos los eventos asíncronos (clicks, timers, HTTP…) y dispara una comprobación en <em>todo el árbol</em> de componentes. Sencillo pero puede ser lento en apps grandes.</div>
+      </div>
+      <div class="card">
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <span class="change-badge badge-event">OnPush</span>
+        </div>
+        <div class="card-title">ChangeDetectionStrategy.OnPush</div>
+        <div class="card-desc">El componente solo se re-renderiza si cambia una referencia en un <code>@Input</code>, se emite un evento, se ejecuta <code>markForCheck()</code> o se usa el pipe <code>async</code>. Mucho más performante.</div>
+      </div>
+      <div class="card">
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <span class="change-badge badge-signal">Signals (v17+)</span>
+        </div>
+        <div class="card-title">Signals</div>
+        <div class="card-desc">Sistema reactivo granular. Un Signal solo marca como "sucio" los componentes que lo leen. Permite apps completamente <strong>Zoneless</strong> — sin Zone.js — con cambios quirúrgicos en el DOM.</div>
+      </div>
+      <div class="card">
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <span class="change-badge badge-async">Pipe async</span>
+        </div>
+        <div class="card-title">Pipe async</div>
+        <div class="card-desc">Suscribe automáticamente a un Observable o Promise en el template y llama a <code>markForCheck()</code> cuando llega un valor. Gestiona la desuscripción al destruir el componente — sin memory leaks.</div>
+      </div>
+    </div>
+
+    <!-- Código -->
+    <p class="sec-title" data-n="3">Código</p>
+    <div class="code-section">
+      <div class="code-tabs">
+        <button class="code-tab active" onclick="showCodeTab('comp-ts', this)">component.ts</button>
+        <button class="code-tab" onclick="showCodeTab('comp-html', this)">component.html</button>
+        <button class="code-tab" onclick="showCodeTab('comp-signal', this)">signals.ts</button>
+      </div>
+      <div id="tab-comp-ts" class="code-panel active"><pre>
+<an>@Component</an>({
+  selector: <st>'app-user-card'</st>,
+  standalone: <kw>true</kw>,
+  imports: [<cl>CommonModule</cl>, <cl>RouterLink</cl>],
+  templateUrl: <st>'./user-card.component.html'</st>,
+  changeDetection: <cl>ChangeDetectionStrategy</cl>.OnPush
+})
+<kw>export class</kw> <cl>UserCardComponent</cl> <kw>implements</kw> <cl>OnInit</cl>, <cl>OnDestroy</cl> {
+
+  <cm>// Datos que recibe del padre</cm>
+  <an>@Input</an>({ required: <kw>true</kw> }) user!: <cl>User</cl>;
+
+  <cm>// Evento que emite al padre</cm>
+  <an>@Output</an>() deleted = <kw>new</kw> <cl>EventEmitter</cl>&lt;<st>number</st>&gt;();
+
+  <cm>// Servicio inyectado</cm>
+  <kw>private</kw> userService = inject(<cl>UserService</cl>);
+
+  ngOnInit(): <kw>void</kw> {
+    console.log(<st>'Componente inicializado'</st>, <kw>this</kw>.user);
+  }
+
+  onDelete(): <kw>void</kw> {
+    <kw>this</kw>.deleted.emit(<kw>this</kw>.user.id);
+  }
+
+  ngOnDestroy(): <kw>void</kw> {
+    <cm>// Limpiar suscripciones aquí</cm>
+  }
+}</pre></div>
+      <div id="tab-comp-html" class="code-panel"><pre>
+<cm>&lt;!-- Interpolación --&gt;</cm>
+&lt;h2&gt;{{ user.name }}&lt;/h2&gt;
+&lt;p&gt;{{ user.email }}&lt;/p&gt;
+
+<cm>&lt;!-- Property binding --&gt;</cm>
+&lt;img [src]="user.avatarUrl" [alt]="user.name"&gt;
+
+<cm>&lt;!-- Event binding --&gt;</cm>
+&lt;button (click)="onDelete()"&gt;Eliminar&lt;/button&gt;
+
+<cm>&lt;!-- Control de flujo moderno (v17+) --&gt;</cm>
+@if (user.isPremium) {
+  &lt;span class="badge"&gt;Premium&lt;/span&gt;
+}
+
+@for (role of user.roles; track role.id) {
+  &lt;span class="role"&gt;{{ role.name }}&lt;/span&gt;
+}
+
+<cm>&lt;!-- Pipe async con Observable --&gt;</cm>
+@if (orders$ | async; as orders) {
+  &lt;p&gt;{{ orders.length }} pedidos&lt;/p&gt;
+}</pre></div>
+      <div id="tab-comp-signal" class="code-panel"><pre>
+<an>@Component</an>({ standalone: <kw>true</kw>, <cm>/* ... */</cm> })
+<kw>export class</kw> <cl>CounterComponent</cl> {
+
+  <cm>// Signal writable</cm>
+  count = signal(<nu>0</nu>);
+
+  <cm>// Computed: se recalcula sólo cuando count cambia</cm>
+  doubled = computed(() => <kw>this</kw>.count() * <nu>2</nu>);
+
+  <cm>// Effect: side-effect cuando cambia el signal</cm>
+  _ = effect(() => {
+    console.log(<st>`Count: `</st>, <kw>this</kw>.count());
+  });
+
+  increment() {
+    <kw>this</kw>.count.update(v => v + <nu>1</nu>);
+  }
+
+  reset() {
+    <kw>this</kw>.count.set(<nu>0</nu>);
+  }
+}
+
+<cm>// En el template: {{ count() }} — es una función
+// Angular detecta cambios de forma GRANULAR sin Zone.js</cm></pre></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- VIEW: INYECCIÓN DE DEPENDENCIAS -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div id="view-di" class="view-panel">
+
+    <p class="sec-title" data-n="0">¿Qué es la Inyección de Dependencias?</p>
+
+    <div class="big-box" style="border-color: var(--accent4);">
+      <div class="big-box-header">
+        <span class="tag tag-service">Injector</span>
+        <span class="big-box-name">Dependency Injection (DI)</span>
+      </div>
+      <p class="big-box-desc">Angular mantiene un árbol de <strong>Injectors</strong> que sabe cómo crear instancias de servicios y las reutiliza (singleton). Tú declaras <em>qué</em> necesitas; Angular decide <em>cómo</em> crearlo.</p>
+
+      <!-- Árbol de injectors -->
+      <div class="di-tree">
+        <div class="root">🌍 Root Injector (ApplicationRef)</div>
+        <div class="branch" style="color:var(--accent3);">NgModule Injector (SharedModule)</div>
+        <div class="leaf" style="color:var(--muted);">AuthService (singleton)</div>
+        <div class="leaf" style="color:var(--muted);">HttpClient (singleton)</div>
+        <div class="branch" style="color:var(--accent);">Component Injector (DashboardComponent)</div>
+        <div class="leaf" style="color:var(--muted);">DashboardService (instancia local)</div>
+        <div class="branch" style="margin-left:48px; padding-left:24px; color:var(--accent);">Component Injector (WidgetComponent)</div>
+        <div class="leaf" style="margin-left:48px; color:var(--muted);">← hereda DashboardService del padre</div>
+      </div>
+    </div>
+
+    <p class="sec-title" data-n="1">Formas de registrar un servicio</p>
+    <div class="grid-3">
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent2); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">providedIn: 'root'</div>
+        <div class="card-title">Singleton global</div>
+        <div class="card-desc">La forma más común. Una sola instancia en toda la app. Tree-shaking si nadie lo usa.</div>
+        <div style="margin-top:10px; font-size:10px; color:var(--muted);">@Injectable({ providedIn: 'root' })</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent3); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">providers: [ ] en Component</div>
+        <div class="card-title">Instancia local</div>
+        <div class="card-desc">Nueva instancia por componente. Útil para servicios con estado local. Se destruye con el componente.</div>
+        <div style="margin-top:10px; font-size:10px; color:var(--muted);">@Component({ providers: [MyService] })</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--yellow); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">useFactory / useValue</div>
+        <div class="card-title">Proveedores avanzados</div>
+        <div class="card-desc">Usa una función fábrica para crear el servicio, o provee un valor concreto (configuración, tokens de env).</div>
+        <div style="margin-top:10px; font-size:10px; color:var(--muted);">{ provide: TOKEN, useValue: config }</div>
+      </div>
+    </div>
+
+    <p class="sec-title" data-n="2">Código — Services e Interceptors</p>
+    <div class="code-section">
+      <div class="code-tabs">
+        <button class="code-tab active" onclick="showCodeTab('di-service', this)">Service</button>
+        <button class="code-tab" onclick="showCodeTab('di-inject', this)">inject()</button>
+        <button class="code-tab" onclick="showCodeTab('di-interceptor', this)">Interceptor</button>
+      </div>
+      <div id="tab-di-service" class="code-panel active"><pre>
+<an>@Injectable</an>({ providedIn: <st>'root'</st> })
+<kw>export class</kw> <cl>UserService</cl> {
+
+  <kw>private</kw> http = inject(<cl>HttpClient</cl>);
+  <kw>private</kw> apiUrl = <st>'/api/users'</st>;
+
+  <cm>// Devuelve Observable (lazy, no ejecuta hasta subscribe)</cm>
+  getUsers(): <cl>Observable</cl>&lt;<cl>User</cl>[]&gt; {
+    <kw>return</kw> <kw>this</kw>.http.get&lt;<cl>User</cl>[]&gt;(<kw>this</kw>.apiUrl);
+  }
+
+  getUserById(id: <st>number</st>): <cl>Observable</cl>&lt;<cl>User</cl>&gt; {
+    <kw>return</kw> <kw>this</kw>.http.get&lt;<cl>User</cl>&gt;(<st>`${this.apiUrl}/${id}`</st>);
+  }
+
+  createUser(user: <cl>CreateUserDto</cl>): <cl>Observable</cl>&lt;<cl>User</cl>&gt; {
+    <kw>return</kw> <kw>this</kw>.http.post&lt;<cl>User</cl>&gt;(<kw>this</kw>.apiUrl, user);
+  }
+}</pre></div>
+      <div id="tab-di-inject" class="code-panel"><pre>
+<cm>// Forma moderna con inject() — sin constructor</cm>
+<an>@Component</an>({ standalone: <kw>true</kw> })
+<kw>export class</kw> <cl>ProductsComponent</cl> <kw>implements</kw> <cl>OnInit</cl> {
+
+  <kw>private</kw> productService = inject(<cl>ProductService</cl>);
+  <kw>private</kw> router = inject(<cl>Router</cl>);
+
+  products: <cl>Product</cl>[] = [];
+
+  ngOnInit() {
+    <kw>this</kw>.productService.getAll()
+      .subscribe(data => <kw>this</kw>.products = data);
+  }
+}
+
+<cm>// Forma clásica con constructor</cm>
+<an>@Component</an>({ <cm>/* ... */</cm> })
+<kw>export class</kw> <cl>OldStyleComponent</cl> {
+
+  <kw>constructor</kw>(
+    <kw>private</kw> productService: <cl>ProductService</cl>,
+    <kw>private</kw> router: <cl>Router</cl>
+  ) {}
+}</pre></div>
+      <div id="tab-di-interceptor" class="code-panel"><pre>
+<cm>// HTTP Interceptor: modifica todas las peticiones</cm>
+<kw>export const</kw> authInterceptor: <cl>HttpInterceptorFn</cl> = (req, next) => {
+  <kw>const</kw> token = inject(<cl>AuthService</cl>).getToken();
+
+  <kw>if</kw> (token) {
+    <cm>// Clona la request y añade el header</cm>
+    <kw>const</kw> authReq = req.clone({
+      headers: req.headers.set(<st>'Authorization'</st>, <st>`Bearer ${token}`</st>)
+    });
+    <kw>return</kw> next(authReq);
+  }
+
+  <kw>return</kw> next(req);
+};
+
+<cm>// Registro en main.ts o AppConfig</cm>
+bootstrapApplication(<cl>AppComponent</cl>, {
+  providers: [
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
+  ]
+});</pre></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- VIEW: ROUTING -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div id="view-routing" class="view-panel">
+
+    <p class="sec-title" data-n="0">Angular Router</p>
+
+    <div class="big-box" style="border-color: var(--accent3);">
+      <div class="big-box-header">
+        <span class="tag tag-module">Router</span>
+        <span class="big-box-name">Navegación entre vistas</span>
+      </div>
+      <p class="big-box-desc">El Router de Angular mapea URLs a componentes, gestiona el historial del navegador y permite lazy loading por rutas para reducir el bundle inicial.</p>
+
+      <!-- Flujo de navegación -->
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="font-size:9px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; font-weight:700;">Ciclo de una navegación</div>
+
+        <div class="flow-row">
+          <div class="flow-node" style="border-color:var(--accent3); color:var(--accent3);">URL change<br><span style="font-size:9px; color:var(--muted);">/users/42</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--yellow); color:var(--yellow);">Guards<br><span style="font-size:9px; color:var(--muted);">canActivate</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--accent4); color:var(--accent4);">Resolvers<br><span style="font-size:9px; color:var(--muted);">pre-fetch data</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--accent2); color:var(--accent2);">Lazy load<br><span style="font-size:9px; color:var(--muted);">chunk.js</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--accent); color:var(--accent);">Render<br><span style="font-size:9px; color:var(--muted);">&lt;router-outlet&gt;</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guards -->
+    <p class="sec-title" data-n="1">Guards — Protección de rutas</p>
+    <div class="grid-2">
+      <div class="card">
+        <div style="font-size:9px; color:var(--yellow); letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; font-weight:700;">canActivate</div>
+        <div class="card-title">¿Puede el usuario acceder?</div>
+        <div class="card-desc">Se ejecuta antes de activar una ruta. Si devuelve <code>false</code> o redirige, la navegación se cancela. Ideal para proteger rutas con autenticación.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent3); letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; font-weight:700;">canActivateChild</div>
+        <div class="card-title">Rutas hijas</div>
+        <div class="card-desc">Como <code>canActivate</code> pero se aplica a todas las rutas hijas del segmento. Útil para módulos con sub-rutas que requieren autorización.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent);" style="letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; font-weight:700;">canDeactivate</div>
+        <div style="font-size:9px; color:var(--accent); letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; font-weight:700;">canDeactivate</div>
+        <div class="card-title">¿Puede salir?</div>
+        <div class="card-desc">Se ejecuta antes de <em>abandonar</em> una ruta. Perfecto para preguntar "¿descartar cambios?" cuando hay formularios sin guardar.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent4); letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; font-weight:700;">canMatch / canLoad</div>
+        <div class="card-title">Lazy loading condicional</div>
+        <div class="card-desc">Decide si un módulo o ruta lazy se carga o no. Si falla, el chunk no se descarga. Más eficiente que <code>canActivate</code> para lazy routes.</div>
+      </div>
+    </div>
+
+    <p class="sec-title" data-n="2">Código de rutas</p>
+    <div class="code-section">
+      <div class="code-tabs">
+        <button class="code-tab active" onclick="showCodeTab('rt-config', this)">Routes</button>
+        <button class="code-tab" onclick="showCodeTab('rt-guard', this)">Guard</button>
+        <button class="code-tab" onclick="showCodeTab('rt-resolver', this)">Resolver</button>
+      </div>
+      <div id="tab-rt-config" class="code-panel active"><pre>
+<kw>export const</kw> routes: <cl>Routes</cl> = [
+
+  <cm>// Ruta pública</cm>
+  { path: <st>'login'</st>, component: <cl>LoginComponent</cl> },
+
+  <cm>// Ruta protegida con guard</cm>
+  {
+    path: <st>'dashboard'</st>,
+    canActivate: [authGuard],
+    component: <cl>DashboardComponent</cl>
+  },
+
+  <cm>// Lazy loading — sólo descarga el chunk cuando se accede</cm>
+  {
+    path: <st>'users'</st>,
+    canActivate: [authGuard],
+    canMatch: [roleGuard(<st>'ADMIN'</st>)],
+    loadChildren: () =>
+      import(<st>'./users/users.routes'</st>).then(m => m.USERS_ROUTES)
+  },
+
+  <cm>// Ruta con parámetros + resolver que pre-carga datos</cm>
+  {
+    path: <st>'users/:id'</st>,
+    component: <cl>UserDetailComponent</cl>,
+    resolve: { user: userResolver }
+  },
+
+  <cm>// Wildcard → 404</cm>
+  { path: <st>'**'</st>, component: <cl>NotFoundComponent</cl> }
+];</pre></div>
+      <div id="tab-rt-guard" class="code-panel"><pre>
+<cm>// Guard funcional (Angular 15+)</cm>
+<kw>export const</kw> authGuard: <cl>CanActivateFn</cl> = (route, state) => {
+  <kw>const</kw> authService = inject(<cl>AuthService</cl>);
+  <kw>const</kw> router = inject(<cl>Router</cl>);
+
+  <kw>if</kw> (authService.isLoggedIn()) {
+    <kw>return true</kw>;
+  }
+
+  <cm>// Redirige al login guardando la URL de retorno</cm>
+  <kw>return</kw> router.createUrlTree(
+    [<st>'/login'</st>],
+    { queryParams: { returnUrl: state.url } }
+  );
+};
+
+<cm>// Guard con rol — factory function</cm>
+<kw>export const</kw> roleGuard = (role: <st>string</st>): <cl>CanMatchFn</cl> =>
+  () => {
+    <kw>return</kw> inject(<cl>AuthService</cl>).hasRole(role);
+  };</pre></div>
+      <div id="tab-rt-resolver" class="code-panel"><pre>
+<cm>// Resolver funcional — pre-carga datos antes de mostrar la vista</cm>
+<kw>export const</kw> userResolver: <cl>ResolveFn</cl>&lt;<cl>User</cl>&gt; =
+  (route, state) => {
+    <kw>const</kw> id = +route.paramMap.get(<st>'id'</st>)!;
+    <kw>return</kw> inject(<cl>UserService</cl>).getUserById(id);
+  };
+
+<cm>// En el componente, los datos resueltos están en:
+// route.snapshot.data['user']</cm>
+
+<an>@Component</an>({ standalone: <kw>true</kw> })
+<kw>export class</kw> <cl>UserDetailComponent</cl> <kw>implements</kw> <cl>OnInit</cl> {
+  <kw>private</kw> route = inject(<cl>ActivatedRoute</cl>);
+
+  user!: <cl>User</cl>;
+
+  ngOnInit() {
+    <kw>this</kw>.user = <kw>this</kw>.route.snapshot.data[<st>'user'</st>];
+  }
+}</pre></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- VIEW: RXJS & SIGNALS -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div id="view-rxjs" class="view-panel">
+
+    <p class="sec-title" data-n="0">RxJS — Programación Reactiva</p>
+
+    <div class="big-box">
+      <div class="big-box-header">
+        <span class="tag tag-pipe">RxJS</span>
+        <span class="big-box-name">Observables y operadores</span>
+      </div>
+      <p class="big-box-desc">RxJS permite modelar cualquier flujo asíncrono (HTTP, eventos, timers) como un stream de valores. Los operadores transforman, filtran y combinan estos streams de forma declarativa.</p>
+
+      <!-- Observable lifecycle -->
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="font-size:9px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; font-weight:700;">Flujo Observable</div>
+        <div class="flow-row">
+          <div class="flow-node" style="border-color:var(--accent3);">Observable<br><span style="font-size:9px; color:var(--muted);">http.get()</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--yellow);">Operadores<br><span style="font-size:9px; color:var(--muted);">map, filter, switchMap</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--accent2);">Subscribe<br><span style="font-size:9px; color:var(--muted);">next / error / complete</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--accent);">Unsubscribe<br><span style="font-size:9px; color:var(--muted);">destroy / takeUntil</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Operadores clave -->
+    <p class="sec-title" data-n="1">Operadores más usados</p>
+    <div class="grid-3">
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent3); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; font-weight:700; font-family:var(--mono);">switchMap</div>
+        <div class="card-title">Cancelar previo</div>
+        <div class="card-desc">Cancela la suscripción anterior y empieza con la nueva. Perfecto para búsquedas en tiempo real — cancela la petición HTTP si el usuario sigue escribiendo.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; font-weight:700; font-family:var(--mono);">mergeMap</div>
+        <div class="card-title">Paralelo</div>
+        <div class="card-desc">Ejecuta los inner Observables en paralelo y mezcla sus resultados. Útil para peticiones independientes que no necesitan cancelarse.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent4); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; font-weight:700; font-family:var(--mono);">combineLatest</div>
+        <div class="card-title">Combinar streams</div>
+        <div class="card-desc">Emite cada vez que cualquiera de los Observables fuente emite un valor, combinando los últimos valores de todos ellos.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--yellow); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; font-weight:700; font-family:var(--mono);">debounceTime</div>
+        <div class="card-title">Anti-rebote</div>
+        <div class="card-desc">Solo emite un valor si han pasado N milisegundos sin que el source haya emitido otro. Indispensable para inputs de búsqueda.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent2); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; font-weight:700; font-family:var(--mono);">takeUntilDestroyed</div>
+        <div class="card-title">Auto-cancelar</div>
+        <div class="card-desc">Cancela la suscripción automáticamente cuando el componente se destruye. La forma más limpia de evitar memory leaks en Angular 16+.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent3); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; font-weight:700; font-family:var(--mono);">BehaviorSubject</div>
+        <div class="card-title">Estado reactivo</div>
+        <div class="card-desc">Subject que recuerda el último valor emitido. Ideal para almacenar estado en un Service. Los nuevos suscriptores reciben el valor actual al momento de suscribirse.</div>
+      </div>
+    </div>
+
+    <p class="sec-title" data-n="2">Código</p>
+    <div class="code-section">
+      <div class="code-tabs">
+        <button class="code-tab active" onclick="showCodeTab('rx-search', this)">Búsqueda reactiva</button>
+        <button class="code-tab" onclick="showCodeTab('rx-state', this)">Estado con BehaviorSubject</button>
+        <button class="code-tab" onclick="showCodeTab('rx-signals', this)">Signals vs RxJS</button>
+      </div>
+      <div id="tab-rx-search" class="code-panel active"><pre>
+<cm>// Búsqueda reactiva — patrón clásico con RxJS</cm>
+<an>@Component</an>({ standalone: <kw>true</kw>, imports: [<cl>ReactiveFormsModule</cl>, <cl>AsyncPipe</cl>] })
+<kw>export class</kw> <cl>SearchComponent</cl> {
+  searchControl = <kw>new</kw> <cl>FormControl</cl>(<st>''</st>);
+  <kw>private</kw> productService = inject(<cl>ProductService</cl>);
+
+  results$ = <kw>this</kw>.searchControl.valueChanges.pipe(
+    debounceTime(<nu>300</nu>),       <cm>// espera 300ms tras el último keystroke</cm>
+    distinctUntilChanged(), <cm>// no emite si el valor no cambió</cm>
+    filter(q => q.length >= <nu>2</nu>),
+    switchMap(q =>          <cm>// cancela la petición anterior</cm>
+      <kw>this</kw>.productService.search(q).pipe(
+        catchError(() => of([]))  <cm>// maneja errores</cm>
+      )
+    )
+  );
+}
+<cm>// En el template: {{ results$ | async }}</cm></pre></div>
+      <div id="tab-rx-state" class="code-panel"><pre>
+<cm>// Gestión de estado con BehaviorSubject en un Service</cm>
+<an>@Injectable</an>({ providedIn: <st>'root'</st> })
+<kw>export class</kw> <cl>CartService</cl> {
+
+  <kw>private</kw> items$ = <kw>new</kw> <cl>BehaviorSubject</cl>&lt;<cl>CartItem</cl>[]&gt;([]);
+
+  <cm>// Solo exponemos el Observable (readonly)</cm>
+  <kw>readonly</kw> cart$ = <kw>this</kw>.items$.asObservable();
+  <kw>readonly</kw> total$ = <kw>this</kw>.cart$.pipe(
+    map(items => items.reduce((sum, i) => sum + i.price * i.qty, <nu>0</nu>))
+  );
+
+  addItem(item: <cl>CartItem</cl>): <kw>void</kw> {
+    <kw>const</kw> current = <kw>this</kw>.items$.getValue();
+    <kw>this</kw>.items$.next([...current, item]);
+  }
+
+  clear(): <kw>void</kw> {
+    <kw>this</kw>.items$.next([]);
+  }
+}</pre></div>
+      <div id="tab-rx-signals" class="code-panel"><pre>
+<cm>// Mismo carrito pero con Signals (Angular 17+)</cm>
+<an>@Injectable</an>({ providedIn: <st>'root'</st> })
+<kw>export class</kw> <cl>CartSignalService</cl> {
+
+  <cm>// Signal es writable internamente</cm>
+  <kw>private</kw> _items = signal&lt;<cl>CartItem</cl>[]&gt;([]);
+
+  <cm>// Exponemos como ReadonlySignal</cm>
+  <kw>readonly</kw> items = <kw>this</kw>._items.asReadonly();
+
+  <cm>// computed() es equivalente a derivedState</cm>
+  <kw>readonly</kw> total = computed(() =>
+    <kw>this</kw>._items().reduce((sum, i) => sum + i.price * i.qty, <nu>0</nu>)
+  );
+  <kw>readonly</kw> count = computed(() => <kw>this</kw>._items().length);
+
+  addItem(item: <cl>CartItem</cl>): <kw>void</kw> {
+    <kw>this</kw>._items.update(curr => [...curr, item]);
+  }
+}
+
+<cm>// En template NO necesita | async, es sincrónico:
+// {{ total() }} — directo, sin subscribe</cm></pre></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- VIEW: LIFECYCLE -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div id="view-lifecycle" class="view-panel">
+
+    <p class="sec-title" data-n="0">Ciclo de vida de un Componente</p>
+
+    <div class="big-box" style="border-color: var(--accent2);">
+      <div class="big-box-header">
+        <span class="tag tag-pipe">Lifecycle Hooks</span>
+        <span class="big-box-name">Desde creación hasta destrucción</span>
+      </div>
+      <p class="big-box-desc">Angular llama a estos métodos en orden predefinido. Implementar la interfaz correspondiente es opcional pero recomendable para autocompletar.</p>
+
+      <div class="lifecycle-row">
+        <div class="lc-step">
+          <span class="lc-num">01</span>
+          <span class="lc-name">constructor</span>
+          <span class="lc-desc">Instanciación. Inyectar dependencias. NO hay @Input disponible aún.</span>
+        </div>
+        <div class="lc-step">
+          <span class="lc-num">02</span>
+          <span class="lc-name">ngOnChanges</span>
+          <span class="lc-desc">Primer cambio en @Input. Se repite cada vez que cambia un @Input.</span>
+        </div>
+        <div class="lc-step">
+          <span class="lc-num">03</span>
+          <span class="lc-name">ngOnInit</span>
+          <span class="lc-desc">Inicialización. @Inputs ya disponibles. Ideal para llamadas HTTP iniciales.</span>
+        </div>
+        <div class="lc-step">
+          <span class="lc-num">04</span>
+          <span class="lc-name">ngDoCheck</span>
+          <span class="lc-desc">Detección manual de cambios. Úsalo con cuidado — se ejecuta muy frecuentemente.</span>
+        </div>
+        <div class="lc-step">
+          <span class="lc-num">05</span>
+          <span class="lc-name">ngAfterViewInit</span>
+          <span class="lc-desc">El template y sus hijos están en el DOM. Acceso a @ViewChild disponible.</span>
+        </div>
+        <div class="lc-step">
+          <span class="lc-num">06</span>
+          <span class="lc-name">ngOnDestroy</span>
+          <span class="lc-desc">Antes de eliminar del DOM. Cancelar suscripciones, limpiar timers, evitar memory leaks.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen en tabla -->
+    <p class="sec-title" data-n="1">¿Cuándo usar cada hook?</p>
+    <div class="grid-2">
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent2); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">ngOnInit ← el más usado</div>
+        <div class="card-desc">Llamadas HTTP, suscripciones a Observables, leer parámetros de ruta, inicializar formularios reactivos. Cualquier lógica de inicio que necesite los @Inputs.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent3); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">ngOnChanges</div>
+        <div class="card-desc">Reaccionar a cambios concretos en @Inputs. Recibe un objeto <code>SimpleChanges</code> con el valor anterior y el nuevo. Útil para componentes "tontos" que procesan los datos recibidos.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--yellow); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">ngAfterViewInit</div>
+        <div class="card-desc">Acceder a elementos del DOM vía <code>@ViewChild</code> / <code>@ViewChildren</code>, integrar librerías de terceros (charts, mapas), medir dimensiones del DOM tras el primer renderizado.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:9px; color:var(--accent); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700;">ngOnDestroy ← siempre limpiar</div>
+        <div class="card-desc">Llamar a <code>subject.complete()</code>, cancelar intervalos con <code>clearInterval</code>, desconectarse de WebSockets. Sin esto aparecen memory leaks que ralentizan la app.</div>
+      </div>
+    </div>
+
+    <!-- Código lifecycle -->
+    <p class="sec-title" data-n="2">Código</p>
+    <div class="code-section">
+      <div class="code-tabs">
+        <button class="code-tab active" onclick="showCodeTab('lc-full', this)">Lifecycle completo</button>
+        <button class="code-tab" onclick="showCodeTab('lc-destroy', this)">Destroy pattern</button>
+      </div>
+      <div id="tab-lc-full" class="code-panel active"><pre>
+<an>@Component</an>({ standalone: <kw>true</kw>, selector: <st>'app-demo'</st>, template: <st>'...'</st> })
+<kw>export class</kw> <cl>DemoComponent</cl>
+  <kw>implements</kw> <cl>OnChanges</cl>, <cl>OnInit</cl>, <cl>AfterViewInit</cl>, <cl>OnDestroy</cl> {
+
+  <an>@Input</an>() userId!: <st>number</st>;
+  <an>@ViewChild</an>(<st>'chartCanvas'</st>) canvas!: <cl>ElementRef</cl>;
+
+  <kw>private</kw> destroyRef = inject(<cl>DestroyRef</cl>);
+  <kw>private</kw> userService = inject(<cl>UserService</cl>);
+
+  user: <cl>User</cl> | <kw>null</kw> = <kw>null</kw>;
+
+  ngOnChanges(changes: <cl>SimpleChanges</cl>): <kw>void</kw> {
+    <kw>if</kw> (changes[<st>'userId'</st>] && !changes[<st>'userId'</st>].firstChange) {
+      <cm>// userId cambió — recargar datos</cm>
+      <kw>this</kw>.loadUser();
+    }
+  }
+
+  ngOnInit(): <kw>void</kw> {
+    <kw>this</kw>.loadUser(); <cm>// primera carga</cm>
+  }
+
+  ngAfterViewInit(): <kw>void</kw> {
+    <cm>// DOM listo, podemos acceder al canvas</cm>
+    console.log(<kw>this</kw>.canvas.nativeElement);
+  }
+
+  ngOnDestroy(): <kw>void</kw> {
+    <cm>// DestroyRef cancela automáticamente las subs</cm>
+  }
+
+  <kw>private</kw> loadUser(): <kw>void</kw> {
+    <kw>this</kw>.userService.getUserById(<kw>this</kw>.userId)
+      .pipe(takeUntilDestroyed(<kw>this</kw>.destroyRef))
+      .subscribe(u => <kw>this</kw>.user = u);
+  }
+}</pre></div>
+      <div id="tab-lc-destroy" class="code-panel"><pre>
+<cm>// Patrón 1: takeUntilDestroyed (Angular 16+) — RECOMENDADO</cm>
+<kw>export class</kw> <cl>ModernComponent</cl> {
+  <kw>private</kw> destroyRef = inject(<cl>DestroyRef</cl>);
+
+  ngOnInit() {
+    interval(<nu>1000</nu>)
+      .pipe(takeUntilDestroyed(<kw>this</kw>.destroyRef))
+      .subscribe(n => console.log(n));
+  }
+}
+
+<cm>// Patrón 2: Subject + takeUntil — clásico</cm>
+<kw>export class</kw> <cl>ClassicComponent</cl> <kw>implements</kw> <cl>OnDestroy</cl> {
+  <kw>private</kw> destroy$ = <kw>new</kw> <cl>Subject</cl>&lt;<kw>void</kw>&gt;();
+
+  ngOnInit() {
+    interval(<nu>1000</nu>)
+      .pipe(takeUntil(<kw>this</kw>.destroy$))
+      .subscribe(n => console.log(n));
+  }
+
+  ngOnDestroy() {
+    <kw>this</kw>.destroy$.next();
+    <kw>this</kw>.destroy$.complete();
+  }
+}
+
+<cm>// Patrón 3: Signals — sin suscripciones manuales</cm>
+<kw>export class</kw> <cl>SignalComponent</cl> {
+  count = signal(<nu>0</nu>);
+
+  ngOnInit() {
+    <cm>// No hay suscripción — signals no necesitan unsubscribe</cm>
+    setInterval(() => <kw>this</kw>.count.update(n => n + <nu>1</nu>), <nu>1000</nu>);
+  }
+}</pre></div>
+    </div>
+
+    <!-- Footer -->
+    <div style="margin-top:48px; padding-top:24px; border-top:2px solid var(--border); display:flex; gap:24px; flex-wrap:wrap; justify-content:space-between; align-items:center;">
+      <div>
+        <div style="font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Versiones de referencia</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <span style="background:rgba(193,68,14,0.12); padding:5px 10px; border-radius:4px; border:1px solid var(--accent); font-size:11px;">Angular 17+ (Standalone)</span>
+          <span style="background:rgba(26,74,138,0.12); padding:5px 10px; border-radius:4px; border:1px solid var(--accent3); font-size:11px;">TypeScript 5+</span>
+          <span style="background:rgba(42,110,78,0.12); padding:5px 10px; border-radius:4px; border:1px solid var(--accent2); font-size:11px;">RxJS 7+</span>
+          <span style="background:rgba(122,31,160,0.12); padding:5px 10px; border-radius:4px; border:1px solid var(--accent4); font-size:11px;">Signals (v16+)</span>
+        </div>
+      </div>
+      <div style="font-size:10px; color:var(--muted); letter-spacing:1px;">
+        angular.dev · rxjs.dev
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- .container -->
+
+<script>
+function showView(name) {
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showCodeTab(id, btn) {
+  const panel = document.getElementById('tab-' + id);
+  if (!panel) return;
+  const section = panel.closest('.code-section');
+  section.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+  section.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+  panel.classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

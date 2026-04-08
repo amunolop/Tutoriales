@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Especificación Técnica: Spring Batch Resiliente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        pre { background: #1e1e1e; color: #d4d4d4; padding: 1.5rem; border-radius: 8px; overflow-x: auto; border: 1px solid #334155; font-size: 0.9rem; }
+        .keyword { color: #569cd6; } .string { color: #ce9178; } .comment { color: #6a9955; } .type { color: #4ec9b0; }
+        .tab-btn.active { border-bottom: 3px solid #6366f1; color: #6366f1; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans">
+
+    <header class="bg-slate-800 border-b border-slate-700 p-8">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-4xl font-black text-white italic">SPRING BATCH <span class="text-indigo-500">ENGINEERING</span></h1>
+            <p class="text-slate-400 mt-2 text-lg">Diseño de Motor Genérico: Chunk 50 | Retry 2 | Skip 2 | Watchman</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-6 space-y-12">
+
+        <section>
+            <h2 class="text-2xl font-bold text-indigo-400 mb-4 flex items-center">
+                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm">1</span>
+                Estrategia de Tolerancia a Fallos
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <h3 class="font-bold text-white mb-2">Chunk-Oriented</h3>
+                    <p class="text-sm text-slate-400">Procesamiento en bloques de 50. Transaccionalidad atómica para asegurar rendimiento y consistencia.</p>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <h3 class="font-bold text-white mb-2">Retry-Logic</h3>
+                    <p class="text-sm text-slate-400">Si falla, reintenta hasta 2 veces. Ideal para micro-cortes de red o Deadlocks de base de datos.</p>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <h3 class="font-bold text-white mb-2">Skip & Audit</h3>
+                    <p class="text-sm text-slate-400">Tras fallar el reintento, se "salta" el registro y se guarda en la tabla de auditoría para el Watchman.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-indigo-400 mb-4 flex items-center">
+                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm">2</span>
+                Implementación Java (Spring Boot)
+            </h2>
+            
+            <h3 class="text-lg font-semibold mb-2 text-slate-300">A. Configuración del Step</h3>
+<pre><code><span class="keyword">@Bean</span>
+<span class="keyword">public</span> Step <span class="type">resilientStep</span>(JobRepository jobRepository, PlatformTransactionManager tm) {
+    <span class="keyword">return new</span> StepBuilder(<span class="string">"resilientStep"</span>, jobRepository)
+        .&lt;Input, Output&gt;chunk(<span class="keyword">50</span>, tm)
+        .reader(itemReader())
+        .writer(itemWriter())
+        .faultTolerant() <span class="comment">// Activa gestión de errores</span>
+        .retry(Exception.<span class="keyword">class</span>).retryLimit(<span class="keyword">2</span>)
+        .skip(Exception.<span class="keyword">class</span>).skipLimit(<span class="keyword">2</span>)
+        .listener(auditSkipListener())
+        .build();
+}</code></pre>
+
+            <h3 class="text-lg font-semibold mt-6 mb-2 text-slate-300">B. Listener de Auditoría (El Fotógrafo)</h3>
+<pre><code><span class="keyword">@Component</span>
+<span class="keyword">public class</span> <span class="type">AuditSkipListener</span> <span class="keyword">implements</span> SkipListener&lt;Object, Object&gt; {
+    <span class="keyword">private final</span> JdbcTemplate jdbcTemplate;
+
+    <span class="keyword">public void</span> onSkipInWrite(Object item, Throwable t) {
+        String sql = <span class="string">"INSERT INTO BATCH_ERROR_LOG (data_raw, error_msg) VALUES (?, ?)"</span>;
+        jdbcTemplate.update(sql, item.toString(), t.getMessage());
+    }
+}</code></pre>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-indigo-400 mb-4 flex items-center">
+                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm">3</span>
+                Scripts de Base de Datos
+            </h2>
+<pre><code><span class="comment">-- Tabla para los errores saltados</span>
+<span class="keyword">CREATE TABLE</span> BATCH_ERROR_LOG (
+    id SERIAL <span class="keyword">PRIMARY KEY</span>,
+    data_raw <span class="keyword">TEXT</span>,
+    error_msg <span class="keyword">TEXT</span>,
+    fecha_error <span class="keyword">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+);
+
+<span class="comment">-- Consulta del Watchman para limpieza</span>
+<span class="keyword">DELETE FROM</span> BATCH_ERROR_LOG 
+<span class="keyword">WHERE</span> data_raw <span class="keyword">IN</span> (<span class="keyword">SELECT</span> id_negocio <span class="keyword">FROM</span> TABLA_DESTINO_OK);</code></pre>
+        </section>
+
+        <section class="bg-slate-800 p-8 rounded-2xl border-2 border-indigo-500 shadow-2xl">
+            <h2 class="text-2xl font-bold text-white mb-6">🛠️ Simulador en Tiempo Real</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <button onclick="ejecutarBatch()" id="btnGo" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-8 rounded-lg mb-6 w-full shadow-lg transition-all">
+                        Lanzar Simulación (Chunk 5)
+                    </button>
+                    <div id="visualizer" class="flex gap-3 p-6 bg-slate-900 rounded-xl justify-center min-h-[100px] items-center">
+                        </div>
+                </div>
+                <div class="bg-black p-4 rounded-lg h-64 overflow-y-auto font-mono text-xs border border-slate-700" id="log">
+                    <p class="text-indigo-400 underline mb-2">LOG DEL SISTEMA:</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const logDiv = document.getElementById('log');
+        const visualizer = document.getElementById('visualizer');
+
+        function addLog(msg, color='text-slate-300') {
+            logDiv.innerHTML += `<div class="${color}">> ${msg}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        async function ejecutarBatch() {
+            document.getElementById('btnGo').disabled = true;
+            visualizer.innerHTML = '';
+            logDiv.innerHTML = '<p class="text-indigo-400 underline mb-2">LOG DEL SISTEMA:</p>';
+            
+            // Crear registros
+            for(let i=1; i<=5; i++) {
+                visualizer.innerHTML += `<div id="r-${i}" class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white shadow-md transition-all duration-500">${i}</div>`;
+            }
+
+            await sleep(800);
+            addLog("Iniciando Step...");
+            addLog("Leyendo registros 1 al 5...");
+            
+            await sleep(1000);
+            addLog("Intentando Escritura de Chunk...");
+            const r3 = document.getElementById('r-3');
+            r3.classList.add('bg-red-500', 'animate-pulse');
+            addLog("¡ERROR! Excepción en registro ID:3", "text-red-400 font-bold");
+
+            await sleep(1200);
+            addLog("Iniciando ROLLBACK del chunk...", "text-yellow-500");
+            document.querySelectorAll('#visualizer div').forEach(el => el.classList.replace('bg-indigo-500', 'bg-slate-700'));
+
+            await sleep(1200);
+            addLog("Reintentando Registro 3 (Intento 1 de 2)...");
+            await sleep(1000);
+            addLog("Error persistente. Ejecutando SKIP.", "text-red-400");
+            r3.classList.remove('animate-pulse');
+            r3.classList.replace('bg-slate-700', 'bg-red-600');
+            r3.innerHTML = "X";
+
+            await sleep(800);
+            addLog("INSERT en BATCH_ERROR_LOG realizado.", "text-green-500 font-bold underline");
+            
+            await sleep(1000);
+            addLog("Procesando resto de registros (1, 2, 4, 5)...");
+            document.querySelectorAll('#visualizer div').forEach(el => {
+                if(el.id !== 'r-3') el.classList.replace('bg-slate-700', 'bg-green-500');
+            });
+
+            addLog("STEP FINALIZADO CON ÉXITO PARCIAL", "text-indigo-400 font-black");
+            document.getElementById('btnGo').disabled = false;
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+    </script>
+</body>
+</html>

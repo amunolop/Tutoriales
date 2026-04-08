@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Batch — CSV → DB</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --surface: #fff;
+    --surface2: #f0ebe0;
+    --border: #d4c9b0;
+    --ink: #1a1410;
+    --ink2: #4a3f30;
+    --muted: #8a7a65;
+    --accent: #c1440e;
+    --accent2: #2a6e4e;
+    --accent3: #1a4a8a;
+    --yellow: #e8a020;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Clash Display', 'IBM Plex Mono', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    min-height: 100vh;
+    position: relative;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.5;
+  }
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 28px 100px;
+  }
+  header {
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 24px;
+    margin-bottom: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+    animation: fadeIn 0.5s ease both;
+  }
+  .stamp {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    padding: 3px 10px;
+    margin-bottom: 14px;
+    transform: rotate(-1deg);
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+    border-bottom: 3px solid var(--accent);
+  }
+  .header-meta {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+  .mode-toggle {
+    display: flex;
+    gap: 0;
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    width: fit-content;
+    animation: fadeIn 0.5s 0.1s ease both;
+  }
+  .mode-btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 24px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    letter-spacing: 1px;
+    transition: all 0.15s;
+    border-right: 2px solid var(--ink);
+  }
+  .mode-btn:last-child { border-right: none; }
+  .mode-btn:hover { background: var(--surface2); color: var(--ink); }
+  .mode-btn.active { background: var(--ink); color: var(--bg); }
+  .sec-title {
+    font-family: var(--display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sec-title::before {
+    content: attr(data-n);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: var(--ink);
+    color: var(--bg);
+    font-size: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 48px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    animation: fadeUp 0.5s 0.15s ease both;
+  }
+  .flow-node {
+    flex-shrink: 0;
+    border: 2px solid var(--ink);
+    background: var(--surface);
+    padding: 16px 18px;
+    min-width: 120px;
+    position: relative;
+  }
+  .flow-node.job-node {
+    background: var(--ink);
+    color: var(--bg);
+    min-width: 100px;
+  }
+  .flow-node.step-node { border-color: var(--accent3); }
+  .flow-node.chunk-node { border-color: var(--accent2); background: #f0f8f4; }
+  .flow-node.reader-node { border-color: var(--accent3); background: #f0f4ff; }
+  .flow-node.proc-node { border-color: var(--yellow); background: #fffaf0; }
+  .flow-node.writer-node { border-color: var(--accent2); background: #f0f8f4; }
+  .flow-node.db-node { background: var(--accent2); color: white; border-color: var(--accent2); }
+  .fn-type {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+  .fn-name {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .fn-sub {
+    font-size: 10px;
+    opacity: 0.6;
+    margin-top: 4px;
+  }
+  .flow-arrow {
+    font-size: 18px;
+    color: var(--muted);
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+  .flow-arrow.chunk-arrow { color: var(--accent2); }
+  .files-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s 0.2s ease both;
+  }
+  @media (max-width: 750px) {
+    .files-grid { grid-template-columns: 1fr; }
+  }
+  .file-card {
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .file-card:hover { border-color: var(--ink); }
+  .file-card.span2 { grid-column: span 2; }
+  @media (max-width: 750px) { .file-card.span2 { grid-column: span 1; } }
+  .file-header {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .file-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .file-icon { font-size: 14px; }
+  .file-tag {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .ft-config { background: rgba(26,74,138,0.12); color: var(--accent3); }
+  .ft-component { background: rgba(42,110,78,0.12); color: var(--accent2); }
+  .ft-props { background: rgba(193,68,14,0.12); color: var(--accent); }
+  .ft-model { background: rgba(232,160,32,0.12); color: var(--yellow); }
+  .ft-controller { background: rgba(26,20,16,0.08); color: var(--ink2); }
+  .file-body {
+    background: #fafaf7;
+    padding: 18px 20px;
+    overflow-x: auto;
+  }
+  pre {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.85;
+    color: var(--ink);
+    white-space: pre;
+  }
+  .kw  { color: #c1440e; font-weight: 600; }
+  .an  { color: #1a4a8a; font-weight: 600; }
+  .cl  { color: #2a6e4e; font-weight: 600; }
+  .st  { color: #8a4a00; }
+  .cm  { color: #9a8a75; font-style: italic; }
+  .nu  { color: #7a3acd; }
+  .iface { color: #1a4a8a; }
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: rgba(193,68,14,0.05);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ink2);
+    animation: fadeUp 0.5s 0.25s ease both;
+  }
+  .callout strong { color: var(--accent); }
+  .callout.green { border-color: var(--accent2); background: rgba(42,110,78,0.05); }
+  .callout.green strong { color: var(--accent2); }
+  .callout.blue { border-color: var(--accent3); background: rgba(26,74,138,0.05); }
+  .callout.blue strong { color: var(--accent3); }
+  .mode-panel { display: none; }
+  .mode-panel.active { display: block; }
+  .diff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s 0.3s ease both;
+  }
+  .diff-table th {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .diff-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .diff-table tr:nth-child(even) td { background: var(--surface2); }
+  .diff-table code {
+    background: rgba(0,0,0,0.06);
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-size: 11px;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-left">
+      <div class="stamp">Spring Batch</div>
+      <h1>CSV → <em>Database</em><br>Implementación completa</h1>
+    </div>
+    <div class="header-meta">
+      spring-boot 3.x<br>
+      spring-batch 5.x<br>
+      java 17+
+    </div>
+  </header>
+
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('auto')">⚡ Auto-lanzamiento</button>
+    <button class="mode-btn" onclick="setMode('manual')">🎯 Manual</button>
+    <button class="mode-btn" onclick="setMode('multi')">💾 Manual · 2 BDs</button>
+    <button class="mode-btn" onclick="setMode('diff')">⚖ Comparativa</button>
+  </div>
+
+  <div class="sec-title" data-n="0">Flujo de datos</div>
+  <div class="flow-diagram">
+    <div class="flow-node job-node">
+      <div class="fn-type">Job</div>
+      <div class="fn-name">importar<br>PedidosJob</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node step-node">
+      <div class="fn-type">Step</div>
+      <div class="fn-name">procesar<br>PedidosStep</div>
+      <div class="fn-sub">chunk(100)</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node reader-node">
+      <div class="fn-type">Reader</div>
+      <div class="fn-name">FlatFile<br>ItemReader</div>
+      <div class="fn-sub">pedidos.csv</div>
+    </div>
+    <div class="flow-arrow chunk-arrow">›</div>
+    <div class="flow-node proc-node">
+      <div class="fn-type">Processor</div>
+      <div class="fn-name">Pedido<br>Processor</div>
+      <div class="fn-sub">+IVA / filtro</div>
+    </div>
+    <div class="flow-arrow chunk-arrow">›</div>
+    <div class="flow-node writer-node">
+      <div class="fn-type">Writer</div>
+      <div class="fn-name">JdbcBatch<br>ItemWriter</div>
+      <div class="fn-sub">List → SQL</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node db-node">
+      <div class="fn-type">DB</div>
+      <div class="fn-name">tabla<br>pedidos</div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="1">Modelos — igual en ambos modos</div>
+  <div class="files-grid">
+    <div class="file-card">
+      <div class="file-header">
+        <div class="file-name"><span class="file-icon">📄</span>Pedido.java</div>
+        <span class="file-tag ft-model">Model · Input</span>
+      </div>
+      <div class="file-body"><pre>
+<an>@Data</an>
+<kw>public class</kw> <cl>Pedido</cl> {
+    <kw>private</kw> Long   id;
+    <kw>private</kw> String cliente;
+    <kw>private</kw> Double importe;
+}</pre></div>
+    </div>
+    <div class="file-card">
+      <div class="file-header">
+        <div class="file-name"><span class="file-icon">📄</span>PedidoDTO.java</div>
+        <span class="file-tag ft-model">Model · Output</span>
+      </div>
+      <div class="file-body"><pre>
+<an>@Data</an>
+<kw>public class</kw> <cl>PedidoDTO</cl> {
+    <kw>private</kw> Long   id;
+    <kw>private</kw> String cliente;
+    <kw>private</kw> Double importeConIva;
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Processor — igual en ambos modos</div>
+  <div class="files-grid">
+    <div class="file-card span2">
+      <div class="file-header">
+        <div class="file-name"><span class="file-icon">⚙️</span>PedidoItemProcessor.java</div>
+        <span class="file-tag ft-component">@Component</span>
+      </div>
+      <div class="file-body"><pre>
+<an>@Component</an>
+<kw>public class</kw> <cl>PedidoItemProcessor</cl>
+    <kw>implements</kw> <iface>ItemProcessor</iface>&lt;<cl>Pedido</cl>, <cl>PedidoDTO</cl>&gt; {
+
+  <an>@Override</an>
+  <kw>public</kw> <cl>PedidoDTO</cl> process(<cl>Pedido</cl> p) {
+    <kw>if</kw> (p.getImporte() &lt;= <nu>0</nu>) <kw>return null</kw>; <cm>// null = descartar ítem</cm>
+
+    <cl>PedidoDTO</cl> dto = <kw>new</kw> <cl>PedidoDTO</cl>();
+    dto.setId(p.getId());
+    dto.setCliente(p.getCliente());
+    dto.setImporteConIva(p.getImporte() * <nu>1.21</nu>);
+    <kw>return</kw> dto;
+  }
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">BatchConfig — igual en ambos modos</div>
+  <div class="callout blue">
+    <strong>Este fichero no cambia nunca.</strong> El Job no sabe cómo va a ser lanzado. La decisión auto/manual es externa a él.
+  </div>
+  <div class="files-grid">
+    <div class="file-card span2">
+      <div class="file-header">
+        <div class="file-name"><span class="file-icon">🗂️</span>BatchConfig.java</div>
+        <span class="file-tag ft-config">@Configuration</span>
+      </div>
+      <div class="file-body"><pre>
+<an>@Configuration</an>
+<kw>public class</kw> <cl>BatchConfig</cl> {
+
+  <cm>// ── READER ──</cm>
+  <an>@Bean</an>
+  <kw>public</kw> <iface>ItemReader</iface>&lt;<cl>Pedido</cl>&gt; pedidoReader() {
+    <kw>return new</kw> <cl>FlatFileItemReaderBuilder</cl>&lt;<cl>Pedido</cl>&gt;()
+      .name(<st>"pedidoReader"</st>) <cm>// id en BATCH_STEP_EXECUTION_CONTEXT para restart</cm>
+      .resource(<kw>new</kw> <cl>ClassPathResource</cl>(<st>"pedidos.csv"</st>))
+      .delimited().delimiter(<st>","</st>)
+      .names(<st>"id"</st>, <st>"cliente"</st>, <st>"importe"</st>)
+      .targetType(<cl>Pedido</cl>.<kw>class</kw>)
+      .build();
+  }
+
+  <cm>// ── WRITER ──</cm>
+  <an>@Bean</an>
+  <kw>public</kw> <iface>ItemWriter</iface>&lt;<cl>PedidoDTO</cl>&gt; pedidoWriter(<cl>DataSource</cl> ds) {
+    <kw>return new</kw> <cl>JdbcBatchItemWriterBuilder</cl>&lt;<cl>PedidoDTO</cl>&gt;()
+      .dataSource(ds)
+      .sql(<st>"INSERT INTO pedidos (id, cliente, importe_iva) "</st> +
+           <st>"VALUES (:id, :cliente, :importeConIva)"</st>)
+      .beanMapped()
+      .build();
+  }
+
+  <cm>// ── STEP ──</cm>
+  <an>@Bean</an>
+  <kw>public</kw> <cl>Step</cl> procesarStep(
+      <cl>JobRepository</cl> repo,
+      <cl>PlatformTransactionManager</cl> tx,
+      <iface>ItemReader</iface>&lt;<cl>Pedido</cl>&gt;  pedidoReader,
+      <cl>PedidoItemProcessor</cl>         processor,  <cm>// clase concreta → @Component, sin ambigüedad</cm>
+      <iface>ItemWriter</iface>&lt;<cl>PedidoDTO</cl>&gt; pedidoWriter) {
+
+    <kw>return new</kw> <cl>StepBuilder</cl>(<st>"procesarStep"</st>, repo)
+      .&lt;<cl>Pedido</cl>, <cl>PedidoDTO</cl>&gt;chunk(<nu>100</nu>, tx)
+      .reader(pedidoReader)
+      .processor(processor)
+      .writer(pedidoWriter)
+      .build();
+  }
+
+  <cm>// ── JOB ──</cm>
+  <an>@Bean</an>
+  <kw>public</kw> <cl>Job</cl> importarPedidosJob(<cl>JobRepository</cl> repo, <cl>Step</cl> procesarStep) {
+    <kw>return new</kw> <cl>JobBuilder</cl>(<st>"importarPedidosJob"</st>, repo)
+      .start(procesarStep)
+      .build();
+  }
+}</pre></div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">Lo que cambia según el modo</div>
+
+  <div id="panel-auto" class="mode-panel active">
+    <div class="callout">
+      <strong>Auto-lanzamiento:</strong> Spring Boot detecta el Job y lo lanza solo al arrancar. No necesitas ninguna clase extra.
+    </div>
+    <div class="files-grid">
+      <div class="file-card span2">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">⚙️</span>application.properties</div>
+          <span class="file-tag ft-props">Config</span>
+        </div>
+        <div class="file-body"><pre>
+<cm># Auto-lanzamiento ACTIVADO (valor por defecto, no hace falta escribirlo)</cm>
+spring.batch.job.enabled=<kw>true</kw>
+
+spring.batch.jdbc.initialize-schema=always
+spring.datasource.url=jdbc:h2:mem:batchdb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.sql.init.schema-locations=classpath:schema.sql</pre></div>
+      </div>
+    </div>
+    <div class="callout green">
+      <strong>¿Qué ocurre?</strong> El <code>JobLauncherApplicationRunner</code> detecta <code>importarPedidosJob</code> y lo ejecuta al arrancar. Cuando termina, la aplicación se cierra.
+    </div>
+  </div>
+
+  <div id="panel-manual" class="mode-panel">
+
+    <div class="callout blue">
+      <strong>Responsabilidades separadas:</strong> <code>JobService</code> centraliza la lógica de lanzamiento. <code>JobController</code> solo sabe de HTTP. <code>BatchScheduler</code> solo sabe de cron. Ninguno conoce al otro.
+    </div>
+
+    <div class="sec-title" data-n="A">Properties — común a ambos modos</div>
+    <div class="files-grid">
+      <div class="file-card span2">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">⚙️</span>application.properties</div>
+          <span class="file-tag ft-props">Config</span>
+        </div>
+        <div class="file-body"><pre>
+<cm># ⚠ Desactiva el auto-lanzamiento de Spring Batch</cm>
+spring.batch.job.enabled=<kw>false</kw>
+
+spring.batch.jdbc.initialize-schema=always
+spring.datasource.url=jdbc:h2:mem:batchdb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.sql.init.schema-locations=classpath:schema.sql</pre></div>
+      </div>
+    </div>
+
+    <div class="sec-title" data-n="B">JobService — lógica común de lanzamiento</div>
+    <div class="callout" style="margin-bottom:16px;">
+      <strong>Pieza central.</strong> Tiene las únicas referencias a <code>JobLauncher</code> y <code>Job</code>. El resto de clases solo inyectan <code>JobService</code>.
+    </div>
+    <div class="files-grid">
+      <div class="file-card span2">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">⚙️</span>JobService.java</div>
+          <span class="file-tag ft-component">@Service</span>
+        </div>
+        <div class="file-body"><pre>
+<an>@Service</an>
+<kw>public class</kw> <cl>JobService</cl> {
+
+  <kw>private final</kw> <cl>JobLauncher</cl> jobLauncher;
+  <kw>private final</kw> <cl>Job</cl>         importarPedidosJob;
+
+  <kw>public</kw> <cl>JobService</cl>(<cl>JobLauncher</cl> jobLauncher,
+                    <cl>Job</cl> importarPedidosJob) {
+    <kw>this</kw>.jobLauncher        = jobLauncher;
+    <kw>this</kw>.importarPedidosJob = importarPedidosJob;
+  }
+
+  <kw>public</kw> String lanzar() <kw>throws</kw> Exception {
+    <cm>// timestamp único → cada llamada es una JobExecution nueva</cm>
+    <cl>JobParameters</cl> params = <kw>new</kw> <cl>JobParametersBuilder</cl>()
+      .addLong(<st>"timestamp"</st>, System.currentTimeMillis())
+      .toJobParameters();
+
+    <cl>JobExecution</cl> exec = jobLauncher.run(importarPedidosJob, params);
+    <kw>return</kw> <st>"Estado: "</st> + exec.getStatus();
+  }
+}</pre></div>
+      </div>
+    </div>
+
+    <div class="sec-title" data-n="C">Consumidores de JobService</div>
+    <div class="files-grid">
+
+      <div class="file-card">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">🌐</span>JobController.java</div>
+          <span class="file-tag ft-controller">@RestController</span>
+        </div>
+        <div class="file-body"><pre>
+<an>@RestController</an>
+<an>@RequestMapping</an>(<st>"/batch"</st>)
+<kw>public class</kw> <cl>JobController</cl> {
+
+  <kw>private final</kw> <cl>JobService</cl> jobService;
+
+  <kw>public</kw> <cl>JobController</cl>(<cl>JobService</cl> jobService) {
+    <kw>this</kw>.jobService = jobService;
+  }
+
+  <cm>// Solo sabe de HTTP.
+  // No conoce JobLauncher ni Job.</cm>
+  <an>@PostMapping</an>(<st>"/lanzar"</st>)
+  <kw>public</kw> String lanzar() <kw>throws</kw> Exception {
+    <kw>return</kw> jobService.lanzar();
+  }
+}</pre></div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">🕐</span>BatchScheduler.java</div>
+          <span class="file-tag ft-config">@Component · @Scheduled</span>
+        </div>
+        <div class="file-body"><pre>
+<an>@Component</an>
+<kw>public class</kw> <cl>BatchScheduler</cl> {
+
+  <kw>private final</kw> <cl>JobService</cl> jobService;
+
+  <kw>public</kw> <cl>BatchScheduler</cl>(<cl>JobService</cl> jobService) {
+    <kw>this</kw>.jobService = jobService;
+  }
+
+  <cm>// Solo sabe de cron.
+  // No conoce JobLauncher ni JobController.</cm>
+
+  <cm>// cada hora en punto: seg min hora * * *</cm>
+  <an>@Scheduled</an>(cron = <st>"0 0 * * * *"</st>)
+  <kw>public void</kw> ejecutarCadaHora() <kw>throws</kw> Exception {
+    System.out.println(<st>"[CRON] Lanzando job..."</st>);
+    System.out.println(<st>"[CRON] "</st> + jobService.lanzar());
+  }
+
+  <cm>// cada día a las 23:00
+  // @Scheduled(cron = "0 0 23 * * *")
+  // public void ejecutarA23h() throws Exception {
+  //   jobService.lanzar();
+  // }</cm>
+}</pre></div>
+      </div>
+
+    </div>
+
+    <div class="sec-title" data-n="D">Dos puntos de entrada independientes</div>
+    <div class="files-grid">
+
+      <div class="file-card">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">🌐</span>ApplicationWeb.java</div>
+          <span class="file-tag ft-config">HTTP · Tomcat activo</span>
+        </div>
+        <div class="file-body"><pre>
+<an>@SpringBootApplication</an>
+<kw>public class</kw> <cl>ApplicationWeb</cl> {
+
+  <kw>public static void</kw> main(String[] args) {
+    <cl>SpringApplication</cl>.run(
+        <cl>ApplicationWeb</cl>.<kw>class</kw>, args);
+  }
+
+  <cm>// Arranca Tomcat.
+  // JobController disponible en POST /batch/lanzar.
+  // BatchScheduler NO está activo
+  // porque @EnableScheduling no está presente.</cm>
+}</pre></div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">🕐</span>ApplicationScheduler.java</div>
+          <span class="file-tag ft-config">Cron · Sin Tomcat</span>
+        </div>
+        <div class="file-body"><pre>
+<an>@SpringBootApplication</an>
+<an>@EnableScheduling</an>
+<kw>public class</kw> <cl>ApplicationScheduler</cl> {
+
+  <kw>public static void</kw> main(String[] args) {
+    <cl>SpringApplication</cl>.run(
+        <cl>ApplicationScheduler</cl>.<kw>class</kw>, args);
+  }
+
+  <cm>// Sin Tomcat gracias a la property:
+  // spring.main.web-application-type=none
+  //
+  // BatchScheduler activo → ejecuta el Job
+  // según la expresión cron.
+  // JobController existe como Bean pero
+  // no hay servidor que lo exponga.</cm>
+}</pre></div>
+      </div>
+
+    </div>
+
+    <div class="files-grid" style="margin-top:16px;">
+      <div class="file-card span2">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">⚙️</span>application.properties — línea extra para ApplicationScheduler</div>
+          <span class="file-tag ft-props">Sin web</span>
+        </div>
+        <div class="file-body"><pre>
+<cm># Desactiva Tomcat cuando se arranca ApplicationScheduler</cm>
+spring.main.web-application-type=none</pre></div>
+      </div>
+    </div>
+
+    <div class="callout green" style="margin-top:20px;">
+      <strong>Resumen de responsabilidades:</strong><br>
+      <code>JobService</code> → sabe <em>cómo</em> lanzar el Job &nbsp;|&nbsp;
+      <code>JobController</code> → sabe <em>exponerlo</em> por HTTP &nbsp;|&nbsp;
+      <code>BatchScheduler</code> → sabe <em>cuándo</em> lanzarlo &nbsp;|&nbsp;
+      <code>ApplicationWeb</code> → arranca con Tomcat &nbsp;|&nbsp;
+      <code>ApplicationScheduler</code> → arranca sin Tomcat con cron activo
+    </div>
+  </div>
+
+  <div id="panel-multi" class="mode-panel">
+
+    <div class="callout blue">
+      <strong>Configuración avanzada con 2 DataSources.</strong> Por defecto Spring Batch usa el mismo DataSource para todo. Aquí separamos las tablas de Batch (estado interno) de las tablas de negocio (pedidos).
+    </div>
+
+    <div class="sec-title" data-n="A">Properties — dos DataSources definidos</div>
+
+    <div class="sec-title" data-n="A">Properties — dos DataSources definidos</div>
+    <div class="files-grid">
+      <div class="file-card span2">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">⚙️</span>application.properties</div>
+          <span class="file-tag ft-props">Dos DataSources</span>
+        </div>
+        <div class="file-body"><pre>
+<cm># ═══════════════════════════════════════════════════════════
+# DataSource PRINCIPAL (negocio) - donde escribes los pedidos
+# ═══════════════════════════════════════════════════════════</cm>
+
+<cm># H2 en memoria (desarrollo)</cm>
+spring.datasource.url=jdbc:h2:mem:negociodb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+<cm># MySQL (producción - comentado)
+# spring.datasource.url=jdbc:mysql://localhost:3306/negocio
+# spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+# spring.datasource.username=root
+# spring.datasource.password=secret</cm>
+
+<cm># ═══════════════════════════════════════════════════════════
+# DataSource BATCH (interno) - solo para Spring Batch
+# ═══════════════════════════════════════════════════════════</cm>
+
+batch.datasource.url=jdbc:h2:mem:batchdb
+batch.datasource.driver-class-name=org.h2.Driver
+batch.datasource.username=sa
+batch.datasource.password=
+
+<cm># ═══════════════════════════════════════════════════════════
+# Spring Batch config
+# ═══════════════════════════════════════════════════════════</cm>
+
+spring.batch.job.enabled=<kw>false</kw>
+spring.batch.jdbc.initialize-schema=always
+spring.sql.init.schema-locations=classpath:schema.sql</pre></div>
+      </div>
+    </div>
+
+    <div class="sec-title" data-n="B">BatchDataSourceConfig — definición de los dos DataSources</div>
+    <div class="files-grid">
+      <div class="file-card span2">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">🗂️</span>BatchDataSourceConfig.java</div>
+          <span class="file-tag ft-config">@Configuration</span>
+        </div>
+        <div class="file-body"><pre>
+<an>@Configuration</an>
+<kw>public class</kw> <cl>BatchDataSourceConfig</cl> {
+
+  <cm>// ── DataSource PRINCIPAL (negocio) ──</cm>
+  <an>@Bean</an>
+  <an>@Primary</an>
+  <an>@ConfigurationProperties</an>(<st>"spring.datasource"</st>)
+  <kw>public</kw> <cl>DataSource</cl> dataSourceNegocio() {
+    <kw>return</kw> <cl>DataSourceBuilder</cl>.create().build();
+  }
+
+  <cm>// ── DataSource BATCH (interno) ──</cm>
+  <an>@Bean</an>
+  <an>@ConfigurationProperties</an>(<st>"batch.datasource"</st>)
+  <kw>public</kw> <cl>DataSource</cl> dataSourceBatch() {
+    <kw>return</kw> <cl>DataSourceBuilder</cl>.create().build();
+  }
+
+  <cm>// ── JobRepository usa el DataSource de Batch ──</cm>
+  <an>@Bean</an>
+  <kw>public</kw> <cl>JobRepository</cl> jobRepository(
+      <an>@Qualifier</an>(<st>"dataSourceBatch"</st>) <cl>DataSource</cl> dataSourceBatch,
+      <cl>PlatformTransactionManager</cl> transactionManager) <kw>throws</kw> Exception {
+
+    <cl>JobRepositoryFactoryBean</cl> factory = <kw>new</kw> <cl>JobRepositoryFactoryBean</cl>();
+    factory.setDataSource(dataSourceBatch);
+    factory.setTransactionManager(transactionManager);
+    factory.setDatabaseType(<st>"H2"</st>);
+    factory.afterPropertiesSet();
+    <kw>return</kw> factory.getObject();
+  }
+
+  <cm>// ── TransactionManager para el DataSource principal ──</cm>
+  <an>@Bean</an>
+  <an>@Primary</an>
+  <kw>public</kw> <cl>PlatformTransactionManager</cl> transactionManager(
+      <an>@Qualifier</an>(<st>"dataSourceNegocio"</st>) <cl>DataSource</cl> dataSourceNegocio) {
+    <kw>return new</kw> <cl>DataSourceTransactionManager</cl>(dataSourceNegocio);
+  }
+
+  <cm>// ── TransactionManager para Batch ──</cm>
+  <an>@Bean</an>
+  <kw>public</kw> <cl>PlatformTransactionManager</cl> batchTransactionManager(
+      <an>@Qualifier</an>(<st>"dataSourceBatch"</st>) <cl>DataSource</cl> dataSourceBatch) {
+    <kw>return new</kw> <cl>DataSourceTransactionManager</cl>(dataSourceBatch);
+  }
+}</pre></div>
+      </div>
+    </div>
+
+    <div class="sec-title" data-n="C">BatchConfig — cambios en Writer y Step con @Qualifier</div>
+    <div class="files-grid">
+      <div class="file-card span2">
+        <div class="file-header">
+          <div class="file-name"><span class="file-icon">🗂️</span>BatchConfig.java — cambios en Writer y Step</div>
+          <span class="file-tag ft-config">@Qualifier necesarios</span>
+        </div>
+        <div class="file-body"><pre>
+<cm>// El Writer ahora debe especificar explícitamente
+// que usa el DataSource de negocio</cm>
+
+<an>@Bean</an>
+<kw>public</kw> <iface>ItemWriter</iface>&lt;<cl>PedidoDTO</cl>&gt; pedidoWriter(
+    <an>@Qualifier</an>(<st>"dataSourceNegocio"</st>) <cl>DataSource</cl> ds) {
+  <kw>return new</kw> <cl>JdbcBatchItemWriterBuilder</cl>&lt;<cl>PedidoDTO</cl>&gt;()
+    .dataSource(ds)  <cm>// ← escribe en la BD de negocio</cm>
+    .sql(<st>"INSERT INTO pedidos (id, cliente, importe_iva) "</st> +
+         <st>"VALUES (:id, :cliente, :importeConIva)"</st>)
+    .beanMapped()
+    .build();
+}
+
+<cm>// El Step debe especificar el TransactionManager del DataSource de negocio</cm>
+
+<an>@Bean</an>
+<kw>public</kw> <cl>Step</cl> procesarStep(
+    <cl>JobRepository</cl> repo,
+    <an>@Qualifier</an>(<st>"transactionManager"</st>) <cl>PlatformTransactionManager</cl> tx,
+    <iface>ItemReader</iface>&lt;<cl>Pedido</cl>&gt; pedidoReader,
+    <cl>PedidoItemProcessor</cl> processor,
+    <iface>ItemWriter</iface>&lt;<cl>PedidoDTO</cl>&gt; pedidoWriter) {
+
+  <kw>return new</kw> <cl>StepBuilder</cl>(<st>"procesarStep"</st>, repo)
+    .&lt;<cl>Pedido</cl>, <cl>PedidoDTO</cl>&gt;chunk(<nu>100</nu>, tx)
+    .reader(pedidoReader)
+    .processor(processor)
+    .writer(pedidoWriter)
+    .build();
+}</pre></div>
+      </div>
+    </div>
+
+    <div class="callout green" style="margin-top:16px;">
+      <strong>¿Qué va dónde?</strong><br><br>
+      <code>dataSourceNegocio</code> (H2 o MySQL):<br>
+      &nbsp;&nbsp;└─ tabla <code>pedidos</code> (negocio)<br>
+      &nbsp;&nbsp;└─ TransactionManager principal<br><br>
+      
+      <code>dataSourceBatch</code> (H2 en memoria):<br>
+      &nbsp;&nbsp;└─ <code>BATCH_JOB_INSTANCE</code><br>
+      &nbsp;&nbsp;└─ <code>BATCH_JOB_EXECUTION</code><br>
+      &nbsp;&nbsp;└─ <code>BATCH_STEP_EXECUTION</code><br>
+      &nbsp;&nbsp;└─ JobRepository<br>
+      &nbsp;&nbsp;└─ TransactionManager de batch
+    </div>
+
+    <div class="callout blue" style="margin-top:16px;">
+      <strong>Cuándo usar cada estrategia:</strong><br>
+      • <strong>1 DataSource</strong> (modo Manual básico) → simple, todo en un sitio, restart funciona. Recomendado para empezar.<br>
+      • <strong>2 DataSources separados</strong> (este modo) → aíslas el estado de Batch, útil si múltiples apps comparten el JobRepository.<br>
+      • <strong>Batch en H2 memoria</strong> → solo desarrollo/testing. Pierdes el estado al reiniciar, no funciona restart.
+    </div>
+
+  </div>
+
+  <div id="panel-diff" class="mode-panel">
+    
+    <div class="sec-title" data-n="1">Auto-lanzamiento vs Manual</div>
+    <div class="callout blue" style="margin-bottom:16px;">
+      <strong>Decisión clave:</strong> ¿Quién controla cuándo se ejecuta el Job?
+    </div>
+
+    <table class="diff-table">
+      <thead>
+        <tr><th>Aspecto</th><th>⚡ Auto</th><th>🎯 Manual</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Propiedad clave</strong></td>
+          <td><code>job.enabled=true</code> (defecto)</td>
+          <td><code>job.enabled=false</code></td>
+        </tr>
+        <tr>
+          <td><strong>¿Quién dispara?</strong></td>
+          <td>Spring Boot al arrancar</td>
+          <td>Tú: controller, scheduler, test</td>
+        </tr>
+        <tr>
+          <td><strong>Clases extra</strong></td>
+          <td>Ninguna</td>
+          <td><code>JobService</code> + <code>JobController</code> o <code>BatchScheduler</code></td>
+        </tr>
+        <tr>
+          <td><strong>JobParameters</strong></td>
+          <td>Vacíos</td>
+          <td>Los defines tú (timestamp)</td>
+        </tr>
+        <tr>
+          <td><strong>App se cierra sola</strong></td>
+          <td>Sí, al terminar el Job</td>
+          <td>No, sigue escuchando (web) o ejecutando (cron)</td>
+        </tr>
+        <tr>
+          <td><strong>Cuándo usarlo</strong></td>
+          <td>Migraciones, scripts puntuales</td>
+          <td>APIs, cron, múltiples ejecuciones</td>
+        </tr>
+        <tr>
+          <td><strong>BatchConfig.java</strong></td>
+          <td colspan="2" style="text-align:center; color:var(--accent2); font-weight:700;">
+            Idéntica. No cambia nada.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <strong>Regla simple:</strong> Si tu Job se ejecuta una sola vez o de forma puntual → <strong>Auto</strong>. Si necesitas control de cuándo ejecutarlo → <strong>Manual</strong>.
+    </div>
+
+    <div class="sec-title" data-n="2" style="margin-top:40px;">Manual: 1 DataSource vs 2 DataSources</div>
+    <div class="callout blue" style="margin-bottom:16px;">
+      <strong>Decisión clave:</strong> ¿Separas las tablas de Batch de las tablas de negocio?
+    </div>
+
+    <table class="diff-table">
+      <thead>
+        <tr><th>Aspecto</th><th>🎯 Manual (1 BD)</th><th>💾 Manual (2 BDs)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DataSource(s)</strong></td>
+          <td>Uno solo auto-configurado</td>
+          <td>Dos explícitos: <code>dataSourceNegocio</code> + <code>dataSourceBatch</code></td>
+        </tr>
+        <tr>
+          <td><strong>Dónde van las tablas de Batch</strong></td>
+          <td>Misma BD que las tablas de negocio</td>
+          <td>BD separada (H2 en memoria)</td>
+        </tr>
+        <tr>
+          <td><strong>Dónde van las tablas de negocio</strong></td>
+          <td>Misma BD que Batch</td>
+          <td>BD separada (H2 o MySQL)</td>
+        </tr>
+        <tr>
+          <td><strong>Clases extra necesarias</strong></td>
+          <td>Ninguna, todo auto-configurado</td>
+          <td><code>BatchDataSourceConfig</code></td>
+        </tr>
+        <tr>
+          <td><strong>@Qualifier necesarios</strong></td>
+          <td>No, solo hay un DataSource</td>
+          <td>Sí, en <code>pedidoWriter()</code> y <code>procesarStep()</code></td>
+        </tr>
+        <tr>
+          <td><strong>Complejidad configuración</strong></td>
+          <td>Baja — properties bastan</td>
+          <td>Media — defines Beans manualmente</td>
+        </tr>
+        <tr>
+          <td><strong>Restart funciona</strong></td>
+          <td>Sí, todo persistente</td>
+          <td>Solo si <code>dataSourceBatch</code> es persistente. Si es H2 memoria → NO</td>
+        </tr>
+        <tr>
+          <td><strong>Cuándo usarlo</strong></td>
+          <td>Por defecto, para empezar, casos simples</td>
+          <td>Múltiples apps comparten JobRepository, o aislas Batch de negocio</td>
+        </tr>
+        <tr>
+          <td><strong>JobService, JobController, etc.</strong></td>
+          <td colspan="2" style="text-align:center; color:var(--accent2); font-weight:700;">
+            Idénticos en ambos. Solo cambia la configuración de DataSources.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout green">
+      <strong>Recomendación:</strong> Empieza con <strong>1 DataSource</strong>. Solo pasa a 2 DataSources si tienes una necesidad específica de aislar las BDs o compartir el JobRepository entre varias aplicaciones.
+    </div>
+  </div>
+
+</div>
+
+<script>
+function setMode(mode) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + mode).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

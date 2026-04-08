@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Cheatsheet — Codility</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #f5f0e8;
+    --surface: #fff;
+    --surface2:#f0ebe0;
+    --border:  #d4c9b0;
+    --ink:     #1a1410;
+    --ink2:    #4a3f30;
+    --muted:   #8a7a65;
+    --accent:  #c1440e;
+    --accent2: #2a6e4e;
+    --accent3: #1a4a8a;
+    --yellow:  #e8a020;
+    --purple:  #7a3a9a;
+    --mono:    'IBM Plex Mono', monospace;
+    --display: 'Clash Display', 'IBM Plex Mono', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    min-height: 100vh;
+    position: relative;
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999; opacity: 0.5;
+  }
+  .container { max-width: 1160px; margin: 0 auto; padding: 48px 28px 100px; }
+
+  /* ── HEADER ── */
+  header { border-bottom: 3px solid var(--ink); padding-bottom: 24px; margin-bottom: 40px; animation: fadeIn .5s ease both; }
+  .stamp { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); border: 2px solid var(--accent); padding: 3px 10px; margin-bottom: 14px; transform: rotate(-1deg); }
+  h1 { font-family: var(--display); font-size: clamp(26px,4vw,44px); font-weight: 700; line-height: 1.1; }
+  h1 em { font-style: normal; color: var(--accent); border-bottom: 3px solid var(--accent); }
+  .subtitle { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.7; }
+
+  /* ── MODE SWITCHER ── */
+  .mode-switcher {
+    display: flex; gap: 0; margin-bottom: 36px;
+    border: 2px solid var(--ink); border-radius: 4px; overflow: hidden;
+    width: fit-content; flex-wrap: wrap;
+  }
+  .mode-btn {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 10px 18px; background: var(--surface2); color: var(--ink2);
+    border: none; border-right: 2px solid var(--ink); cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .mode-btn:last-child { border-right: none; }
+  .mode-btn:hover { background: var(--border); }
+  .mode-btn.active { background: var(--ink); color: var(--bg); }
+
+  /* ── PANELS ── */
+  .mode-panel { display: none; animation: fadeUp .35s ease both; }
+  .mode-panel.active { display: block; }
+
+  /* ── SECTION TITLE ── */
+  .sec-title {
+    font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 20px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── GRID ── */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 22px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 22px; }
+  .full { grid-column: 1 / -1; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: box-shadow .2s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+  .card-head {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--border);
+    padding: 12px 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-head.red    { border-left: 4px solid var(--accent);  }
+  .card-head.green  { border-left: 4px solid var(--accent2); }
+  .card-head.blue   { border-left: 4px solid var(--accent3); }
+  .card-head.yellow { border-left: 4px solid var(--yellow);  }
+  .card-head.purple { border-left: 4px solid var(--purple);  }
+
+  .card-icon { font-size: 16px; }
+  .card-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  }
+  .red    .card-label { color: var(--accent);  }
+  .green  .card-label { color: var(--accent2); }
+  .blue   .card-label { color: var(--accent3); }
+  .yellow .card-label { color: var(--yellow);  }
+  .purple .card-label { color: var(--purple);  }
+
+  /* ── CODE BLOCK ── */
+  pre {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.85;
+    padding: 18px 20px;
+    background: var(--surface);
+    overflow-x: auto;
+    color: var(--ink);
+  }
+  .kw  { color: var(--accent);  font-weight: 700; }
+  .ty  { color: var(--accent3); }
+  .st  { color: var(--accent2); }
+  .cm  { color: var(--muted);   font-style: italic; }
+  .nm  { color: var(--purple);  }
+  .fn  { color: var(--yellow);  }
+  .op  { color: var(--accent);  }
+  .vr  { color: var(--ink); }
+
+  /* ── TABLE ── */
+  .tbl-wrap { padding: 0 18px 18px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11.5px; margin-top: 14px; }
+  thead tr { border-bottom: 2px solid var(--border); }
+  th { text-align: left; padding: 7px 10px; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--surface2); color: var(--ink2); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  td:first-child { color: var(--accent); font-weight: 700; font-family: var(--mono); }
+  td:nth-child(3) { color: var(--accent2); }
+
+  /* ── ALGORITHM CARD ── */
+  .algo-block {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 22px;
+    overflow: hidden;
+    transition: box-shadow .2s;
+  }
+  .algo-block:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+  .algo-head {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--border);
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .algo-name { font-family: var(--display); font-size: 18px; font-weight: 700; }
+  .algo-badge {
+    font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 3px; border: 1.5px solid;
+  }
+  .badge-easy   { border-color: var(--accent2); color: var(--accent2); background: rgba(42,110,78,0.06); }
+  .badge-medium { border-color: var(--yellow);  color: var(--yellow);  background: rgba(232,160,32,0.06); }
+  .badge-hard   { border-color: var(--accent);  color: var(--accent);  background: rgba(193,68,14,0.06); }
+  .algo-complexity { font-size: 10px; color: var(--muted); margin-left: auto; font-style: italic; }
+
+  .algo-body { padding: 20px; }
+  .algo-desc { font-size: 12px; color: var(--ink2); line-height: 1.7; margin-bottom: 16px; padding: 10px 14px; background: var(--surface2); border-left: 3px solid var(--border); border-radius: 0 3px 3px 0; }
+  .algo-desc strong { color: var(--ink); }
+
+  .algo-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 680px) { .algo-cols { grid-template-columns: 1fr; } }
+
+  .algo-section-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+
+  /* ── COMPLEXITY TABLE ── */
+  .cmplx-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+    background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+    margin-top: 14px;
+  }
+  .cmplx-cell {
+    background: var(--surface); padding: 10px 12px; font-size: 11px; text-align: center;
+  }
+  .cmplx-cell.head { background: var(--surface2); font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+  .cmplx-cell .val { font-weight: 700; font-family: var(--mono); }
+  .val.good { color: var(--accent2); }
+  .val.ok   { color: var(--yellow); }
+  .val.bad  { color: var(--accent); }
+
+  /* ── TIPS BOX ── */
+  .tip-box {
+    background: rgba(193,68,14,0.04);
+    border: 1.5px solid rgba(193,68,14,0.2);
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 11.5px;
+    color: var(--ink2);
+    line-height: 1.7;
+    margin-top: 16px;
+  }
+  .tip-label { font-size: 8px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+  .tip-box code { font-family: var(--mono); color: var(--accent3); background: var(--surface2); padding: 1px 5px; border-radius: 2px; font-size: 11px; }
+
+  /* ── PATTERN PILL ── */
+  .patterns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .pill {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 3px; border: 1.5px solid var(--border);
+    color: var(--ink2); background: var(--surface2);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn  { from { opacity:0; } to { opacity:1; } }
+  @keyframes fadeUp  { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform: translateY(0); } }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* ── FOOTER ── */
+  footer { border-top: 2px solid var(--border); margin-top: 60px; padding-top: 20px; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+  footer em { color: var(--accent); font-style: normal; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="stamp">// Referencia técnica</div>
+    <h1>Java <em>Cheatsheet</em></h1>
+    <p class="subtitle">Sintaxis · Operadores · Arrays · Strings · Algoritmos típicos de Codility</p>
+  </header>
+
+  <!-- TABS -->
+  <div class="mode-switcher">
+    <button class="mode-btn active" onclick="setView('sintaxis',this)">📦 Sintaxis</button>
+    <button class="mode-btn" onclick="setView('operadores',this)">➕ Operadores</button>
+    <button class="mode-btn" onclick="setView('arrays',this)">📋 Arrays & Strings</button>
+    <button class="mode-btn" onclick="setView('colecciones',this)">🗂️ Colecciones</button>
+    <button class="mode-btn" onclick="setView('algoritmos',this)">🧩 Algoritmos</button>
+    <button class="mode-btn" onclick="setView('patrones',this)">🏆 Patrones Codility</button>
+  </div>
+
+  <!-- ════════════════════════ TAB 1: SINTAXIS ════════════════════════ -->
+  <div id="view-sintaxis" class="mode-panel active">
+    <div class="sec-title">Sintaxis fundamental de Java</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head blue"><span class="card-icon">📦</span><span class="card-label">Tipos primitivos</span></div>
+        <pre>
+<span class="cm">// Enteros</span>
+<span class="ty">byte</span>   <span class="vr">b</span>  <span class="op">=</span> <span class="nm">127</span>;           <span class="cm">// -128 a 127</span>
+<span class="ty">short</span>  <span class="vr">s</span>  <span class="op">=</span> <span class="nm">32767</span>;         <span class="cm">// ~32 mil</span>
+<span class="ty">int</span>    <span class="vr">i</span>  <span class="op">=</span> <span class="nm">2_000_000</span>;     <span class="cm">// ~2 mil millones</span>
+<span class="ty">long</span>   <span class="vr">l</span>  <span class="op">=</span> <span class="nm">9_999_999L</span>;    <span class="cm">// muy grande (L)</span>
+
+<span class="cm">// Decimales</span>
+<span class="ty">float</span>  <span class="vr">f</span>  <span class="op">=</span> <span class="nm">3.14f</span>;          <span class="cm">// poca precisión (f)</span>
+<span class="ty">double</span> <span class="vr">d</span>  <span class="op">=</span> <span class="nm">3.14159265</span>;     <span class="cm">// alta precisión</span>
+
+<span class="cm">// Otros</span>
+<span class="ty">boolean</span> <span class="vr">ok</span>  <span class="op">=</span> <span class="kw">true</span>;         <span class="cm">// true / false</span>
+<span class="ty">char</span>    <span class="vr">c</span>   <span class="op">=</span> <span class="st">'A'</span>;          <span class="cm">// un carácter (comillas simples)</span>
+<span class="ty">String</span>  <span class="vr">str</span> <span class="op">=</span> <span class="st">"Hola"</span>;        <span class="cm">// clase, no primitivo</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head red"><span class="card-icon">🔀</span><span class="card-label">Condicionales</span></div>
+        <pre>
+<span class="cm">// if / else if / else</span>
+<span class="kw">if</span> (<span class="vr">x</span> <span class="op">></span> <span class="nm">10</span>) {
+    <span class="fn">System.out.println</span>(<span class="st">"mayor"</span>);
+} <span class="kw">else if</span> (<span class="vr">x</span> <span class="op">==</span> <span class="nm">10</span>) {
+    <span class="fn">System.out.println</span>(<span class="st">"igual"</span>);
+} <span class="kw">else</span> {
+    <span class="fn">System.out.println</span>(<span class="st">"menor"</span>);
+}
+
+<span class="cm">// Ternario (condición ? sí : no)</span>
+<span class="ty">String</span> <span class="vr">r</span> <span class="op">=</span> (<span class="vr">x</span> <span class="op">></span> <span class="nm">5</span>) <span class="op">?</span> <span class="st">"grande"</span> <span class="op">:</span> <span class="st">"pequeño"</span>;
+
+<span class="cm">// switch</span>
+<span class="kw">switch</span> (<span class="vr">x</span>) {
+    <span class="kw">case</span> <span class="nm">1</span>: <span class="fn">System.out.println</span>(<span class="st">"uno"</span>); <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="nm">2</span>: <span class="fn">System.out.println</span>(<span class="st">"dos"</span>); <span class="kw">break</span>;
+    <span class="kw">default</span>: <span class="fn">System.out.println</span>(<span class="st">"otro"</span>);
+}</pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head green"><span class="card-icon">🔄</span><span class="card-label">Bucles</span></div>
+        <pre>
+<span class="cm">// for clásico</span>
+<span class="kw">for</span> (<span class="ty">int</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">0</span>; <span class="vr">i</span> <span class="op">&lt;</span> <span class="nm">5</span>; <span class="vr">i</span><span class="op">++</span>) { ... }
+
+<span class="cm">// for-each (recorre arrays / listas)</span>
+<span class="kw">for</span> (<span class="ty">int</span> <span class="vr">num</span> : <span class="vr">array</span>) { ... }
+
+<span class="cm">// while</span>
+<span class="kw">while</span> (<span class="vr">i</span> <span class="op">&lt;</span> <span class="nm">10</span>) { <span class="vr">i</span><span class="op">++</span>; }
+
+<span class="cm">// do-while (ejecuta al menos una vez)</span>
+<span class="kw">do</span> { <span class="vr">i</span><span class="op">++</span>; } <span class="kw">while</span> (<span class="vr">i</span> <span class="op">&lt;</span> <span class="nm">10</span>);
+
+<span class="cm">// Controles de flujo</span>
+<span class="kw">break</span>;     <span class="cm">// sale del bucle</span>
+<span class="kw">continue</span>;  <span class="cm">// salta a la siguiente iteración</span>
+<span class="kw">return</span> <span class="vr">x</span>; <span class="cm">// sale del método</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head purple"><span class="card-icon">⚙️</span><span class="card-label">Métodos</span></div>
+        <pre>
+<span class="cm">// Con retorno</span>
+<span class="kw">public static</span> <span class="ty">int</span> <span class="fn">suma</span>(<span class="ty">int</span> <span class="vr">a</span>, <span class="ty">int</span> <span class="vr">b</span>) {
+    <span class="kw">return</span> <span class="vr">a</span> <span class="op">+</span> <span class="vr">b</span>;
+}
+
+<span class="cm">// Sin retorno</span>
+<span class="kw">public static</span> <span class="ty">void</span> <span class="fn">imprimir</span>(<span class="ty">String</span> <span class="vr">s</span>) {
+    <span class="fn">System.out.println</span>(<span class="vr">s</span>);
+}
+
+<span class="cm">// Con array como parámetro</span>
+<span class="kw">public static</span> <span class="ty">int</span> <span class="fn">sumaArray</span>(<span class="ty">int</span>[] <span class="vr">arr</span>) {
+    <span class="ty">int</span> <span class="vr">total</span> <span class="op">=</span> <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="ty">int</span> <span class="vr">n</span> : <span class="vr">arr</span>) <span class="vr">total</span> <span class="op">+=</span> <span class="vr">n</span>;
+    <span class="kw">return</span> <span class="vr">total</span>;
+}
+
+<span class="cm">// Llamada</span>
+<span class="ty">int</span> <span class="vr">res</span> <span class="op">=</span> <span class="fn">suma</span>(<span class="nm">3</span>, <span class="nm">4</span>); <span class="cm">// → 7</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head yellow"><span class="card-icon">🔄</span><span class="card-label">Casting — conversión de tipos</span></div>
+        <pre>
+<span class="cm">// Implícito (sin pérdida)</span>
+<span class="ty">int</span>    <span class="vr">i</span> <span class="op">=</span> <span class="nm">42</span>;
+<span class="ty">long</span>   <span class="vr">l</span> <span class="op">=</span> <span class="vr">i</span>;     <span class="cm">// int → long  ✅</span>
+<span class="ty">double</span> <span class="vr">d</span> <span class="op">=</span> <span class="vr">i</span>;     <span class="cm">// int → double ✅</span>
+
+<span class="cm">// Explícito (posible pérdida)</span>
+<span class="ty">double</span> <span class="vr">x</span> <span class="op">=</span> <span class="nm">9.99</span>;
+<span class="ty">int</span>    <span class="vr">y</span> <span class="op">=</span> (<span class="ty">int</span>) <span class="vr">x</span>;  <span class="cm">// → 9 (trunca decimales)</span>
+
+<span class="cm">// String ↔ número</span>
+<span class="ty">int</span>    <span class="vr">n</span>  <span class="op">=</span> <span class="ty">Integer</span>.<span class="fn">parseInt</span>(<span class="st">"42"</span>);
+<span class="ty">double</span> <span class="vr">dd</span> <span class="op">=</span> <span class="ty">Double</span>.<span class="fn">parseDouble</span>(<span class="st">"3.14"</span>);
+<span class="ty">String</span> <span class="vr">s</span>  <span class="op">=</span> <span class="ty">String</span>.<span class="fn">valueOf</span>(<span class="nm">42</span>);
+<span class="ty">String</span> <span class="vr">s2</span> <span class="op">=</span> <span class="ty">Integer</span>.<span class="fn">toString</span>(<span class="nm">42</span>);</pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head blue"><span class="card-icon">🔢</span><span class="card-label">Math — utilidades</span></div>
+        <pre>
+<span class="ty">Math</span>.<span class="fn">abs</span>(<span class="op">-</span><span class="nm">5</span>);       <span class="cm">// valor absoluto → 5</span>
+<span class="ty">Math</span>.<span class="fn">max</span>(<span class="nm">3</span>, <span class="nm">7</span>);     <span class="cm">// máximo → 7</span>
+<span class="ty">Math</span>.<span class="fn">min</span>(<span class="nm">3</span>, <span class="nm">7</span>);     <span class="cm">// mínimo → 3</span>
+<span class="ty">Math</span>.<span class="fn">pow</span>(<span class="nm">2</span>, <span class="nm">10</span>);    <span class="cm">// potencia → 1024.0</span>
+<span class="ty">Math</span>.<span class="fn">sqrt</span>(<span class="nm">16</span>);      <span class="cm">// raíz cuadrada → 4.0</span>
+<span class="ty">Math</span>.<span class="fn">floor</span>(<span class="nm">3.9</span>);    <span class="cm">// redondea abajo → 3.0</span>
+<span class="ty">Math</span>.<span class="fn">ceil</span>(<span class="nm">3.1</span>);     <span class="cm">// redondea arriba → 4.0</span>
+<span class="ty">Math</span>.<span class="fn">round</span>(<span class="nm">3.5</span>);    <span class="cm">// redondea → 4</span>
+<span class="ty">Math</span>.<span class="fn">random</span>();      <span class="cm">// 0.0 a 1.0 aleatorio</span>
+<span class="ty">Math</span>.<span class="vr">PI</span>;            <span class="cm">// 3.14159...</span>
+
+<span class="cm">// Entero aleatorio entre 1 y 10</span>
+<span class="ty">int</span> <span class="vr">r</span> <span class="op">=</span> (<span class="ty">int</span>)(<span class="ty">Math</span>.<span class="fn">random</span>() <span class="op">*</span> <span class="nm">10</span>) <span class="op">+</span> <span class="nm">1</span>;</pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════ TAB 2: OPERADORES ════════════════════════ -->
+  <div id="view-operadores" class="mode-panel">
+    <div class="sec-title">Todos los operadores de Java</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head red"><span class="card-icon">➕</span><span class="card-label">Aritméticos</span></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Op.</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
+            <tbody>
+              <tr><td>+</td><td>Suma</td><td>5 + 3 = 8</td></tr>
+              <tr><td>-</td><td>Resta</td><td>5 - 3 = 2</td></tr>
+              <tr><td>*</td><td>Multiplicación</td><td>5 * 3 = 15</td></tr>
+              <tr><td>/</td><td>División entera</td><td>10 / 3 = 3</td></tr>
+              <tr><td>%</td><td>Módulo (resto)</td><td>10 % 3 = 1</td></tr>
+              <tr><td>++</td><td>Incremento</td><td>i++ → i = i+1</td></tr>
+              <tr><td>--</td><td>Decremento</td><td>i-- → i = i-1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head green"><span class="card-icon">⚖️</span><span class="card-label">Comparación</span></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Op.</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
+            <tbody>
+              <tr><td>==</td><td>Igual a</td><td>5 == 5 → true</td></tr>
+              <tr><td>!=</td><td>Distinto de</td><td>5 != 3 → true</td></tr>
+              <tr><td>&gt;</td><td>Mayor que</td><td>5 > 3 → true</td></tr>
+              <tr><td>&lt;</td><td>Menor que</td><td>3 < 5 → true</td></tr>
+              <tr><td>&gt;=</td><td>Mayor o igual</td><td>5 >= 5 → true</td></tr>
+              <tr><td>&lt;=</td><td>Menor o igual</td><td>3 <= 5 → true</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head blue"><span class="card-icon">🔗</span><span class="card-label">Lógicos</span></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Op.</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
+            <tbody>
+              <tr><td>&&</td><td>AND lógico</td><td>true && false → false</td></tr>
+              <tr><td>||</td><td>OR lógico</td><td>true || false → true</td></tr>
+              <tr><td>!</td><td>NOT (negación)</td><td>!true → false</td></tr>
+              <tr><td>&</td><td>AND bit a bit</td><td>6 & 3 → 2</td></tr>
+              <tr><td>|</td><td>OR bit a bit</td><td>6 | 3 → 7</td></tr>
+              <tr><td>^</td><td>XOR bit a bit</td><td>6 ^ 3 → 5</td></tr>
+              <tr><td>~</td><td>NOT bit a bit</td><td>~6 → -7</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head yellow"><span class="card-icon">✏️</span><span class="card-label">Asignación</span></div>
+        <pre>
+<span class="ty">int</span> <span class="vr">x</span> <span class="op">=</span> <span class="nm">10</span>;
+
+<span class="vr">x</span> <span class="op">+=</span> <span class="nm">5</span>;   <span class="cm">// x = x + 5  → 15</span>
+<span class="vr">x</span> <span class="op">-=</span> <span class="nm">3</span>;   <span class="cm">// x = x - 3  → 12</span>
+<span class="vr">x</span> <span class="op">*=</span> <span class="nm">2</span>;   <span class="cm">// x = x * 2  → 24</span>
+<span class="vr">x</span> <span class="op">/=</span> <span class="nm">4</span>;   <span class="cm">// x = x / 4  → 6</span>
+<span class="vr">x</span> <span class="op">%=</span> <span class="nm">4</span>;   <span class="cm">// x = x % 4  → 2</span>
+<span class="vr">x</span> <span class="op">&amp;=</span> <span class="nm">3</span>;   <span class="cm">// AND bit a bit asignado</span>
+<span class="vr">x</span> <span class="op">|=</span> <span class="nm">3</span>;   <span class="cm">// OR bit a bit asignado</span>
+<span class="vr">x</span> <span class="op">^=</span> <span class="nm">3</span>;   <span class="cm">// XOR bit a bit asignado</span>
+<span class="vr">x</span> <span class="op">&lt;&lt;=</span> <span class="nm">1</span>;  <span class="cm">// desplaza bits izquierda</span>
+<span class="vr">x</span> <span class="op">&gt;&gt;=</span> <span class="nm">1</span>;  <span class="cm">// desplaza bits derecha</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head purple"><span class="card-icon">🔢</span><span class="card-label">Desplazamiento de bits</span></div>
+        <pre>
+<span class="ty">int</span> <span class="vr">n</span> <span class="op">=</span> <span class="nm">8</span>;  <span class="cm">// binario: 1000</span>
+
+<span class="vr">n</span> <span class="op">&lt;&lt;</span> <span class="nm">1</span>;  <span class="cm">// desplaza izquierda → 16 (10000)</span>
+<span class="vr">n</span> <span class="op">&gt;&gt;</span> <span class="nm">1</span>;  <span class="cm">// desplaza derecha  → 4  (0100)</span>
+<span class="vr">n</span> <span class="op">&gt;&gt;&gt;</span> <span class="nm">1</span>; <span class="cm">// sin signo derecha → 4</span>
+
+<span class="cm">// Truco: comprobar si n es par</span>
+<span class="kw">if</span> ((<span class="vr">n</span> <span class="op">&amp;</span> <span class="nm">1</span>) <span class="op">==</span> <span class="nm">0</span>) { <span class="cm">/* es par */</span> }
+
+<span class="cm">// Truco: multiplicar/dividir por 2</span>
+<span class="vr">n</span> <span class="op">&lt;&lt;</span> <span class="nm">1</span>; <span class="cm">// × 2</span>
+<span class="vr">n</span> <span class="op">&gt;&gt;</span> <span class="nm">1</span>; <span class="cm">// ÷ 2</span></pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════ TAB 3: ARRAYS & STRINGS ════════════════════════ -->
+  <div id="view-arrays" class="mode-panel">
+    <div class="sec-title">Arrays y Strings — los más usados en Codility</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head blue"><span class="card-icon">📋</span><span class="card-label">Arrays — creación y acceso</span></div>
+        <pre>
+<span class="cm">// Declarar e inicializar</span>
+<span class="ty">int</span>[] <span class="vr">a</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">int</span>[<span class="nm">5</span>];            <span class="cm">// vacío, tamaño 5</span>
+<span class="ty">int</span>[] <span class="vr">b</span> <span class="op">=</span> {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>};       <span class="cm">// con valores</span>
+
+<span class="cm">// Acceso</span>
+<span class="vr">b</span>[<span class="nm">0</span>];                 <span class="cm">// primer elemento → 1</span>
+<span class="vr">b</span>[<span class="vr">b</span>.<span class="vr">length</span> <span class="op">-</span> <span class="nm">1</span>];      <span class="cm">// último elemento → 5</span>
+<span class="vr">b</span>.<span class="vr">length</span>;             <span class="cm">// tamaño → 5</span>
+<span class="vr">b</span>[<span class="nm">2</span>] <span class="op">=</span> <span class="nm">99</span>;             <span class="cm">// modifica posición 2</span>
+
+<span class="cm">// Array 2D (matriz)</span>
+<span class="ty">int</span>[][] <span class="vr">m</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">int</span>[<span class="nm">3</span>][<span class="nm">3</span>];
+<span class="vr">m</span>[<span class="nm">0</span>][<span class="nm">1</span>] <span class="op">=</span> <span class="nm">5</span>;           <span class="cm">// fila 0, columna 1</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head green"><span class="card-icon">🛠️</span><span class="card-label">Arrays — métodos útiles</span></div>
+        <pre>
+<span class="cm">// import java.util.Arrays;</span>
+
+<span class="fn">Arrays</span>.<span class="fn">sort</span>(<span class="vr">b</span>);
+<span class="cm">// ordena de menor a mayor: [1,2,3,4,5]</span>
+
+<span class="fn">Arrays</span>.<span class="fn">fill</span>(<span class="vr">a</span>, <span class="nm">0</span>);
+<span class="cm">// rellena todo con 0</span>
+
+<span class="fn">Arrays</span>.<span class="fn">copyOfRange</span>(<span class="vr">b</span>, <span class="nm">1</span>, <span class="nm">4</span>);
+<span class="cm">// subrango índices [1,4) → [2,3,4]</span>
+
+<span class="fn">Arrays</span>.<span class="fn">copyOf</span>(<span class="vr">b</span>, <span class="nm">3</span>);
+<span class="cm">// primeros 3 elementos → [1,2,3]</span>
+
+<span class="fn">Arrays</span>.<span class="fn">toString</span>(<span class="vr">b</span>);
+<span class="cm">// imprime: [1, 2, 3, 4, 5]</span>
+
+<span class="cm">// Copiar entre arrays</span>
+<span class="fn">System</span>.<span class="fn">arraycopy</span>(<span class="vr">src</span>, <span class="nm">0</span>, <span class="vr">dest</span>, <span class="nm">0</span>, <span class="vr">n</span>);</pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head red"><span class="card-icon">📝</span><span class="card-label">Strings — métodos esenciales</span></div>
+        <pre>
+<span class="ty">String</span> <span class="vr">s</span> <span class="op">=</span> <span class="st">"Hola Mundo"</span>;
+
+<span class="vr">s</span>.<span class="fn">length</span>();           <span class="cm">// → 10</span>
+<span class="vr">s</span>.<span class="fn">charAt</span>(<span class="nm">0</span>);          <span class="cm">// → 'H'</span>
+<span class="vr">s</span>.<span class="fn">substring</span>(<span class="nm">0</span>, <span class="nm">4</span>);   <span class="cm">// → "Hola"  [0,4)</span>
+<span class="vr">s</span>.<span class="fn">indexOf</span>(<span class="st">"M"</span>);       <span class="cm">// → 5</span>
+<span class="vr">s</span>.<span class="fn">contains</span>(<span class="st">"Mundo"</span>);  <span class="cm">// → true</span>
+<span class="vr">s</span>.<span class="fn">startsWith</span>(<span class="st">"Ho"</span>);   <span class="cm">// → true</span>
+<span class="vr">s</span>.<span class="fn">endsWith</span>(<span class="st">"do"</span>);     <span class="cm">// → true</span>
+<span class="vr">s</span>.<span class="fn">replace</span>(<span class="st">"Hola"</span>,<span class="st">"Hi"</span>); <span class="cm">// → "Hi Mundo"</span>
+<span class="vr">s</span>.<span class="fn">toUpperCase</span>();       <span class="cm">// → "HOLA MUNDO"</span>
+<span class="vr">s</span>.<span class="fn">toLowerCase</span>();       <span class="cm">// → "hola mundo"</span>
+<span class="vr">s</span>.<span class="fn">trim</span>();              <span class="cm">// elimina espacios extremos</span>
+<span class="vr">s</span>.<span class="fn">split</span>(<span class="st">" "</span>);          <span class="cm">// → ["Hola","Mundo"]</span>
+<span class="vr">s</span>.<span class="fn">equals</span>(<span class="st">"Hola"</span>);     <span class="cm">// comparar (¡nunca ==!)</span></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head purple"><span class="card-icon">🔡</span><span class="card-label">StringBuilder — strings mutables</span></div>
+        <pre>
+<span class="cm">// Para construir strings dinámicamente (más eficiente)</span>
+<span class="ty">StringBuilder</span> <span class="vr">sb</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">StringBuilder</span>();
+
+<span class="vr">sb</span>.<span class="fn">append</span>(<span class="st">"Hola"</span>);     <span class="cm">// añade texto</span>
+<span class="vr">sb</span>.<span class="fn">append</span>(<span class="st">" Mundo"</span>);   <span class="cm">// → "Hola Mundo"</span>
+<span class="vr">sb</span>.<span class="fn">insert</span>(<span class="nm">0</span>, <span class="st">"¡"</span>);     <span class="cm">// inserta en posición</span>
+<span class="vr">sb</span>.<span class="fn">delete</span>(<span class="nm">0</span>, <span class="nm">1</span>);      <span class="cm">// elimina rango</span>
+<span class="vr">sb</span>.<span class="fn">reverse</span>();          <span class="cm">// invierte</span>
+<span class="vr">sb</span>.<span class="fn">length</span>();            <span class="cm">// tamaño</span>
+<span class="vr">sb</span>.<span class="fn">toString</span>();          <span class="cm">// convierte a String</span>
+
+<span class="cm">// Ejemplo: invertir una cadena</span>
+<span class="ty">String</span> <span class="vr">rev</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">StringBuilder</span>(<span class="vr">s</span>)
+                    .<span class="fn">reverse</span>().<span class="fn">toString</span>();</pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════ TAB 4: COLECCIONES ════════════════════════ -->
+  <div id="view-colecciones" class="mode-panel">
+    <div class="sec-title">Colecciones — import java.util.*</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-head blue"><span class="card-icon">📃</span><span class="card-label">ArrayList — lista dinámica</span></div>
+        <pre>
+<span class="ty">ArrayList</span>&lt;<span class="ty">Integer</span>&gt; <span class="vr">lista</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;();
+
+<span class="vr">lista</span>.<span class="fn">add</span>(<span class="nm">5</span>);          <span class="cm">// añadir al final</span>
+<span class="vr">lista</span>.<span class="fn">add</span>(<span class="nm">0</span>, <span class="nm">10</span>);      <span class="cm">// insertar en posición 0</span>
+<span class="vr">lista</span>.<span class="fn">get</span>(<span class="nm">0</span>);          <span class="cm">// obtener por índice</span>
+<span class="vr">lista</span>.<span class="fn">set</span>(<span class="nm">0</span>, <span class="nm">99</span>);      <span class="cm">// modificar posición</span>
+<span class="vr">lista</span>.<span class="fn">remove</span>(<span class="nm">0</span>);       <span class="cm">// eliminar por índice</span>
+<span class="vr">lista</span>.<span class="fn">size</span>();           <span class="cm">// tamaño</span>
+<span class="vr">lista</span>.<span class="fn">contains</span>(<span class="nm">5</span>);     <span class="cm">// buscar → true/false</span>
+<span class="vr">lista</span>.<span class="fn">isEmpty</span>();        <span class="cm">// está vacío?</span>
+<span class="vr">lista</span>.<span class="fn">clear</span>();          <span class="cm">// vaciar lista</span>
+
+<span class="cm">// Array → ArrayList</span>
+<span class="ty">List</span>&lt;<span class="ty">Integer</span>&gt; <span class="vr">l</span> <span class="op">=</span> <span class="ty">Arrays</span>.<span class="fn">asList</span>(<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>);</pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head red"><span class="card-icon">🗺️</span><span class="card-label">HashMap — clave → valor</span></div>
+        <pre>
+<span class="ty">HashMap</span>&lt;<span class="ty">String</span>, <span class="ty">Integer</span>&gt; <span class="vr">map</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">HashMap</span>&lt;&gt;();
+
+<span class="vr">map</span>.<span class="fn">put</span>(<span class="st">"a"</span>, <span class="nm">1</span>);         <span class="cm">// insertar</span>
+<span class="vr">map</span>.<span class="fn">get</span>(<span class="st">"a"</span>);            <span class="cm">// obtener → 1</span>
+<span class="vr">map</span>.<span class="fn">getOrDefault</span>(<span class="st">"b"</span>,<span class="nm">0</span>); <span class="cm">// si no existe → 0</span>
+<span class="vr">map</span>.<span class="fn">containsKey</span>(<span class="st">"a"</span>);    <span class="cm">// ¿existe clave?</span>
+<span class="vr">map</span>.<span class="fn">containsValue</span>(<span class="nm">1</span>);    <span class="cm">// ¿existe valor?</span>
+<span class="vr">map</span>.<span class="fn">remove</span>(<span class="st">"a"</span>);         <span class="cm">// eliminar</span>
+<span class="vr">map</span>.<span class="fn">size</span>();               <span class="cm">// tamaño</span>
+<span class="vr">map</span>.<span class="fn">keySet</span>();             <span class="cm">// conjunto de claves</span>
+<span class="vr">map</span>.<span class="fn">values</span>();             <span class="cm">// colección de valores</span>
+
+<span class="cm">// Recorrer</span>
+<span class="kw">for</span> (<span class="ty">String</span> <span class="vr">k</span> : <span class="vr">map</span>.<span class="fn">keySet</span>()) { ... }</pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head green"><span class="card-icon">🔵</span><span class="card-label">HashSet — sin duplicados</span></div>
+        <pre>
+<span class="ty">HashSet</span>&lt;<span class="ty">Integer</span>&gt; <span class="vr">set</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">HashSet</span>&lt;&gt;();
+
+<span class="vr">set</span>.<span class="fn">add</span>(<span class="nm">5</span>);           <span class="cm">// añadir</span>
+<span class="vr">set</span>.<span class="fn">add</span>(<span class="nm">5</span>);           <span class="cm">// ignorado (ya existe)</span>
+<span class="vr">set</span>.<span class="fn">contains</span>(<span class="nm">5</span>);      <span class="cm">// buscar → true</span>
+<span class="vr">set</span>.<span class="fn">remove</span>(<span class="nm">5</span>);        <span class="cm">// eliminar</span>
+<span class="vr">set</span>.<span class="fn">size</span>();            <span class="cm">// tamaño</span>
+<span class="vr">set</span>.<span class="fn">isEmpty</span>();         <span class="cm">// está vacío?</span>
+
+<span class="cm">// Muy útil en Codility para detectar duplicados</span>
+<span class="ty">boolean</span> <span class="vr">hayDuplicado</span> <span class="op">=</span> <span class="vr">set</span>.<span class="fn">size</span>() <span class="op">!=</span> <span class="vr">array</span>.<span class="vr">length</span>;
+
+<span class="cm">// Recorrer</span>
+<span class="kw">for</span> (<span class="ty">int</span> <span class="vr">n</span> : <span class="vr">set</span>) { ... }</pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head yellow"><span class="card-icon">📚</span><span class="card-label">Stack & Queue</span></div>
+        <pre>
+<span class="cm">// Stack (pila — LIFO: último en entrar, primero en salir)</span>
+<span class="ty">Stack</span>&lt;<span class="ty">Integer</span>&gt; <span class="vr">pila</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">Stack</span>&lt;&gt;();
+<span class="vr">pila</span>.<span class="fn">push</span>(<span class="nm">5</span>);      <span class="cm">// apilar</span>
+<span class="vr">pila</span>.<span class="fn">pop</span>();         <span class="cm">// desapilar (extrae)</span>
+<span class="vr">pila</span>.<span class="fn">peek</span>();        <span class="cm">// ver tope sin extraer</span>
+<span class="vr">pila</span>.<span class="fn">isEmpty</span>();     <span class="cm">// está vacía?</span>
+
+<span class="cm">// Queue (cola — FIFO: primero en entrar, primero en salir)</span>
+<span class="ty">Queue</span>&lt;<span class="ty">Integer</span>&gt; <span class="vr">cola</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">LinkedList</span>&lt;&gt;();
+<span class="vr">cola</span>.<span class="fn">offer</span>(<span class="nm">5</span>);     <span class="cm">// encolar</span>
+<span class="vr">cola</span>.<span class="fn">poll</span>();        <span class="cm">// desencolar (extrae)</span>
+<span class="vr">cola</span>.<span class="fn">peek</span>();        <span class="cm">// ver frente sin extraer</span>
+<span class="vr">cola</span>.<span class="fn">isEmpty</span>();     <span class="cm">// está vacía?</span></pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════ TAB 5: ALGORITMOS ════════════════════════ -->
+  <div id="view-algoritmos" class="mode-panel">
+    <div class="sec-title">Algoritmos clásicos — implementación en Java</div>
+
+    <!-- GAUSS -->
+    <div class="algo-block">
+      <div class="algo-head">
+        <span class="algo-name">Fórmula de Gauss</span>
+        <span class="algo-badge badge-easy">Fácil</span>
+        <span class="algo-complexity">O(1) tiempo · O(1) espacio</span>
+      </div>
+      <div class="algo-body">
+        <div class="algo-desc">Suma de los primeros N números naturales. Útil para encontrar <strong>el elemento faltante</strong> en un array.</div>
+        <div class="algo-cols">
+          <div>
+            <div class="algo-section-label">Código</div>
+            <pre>
+<span class="kw">public</span> <span class="ty">int</span> <span class="fn">elementoFaltante</span>(<span class="ty">int</span>[] <span class="vr">A</span>) {
+    <span class="ty">int</span> <span class="vr">n</span> <span class="op">=</span> <span class="vr">A</span>.<span class="vr">length</span>;
+    <span class="ty">long</span> <span class="vr">esperada</span> <span class="op">=</span> (<span class="ty">long</span>)(<span class="vr">n</span> <span class="op">+</span> <span class="nm">2</span>) <span class="op">*</span> (<span class="vr">n</span> <span class="op">+</span> <span class="nm">1</span>) <span class="op">/</span> <span class="nm">2</span>;
+    <span class="ty">long</span> <span class="vr">real</span> <span class="op">=</span> <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="ty">int</span> <span class="vr">x</span> : <span class="vr">A</span>) <span class="vr">real</span> <span class="op">+=</span> <span class="vr">x</span>;
+    <span class="kw">return</span> (<span class="ty">int</span>)(<span class="vr">esperada</span> <span class="op">-</span> <span class="vr">real</span>);
+}</pre>
+          </div>
+          <div>
+            <div class="algo-section-label">Ejemplo</div>
+            <pre>
+A <span class="op">=</span> [<span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">5</span>]
+n <span class="op">=</span> <span class="nm">4</span>
+esperada <span class="op">=</span> (<span class="nm">6</span><span class="op">*</span><span class="nm">5</span>)<span class="op">/</span><span class="nm">2</span> <span class="op">=</span> <span class="nm">15</span>
+real     <span class="op">=</span> <span class="nm">2</span><span class="op">+</span><span class="nm">3</span><span class="op">+</span><span class="nm">1</span><span class="op">+</span><span class="nm">5</span> <span class="op">=</span> <span class="nm">11</span>
+resultado <span class="op">=</span> <span class="nm">15</span> <span class="op">-</span> <span class="nm">11</span> <span class="op">=</span> <span class="nm">4</span> ✓</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BINARY SEARCH -->
+    <div class="algo-block">
+      <div class="algo-head">
+        <span class="algo-name">Búsqueda Binaria</span>
+        <span class="algo-badge badge-medium">Medio</span>
+        <span class="algo-complexity">O(log N) tiempo · O(1) espacio</span>
+      </div>
+      <div class="algo-body">
+        <div class="algo-desc">Busca un elemento en un array <strong>ordenado</strong>, dividiendo el espacio de búsqueda a la mitad en cada paso.</div>
+        <div class="algo-cols">
+          <div>
+            <div class="algo-section-label">Código</div>
+            <pre>
+<span class="kw">public</span> <span class="ty">int</span> <span class="fn">busquedaBinaria</span>(<span class="ty">int</span>[] <span class="vr">A</span>, <span class="ty">int</span> <span class="vr">target</span>) {
+    <span class="ty">int</span> <span class="vr">izq</span> <span class="op">=</span> <span class="nm">0</span>, <span class="vr">der</span> <span class="op">=</span> <span class="vr">A</span>.<span class="vr">length</span> <span class="op">-</span> <span class="nm">1</span>;
+    <span class="kw">while</span> (<span class="vr">izq</span> <span class="op">&lt;=</span> <span class="vr">der</span>) {
+        <span class="ty">int</span> <span class="vr">mid</span> <span class="op">=</span> <span class="vr">izq</span> <span class="op">+</span> (<span class="vr">der</span> <span class="op">-</span> <span class="vr">izq</span>) <span class="op">/</span> <span class="nm">2</span>;
+        <span class="kw">if</span> (<span class="vr">A</span>[<span class="vr">mid</span>] <span class="op">==</span> <span class="vr">target</span>)
+            <span class="kw">return</span> <span class="vr">mid</span>;
+        <span class="kw">else if</span> (<span class="vr">A</span>[<span class="vr">mid</span>] <span class="op">&lt;</span> <span class="vr">target</span>)
+            <span class="vr">izq</span> <span class="op">=</span> <span class="vr">mid</span> <span class="op">+</span> <span class="nm">1</span>;
+        <span class="kw">else</span>
+            <span class="vr">der</span> <span class="op">=</span> <span class="vr">mid</span> <span class="op">-</span> <span class="nm">1</span>;
+    }
+    <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>; <span class="cm">// no encontrado</span>
+}</pre>
+          </div>
+          <div>
+            <div class="algo-section-label">Ejemplo</div>
+            <pre>
+A      <span class="op">=</span> [<span class="nm">1</span>,<span class="nm">3</span>,<span class="nm">5</span>,<span class="nm">7</span>,<span class="nm">9</span>]
+target <span class="op">=</span> <span class="nm">7</span>
+
+paso <span class="nm">1</span>: mid<span class="op">=</span><span class="nm">2</span>, A[<span class="nm">2</span>]<span class="op">=</span><span class="nm">5</span> &lt; <span class="nm">7</span> → izq<span class="op">=</span><span class="nm">3</span>
+paso <span class="nm">2</span>: mid<span class="op">=</span><span class="nm">4</span>, A[<span class="nm">4</span>]<span class="op">=</span><span class="nm">9</span> &gt; <span class="nm">7</span> → der<span class="op">=</span><span class="nm">3</span>
+paso <span class="nm">3</span>: mid<span class="op">=</span><span class="nm">3</span>, A[<span class="nm">3</span>]<span class="op">=</span><span class="nm">7</span> ✓
+retorna índice <span class="nm">3</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TWO POINTERS -->
+    <div class="algo-block">
+      <div class="algo-head">
+        <span class="algo-name">Two Pointers</span>
+        <span class="algo-badge badge-medium">Medio</span>
+        <span class="algo-complexity">O(N) tiempo · O(1) espacio</span>
+      </div>
+      <div class="algo-body">
+        <div class="algo-desc">Dos punteros que avanzan desde los extremos. Útil para problemas de <strong>pares con suma objetivo</strong>, palíndromos, inversiones.</div>
+        <div class="algo-cols">
+          <div>
+            <div class="algo-section-label">Código — par con suma K</div>
+            <pre>
+<span class="kw">public</span> <span class="ty">boolean</span> <span class="fn">parConSuma</span>(<span class="ty">int</span>[] <span class="vr">A</span>, <span class="ty">int</span> <span class="vr">K</span>) {
+    <span class="cm">// Array debe estar ordenado</span>
+    <span class="ty">int</span> <span class="vr">izq</span> <span class="op">=</span> <span class="nm">0</span>, <span class="vr">der</span> <span class="op">=</span> <span class="vr">A</span>.<span class="vr">length</span> <span class="op">-</span> <span class="nm">1</span>;
+    <span class="kw">while</span> (<span class="vr">izq</span> <span class="op">&lt;</span> <span class="vr">der</span>) {
+        <span class="ty">int</span> <span class="vr">suma</span> <span class="op">=</span> <span class="vr">A</span>[<span class="vr">izq</span>] <span class="op">+</span> <span class="vr">A</span>[<span class="vr">der</span>];
+        <span class="kw">if</span> (<span class="vr">suma</span> <span class="op">==</span> <span class="vr">K</span>)  <span class="kw">return</span> <span class="kw">true</span>;
+        <span class="kw">if</span> (<span class="vr">suma</span> <span class="op">&lt;</span>  <span class="vr">K</span>)  <span class="vr">izq</span><span class="op">++</span>;
+        <span class="kw">else</span>            <span class="vr">der</span><span class="op">--</span>;
+    }
+    <span class="kw">return</span> <span class="kw">false</span>;
+}</pre>
+          </div>
+          <div>
+            <div class="algo-section-label">Código — invertir array</div>
+            <pre>
+<span class="kw">public</span> <span class="ty">void</span> <span class="fn">invertir</span>(<span class="ty">int</span>[] <span class="vr">A</span>) {
+    <span class="ty">int</span> <span class="vr">izq</span> <span class="op">=</span> <span class="nm">0</span>, <span class="vr">der</span> <span class="op">=</span> <span class="vr">A</span>.<span class="vr">length</span> <span class="op">-</span> <span class="nm">1</span>;
+    <span class="kw">while</span> (<span class="vr">izq</span> <span class="op">&lt;</span> <span class="vr">der</span>) {
+        <span class="cm">// swap</span>
+        <span class="ty">int</span> <span class="vr">tmp</span> <span class="op">=</span> <span class="vr">A</span>[<span class="vr">izq</span>];
+        <span class="vr">A</span>[<span class="vr">izq</span>] <span class="op">=</span> <span class="vr">A</span>[<span class="vr">der</span>];
+        <span class="vr">A</span>[<span class="vr">der</span>] <span class="op">=</span> <span class="vr">tmp</span>;
+        <span class="vr">izq</span><span class="op">++</span>; <span class="vr">der</span><span class="op">--</span>;
+    }
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDING WINDOW -->
+    <div class="algo-block">
+      <div class="algo-head">
+        <span class="algo-name">Sliding Window</span>
+        <span class="algo-badge badge-medium">Medio</span>
+        <span class="algo-complexity">O(N) tiempo · O(1) espacio</span>
+      </div>
+      <div class="algo-body">
+        <div class="algo-desc">Una ventana deslizante de tamaño K que avanza por el array. Útil para <strong>máximos/mínimos en subarrays</strong>, sumas, medias móviles.</div>
+        <div class="algo-cols">
+          <div>
+            <div class="algo-section-label">Código — suma máxima de K elementos</div>
+            <pre>
+<span class="kw">public</span> <span class="ty">int</span> <span class="fn">sumaMaxima</span>(<span class="ty">int</span>[] <span class="vr">A</span>, <span class="ty">int</span> <span class="vr">K</span>) {
+    <span class="ty">int</span> <span class="vr">suma</span> <span class="op">=</span> <span class="nm">0</span>;
+    <span class="cm">// primera ventana</span>
+    <span class="kw">for</span> (<span class="ty">int</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">0</span>; <span class="vr">i</span> <span class="op">&lt;</span> <span class="vr">K</span>; <span class="vr">i</span><span class="op">++</span>)
+        <span class="vr">suma</span> <span class="op">+=</span> <span class="vr">A</span>[<span class="vr">i</span>];
+    <span class="ty">int</span> <span class="vr">max</span> <span class="op">=</span> <span class="vr">suma</span>;
+    <span class="cm">// deslizar ventana</span>
+    <span class="kw">for</span> (<span class="ty">int</span> <span class="vr">i</span> <span class="op">=</span> <span class="vr">K</span>; <span class="vr">i</span> <span class="op">&lt;</span> <span class="vr">A</span>.<span class="vr">length</span>; <span class="vr">i</span><span class="op">++</span>) {
+        <span class="vr">suma</span> <span class="op">+=</span> <span class="vr">A</span>[<span class="vr">i</span>] <span class="op">-</span> <span class="vr">A</span>[<span class="vr">i</span> <span class="op">-</span> <span class="vr">K</span>];
+        <span class="vr">max</span> <span class="op">=</span> <span class="ty">Math</span>.<span class="fn">max</span>(<span class="vr">max</span>, <span class="vr">suma</span>);
+    }
+    <span class="kw">return</span> <span class="vr">max</span>;
+}</pre>
+          </div>
+          <div>
+            <div class="algo-section-label">Ejemplo</div>
+            <pre>
+A <span class="op">=</span> [<span class="nm">2</span>,<span class="nm">1</span>,<span class="nm">5</span>,<span class="nm">1</span>,<span class="nm">3</span>,<span class="nm">2</span>], K<span class="op">=</span><span class="nm">3</span>
+
+ventana <span class="nm">1</span>: [<span class="nm">2</span>,<span class="nm">1</span>,<span class="nm">5</span>] suma <span class="op">=</span> <span class="nm">8</span>
+ventana <span class="nm">2</span>: [<span class="nm">1</span>,<span class="nm">5</span>,<span class="nm">1</span>] suma <span class="op">=</span> <span class="nm">7</span>
+ventana <span class="nm">3</span>: [<span class="nm">5</span>,<span class="nm">1</span>,<span class="nm">3</span>] suma <span class="op">=</span> <span class="nm">9</span> ← max
+ventana <span class="nm">4</span>: [<span class="nm">1</span>,<span class="nm">3</span>,<span class="nm">2</span>] suma <span class="op">=</span> <span class="nm">6</span>
+
+resultado: <span class="nm">9</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════ TAB 6: PATRONES CODILITY ════════════════════════ -->
+  <div id="view-patrones" class="mode-panel">
+    <div class="sec-title">Patrones más frecuentes en Codility</div>
+
+    <div class="algo-block">
+      <div class="algo-head">
+        <span class="algo-name">Prefix Sum — Sumas prefijo</span>
+        <span class="algo-badge badge-medium">Medio</span>
+        <span class="algo-complexity">O(N) preproceso · O(1) consulta</span>
+      </div>
+      <div class="algo-body">
+        <div class="algo-desc">Precalcular sumas acumuladas para responder consultas de suma de subarrays en O(1). <strong>Muy frecuente en Codility.</strong></div>
+        <pre>
+<span class="cm">// Construir array de prefijos</span>
+<span class="ty">int</span>[] <span class="vr">prefix</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">int</span>[<span class="vr">A</span>.<span class="vr">length</span> <span class="op">+</span> <span class="nm">1</span>];
+<span class="kw">for</span> (<span class="ty">int</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">0</span>; <span class="vr">i</span> <span class="op">&lt;</span> <span class="vr">A</span>.<span class="vr">length</span>; <span class="vr">i</span><span class="op">++</span>)
+    <span class="vr">prefix</span>[<span class="vr">i</span> <span class="op">+</span> <span class="nm">1</span>] <span class="op">=</span> <span class="vr">prefix</span>[<span class="vr">i</span>] <span class="op">+</span> <span class="vr">A</span>[<span class="vr">i</span>];
+
+<span class="cm">// Suma del subarray A[l..r] en O(1)</span>
+<span class="ty">int</span> <span class="fn">sumaRango</span>(<span class="ty">int</span> <span class="vr">l</span>, <span class="ty">int</span> <span class="vr">r</span>) {
+    <span class="kw">return</span> <span class="vr">prefix</span>[<span class="vr">r</span> <span class="op">+</span> <span class="nm">1</span>] <span class="op">-</span> <span class="vr">prefix</span>[<span class="vr">l</span>];
+}
+<span class="cm">// Ejemplo: A=[1,2,3,4,5], suma A[1..3] = prefix[4]-prefix[1] = 10-1 = 9</span></pre>
+      </div>
+    </div>
+
+    <div class="algo-block">
+      <div class="algo-head">
+        <span class="algo-name">Conteo con HashMap</span>
+        <span class="algo-badge badge-easy">Fácil</span>
+        <span class="algo-complexity">O(N) tiempo · O(N) espacio</span>
+      </div>
+      <div class="algo-body">
+        <div class="algo-desc">Contar frecuencias de elementos. Patrón base para detectar <strong>duplicados, mayorías y equilibrios</strong>.</div>
+        <pre>
+<span class="cm">// Contar cuántas veces aparece cada número</span>
+<span class="ty">HashMap</span>&lt;<span class="ty">Integer</span>,<span class="ty">Integer</span>&gt; <span class="vr">freq</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">HashMap</span>&lt;&gt;();
+<span class="kw">for</span> (<span class="ty">int</span> <span class="vr">n</span> : <span class="vr">A</span>)
+    <span class="vr">freq</span>.<span class="fn">put</span>(<span class="vr">n</span>, <span class="vr">freq</span>.<span class="fn">getOrDefault</span>(<span class="vr">n</span>, <span class="nm">0</span>) <span class="op">+</span> <span class="nm">1</span>);
+
+<span class="cm">// ¿Hay algún elemento que aparezca más de una vez?</span>
+<span class="kw">for</span> (<span class="ty">int</span> <span class="vr">v</span> : <span class="vr">freq</span>.<span class="fn">values</span>())
+    <span class="kw">if</span> (<span class="vr">v</span> <span class="op">></span> <span class="nm">1</span>) <span class="kw">return</span> <span class="kw">true</span>;
+
+<span class="cm">// Alternativa con HashSet (más rápida para solo detectar duplicados)</span>
+<span class="ty">HashSet</span>&lt;<span class="ty">Integer</span>&gt; <span class="vr">vistos</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">HashSet</span>&lt;&gt;();
+<span class="kw">for</span> (<span class="ty">int</span> <span class="vr">n</span> : <span class="vr">A</span>)
+    <span class="kw">if</span> (<span class="op">!</span><span class="vr">vistos</span>.<span class="fn">add</span>(<span class="vr">n</span>)) <span class="kw">return</span> <span class="kw">false</span>; <span class="cm">// duplicado</span></pre>
+      </div>
+    </div>
+
+    <div class="algo-block">
+      <div class="algo-head">
+        <span class="algo-name">Rotación de Array</span>
+        <span class="algo-badge badge-easy">Fácil</span>
+        <span class="algo-complexity">O(N) tiempo · O(N) espacio</span>
+      </div>
+      <div class="algo-body">
+        <div class="algo-desc">Desplazar todos los elementos K posiciones a la derecha. Clave: <strong>K % N</strong> evita rotaciones innecesarias.</div>
+        <pre>
+<span class="kw">public</span> <span class="ty">int</span>[] <span class="fn">rotar</span>(<span class="ty">int</span>[] <span class="vr">A</span>, <span class="ty">int</span> <span class="vr">K</span>) {
+    <span class="ty">int</span> <span class="vr">n</span> <span class="op">=</span> <span class="vr">A</span>.<span class="vr">length</span>;
+    <span class="vr">K</span> <span class="op">=</span> <span class="vr">K</span> <span class="op">%</span> <span class="vr">n</span>;                             <span class="cm">// evitar vueltas completas</span>
+    <span class="kw">if</span> (<span class="vr">K</span> <span class="op">==</span> <span class="nm">0</span>) <span class="kw">return</span> <span class="vr">A</span>;
+    <span class="ty">int</span>[] <span class="vr">res</span> <span class="op">=</span> <span class="kw">new</span> <span class="ty">int</span>[<span class="vr">n</span>];
+    <span class="ty">int</span>[] <span class="vr">izq</span> <span class="op">=</span> <span class="fn">Arrays</span>.<span class="fn">copyOfRange</span>(<span class="vr">A</span>, <span class="nm">0</span>, <span class="vr">n</span><span class="op">-</span><span class="vr">K</span>);    <span class="cm">// parte izquierda</span>
+    <span class="ty">int</span>[] <span class="vr">der</span> <span class="op">=</span> <span class="fn">Arrays</span>.<span class="fn">copyOfRange</span>(<span class="vr">A</span>, <span class="vr">n</span><span class="op">-</span><span class="vr">K</span>, <span class="vr">n</span>);   <span class="cm">// parte derecha (va al frente)</span>
+    <span class="fn">System</span>.<span class="fn">arraycopy</span>(<span class="vr">der</span>, <span class="nm">0</span>, <span class="vr">res</span>, <span class="nm">0</span>,   <span class="vr">K</span>);
+    <span class="fn">System</span>.<span class="fn">arraycopy</span>(<span class="vr">izq</span>, <span class="nm">0</span>, <span class="vr">res</span>, <span class="vr">K</span>, <span class="vr">n</span><span class="op">-</span><span class="vr">K</span>);
+    <span class="kw">return</span> <span class="vr">res</span>;
+}
+<span class="cm">// A=[3,8,9,7,6], K=3 → [9,7,6,3,8]</span></pre>
+      </div>
+    </div>
+
+    <div class="algo-block">
+      <div class="algo-head">
+        <span class="algo-name">Estructura típica Codility</span>
+        <span class="algo-badge badge-easy">Plantilla</span>
+        <span class="algo-complexity">La solución completa</span>
+      </div>
+      <div class="algo-body">
+        <div class="algo-desc">Estructura base que debes usar en <strong>todos los ejercicios</strong> de Codility.</div>
+        <pre>
+<span class="kw">import</span> java.util.Arrays;
+<span class="kw">import</span> java.util.*;
+
+<span class="kw">class</span> <span class="ty">Solution</span> {
+
+    <span class="kw">public</span> <span class="ty">int</span> <span class="fn">solution</span>(<span class="ty">int</span>[] <span class="vr">A</span>) {
+        <span class="ty">int</span> <span class="vr">n</span> <span class="op">=</span> <span class="vr">A</span>.<span class="vr">length</span>;  <span class="cm">// 1. tamaño del array</span>
+
+        <span class="cm">// 2. casos límite</span>
+        <span class="kw">if</span> (<span class="vr">n</span> <span class="op">==</span> <span class="nm">0</span>) <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;
+
+        <span class="cm">// 3. lógica principal</span>
+        <span class="ty">int</span> <span class="vr">resultado</span> <span class="op">=</span> <span class="nm">0</span>;
+        <span class="kw">for</span> (<span class="ty">int</span> <span class="vr">i</span> <span class="op">=</span> <span class="nm">0</span>; <span class="vr">i</span> <span class="op">&lt;</span> <span class="vr">n</span>; <span class="vr">i</span><span class="op">++</span>) {
+            <span class="cm">// tu código aquí</span>
+        }
+
+        <span class="cm">// 4. retornar resultado</span>
+        <span class="kw">return</span> <span class="vr">resultado</span>;
+    }
+}</pre>
+        <div class="tip-box">
+          <div class="tip-label">💡 Consejos para Codility</div>
+          Usa <code>long</code> en lugar de <code>int</code> cuando N puede ser grande para evitar overflow.
+          Siempre maneja el caso de array vacío o N=0.
+          Piensa primero en la complejidad: Codility penaliza soluciones O(N²) cuando existe una O(N).
+          Puedes tener el navegador abierto con la documentación de Java.
+        </div>
+        <div class="patterns">
+          <span class="pill">Gauss para faltantes</span>
+          <span class="pill">% para rotaciones</span>
+          <span class="pill">HashSet para duplicados</span>
+          <span class="pill">Prefix sum para rangos</span>
+          <span class="pill">Two pointers en arrays ordenados</span>
+          <span class="pill">long para números grandes</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>☕ Java Cheatsheet · preparación <em>Codility</em> · sintaxis · operadores · algoritmos</footer>
+</div>
+
+<script>
+function setView(name, btn) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

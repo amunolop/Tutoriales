@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical English for Developers — Guía completa + Plan 60 días</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;position:relative}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1100px;margin:0 auto;padding:48px 28px 100px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:40px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(26px,4vw,44px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:40px;width:fit-content;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:10px 18px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:2px solid var(--ink)}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:36px 0 16px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:16px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  .ph{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:8px;transition:border-color .15s}
+  .ph:hover{border-color:var(--ink)}
+  .ph-en{padding:12px 16px;font-size:12px;font-weight:600;background:var(--surface);line-height:1.6}
+  .ph-es{padding:12px 16px;font-size:11px;color:var(--muted);background:var(--surface2);line-height:1.6;border-left:1px solid var(--border)}
+  .ph-tag{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 6px;border-radius:2px;display:inline-block;margin-bottom:4px}
+  .pht-o{color:var(--accent);background:rgba(193,68,14,.08)}.pht-g{color:var(--accent2);background:rgba(42,110,78,.08)}.pht-b{color:var(--accent3);background:rgba(26,74,138,.08)}.pht-y{color:var(--yellow);background:rgba(232,160,32,.08)}.pht-p{color:var(--purple);background:rgba(122,58,205,.08)}
+  .tag{font-size:9px;font-weight:700;letter-spacing:2px;padding:4px 10px;border-radius:3px;text-transform:uppercase}
+  .tag-o{background:rgba(193,68,14,.12);color:var(--accent);border:2px solid var(--accent)}.tag-g{background:rgba(42,110,78,.12);color:var(--accent2);border:2px solid var(--accent2)}.tag-b{background:rgba(26,74,138,.12);color:var(--accent3);border:2px solid var(--accent3)}.tag-y{background:rgba(232,160,32,.12);color:var(--yellow);border:2px solid var(--yellow)}.tag-p{background:rgba(122,58,205,.12);color:var(--purple);border:2px solid var(--purple)}
+  .job-box{background:linear-gradient(135deg,#faf8f4 0%,#f0ebe0 100%);border:3px solid var(--accent);border-radius:8px;padding:24px 28px;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .job-box.green{border-color:var(--accent2)}.job-box.blue{border-color:var(--accent3)}.job-box.yellow{border-color:var(--yellow)}.job-box.purple{border-color:var(--purple)}
+  .job-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .job-name{font-size:18px;font-weight:700}
+  .job-desc{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+  .lifecycle-flow{display:flex;align-items:stretch;gap:0;background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
+  .lf-step{flex:1;padding:16px 12px;text-align:center;position:relative;transition:background .2s;min-width:0}
+  .lf-step:not(:last-child)::after{content:'▶';position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;z-index:2}
+  .lf-step:not(:last-child){border-right:2px solid var(--border)}
+  .lf-num{font-size:9px;color:var(--muted);margin-bottom:4px}.lf-icon{font-size:18px;margin-bottom:4px}.lf-name{font-size:10px;font-weight:700;margin-bottom:2px}.lf-desc{font-size:9px;color:var(--muted);line-height:1.4}
+  .steps-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+  .step-box{flex:1;min-width:200px;background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:18px;transition:all .2s}
+  .step-box:hover{border-color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .step-box.o{border-left:4px solid var(--accent)}.step-box.g{border-left:4px solid var(--accent2)}.step-box.b{border-left:4px solid var(--accent3)}
+  .step-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .step-label.o{color:var(--accent)}.step-label.g{color:var(--accent2)}.step-label.b{color:var(--accent3)}
+  .step-name{font-size:14px;font-weight:700;margin-bottom:6px}
+  .step-desc{font-size:11px;color:var(--muted);line-height:1.6}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:16px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 16px;text-align:left}
+  .vtable td{padding:11px 16px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td:first-child{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap}
+  .repo-box{background:linear-gradient(135deg,#fffaf0 0%,#faf5e8 100%);border:2px solid var(--yellow);border-radius:8px;padding:20px 24px;display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .repo-box.o{border-color:var(--accent)}
+  .repo-icon{font-size:28px;flex-shrink:0}.repo-title{font-size:15px;font-weight:700;margin-bottom:6px}.repo-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+  .repo-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .rchip{font-size:10px;padding:4px 10px;border-radius:3px;border:1px solid}
+  .rchip.o{background:rgba(193,68,14,.06);border-color:rgba(193,68,14,.3);color:var(--accent)}.rchip.g{background:rgba(42,110,78,.06);border-color:rgba(42,110,78,.3);color:var(--accent2)}.rchip.b{background:rgba(26,74,138,.06);border-color:rgba(26,74,138,.3);color:var(--accent3)}.rchip.y{background:rgba(232,160,32,.06);border-color:rgba(232,160,32,.3);color:var(--yellow)}.rchip.p{background:rgba(122,58,205,.06);border-color:rgba(122,58,205,.3);color:var(--purple)}
+  .seq-box{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:20px;margin-bottom:20px;font-size:11.5px;line-height:1.85;font-family:var(--mono);white-space:pre-wrap;overflow-x:auto}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  /* Week boxes */
+  .week-box{background:linear-gradient(135deg,#faf8f4 0%,#f0ebe0 100%);border:3px solid var(--border);border-radius:8px;padding:0;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,.06);overflow:hidden}
+  .week-box.m1{border-color:var(--accent)}.week-box.m2{border-color:var(--accent3)}.week-box.m3{border-color:var(--accent2)}
+  .week-header{padding:14px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background .15s}
+  .week-header:hover{background:rgba(0,0,0,.02)}
+  .week-num{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .m1 .week-num{color:var(--accent)}.m2 .week-num{color:var(--accent3)}.m3 .week-num{color:var(--accent2)}
+  .week-goal{font-size:11px;color:var(--muted);margin-left:auto}
+  .week-arrow{font-size:14px;color:var(--muted);transition:transform .2s;margin-left:8px}
+  .week-box.open .week-arrow{transform:rotate(180deg)}
+  .week-body{display:none;padding:0 20px 20px;border-top:1px solid var(--border)}
+  .week-box.open .week-body{display:block}
+  .day{display:grid;grid-template-columns:60px 1fr;gap:0;border-bottom:1px solid var(--border);transition:background .1s}
+  .day:last-child{border-bottom:none}
+  .day:hover{background:rgba(0,0,0,.015)}
+  .day-label{padding:12px 10px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+  .day-num{font-size:14px;font-weight:700;color:var(--ink)}
+  .day-content{padding:12px 16px}
+  .day-title{font-size:12px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+  .day-desc{font-size:11px;color:var(--muted);line-height:1.65}
+  .day-time{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px}
+  .dt-r{color:var(--accent);background:rgba(193,68,14,.08)}.dt-l{color:var(--accent3);background:rgba(26,74,138,.08)}.dt-w{color:var(--accent2);background:rgba(42,110,78,.08)}.dt-s{color:var(--yellow);background:rgba(232,160,32,.08)}.dt-p{color:var(--purple);background:rgba(122,58,205,.08)}
+  /* Sub-toggle inside plan */
+  .sub-toggle{display:flex;gap:0;border:2px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:20px;width:fit-content}
+  .sub-btn{font-family:var(--mono);font-size:10px;font-weight:600;padding:8px 16px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:1px solid var(--border)}
+  .sub-btn:last-child{border-right:none}
+  .sub-btn:hover{background:var(--surface);color:var(--ink)}
+  .sub-btn.active{background:var(--ink);color:var(--bg)}
+  .sub-panel{display:none}.sub-panel.active{display:block}
+  @media(max-width:700px){.grid2{grid-template-columns:1fr}.steps-row{flex-direction:column}.lifecycle-flow{flex-direction:column}.lf-step:not(:last-child)::after{content:'▼';right:auto;bottom:-10px;top:auto;left:50%;transform:translateX(-50%)}.lf-step:not(:last-child){border-right:none;border-bottom:2px solid var(--border)}.ph{grid-template-columns:1fr}.ph-es{border-left:none;border-top:1px solid var(--border)}.day{grid-template-columns:50px 1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div class="stamp">A1/B2 → Professional · Guía + Plan 60 días</div>
+  <h1><em>Technical English</em><br>for Developers</h1>
+  <p class="subtitle">// Java · Angular · Jenkins · SonarQube · CI/CD · Git — Todo lo que necesitas: gramática, frases, vocabulario, code reviews, meetings y plan día a día</p>
+</header>
+
+<!-- DIAGRAMA NIVEL — siempre visible -->
+<div class="job-box green">
+  <div class="job-header"><span class="tag tag-g">Tu nivel</span><span class="job-name">Con A1/B2 ya cubres el 90% del inglés técnico</span></div>
+  <p class="job-desc">El inglés de programación usa pocas estructuras gramaticales. Con <strong style="color:var(--accent2)">presente simple</strong> describes código, con <strong style="color:var(--accent3)">pasado simple</strong> haces standups, con <strong style="color:var(--accent)">modales</strong> haces reviews, y con <strong style="color:var(--yellow)">condicionales</strong> discutes arquitectura. No necesitas ser fluido — necesitas ser <strong>claro y preciso</strong>.</p>
+  <div class="lifecycle-flow">
+    <div class="lf-step"><div class="lf-num">A1</div><div class="lf-icon">📗</div><div class="lf-name" style="color:var(--accent2)">Present Simple</div><div class="lf-desc">Cómo funciona<br>el código</div></div>
+    <div class="lf-step"><div class="lf-num">A1</div><div class="lf-icon">📘</div><div class="lf-name" style="color:var(--accent3)">Past Simple</div><div class="lf-desc">Standups<br>Commits</div></div>
+    <div class="lf-step"><div class="lf-num">A2</div><div class="lf-icon">📙</div><div class="lf-name" style="color:var(--accent)">Modals</div><div class="lf-desc">should, could<br>need to, must</div></div>
+    <div class="lf-step"><div class="lf-num">B1</div><div class="lf-icon">📕</div><div class="lf-name" style="color:var(--yellow)">Conditionals</div><div class="lf-desc">If + present<br>would, might</div></div>
+    <div class="lf-step"><div class="lf-num">B1</div><div class="lf-icon">📓</div><div class="lf-name" style="color:var(--purple)">Passive</div><div class="lf-desc">Docs, tickets<br>commits</div></div>
+  </div>
+</div>
+
+<!-- TOGGLE PRINCIPAL -->
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setView('grammar')">📗 Gramática</button>
+  <button class="mode-btn" onclick="setView('phrases')">💬 Frases</button>
+  <button class="mode-btn" onclick="setView('vocab')">🔧 Vocabulario</button>
+  <button class="mode-btn" onclick="setView('reviews')">👀 Code Reviews</button>
+  <button class="mode-btn" onclick="setView('meetings')">📞 Meetings</button>
+  <button class="mode-btn" onclick="setView('plan')">📅 Plan 60 días</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 1 · GRAMÁTICA TÉCNICA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-grammar" class="mode-panel active">
+  <div class="sec-title" data-n="1">Present Simple — describir cómo funciona algo</div>
+  <div class="callout blue" style="margin-top:0"><strong>Estructura:</strong> Subject + <code>verb</code> + object — Tu herramienta principal para explicar código y arquitectura.</div>
+  <div class="ph"><div class="ph-en">This service <strong>handles</strong> authentication.</div><div class="ph-es">Este servicio gestiona la autenticación.</div></div>
+  <div class="ph"><div class="ph-en">The pipeline <strong>runs</strong> every time we push to main.</div><div class="ph-es">El pipeline se ejecuta cada vez que pusheamos a main.</div></div>
+  <div class="ph"><div class="ph-en">Angular <strong>uses</strong> dependency injection to provide services.</div><div class="ph-es">Angular usa inyección de dependencias para proveer servicios.</div></div>
+  <div class="ph"><div class="ph-en">SonarQube <strong>analyzes</strong> the code and <strong>reports</strong> code smells.</div><div class="ph-es">SonarQube analiza el código y reporta code smells.</div></div>
+  <div class="ph"><div class="ph-en">This method <strong>returns</strong> a list of users from the database.</div><div class="ph-es">Este método retorna una lista de usuarios de la base de datos.</div></div>
+  <div class="ph"><div class="ph-en">The @Component decorator <strong>defines</strong> the metadata for the class.</div><div class="ph-es">El decorador @Component define los metadatos de la clase.</div></div>
+  <div class="ph"><div class="ph-en">The controller <strong>receives</strong> the request and <strong>delegates</strong> to the service.</div><div class="ph-es">El controller recibe la request y delega al servicio.</div></div>
+
+  <div class="sec-title" data-n="2">Present Continuous — lo que pasa ahora mismo</div>
+  <div class="callout green" style="margin-top:0"><strong>Estructura:</strong> Subject + <code>am/is/are + verb-ing</code> — Para tareas en progreso y problemas actuales.</div>
+  <div class="ph"><div class="ph-en">I <strong>am working on</strong> the login feature.</div><div class="ph-es">Estoy trabajando en la funcionalidad de login.</div></div>
+  <div class="ph"><div class="ph-en">The build <strong>is failing</strong> because of a dependency conflict.</div><div class="ph-es">El build está fallando por un conflicto de dependencias.</div></div>
+  <div class="ph"><div class="ph-en">We <strong>are migrating</strong> from AngularJS to Angular 17.</div><div class="ph-es">Estamos migrando de AngularJS a Angular 17.</div></div>
+  <div class="ph"><div class="ph-en">Jenkins <strong>is running</strong> the integration tests right now.</div><div class="ph-es">Jenkins está ejecutando los tests de integración ahora.</div></div>
+  <div class="ph"><div class="ph-en">The team <strong>is reviewing</strong> the new architecture proposal.</div><div class="ph-es">El equipo está revisando la propuesta de nueva arquitectura.</div></div>
+
+  <div class="sec-title" data-n="3">Past Simple — standups, commits, postmortems</div>
+  <div class="callout orange" style="margin-top:0"><strong>Estructura:</strong> Subject + <code>verb-ed / irregular</code> — Para contar qué hiciste, qué pasó, qué cambió.</div>
+  <div class="ph"><div class="ph-en">I <strong>fixed</strong> the NullPointerException in UserService.</div><div class="ph-es">Arreglé el NullPointerException en UserService.</div></div>
+  <div class="ph"><div class="ph-en">The deployment <strong>failed</strong> because the image was too large.</div><div class="ph-es">El despliegue falló porque la imagen era muy grande.</div></div>
+  <div class="ph"><div class="ph-en">We <strong>refactored</strong> the component to use signals instead of observables.</div><div class="ph-es">Refactorizamos el componente para usar signals en vez de observables.</div></div>
+  <div class="ph"><div class="ph-en">I <strong>created</strong> a branch, <strong>pushed</strong> the changes and <strong>opened</strong> a PR.</div><div class="ph-es">Creé una rama, subí los cambios y abrí una PR.</div></div>
+  <div class="ph"><div class="ph-en">The test <strong>passed</strong> after I <strong>added</strong> the mock for the HTTP client.</div><div class="ph-es">El test pasó después de que añadí el mock del HTTP client.</div></div>
+  <div class="ph"><div class="ph-en">Yesterday I <strong>spent</strong> 3 hours debugging a race condition.</div><div class="ph-es">Ayer pasé 3 horas depurando una condición de carrera.</div></div>
+
+  <div class="sec-title" data-n="4">Modals — sugerir, pedir, obligar</div>
+  <div class="callout purple" style="margin-top:0"><strong>Esenciales para code reviews y discusiones técnicas.</strong> Usa <code>should/could</code> para ser educado, <code>must/need to</code> para obligaciones.</div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">should</span> sugerencia educada<br>We <strong>should</strong> add unit tests before merging this PR.</div><div class="ph-es">Deberíamos añadir tests unitarios antes de mergear esta PR.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-b">could</span> posibilidad / propuesta<br>We <strong>could</strong> use Redis as a cache to improve response time.</div><div class="ph-es">Podríamos usar Redis como caché para mejorar el tiempo de respuesta.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">need to</span> necesidad clara<br>We <strong>need to</strong> upgrade the Angular version before adding signals.</div><div class="ph-es">Necesitamos actualizar la versión de Angular antes de añadir signals.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">must</span> obligación fuerte<br>This endpoint <strong>must</strong> validate the JWT token before processing.</div><div class="ph-es">Este endpoint debe validar el token JWT antes de procesar.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-p">might</span> incertidumbre<br>The timeout <strong>might</strong> be causing the intermittent failures.</div><div class="ph-es">El timeout podría estar causando los fallos intermitentes.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">would</span> hipótesis<br>That <strong>would</strong> break backward compatibility with v2 clients.</div><div class="ph-es">Eso rompería la compatibilidad con clientes de la v2.</div></div>
+
+  <div class="sec-title" data-n="5">Conditionals — si esto pasa, entonces...</div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">If + present → future</span><br>If we add an index, the query <strong>will be</strong> 10x faster.</div><div class="ph-es">Si añadimos un índice, la query será 10x más rápida.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">If + present → present</span><br>If the user <strong>is not</strong> authenticated, the guard <strong>redirects</strong> to login.</div><div class="ph-es">Si el usuario no está autenticado, el guard redirige al login.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">If + past → would</span><br>If we used lazy loading, the initial bundle <strong>would be</strong> much smaller.</div><div class="ph-es">Si usáramos lazy loading, el bundle inicial sería mucho más pequeño.</div></div>
+
+  <div class="sec-title" data-n="6">Passive Voice — docs, tickets, commits</div>
+  <div class="callout yellow" style="margin-top:0"><strong>Muy común en documentación.</strong> El foco está en la acción, no en quién la hace. Patrón: <code>Object + is/was + past participle</code>.</div>
+  <div class="ph"><div class="ph-en">The request <strong>is validated</strong> by the middleware before reaching the controller.</div><div class="ph-es">La request es validada por el middleware antes de llegar al controller.</div></div>
+  <div class="ph"><div class="ph-en">Tests <strong>are executed</strong> automatically by Jenkins on every push.</div><div class="ph-es">Los tests son ejecutados automáticamente por Jenkins en cada push.</div></div>
+  <div class="ph"><div class="ph-en">The bug <strong>was introduced</strong> in commit <code>a3f29b1</code> and <strong>was fixed</strong> in <code>b7c44d2</code>.</div><div class="ph-es">El bug fue introducido en el commit a3f29b1 y arreglado en b7c44d2.</div></div>
+  <div class="ph"><div class="ph-en">The config <strong>was updated</strong> in the last release to support Java 21.</div><div class="ph-es">La config fue actualizada en el último release para soportar Java 21.</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 2 · FRASES DEL DÍA A DÍA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-phrases" class="mode-panel">
+  <div class="sec-title" data-n="1">Git & Branching</div>
+  <div class="ph"><div class="ph-en">I need to <strong>create a branch</strong> from develop.</div><div class="ph-es">Necesito crear una rama desde develop.</div></div>
+  <div class="ph"><div class="ph-en">Can you <strong>review my pull request</strong>? It's ready.</div><div class="ph-es">¿Puedes revisar mi pull request? Está lista.</div></div>
+  <div class="ph"><div class="ph-en">I'll <strong>rebase</strong> my branch <strong>on top of</strong> main before merging.</div><div class="ph-es">Voy a hacer rebase de mi rama sobre main antes de mergear.</div></div>
+  <div class="ph"><div class="ph-en">There's a <strong>merge conflict</strong> in the <code>pom.xml</code>. I'll resolve it.</div><div class="ph-es">Hay un conflicto de merge en el pom.xml. Lo resuelvo.</div></div>
+  <div class="ph"><div class="ph-en">I already pushed my changes. <strong>Ready for review</strong>.</div><div class="ph-es">Ya subí mis cambios. Listo para revisión.</div></div>
+  <div class="ph"><div class="ph-en">Let me <strong>cherry-pick</strong> that commit into the hotfix branch.</div><div class="ph-es">Déjame hacer cherry-pick de ese commit a la rama de hotfix.</div></div>
+  <div class="ph"><div class="ph-en">I'll <strong>squash</strong> my commits before merging to keep history clean.</div><div class="ph-es">Voy a hacer squash de mis commits antes de mergear.</div></div>
+
+  <div class="sec-title" data-n="2">Bugs & Debugging</div>
+  <div class="ph"><div class="ph-en">I found a bug <strong>in</strong> the payment module.</div><div class="ph-es">Encontré un bug en el módulo de pagos.</div></div>
+  <div class="ph"><div class="ph-en">It <strong>throws</strong> a NullPointerException when the list is empty.</div><div class="ph-es">Lanza NullPointerException cuando la lista está vacía.</div></div>
+  <div class="ph"><div class="ph-en">I can <strong>reproduce</strong> the issue <strong>by</strong> clicking submit twice quickly.</div><div class="ph-es">Puedo reproducir el problema haciendo click en submit dos veces rápido.</div></div>
+  <div class="ph"><div class="ph-en">The <strong>root cause</strong> was a missing null check in the mapper.</div><div class="ph-es">La causa raíz era un null check que faltaba en el mapper.</div></div>
+  <div class="ph"><div class="ph-en">It works <strong>on my local</strong> but fails <strong>in staging</strong>.</div><div class="ph-es">Funciona en mi local pero falla en staging.</div></div>
+  <div class="ph"><div class="ph-en">I <strong>added some logs</strong> to trace the issue in production.</div><div class="ph-es">Añadí logs para rastrear el problema en producción.</div></div>
+  <div class="ph"><div class="ph-en">The error only <strong>happens</strong> when the payload <strong>exceeds</strong> 1MB.</div><div class="ph-es">El error solo ocurre cuando el payload supera 1MB.</div></div>
+
+  <div class="sec-title" data-n="3">CI/CD & Jenkins & SonarQube</div>
+  <div class="ph"><div class="ph-en">The <strong>pipeline is broken</strong>. The build step failed with exit code 1.</div><div class="ph-es">El pipeline está roto. El paso de build falló con código 1.</div></div>
+  <div class="ph"><div class="ph-en">Jenkins <strong>triggered</strong> a build automatically after my push.</div><div class="ph-es">Jenkins disparó un build automáticamente después de mi push.</div></div>
+  <div class="ph"><div class="ph-en">The <strong>deployment to staging</strong> was successful. Ready for QA.</div><div class="ph-es">El despliegue a staging fue exitoso. Listo para QA.</div></div>
+  <div class="ph"><div class="ph-en">We need to <strong>roll back</strong> to the previous version immediately.</div><div class="ph-es">Necesitamos hacer rollback a la versión anterior ya.</div></div>
+  <div class="ph"><div class="ph-en">The <strong>quality gate</strong> in SonarQube is <strong>not passing</strong> — coverage is below 80%.</div><div class="ph-es">La quality gate en SonarQube no está pasando — el coverage está bajo 80%.</div></div>
+  <div class="ph"><div class="ph-en">Can you check <strong>why the tests are flaky</strong>? They pass locally but fail in CI.</div><div class="ph-es">¿Puedes ver por qué los tests son inestables? Pasan en local pero fallan en CI.</div></div>
+
+  <div class="sec-title" data-n="4">Angular & Frontend</div>
+  <div class="ph"><div class="ph-en">The component <strong>doesn't render</strong> because the observable has no subscribers.</div><div class="ph-es">El componente no renderiza porque el observable no tiene suscriptores.</div></div>
+  <div class="ph"><div class="ph-en">I'm going to <strong>lazy-load</strong> this module to reduce the initial bundle.</div><div class="ph-es">Voy a hacer lazy load de este módulo para reducir el bundle inicial.</div></div>
+  <div class="ph"><div class="ph-en">The <strong>change detection</strong> is triggering too often. Let's try OnPush.</div><div class="ph-es">La detección de cambios se dispara demasiado. Probemos OnPush.</div></div>
+  <div class="ph"><div class="ph-en">Can you <strong>extract this logic</strong> into a shared service?</div><div class="ph-es">¿Puedes extraer esta lógica a un servicio compartido?</div></div>
+
+  <div class="sec-title" data-n="5">Java & Backend</div>
+  <div class="ph"><div class="ph-en">This class <strong>implements</strong> the <code>UserRepository</code> interface.</div><div class="ph-es">Esta clase implementa la interfaz UserRepository.</div></div>
+  <div class="ph"><div class="ph-en">We should <strong>inject</strong> the dependency <strong>through</strong> the constructor, not field injection.</div><div class="ph-es">Deberíamos inyectar la dependencia por constructor, no por field.</div></div>
+  <div class="ph"><div class="ph-en">The endpoint <strong>returns</strong> a 404 when the resource <strong>is not found</strong>.</div><div class="ph-es">El endpoint devuelve 404 cuando no se encuentra el recurso.</div></div>
+  <div class="ph"><div class="ph-en">I need to <strong>handle</strong> the exception in the controller <strong>layer</strong>.</div><div class="ph-es">Necesito gestionar la excepción en la capa del controller.</div></div>
+  <div class="ph"><div class="ph-en">The <strong>DTO</strong> maps the entity to the API response <strong>without exposing</strong> internal fields.</div><div class="ph-es">El DTO mapea la entidad a la respuesta API sin exponer campos internos.</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 3 · VOCABULARIO CI/CD -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-vocab" class="mode-panel">
+  <div class="sec-title" data-n="1">Vocabulario esencial — pronunciación y ejemplo</div>
+  <table class="vtable">
+    <thead><tr><th>Término</th><th>Pronun.</th><th>Significado y ejemplo de uso</th></tr></thead>
+    <tbody>
+      <tr><td>Pipeline</td><td>/ˈpaɪp.laɪn/</td><td>Secuencia automatizada: build → test → deploy. <em>"The pipeline is green."</em></td></tr>
+      <tr><td>Build</td><td>/bɪld/</td><td>Compilar y empaquetar. Pasado: <strong>built</strong>. <em>"The build failed on step 3."</em></td></tr>
+      <tr><td>Deploy</td><td>/dɪˈplɔɪ/</td><td>Llevar código a un entorno. <em>"We deployed to prod at 18:00."</em></td></tr>
+      <tr><td>Rollback</td><td>/ˈroʊl.bæk/</td><td>Volver a la versión anterior. <em>"We had to rollback to v2.3."</em></td></tr>
+      <tr><td>Artifact</td><td>/ˈɑːr.tɪ.fækt/</td><td>Resultado del build: .jar, .war, Docker image. <em>"Artifact uploaded to Nexus."</em></td></tr>
+      <tr><td>Trigger</td><td>/ˈtrɪɡ.ər/</td><td>Lo que inicia el pipeline: push, merge, cron. <em>"A push triggered the build."</em></td></tr>
+      <tr><td>Quality Gate</td><td>/ˈkwɒl.ɪ.ti ɡeɪt/</td><td>Umbral de calidad en SonarQube. <em>"The quality gate failed."</em></td></tr>
+      <tr><td>Coverage</td><td>/ˈkʌv.ər.ɪdʒ/</td><td>% de código cubierto por tests. <em>"Coverage is at 78%."</em></td></tr>
+      <tr><td>Code Smell</td><td>/koʊd smel/</td><td>Código funcional pero mal escrito. <em>"SonarQube found 12 smells."</em></td></tr>
+      <tr><td>Flaky test</td><td>/ˈfleɪ.ki/</td><td>Test inestable (a veces pasa, a veces no). <em>"This test is flaky."</em></td></tr>
+      <tr><td>Hotfix</td><td>/ˈhɒt.fɪks/</td><td>Fix urgente directo a producción. <em>"We need a hotfix for login."</em></td></tr>
+      <tr><td>Merge</td><td>/mɜːrdʒ/</td><td>Unir ramas. <em>"I'll merge this PR after approval."</em></td></tr>
+      <tr><td>Rebase</td><td>/riːˈbeɪs/</td><td>Mover rama al último commit de otra. <em>"Please rebase on main."</em></td></tr>
+      <tr><td>Downstream</td><td>/daʊnˈstriːm/</td><td>Lo que viene después. <em>"The downstream job deploys."</em></td></tr>
+      <tr><td>Environment</td><td>/ɪnˈvaɪ.rən.mənt/</td><td>dev, staging, production. <em>"It fails only in staging."</em></td></tr>
+      <tr><td>Throughput</td><td>/ˈθruː.pʊt/</td><td>Cantidad procesada por tiempo. <em>"Throughput dropped after the change."</em></td></tr>
+      <tr><td>Latency</td><td>/ˈleɪ.tən.si/</td><td>Tiempo de respuesta. <em>"p99 latency is 200ms."</em></td></tr>
+      <tr><td>Boilerplate</td><td>/ˈbɔɪ.lər.pleɪt/</td><td>Código repetitivo necesario. <em>"Too much boilerplate in this config."</em></td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title" data-n="2">Verbos técnicos — presente → pasado</div>
+  <div class="repo-box o">
+    <div class="repo-icon">⚡</div>
+    <div>
+      <div class="repo-title" style="color:var(--accent)">Los 20 verbos que usarás cada día</div>
+      <div class="repo-desc">Memoriza estos con su pasado. Son el 80% de tus conversaciones técnicas.</div>
+      <div class="repo-chips">
+        <span class="rchip o">deploy → deployed</span><span class="rchip b">build → built</span><span class="rchip g">run → ran</span><span class="rchip o">fix → fixed</span><span class="rchip b">push → pushed</span><span class="rchip g">pull → pulled</span><span class="rchip y">merge → merged</span><span class="rchip o">trigger → triggered</span><span class="rchip b">throw → threw</span><span class="rchip g">return → returned</span><span class="rchip p">handle → handled</span><span class="rchip y">implement → implemented</span><span class="rchip o">refactor → refactored</span><span class="rchip b">inject → injected</span><span class="rchip g">subscribe → subscribed</span><span class="rchip p">fetch → fetched</span><span class="rchip o">override → overrode</span><span class="rchip b">debug → debugged</span><span class="rchip g">wrap → wrapped</span><span class="rchip y">break → broke</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">Pronunciación peligrosa — palabras trampa</div>
+  <div class="callout orange" style="margin-top:0"><strong>Estas palabras las decimos mal el 90% de los hispanohablantes.</strong> Practica la pronunciación correcta.</div>
+  <table class="vtable">
+    <thead><tr><th>Palabra</th><th>MAL ✗</th><th>BIEN ✓</th></tr></thead>
+    <tbody>
+      <tr><td>cache</td><td>/ka-che/</td><td><strong>/kæʃ/</strong> — rima con "cash"</td></tr>
+      <tr><td>queue</td><td>/ke-ue/</td><td><strong>/kjuː/</strong> — suena como "kiú"</td></tr>
+      <tr><td>height</td><td>/jeigt/</td><td><strong>/haɪt/</strong> — "jáit"</td></tr>
+      <tr><td>width</td><td>/guid/</td><td><strong>/wɪdθ/</strong> — "uídz"</td></tr>
+      <tr><td>image</td><td>/i-match/</td><td><strong>/ˈɪm.ɪdʒ/</strong> — "ímich"</td></tr>
+      <tr><td>null</td><td>/nul/</td><td><strong>/nʌl/</strong> — "nal" (como "cup")</td></tr>
+      <tr><td>debug</td><td>/de-bug/</td><td><strong>/diːˈbʌɡ/</strong> — "di-bag"</td></tr>
+      <tr><td>parameter</td><td>/pa-ra-me-ter/</td><td><strong>/pəˈræm.ɪ.tər/</strong> — "pa-RÁM-eter"</td></tr>
+      <tr><td>sudo</td><td>/su-do/</td><td><strong>/ˈsuː.duː/</strong> — "sú-du"</td></tr>
+      <tr><td>schema</td><td>/es-que-ma/</td><td><strong>/ˈskiː.mə/</strong> — "skí-ma"</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 4 · CODE REVIEWS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-reviews" class="mode-panel">
+  <div class="sec-title" data-n="1">Dar feedback — tú revisas una PR</div>
+  <div class="callout green" style="margin-top:0"><strong>Regla de oro:</strong> Empieza positivo → sugiere con <code>could/should</code> → pide cambios solo si es necesario. Nunca uses <code>must</code> salvo para seguridad.</div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">Aprobar</span><br>Looks good to me! <strong>LGTM</strong>. Approved.</div><div class="ph-es">¡Me parece bien! Aprobado.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">Elogiar</span><br>Nice approach! I like how you <strong>extracted</strong> the logic into a service.</div><div class="ph-es">Buen enfoque. Me gusta cómo extrajiste la lógica a un servicio.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">Sugerir</span><br>What do you think about <strong>using a constant</strong> instead of a magic number?</div><div class="ph-es">¿Qué te parece usar una constante en vez de un número mágico?</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">Sugerir</span><br>Could we <strong>add a null check</strong> before calling this method?</div><div class="ph-es">¿Podríamos añadir un null check antes de llamar a este método?</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">Sugerir</span><br>I think this <strong>could be simplified</strong> by using Optional.ofNullable().</div><div class="ph-es">Creo que esto podría simplificarse usando Optional.ofNullable().</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">Pedir cambio</span><br>This method is doing too much. <strong>Should we split it</strong> into smaller ones?</div><div class="ph-es">Este método hace demasiado. ¿Deberíamos dividirlo?</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">Bug potencial</span><br>This might <strong>cause a memory leak</strong> if we don't unsubscribe here.</div><div class="ph-es">Esto podría causar un memory leak si no nos desuscribimos.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">Tests</span><br>We <strong>need tests</strong> for this new feature before merging.</div><div class="ph-es">Necesitamos tests para esta feature antes de mergear.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-b">Pregunta</span><br>I'm not sure I understand this logic. <strong>Could you add a comment</strong> explaining why?</div><div class="ph-es">No estoy seguro de entender esta lógica. ¿Podrías añadir un comentario?</div></div>
+
+  <div class="sec-title" data-n="2">Recibir feedback — te revisan a ti</div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-b">Aceptar</span><br>Good point! I'll <strong>fix that</strong> in the next commit.</div><div class="ph-es">Buena observación. Lo arreglo en el siguiente commit.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-b">Aceptar</span><br>You're right, I <strong>missed that edge case</strong>. Updating now.</div><div class="ph-es">Tienes razón, se me pasó ese edge case. Actualizando.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-p">Explicar</span><br>I did it this way <strong>because</strong> the API requires the full object, not a partial one.</div><div class="ph-es">Lo hice así porque la API requiere el objeto completo.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-p">Defender</span><br>That's intentional — the <strong>spec says</strong> we should return 204 here, not 200.</div><div class="ph-es">Es intencionado — la spec dice que debemos retornar 204, no 200.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">Preguntar</span><br>Do you mean I should <strong>move this to the service layer</strong>?</div><div class="ph-es">¿Quieres decir que debería mover esto a la capa de servicio?</div></div>
+
+  <div class="sec-title" data-n="3">Commit messages — convención</div>
+  <div class="callout blue"><strong>Patrón universal:</strong> <code>type(scope): description in imperative</code> — Siempre en imperativo, como dando una orden al código.<br><br>
+  <code>fix(auth): validate token expiration before refresh</code><br>
+  <code>feat(catalog): add product search by category endpoint</code><br>
+  <code>refactor(checkout): extract payment logic into PaymentService</code><br>
+  <code>chore(ci): update Jenkins pipeline to use JDK 21</code><br>
+  <code>test(users): add unit tests for UserService edge cases</code><br>
+  <code>docs(readme): update setup instructions for local dev</code></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 5 · MEETINGS & STANDUPS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-meetings" class="mode-panel">
+  <div class="sec-title" data-n="1">Daily Standup — la estructura mágica</div>
+  <div class="job-box blue">
+    <div class="job-header"><span class="tag tag-b">Daily</span><span class="job-name">Las 3 frases de tu standup</span></div>
+    <div class="seq-box" style="margin-bottom:0"><span style="color:var(--accent3);font-weight:700">Yesterday</span> I + past simple (lo que hiciste)
+<span style="color:var(--accent2);font-weight:700">Today</span> I'm going to + infinitive (lo que harás)
+<span style="color:var(--accent);font-weight:700">Blockers</span> I'm blocked by / waiting for + noun (si tienes)
+                No blockers. (si no tienes)</div>
+  </div>
+  <div class="callout green"><strong>Ejemplo fluido:</strong><br>"Yesterday I <strong>finished</strong> the login component and <strong>opened</strong> a PR. Today I'm going to <strong>start working on</strong> the user profile page. No blockers."</div>
+  <div class="callout orange"><strong>Ejemplo con blocker:</strong><br>"Yesterday I <strong>worked on</strong> the payment integration but I <strong>got stuck</strong> with the API response format. Today I'm going to <strong>continue debugging</strong> the issue. I'm <strong>blocked by</strong> the API team — I need the updated documentation."</div>
+
+  <div class="sec-title" data-n="2">Planning, Retro & Estimaciones</div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-b">Estimar</span><br>I think this is a <strong>3-pointer</strong>. It's straightforward, just a CRUD.</div><div class="ph-es">Creo que es de 3 puntos. Es directo, solo un CRUD.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">Dudar</span><br>I'm not sure about the complexity. <strong>Can we break it down</strong> into subtasks?</div><div class="ph-es">No estoy seguro de la complejidad. ¿Podemos partirlo en subtareas?</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">Dependencia</span><br>This story <strong>depends on</strong> the API being ready first.</div><div class="ph-es">Esta historia depende de que la API esté lista primero.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">Coger tarea</span><br>I can <strong>take</strong> that story. I'll start tomorrow.</div><div class="ph-es">Puedo coger esa historia. Empiezo mañana.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">Retro +</span><br>The deployment process <strong>was much smoother</strong> this sprint.</div><div class="ph-es">El proceso de deploy fue mucho más fluido este sprint.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">Retro -</span><br>We should <strong>improve our code review turnaround</strong> time.</div><div class="ph-es">Deberíamos mejorar el tiempo de respuesta en reviews.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-b">Proponer</span><br>What if we <strong>set a 24-hour SLA</strong> for reviewing PRs?</div><div class="ph-es">¿Y si ponemos un SLA de 24h para revisar PRs?</div></div>
+
+  <div class="sec-title" data-n="3">Frases comodín para cualquier meeting</div>
+  <div class="ph"><div class="ph-en">Can you <strong>share your screen</strong>, please?</div><div class="ph-es">¿Puedes compartir tu pantalla?</div></div>
+  <div class="ph"><div class="ph-en">Sorry, I didn't catch that. <strong>Could you repeat</strong>?</div><div class="ph-es">Perdona, no lo pillé. ¿Podrías repetir?</div></div>
+  <div class="ph"><div class="ph-en"><strong>Let me jump in</strong> here — I have some context on this.</div><div class="ph-es">Déjame intervenir — tengo contexto sobre esto.</div></div>
+  <div class="ph"><div class="ph-en">I'll <strong>follow up</strong> on Slack with more details.</div><div class="ph-es">Hago follow up en Slack con más detalles.</div></div>
+  <div class="ph"><div class="ph-en"><strong>Makes sense</strong>. I agree with that approach.</div><div class="ph-es">Tiene sentido. Estoy de acuerdo con ese enfoque.</div></div>
+  <div class="ph"><div class="ph-en">I'm going to <strong>drop off</strong>. I have another meeting. Thanks everyone!</div><div class="ph-es">Me voy a salir. Tengo otra reunión. ¡Gracias a todos!</div></div>
+  <div class="ph"><div class="ph-en">Sorry, you're <strong>breaking up</strong>. Can you say that again?</div><div class="ph-es">Perdona, se corta. ¿Puedes repetirlo?</div></div>
+  <div class="ph"><div class="ph-en"><strong>Just to clarify</strong> — are we talking about the staging environment?</div><div class="ph-es">Solo para aclarar — ¿estamos hablando del entorno de staging?</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 6 · PLAN 60 DÍAS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-plan" class="mode-panel">
+
+  <div class="callout green" style="margin-top:0;margin-bottom:16px"><strong>Principio:</strong> No estudies gramática abstracta. Todo con material técnico real. 30 min/día, lunes a viernes. Haz click en cada semana para ver los 5 días.</div>
+
+  <div class="lifecycle-flow" style="margin-bottom:16px">
+    <div class="lf-step"><div class="lf-num">Sem 1-4</div><div class="lf-icon">📗</div><div class="lf-name" style="color:var(--accent)">Reading</div><div class="lf-desc">Vocabulario<br>Docs técnicos</div></div>
+    <div class="lf-step"><div class="lf-num">Sem 5-8</div><div class="lf-icon">🎧</div><div class="lf-name" style="color:var(--accent3)">Listening</div><div class="lf-desc">Vídeos, podcasts<br>Comprensión</div></div>
+    <div class="lf-step"><div class="lf-num">Sem 9-12</div><div class="lf-icon">🗣️</div><div class="lf-name" style="color:var(--accent2)">Speaking</div><div class="lf-desc">Producir, escribir<br>Dailies, PRs</div></div>
+  </div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;font-size:10px">
+    <span class="day-time dt-r">READ</span> Leer docs
+    <span class="day-time dt-l">LISTEN</span> Escuchar
+    <span class="day-time dt-w">WRITE</span> Escribir
+    <span class="day-time dt-s">SPEAK</span> Hablar
+    <span class="day-time dt-p">REVIEW</span> Repasar
+  </div>
+
+  <div class="sub-toggle">
+    <button class="sub-btn active" onclick="setSub('sm1')">Mes 1 · Reading</button>
+    <button class="sub-btn" onclick="setSub('sm2')">Mes 2 · Listening</button>
+    <button class="sub-btn" onclick="setSub('sm3')">Mes 3 · Speaking</button>
+  </div>
+
+  <!-- ── MES 1 ── -->
+  <div id="sub-sm1" class="sub-panel active">
+  <div class="callout orange" style="margin-top:0"><strong>Objetivo mes 1:</strong> Leer docs en inglés sin traductor. Base de 120+ términos técnicos. Entorno completo en inglés.</div>
+
+  <div class="week-box m1 open" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-o">S1</span><span class="week-num">Setup + primeras palabras</span><span class="week-goal">Meta: 30 palabras en Anki</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">1</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> Setup day</div><div class="day-desc">Cambia IDE + SO + móvil a inglés. Instala <strong>Anki</strong>. Crea deck "Tech English". Añade 10 palabras: <em>pipeline, build, deploy, rollback, artifact, trigger, merge, rebase, hotfix, environment</em>.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">2</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> Angular docs</div><div class="day-desc">Lee "What is Angular?" en angular.dev/overview. Sin traducir. Anki +5: <em>framework, component, template, directive, module</em>.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">3</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> Spring Boot docs</div><div class="day-desc">Lee "Getting Started" en Spring Boot reference. Anki +5: <em>dependency, annotation, bean, controller, endpoint</em>.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">4</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> README de GitHub</div><div class="day-desc">Lee github.com/angular/angular README completo. Anki +5: <em>repository, contributor, issue, branch, release</em>.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">5</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-p">REVIEW</span> Repaso semanal</div><div class="day-desc">Repasa 30 tarjetas Anki. Lee en voz alta las frases de "Present Simple" de la pestaña Gramática. Di 3 frases originales.</div></div></div>
+  </div></div>
+
+  <div class="week-box m1" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-o">S2</span><span class="week-num">Git vocab + Stack Overflow</span><span class="week-goal">Meta: 60 palabras</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">6</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> Git docs</div><div class="day-desc">Lee git-scm.com/book capítulo 2. Anki +6: <em>commit, push, pull, fetch, checkout, stash</em>.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">7</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> Stack Overflow</div><div class="day-desc">Busca un error Java que tuvieras esta semana en SO en inglés. Lee pregunta + 2 respuestas. Anki +5 palabras.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">8</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> PR comments</div><div class="day-desc">github.com/spring-projects/spring-boot/pulls — abre 3 PRs cerradas. Lee comentarios. Apunta frases: "LGTM", "Could you...", "What about...".</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">9</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> Jenkins pipeline syntax</div><div class="day-desc">Lee jenkins.io/doc pipeline syntax. Anki +8: <em>stage, agent, steps, post, when, node, script, parallel</em>.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">10</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-p">REVIEW</span> Repaso + pasado</div><div class="day-desc">Repasa 60 Anki. Lee "Past Simple" de Gramática. Escribe 5 frases en pasado sobre tu semana real.</div></div></div>
+  </div></div>
+
+  <div class="week-box m1" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-o">S3</span><span class="week-num">SonarQube + errores en inglés</span><span class="week-goal">Meta: 90 palabras + primer commit EN</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">11</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> SonarQube rules</div><div class="day-desc">rules.sonarsource.com/java — lee 5 reglas de bugs. Anki +5: <em>code smell, vulnerability, coverage, technical debt, duplicated</em>.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">12</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> Error messages</div><div class="day-desc">Recoge 5 errores de tu IDE/logs de hoy. Léelos en inglés sin buscar. Anki: las palabras que no entiendas.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">13</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-w">WRITE</span> Primer día de commits EN</div><div class="day-desc">TODOS tus commits de hoy en inglés. Patrón: <code>fix(scope): imperative</code>. Lee "Commit messages" en Code Reviews.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">14</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> Angular error guide</div><div class="day-desc">angular.dev/errors — busca 3 errores tuyos. Anki +5: <em>expression, change detection, lifecycle, subscription, token</em>.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">15</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-p">REVIEW</span> Repaso + modales</div><div class="day-desc">Repasa 90 Anki. Lee "Modals" de Gramática. Escribe 5 sugerencias de code review.</div></div></div>
+  </div></div>
+
+  <div class="week-box m1" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-o">S4</span><span class="week-num">Docker/K8s + cierre mes 1</span><span class="week-goal">Meta: 120 palabras · Checkpoint</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">16</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> Dockerfile reference</div><div class="day-desc">docs.docker.com/reference/dockerfile. Anki +8: <em>image, container, layer, volume, expose, registry, tag, context</em>.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">17</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> K8s concepts</div><div class="day-desc">kubernetes.io/docs/concepts. Anki +8: <em>pod, deployment, service, namespace, node, cluster, replica, ingress</em>.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">18</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-w">WRITE</span> Jira ticket en inglés</div><div class="day-desc">Escribe un ticket completo en inglés: título, descripción, acceptance criteria. Usa pasiva.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">19</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-r">READ</span> Artículo Dev.to</div><div class="day-desc">Lee un artículo completo en Dev.to sobre tu stack. Apunta frases útiles, no solo palabras.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">20</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-p">REVIEW</span> ★ Checkpoint mes 1</div><div class="day-desc">Repasa 120+ Anki. Escribe 5 frases resumen de lo aprendido. <strong>Test:</strong> ¿Puedes leer un README sin Google Translate? → Sí = mes 2.</div></div></div>
+  </div></div>
+  </div>
+
+  <!-- ── MES 2 ── -->
+  <div id="sub-sm2" class="sub-panel">
+  <div class="callout blue" style="margin-top:0"><strong>Objetivo mes 2:</strong> Entender el 70% de una charla técnica. Seguir una daily sin perderte. Shadowing para mejorar pronunciación.</div>
+
+  <div class="week-box m2 open" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-b">S5</span><span class="week-num">Primeros vídeos técnicos</span><span class="week-goal">Meta: Vídeos cortos con subs EN</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">21</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> Fireship — Angular in 100s</div><div class="day-desc">YouTube "Angular in 100 Seconds". 2 veces: 1ª con subs EN, 2ª sin subs. Anki +5 palabras que escuches.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">22</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> Fireship — Docker in 100s</div><div class="day-desc">Mismo ejercicio: 2 visionados. Pausa y repite frases difíciles. Anki +5.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">23</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> Fireship — CI/CD in 100s</div><div class="day-desc">2 visionados. Después escribe 3 frases en inglés resumiendo lo que entendiste.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">24</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> Conferencia 15 min</div><div class="day-desc">YouTube "ng-conf" o "Devoxx Spring Boot". 15 min con subs EN. Anota 3 frases que quieras usar.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">25</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Primer shadowing</div><div class="day-desc">Pon el vídeo Fireship Angular. Haz shadowing: repite lo que dice 1 segundo después. Imita ritmo y entonación.</div></div></div>
+  </div></div>
+
+  <div class="week-box m2" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-b">S6</span><span class="week-num">Podcasts + vídeos largos</span><span class="week-goal">Meta: 20 min seguidos</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">26</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> Podcast Syntax.fm</div><div class="day-desc">Episodio "Hasty Treat" (15 min). Mientras caminas. Capta ideas principales, no cada palabra.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">27</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> YouTube Java Brains</div><div class="day-desc">"Java Brains Spring Boot" 20 min con subs EN. Habla despacio y claro — perfecto para tu nivel.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">28</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Shadowing podcast</div><div class="day-desc">5 min del podcast de ayer con shadowing. Grábate con el móvil. Para cada 30 seg si hace falta.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">29</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> Conferencia 25 min</div><div class="day-desc">"Devoxx Angular" o "SpringOne". 25 min sin parar. Al acabar: 5 bullet points en inglés de lo que entendiste.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">30</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-p">REVIEW</span> Escúchate</div><div class="day-desc">Escucha tu grabación de shadowing. Compara con el original. Tus palabras débiles → Anki con audio.</div></div></div>
+  </div></div>
+
+  <div class="week-box m2" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-b">S7</span><span class="week-num">Daily simulado + escucha activa</span><span class="week-goal">Meta: Simular una daily</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">31</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Daily simulado #1</div><div class="day-desc">Lee "Meetings" de esta guía. Practica tu daily en voz alta: yesterday / today / blockers. Grábate.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">32</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> Mock standup YouTube</div><div class="day-desc">Busca "daily standup example". Escucha cómo otros devs lo hacen. Apunta sus frases plantilla.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">33</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Daily simulado #2</div><div class="day-desc">Daily EN antes de trabajar. Sobre lo que hiciste AYER de verdad. Cronométrate: objetivo < 45 seg.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">34</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> Podcast 20 min</div><div class="day-desc">The Changelog o Java Pub House. 20 min. Al final: 3 ideas + 3 palabras nuevas.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">35</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-p">REVIEW</span> Compara dailies</div><div class="day-desc">Escucha tus grabaciones de lunes y miércoles. ¿Mejoró? Lee 10 frases random de "Frases" en voz alta.</div></div></div>
+  </div></div>
+
+  <div class="week-box m2" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-b">S8</span><span class="week-num">Charla completa + checkpoint</span><span class="week-goal">Meta: 30 min de charla al 70% · Checkpoint</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">36</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> Charla 30 min</div><div class="day-desc">Charla ng-conf o Devoxx de 30 min. Subs EN. Sin parar. ¿Entiendes la idea principal?</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">37</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Explica la charla</div><div class="day-desc">En voz alta, en inglés, explica de qué iba en 1 minuto. Grábate.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">38</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-l">LISTEN</span> Misma charla SIN subs</div><div class="day-desc">Repite la charla del lunes AHORA SIN subs. ¿Mejor que la primera vez?</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">39</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Daily con blocker</div><div class="day-desc">Daily en inglés con blocker: "I'm blocked by... because...". Practica pedir ayuda.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">40</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-p">REVIEW</span> ★ Checkpoint mes 2</div><div class="day-desc">Pon un vídeo nuevo de 10 min SIN subs. <strong>Test:</strong> ¿Entiendes el 70%? → Sí = mes 3.</div></div></div>
+  </div></div>
+  </div>
+
+  <!-- ── MES 3 ── -->
+  <div id="sub-sm3" class="sub-panel">
+  <div class="callout green" style="margin-top:0"><strong>Objetivo mes 3:</strong> Escribir PRs y code reviews en inglés. Hacer daily sin guión. Mantener conversación técnica de 5 min.</div>
+
+  <div class="week-box m3 open" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-g">S9</span><span class="week-num">PRs + commits en inglés</span><span class="week-goal">Meta: Todo lo escrito en EN</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">41</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-w">WRITE</span> Commits EN todo el día</div><div class="day-desc">A partir de hoy: TODOS tus commits en inglés. Para siempre. Usa la pestaña "Code Reviews" como referencia.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">42</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-w">WRITE</span> PR description EN</div><div class="day-desc">Escribe una PR real en inglés: qué, por qué, cómo testearlo. "This PR adds/fixes... Testing: ..."</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">43</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-w">WRITE</span> Code review EN</div><div class="day-desc">Revisa una PR y escribe comentarios en inglés. Usa frases de "Code Reviews": "Nice approach!", "Could we...".</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">44</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Daily real attempt</div><div class="day-desc">Haz tu daily de hoy en inglés (aunque sea solo para ti antes de la reunión). Máx 1 minuto.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">45</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-p">REVIEW</span> Autoevaluación</div><div class="day-desc">Lee tu PR y review de esta semana. ¿Suena natural? Compara con PRs de repos open source.</div></div></div>
+  </div></div>
+
+  <div class="week-box m3" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-g">S10</span><span class="week-num">Conversación + pair programming</span><span class="week-goal">Meta: 5 min hablando en inglés</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">46</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Explica tu código</div><div class="day-desc">Abre algo de hoy y explícalo en voz alta: "This method takes... First it calls... Then it returns..."</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">47</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-w">WRITE</span> Documenta un servicio</div><div class="day-desc">Escribe README o Javadoc en inglés: qué hace, endpoints, parámetros, respuestas.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">48</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Pair simulado</div><div class="day-desc">Habla en voz alta MIENTRAS programas 15 min: "Now I'm creating a service... I need to inject..." Grábate.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">49</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Practica con IA</div><div class="day-desc">Dile a Claude: "Let's do a technical interview about Angular/Java. Ask me questions." Responde en inglés.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">50</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-p">REVIEW</span> Escúchate + mejora</div><div class="day-desc">Escucha grabación del miércoles. Lista 3 cosas a mejorar. Repasa pronunciación (pestaña Vocabulario).</div></div></div>
+  </div></div>
+
+  <div class="week-box m3" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-g">S11</span><span class="week-num">Reuniones + presentaciones</span><span class="week-goal">Meta: Participar en meetings</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">51</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Retro simulada</div><div class="day-desc">Di en voz alta: 1 positivo, 1 mejora, 1 propuesta. Usa frases de "Meetings".</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">52</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-w">WRITE</span> Email técnico EN</div><div class="day-desc">Escribe un email pidiendo algo a otro equipo: "Hi team, we need... Could you... Thanks."</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">53</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Presenta un bug</div><div class="day-desc">Explica un bug resuelto: "The issue was... Root cause was... I fixed it by..." — 2 min.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">54</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Estima un ticket</div><div class="day-desc">Lee un Jira y estímalo en voz alta: "I think this is a 5-pointer because... It depends on..."</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">55</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Maratón de práctica</div><div class="day-desc">Todo seguido sin parar: 1) Daily, 2) Explica componente, 3) Sugiere en review, 4) Estima ticket. Grábate.</div></div></div>
+  </div></div>
+
+  <div class="week-box m3" onclick="toggleWeek(this)"><div class="week-header"><span class="tag tag-g">S12</span><span class="week-num">Inmersión total + test final</span><span class="week-goal">Meta: Un día completo en EN · Graduación</span><span class="week-arrow">▼</span></div>
+  <div class="week-body">
+    <div class="day"><div class="day-label"><div class="day-num">56</div>Lu</div><div class="day-content"><div class="day-title"><span class="day-time dt-w">WRITE</span> Día inglés: escritura</div><div class="day-desc">HOY todo escrito en inglés: commits, Slack, comentarios de código, notas. Sin excepciones.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">57</div>Ma</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Día inglés: pensamiento</div><div class="day-desc">Piensa en inglés mientras programas. Monólogo interno: "Okay, now I need to... Let me check..."</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">58</div>Mi</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Pair real en inglés</div><div class="day-desc">Pair programming EN con compañero, amigo o vía CodeBuddies.org. Si imposible: 15 min con Claude.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">59</div>Ju</div><div class="day-content"><div class="day-title"><span class="day-time dt-s">SPEAK</span> Mini presentación</div><div class="day-desc">Graba una presentación de 3 min sobre tu proyecto: feature, decisión de arquitectura o bug interesante.</div></div></div>
+    <div class="day"><div class="day-label"><div class="day-num">60</div>Vi</div><div class="day-content"><div class="day-title"><span class="day-time dt-p">REVIEW</span> ★ TEST FINAL</div><div class="day-desc">Repasa 200+ Anki. Escucha tu presentación. Compara tu daily del día 31 con el de hoy. Escribe 10 frases resumen de tu progreso EN INGLÉS. <strong>¡Lo has conseguido!</strong></div></div></div>
+  </div></div>
+  </div>
+
+  <!-- 5 REGLAS -->
+  <div class="repo-box o" style="margin-top:24px">
+    <div class="repo-icon">🎯</div>
+    <div>
+      <div class="repo-title" style="color:var(--accent)">Las 5 reglas de oro — haz esto y funciona</div>
+      <div class="repo-desc" style="line-height:2.1">
+        <strong style="color:var(--accent)">1.</strong> Cambia TODO tu entorno a inglés: IDE, SO, móvil, Stack Overflow.<br>
+        <strong style="color:var(--accent3)">2.</strong> No traduzcas mentalmente. Piensa directo: <em>"this method returns a list"</em>.<br>
+        <strong style="color:var(--accent2)">3.</strong> Prioriza vocabulario técnico sobre gramática perfecta.<br>
+        <strong style="color:var(--yellow)">4.</strong> Grábate hablando. Escúchate. Es incómodo pero funciona.<br>
+        <strong style="color:var(--purple)">5.</strong> Consistencia > intensidad. 30 min/día supera a 3h los sábados.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+<script>
+function setView(n){document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).classList.add('active');event.target.classList.add('active')}
+function setSub(n){document.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.sub-btn').forEach(b=>b.classList.remove('active'));document.getElementById('sub-'+n).classList.add('active');event.target.classList.add('active')}
+function toggleWeek(el){el.classList.toggle('open')}
+</script>
+</body>
+</html>

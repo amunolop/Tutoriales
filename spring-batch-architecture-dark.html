@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Batch — Arquitectura</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #7c3aed;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --chunk-bg: #0f1f35;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID NOISE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* HEADER */
+  header {
+    margin-bottom: 60px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+    border-radius: 2px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    animation: fadeIn 0.6s ease both;
+  }
+
+  h1 {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.05;
+    animation: fadeIn 0.6s 0.1s ease both;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 15px;
+    font-family: 'JetBrains Mono', monospace;
+    animation: fadeIn 0.6s 0.2s ease both;
+  }
+
+  /* SECTION LABELS */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  /* ────────────────────────────────────
+     NIVEL 1: JOB
+  ──────────────────────────────────── */
+  .job-wrapper {
+    margin-bottom: 40px;
+  }
+
+  .job-box {
+    background: linear-gradient(135deg, #0f2744 0%, #0a1628 100%);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 28px 32px 32px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(0,212,255,0.08), inset 0 1px 0 rgba(0,212,255,0.15);
+    animation: fadeUp 0.5s 0.1s ease both;
+  }
+
+  .job-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .tag-job   { background: rgba(0,212,255,0.15); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+  .tag-step  { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+  .tag-chunk { background: rgba(16,185,129,0.12); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .tag-repo  { background: rgba(245,158,11,0.12); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
+  .tag-r     { background: rgba(0,212,255,0.1); color: #67e8f9; border: 1px solid rgba(0,212,255,0.2); }
+  .tag-p     { background: rgba(167,139,250,0.1); color: #c4b5fd; border: 1px solid rgba(167,139,250,0.2); }
+  .tag-w     { background: rgba(16,185,129,0.1); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+
+  .job-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .job-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    padding-left: 2px;
+  }
+
+  /* ────────────────────────────────────
+     NIVEL 2: STEPS
+  ──────────────────────────────────── */
+  .steps-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .step-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 32px;
+    min-width: 32px;
+    color: var(--muted);
+  }
+
+  .arrow-right {
+    font-size: 20px;
+    color: var(--accent3);
+    animation: pulse 2s ease infinite;
+  }
+
+  .step-box {
+    flex: 1;
+    min-width: 220px;
+    background: #0d1829;
+    border: 1px solid rgba(124,58,237,0.4);
+    border-radius: 10px;
+    padding: 20px 20px 24px;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+
+  .step-box:hover {
+    border-color: #7c3aed;
+    box-shadow: 0 0 20px rgba(124,58,237,0.15);
+  }
+
+  .step-box.active {
+    border-color: #7c3aed;
+    box-shadow: 0 0 24px rgba(124,58,237,0.2);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    width: 20px;
+    text-align: right;
+  }
+
+  .step-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #c4b5fd;
+  }
+
+  .step-type-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    margin-left: auto;
+  }
+  .type-chunk { background: rgba(16,185,129,0.12); color: var(--green); }
+  .type-tasklet { background: rgba(245,158,11,0.12); color: var(--yellow); }
+
+  .step-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin: 8px 0 16px 30px;
+    line-height: 1.6;
+  }
+
+  /* ────────────────────────────────────
+     NIVEL 3: CHUNK
+  ──────────────────────────────────── */
+  .chunk-block {
+    margin: 0 -4px;
+    background: var(--chunk-bg);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+
+  .chunk-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chunk-title::after {
+    content: 'size=' attr(data-size);
+    color: var(--muted);
+    font-size: 9px;
+  }
+
+  .chunk-flow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .chunk-node {
+    flex: 1;
+    border-radius: 6px;
+    padding: 10px 8px;
+    text-align: center;
+    position: relative;
+  }
+
+  .cn-reader { background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.2); }
+  .cn-processor { background: rgba(167,139,250,0.07); border: 1px solid rgba(167,139,250,0.2); }
+  .cn-writer { background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.2); }
+
+  .cn-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .cn-reader .cn-label   { color: #67e8f9; }
+  .cn-processor .cn-label { color: #c4b5fd; }
+  .cn-writer .cn-label   { color: #6ee7b7; }
+
+  .cn-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .cn-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .mini-arrow {
+    color: var(--muted);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* ────────────────────────────────────
+     TRANSACTION CALLOUT
+  ──────────────────────────────────── */
+  .tx-bar {
+    margin-top: 10px;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(16,185,129,0) 0%, rgba(16,185,129,0.5) 30%, rgba(16,185,129,0.5) 70%, rgba(16,185,129,0) 100%);
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .tx-label {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--green);
+    margin-top: 5px;
+    opacity: 0.7;
+  }
+
+  /* ────────────────────────────────────
+     JOB REPOSITORY
+  ──────────────────────────────────── */
+  .repo-section {
+    margin: 40px 0;
+    animation: fadeUp 0.5s 0.4s ease both;
+  }
+
+  .repo-box {
+    background: linear-gradient(135deg, #1a1200 0%, #120d00 100%);
+    border: 1px solid rgba(245,158,11,0.35);
+    border-radius: 10px;
+    padding: 20px 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    box-shadow: 0 0 30px rgba(245,158,11,0.05);
+  }
+
+  .repo-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .repo-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--yellow);
+    margin-bottom: 6px;
+  }
+
+  .repo-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 600px;
+  }
+
+  .repo-tables {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .db-table {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2);
+    color: #fbbf24;
+  }
+
+  /* ────────────────────────────────────
+     LIFECYCLE FLOW
+  ──────────────────────────────────── */
+  .lifecycle-section {
+    margin: 40px 0;
+    animation: fadeUp 0.5s 0.5s ease both;
+  }
+
+  .lifecycle-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .lf-step {
+    flex: 1;
+    padding: 20px 16px;
+    text-align: center;
+    position: relative;
+    cursor: default;
+    transition: background 0.2s;
+    min-width: 0;
+  }
+
+  .lf-step:not(:last-child)::after {
+    content: '▶';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 12px;
+    z-index: 2;
+  }
+
+  .lf-step:hover { background: rgba(255,255,255,0.03); }
+
+  .lf-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .lf-icon { font-size: 22px; margin-bottom: 8px; }
+
+  .lf-name {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .lf-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .lf-1 { border-right: 1px solid var(--border); }
+  .lf-2 { border-right: 1px solid var(--border); }
+  .lf-3 { border-right: 1px solid var(--border); }
+  .lf-4 { border-right: 1px solid var(--border); }
+  .lf-5 { border-right: 1px solid var(--border); }
+
+  /* ────────────────────────────────────
+     CODE SNIPPET PANEL
+  ──────────────────────────────────── */
+  .code-section {
+    margin: 40px 0;
+    animation: fadeUp 0.5s 0.6s ease both;
+  }
+
+  .code-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+
+  .code-tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 10px 18px;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+
+  .code-tab:hover { color: var(--text); }
+  .code-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .code-panel {
+    display: none;
+    background: #080d18;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 24px;
+    overflow-x: auto;
+  }
+  .code-panel.active { display: block; }
+
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #e2e8f0;
+    white-space: pre;
+  }
+
+  .kw { color: #f472b6; }
+  .an { color: #fb923c; }
+  .cl { color: #67e8f9; }
+  .st { color: #86efac; }
+  .cm { color: #475569; font-style: italic; }
+  .nu { color: #c084fc; }
+
+  /* ────────────────────────────────────
+     TOOLTIP
+  ──────────────────────────────────── */
+  .tooltip-trigger {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip-content {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e293b;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text);
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .tooltip-trigger:hover .tooltip-content { display: block; }
+
+  /* ────────────────────────────────────
+     ANIMATIONS
+  ──────────────────────────────────── */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  @keyframes flow {
+    0% { opacity: 0.3; transform: translateX(-4px); }
+    50% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0.3; transform: translateX(4px); }
+  }
+
+  .flow-anim { animation: flow 2s ease infinite; }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .steps-row { flex-direction: column; }
+    .step-connector { flex-direction: row; padding: 0; }
+    .arrow-right { transform: rotate(90deg); }
+    .lifecycle-flow { flex-direction: column; }
+    .lf-step:not(:last-child)::after { content: '▼'; right: auto; bottom: -10px; top: auto; left: 50%; transform: translateX(-50%); }
+    .lf-1,.lf-2,.lf-3,.lf-4,.lf-5 { border-right: none; border-bottom: 1px solid var(--border); }
+    .chunk-flow { flex-direction: column; }
+    .mini-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="badge">Spring Framework</div>
+    <h1>Spring <span>Batch</span><br>Arquitectura Core</h1>
+    <p class="subtitle">// Job → Step → Chunk [Reader / Processor / Writer]</p>
+  </header>
+
+  <!-- ─── NIVEL 1: JOB ─── -->
+  <div class="section-label">01 — Jerarquía completa</div>
+
+  <div class="job-wrapper">
+    <div class="job-box">
+      <div class="job-header">
+        <span class="tag tag-job">Job</span>
+        <span class="job-name">ImportarPedidosJob</span>
+      </div>
+      <p class="job-desc">// Unidad lógica completa. Se registra en el JobRepository. Contiene Steps secuenciales o condicionales.</p>
+
+      <div class="steps-row">
+
+        <!-- STEP 1: Tasklet -->
+        <div class="step-box">
+          <div class="step-header">
+            <span class="step-num">01</span>
+            <span class="tag tag-step">Step</span>
+            <span class="step-name">validarArchivoStep</span>
+            <span class="step-type-badge type-tasklet">Tasklet</span>
+          </div>
+          <p class="step-desc">Ejecuta una sola tarea atómica: verificar que el fichero CSV existe y es legible.</p>
+          <div class="chunk-block" style="border-color: rgba(245,158,11,0.2);">
+            <div class="chunk-title" style="color: var(--yellow);">TASKLET &nbsp;—&nbsp; una sola transacción</div>
+            <div style="display:flex; align-items:center; gap:8px; padding: 10px 0;">
+              <span style="font-size:24px;">📂</span>
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#fbbf24; font-weight:700;">FileCheckTasklet</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted);">execute() → RepeatStatus.FINISHED</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-connector">
+          <span class="arrow-right flow-anim">→</span>
+        </div>
+
+        <!-- STEP 2: Chunk -->
+        <div class="step-box" style="flex:2;">
+          <div class="step-header">
+            <span class="step-num">02</span>
+            <span class="tag tag-step">Step</span>
+            <span class="step-name">procesarPedidosStep</span>
+            <span class="step-type-badge type-chunk">Chunk</span>
+          </div>
+          <p class="step-desc">Lee N registros, los transforma, los escribe en BD. Repite hasta agotar la fuente.</p>
+
+          <div class="chunk-block">
+            <div class="chunk-title" data-size="100">CHUNK-ORIENTED</div>
+            <div class="chunk-flow">
+
+              <div class="chunk-node cn-reader tooltip-trigger">
+                <div class="cn-label">Reader</div>
+                <div class="cn-name">FlatFileItem<br>Reader</div>
+                <div class="cn-sub">CSV → Pedido</div>
+                <div class="tooltip-content">Lee un ítem por llamada.<br>Stateful: recuerda la línea actual.<br>Devuelve null al terminar.</div>
+              </div>
+
+              <span class="mini-arrow flow-anim">›</span>
+
+              <div class="chunk-node cn-processor tooltip-trigger">
+                <div class="cn-label">Processor</div>
+                <div class="cn-name">PedidoItem<br>Processor</div>
+                <div class="cn-sub">Pedido → PedidoDTO</div>
+                <div class="tooltip-content">Transforma / valida / filtra.<br>Retorna null para descartar ítem.<br>No escribe en ningún sitio.</div>
+              </div>
+
+              <span class="mini-arrow flow-anim">›</span>
+
+              <div class="chunk-node cn-writer tooltip-trigger">
+                <div class="cn-label">Writer</div>
+                <div class="cn-name">JdbcBatch<br>ItemWriter</div>
+                <div class="cn-sub">List&lt;PedidoDTO&gt; → DB</div>
+                <div class="tooltip-content">Recibe una lista completa del chunk.<br>Escribe todo en una sola operación.<br>El commit ocurre aquí.</div>
+              </div>
+
+            </div>
+            <div class="tx-bar"></div>
+            <div class="tx-label">↔ una transacción por chunk (100 ítems) · rollback total si falla el Writer</div>
+          </div>
+        </div>
+
+        <div class="step-connector">
+          <span class="arrow-right flow-anim">→</span>
+        </div>
+
+        <!-- STEP 3: Chunk -->
+        <div class="step-box">
+          <div class="step-header">
+            <span class="step-num">03</span>
+            <span class="tag tag-step">Step</span>
+            <span class="step-name">notificarStep</span>
+            <span class="step-type-badge type-tasklet">Tasklet</span>
+          </div>
+          <p class="step-desc">Envía email de resumen con métricas de la ejecución. Solo corre si Step 02 fue COMPLETED.</p>
+          <div class="chunk-block" style="border-color: rgba(245,158,11,0.2);">
+            <div class="chunk-title" style="color: var(--yellow);">TASKLET &nbsp;—&nbsp; post-proceso</div>
+            <div style="display:flex; align-items:center; gap:8px; padding: 10px 0;">
+              <span style="font-size:24px;">📧</span>
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#fbbf24; font-weight:700;">EmailNotifierTasklet</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted);">StepExecutionContext → SMTP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── JOB REPOSITORY ─── -->
+  <div class="section-label">02 — JobRepository: el cerebro persistente</div>
+
+  <div class="repo-section">
+    <div class="repo-box">
+      <div class="repo-icon">🗄️</div>
+      <div>
+        <div class="repo-title">JobRepository</div>
+        <div class="repo-desc">
+          Persiste el estado de cada ejecución en BD. Esto es lo que permite <strong style="color:var(--yellow)">reiniciar desde el punto de fallo</strong>
+          sin reprocesar lo ya completado. Cada vez que lanzas un Job, crea una nueva <code style="color:#fbbf24">JobInstance</code>
+          (si los parámetros son distintos) o reutiliza la existente para continuar.
+        </div>
+        <div class="repo-tables">
+          <span class="db-table">BATCH_JOB_INSTANCE</span>
+          <span class="db-table">BATCH_JOB_EXECUTION</span>
+          <span class="db-table">BATCH_JOB_EXECUTION_PARAMS</span>
+          <span class="db-table">BATCH_STEP_EXECUTION</span>
+          <span class="db-table">BATCH_STEP_EXECUTION_CONTEXT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CICLO DE VIDA ─── -->
+  <div class="section-label">03 — Ciclo de vida de un Chunk</div>
+
+  <div class="lifecycle-section">
+    <div class="lifecycle-flow">
+      <div class="lf-step lf-1">
+        <div class="lf-num">01</div>
+        <div class="lf-icon">🔁</div>
+        <div class="lf-name" style="color:#67e8f9">open()</div>
+        <div class="lf-desc">Reader abre<br>la fuente</div>
+      </div>
+      <div class="lf-step lf-2">
+        <div class="lf-num">02</div>
+        <div class="lf-icon">📖</div>
+        <div class="lf-name" style="color:#67e8f9">read() ×N</div>
+        <div class="lf-desc">Lee hasta<br>chunk-size</div>
+      </div>
+      <div class="lf-step lf-3">
+        <div class="lf-num">03</div>
+        <div class="lf-icon">⚙️</div>
+        <div class="lf-name" style="color:#c4b5fd">process() ×N</div>
+        <div class="lf-desc">Transforma<br>cada ítem</div>
+      </div>
+      <div class="lf-step lf-4">
+        <div class="lf-num">04</div>
+        <div class="lf-icon">💾</div>
+        <div class="lf-name" style="color:#6ee7b7">write(List)</div>
+        <div class="lf-desc">Escribe el<br>lote completo</div>
+      </div>
+      <div class="lf-step lf-5">
+        <div class="lf-num">05</div>
+        <div class="lf-icon" style="color:var(--green)">✔</div>
+        <div class="lf-name" style="color:var(--green)">COMMIT</div>
+        <div class="lf-desc">Transacción<br>confirmada</div>
+      </div>
+      <div class="lf-step">
+        <div class="lf-num">→</div>
+        <div class="lf-icon">🔄</div>
+        <div class="lf-name" style="color:var(--muted)">Repetir</div>
+        <div class="lf-desc">Vuelve a 02<br>hasta null</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:20px; margin-top:12px; flex-wrap:wrap;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); padding: 8px 14px; background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.2); border-radius:4px;">
+        ⚠ Si falla en write() → rollback de los N ítems completos
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); padding: 8px 14px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2); border-radius:4px;">
+        ✓ Reader es stateful → sabe dónde reanudar tras restart
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CÓDIGO ─── -->
+  <div class="section-label">04 — Esqueleto de código</div>
+
+  <div class="code-section">
+    <div class="code-tabs">
+      <button class="code-tab active" onclick="showTab('job')">Job Config</button>
+      <button class="code-tab" onclick="showTab('reader')">Reader</button>
+      <button class="code-tab" onclick="showTab('processor')">Processor</button>
+      <button class="code-tab" onclick="showTab('writer')">Writer</button>
+      <button class="code-tab" onclick="showTab('props')">Properties</button>
+    </div>
+
+    <div id="tab-job" class="code-panel active"><pre>
+<an>@Configuration</an>
+<kw>public class</kw> <cl>BatchConfig</cl> {
+
+    <an>@Bean</an>
+    <kw>public</kw> <cl>Job</cl> importarPedidosJob(<cl>JobRepository</cl> repo,
+                                      <cl>Step</cl> validarStep,
+                                      <cl>Step</cl> procesarStep,
+                                      <cl>Step</cl> notificarStep) {
+        <kw>return new</kw> <cl>JobBuilder</cl>(<st>"importarPedidosJob"</st>, repo)
+            .start(validarStep)           <cm>// Step 1: Tasklet</cm>
+            .next(procesarStep)           <cm>// Step 2: Chunk</cm>
+            .next(notificarStep)          <cm>// Step 3: Tasklet</cm>
+            .build();
+    }
+
+    <an>@Bean</an>
+    <kw>public</kw> <cl>Step</cl> procesarStep(<cl>JobRepository</cl> repo,
+                              <cl>PlatformTransactionManager</cl> tx,
+                              <cl>ItemReader</cl>&lt;<cl>Pedido</cl>&gt; reader,
+                              <cl>ItemProcessor</cl>&lt;<cl>Pedido</cl>, <cl>PedidoDTO</cl>&gt; processor,
+                              <cl>ItemWriter</cl>&lt;<cl>PedidoDTO</cl>&gt; writer) {
+        <kw>return new</kw> <cl>StepBuilder</cl>(<st>"procesarPedidosStep"</st>, repo)
+            .&lt;<cl>Pedido</cl>, <cl>PedidoDTO</cl>&gt;chunk(<nu>100</nu>, tx) <cm>// tamaño del chunk</cm>
+            .reader(reader)
+            .processor(processor)
+            .writer(writer)
+            .build();
+    }
+}</pre></div>
+
+    <div id="tab-reader" class="code-panel"><pre>
+<an>@Bean</an>
+<kw>public</kw> <cl>FlatFileItemReader</cl>&lt;<cl>Pedido</cl>&gt; pedidoReader() {
+    <kw>return new</kw> <cl>FlatFileItemReaderBuilder</cl>&lt;<cl>Pedido</cl>&gt;()
+        .name(<st>"pedidoReader"</st>)
+        .resource(<kw>new</kw> <cl>FileSystemResource</cl>(<st>"pedidos.csv"</st>))
+        .delimited().delimiter(<st>","</st>)
+        .names(<st>"id"</st>, <st>"cliente"</st>, <st>"importe"</st>)
+        .targetType(<cl>Pedido</cl>.<kw>class</kw>)
+        .build();
+}
+
+<cm>// read() devuelve:
+//   → un Pedido  si quedan líneas
+//   → null       cuando se acaba el fichero (señal de FIN)</cm></pre></div>
+
+    <div id="tab-processor" class="code-panel"><pre>
+<an>@Component</an>
+<kw>public class</kw> <cl>PedidoItemProcessor</cl>
+        <kw>implements</kw> <cl>ItemProcessor</cl>&lt;<cl>Pedido</cl>, <cl>PedidoDTO</cl>&gt; {
+
+    <an>@Override</an>
+    <kw>public</kw> <cl>PedidoDTO</cl> process(<cl>Pedido</cl> pedido) {
+
+        <cm>// Filtrar: devolver null descarta el ítem</cm>
+        <kw>if</kw> (pedido.getImporte() &lt;= <nu>0</nu>) <kw>return null</kw>;
+
+        <cm>// Transformar</cm>
+        <cl>PedidoDTO</cl> dto = <kw>new</kw> <cl>PedidoDTO</cl>();
+        dto.setId(pedido.getId());
+        dto.setImporteConIva(pedido.getImporte() * <nu>1.21</nu>);
+        <kw>return</kw> dto;
+    }
+}</pre></div>
+
+    <div id="tab-writer" class="code-panel"><pre>
+<an>@Bean</an>
+<kw>public</kw> <cl>JdbcBatchItemWriter</cl>&lt;<cl>PedidoDTO</cl>&gt; pedidoWriter(<cl>DataSource</cl> ds) {
+    <kw>return new</kw> <cl>JdbcBatchItemWriterBuilder</cl>&lt;<cl>PedidoDTO</cl>&gt;()
+        .dataSource(ds)
+        .sql(<st>"INSERT INTO pedidos (id, importe_iva) VALUES (:id, :importeConIva)"</st>)
+        .beanMapped()   <cm>// mapea campos del DTO al SQL</cm>
+        .build();
+}
+
+<cm>// El Writer recibe List&lt;PedidoDTO&gt; (tamaño = chunk)
+// Ejecuta un batch INSERT en una sola llamada JDBC
+// El commit ocurre DESPUÉS de que write() retorne sin excepción</cm></pre></div>
+
+    <div id="tab-props" class="code-panel"><pre>
+<cm># application.properties</cm>
+
+<cm># ⚠ CRÍTICO: deshabilitar auto-lanzamiento</cm>
+spring.batch.job.enabled=<kw>false</kw>
+
+<cm># Spring Batch crea sus tablas automáticamente (H2/dev)</cm>
+spring.batch.jdbc.initialize-schema=always
+
+<cm># Para lanzar manualmente desde un endpoint o evento:</cm>
+<cm>#   jobLauncher.run(job, new JobParametersBuilder()</cm>
+<cm>#     .addLong("timestamp", System.currentTimeMillis())</cm>
+<cm>#     .toJobParameters());</cm></pre></div>
+  </div>
+
+</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

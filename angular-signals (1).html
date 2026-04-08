@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angular Signals — Guía Visual</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FAFAF8;
+      --card: #FFFFFF;
+      --text: #1A1A1A;
+      --muted: #6B6B6B;
+      --accent: #D93654;
+      --accent-soft: #FFF0F3;
+      --blue: #2563EB;
+      --blue-soft: #EFF6FF;
+      --green: #16A34A;
+      --green-soft: #F0FDF4;
+      --orange: #EA580C;
+      --orange-soft: #FFF7ED;
+      --purple: #7C3AED;
+      --purple-soft: #F5F3FF;
+      --border: #E8E8E4;
+      --code-bg: #F4F4F0;
+      --shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.03);
+      --shadow-lg: 0 4px 24px rgba(0,0,0,.06);
+      --radius: 14px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(217,54,84,.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px; font-weight: 600;
+      padding: 6px 16px; border-radius: 100px;
+      margin-bottom: 24px;
+      letter-spacing: .5px;
+    }
+
+    .hero .badge .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(.8); }
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(42px, 6vw, 68px);
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+
+    /* ── Section ── */
+    section {
+      margin-bottom: 56px;
+    }
+
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    .section-label .num {
+      width: 22px; height: 22px; border-radius: 6px;
+      display: grid; place-items: center;
+      font-size: 11px;
+    }
+
+    .section-label.red   .num { background: var(--accent-soft); color: var(--accent); }
+    .section-label.blue  .num { background: var(--blue-soft); color: var(--blue); }
+    .section-label.green .num { background: var(--green-soft); color: var(--green); }
+    .section-label.orange .num { background: var(--orange-soft); color: var(--orange); }
+    .section-label.purple .num { background: var(--purple-soft); color: var(--purple); }
+
+    section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 30px;
+      margin-bottom: 12px;
+    }
+
+    section > p {
+      color: var(--muted);
+      font-size: 16px;
+      margin-bottom: 24px;
+      max-width: 640px;
+    }
+
+    /* ── Code Card ── */
+    .code-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: box-shadow .3s ease;
+    }
+
+    .code-card:hover { box-shadow: var(--shadow-lg); }
+
+    .code-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--code-bg);
+    }
+
+    .code-header .filename {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; font-weight: 500;
+      color: var(--muted);
+    }
+
+    .code-header .dots {
+      display: flex; gap: 6px;
+    }
+
+    .code-header .dots span {
+      width: 10px; height: 10px; border-radius: 50%;
+      border: 1.5px solid var(--border);
+    }
+
+    pre {
+      padding: 24px;
+      overflow-x: auto;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13.5px;
+      line-height: 1.8;
+      tab-size: 2;
+    }
+
+    /* Syntax colors */
+    .kw   { color: var(--accent); font-weight: 500; }
+    .fn   { color: var(--blue); }
+    .str  { color: var(--green); }
+    .cmt  { color: #B0B0A8; font-style: italic; }
+    .num  { color: var(--orange); }
+    .dec  { color: var(--purple); font-weight: 500; }
+    .typ  { color: #0E7490; }
+    .op   { color: #888; }
+
+    /* ── Info boxes ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .info-box {
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .info-box:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .info-box .icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: grid; place-items: center;
+      font-size: 18px;
+      margin-bottom: 14px;
+    }
+
+    .info-box.red   .icon { background: var(--accent-soft); }
+    .info-box.blue  .icon { background: var(--blue-soft); }
+    .info-box.green .icon { background: var(--green-soft); }
+    .info-box.orange .icon { background: var(--orange-soft); }
+
+    .info-box h3 {
+      font-size: 15px; font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .info-box p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Diagram ── */
+    .diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 40px 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .diagram-node {
+      text-align: center;
+      padding: 20px 28px;
+      border-radius: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px; font-weight: 600;
+      position: relative;
+      animation: fadeUp .6s ease both;
+    }
+
+    .diagram-node:nth-child(1) { animation-delay: .1s; }
+    .diagram-node:nth-child(3) { animation-delay: .3s; }
+    .diagram-node:nth-child(5) { animation-delay: .5s; }
+
+    .diagram-node.signal  { background: var(--accent-soft); color: var(--accent); }
+    .diagram-node.computed { background: var(--blue-soft); color: var(--blue); }
+    .diagram-node.effect   { background: var(--green-soft); color: var(--green); }
+
+    .diagram-node small {
+      display: block; margin-top: 4px;
+      font-weight: 400; font-size: 11px; opacity: .7;
+    }
+
+    .diagram-arrow {
+      font-size: 22px; color: var(--border);
+      animation: fadeUp .6s ease both;
+    }
+
+    .diagram-arrow:nth-child(2) { animation-delay: .2s; }
+    .diagram-arrow:nth-child(4) { animation-delay: .4s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Interactive Demo ── */
+    .demo-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      text-align: center;
+    }
+
+    .demo-card h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .demo-card .subtitle {
+      color: var(--muted); font-size: 14px; margin-bottom: 24px;
+    }
+
+    .demo-values {
+      display: flex; justify-content: center; gap: 32px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .demo-val {
+      text-align: center;
+    }
+
+    .demo-val .label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .demo-val .value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 42px;
+      line-height: 1;
+      transition: color .2s;
+    }
+
+    .demo-val.signal  .value { color: var(--accent); }
+    .demo-val.computed .value { color: var(--blue); }
+
+    .demo-buttons {
+      display: flex; gap: 10px; justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .demo-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px; font-weight: 500;
+      padding: 10px 22px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .demo-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .demo-btn.primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .demo-btn.primary:hover {
+      background: #C02E4A;
+      border-color: #C02E4A;
+    }
+
+    .effect-log {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--code-bg);
+      border-radius: 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      max-height: 120px;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .effect-log .log-entry {
+      padding: 3px 0;
+      animation: fadeIn .3s ease;
+    }
+
+    .effect-log .log-entry .time { color: var(--green); }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+
+    footer code {
+      font-family: 'IBM Plex Mono', monospace;
+      background: var(--code-bg);
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="badge"><span class="dot"></span> Angular 16+</div>
+    <h1>Entendiendo <span>Signals</span></h1>
+    <p>Reactividad granular sin RxJS. Más simple, más rápido, más predecible.</p>
+  </header>
+
+  <main class="container">
+
+    <!-- ─── Qué son ─── -->
+    <section>
+      <div class="section-label red"><span class="num">1</span> CONCEPTO</div>
+      <h2>¿Qué es un Signal?</h2>
+      <p>Un <strong>Signal</strong> es un contenedor reactivo de valor. Cuando su valor cambia, Angular sabe exactamente qué partes de la UI actualizar — sin Zone.js, sin detectar todo el árbol.</p>
+
+      <div class="info-grid">
+        <div class="info-box red">
+          <div class="icon">📡</div>
+          <h3>signal()</h3>
+          <p>Crea un valor reactivo que puedes leer y escribir. Es la unidad fundamental.</p>
+        </div>
+        <div class="info-box blue">
+          <div class="icon">⚙️</div>
+          <h3>computed()</h3>
+          <p>Deriva un valor de otros signals. Se recalcula automáticamente cuando cambian sus dependencias.</p>
+        </div>
+        <div class="info-box green">
+          <div class="icon">⚡</div>
+          <h3>effect()</h3>
+          <p>Ejecuta código como efecto secundario cada vez que un signal cambia. Ideal para logs, peticiones HTTP, etc.</p>
+        </div>
+        <div class="info-box orange">
+          <div class="icon">🎯</div>
+          <h3>Granular</h3>
+          <p>Solo se actualizan los componentes afectados. No más change detection global.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Flujo ─── -->
+    <section>
+      <div class="section-label blue"><span class="num">2</span> FLUJO</div>
+      <h2>Cómo se conectan</h2>
+      <p>Los signals forman un grafo de dependencias reactivo, donde los datos fluyen de forma unidireccional.</p>
+
+      <div class="diagram">
+        <div class="diagram-node signal">
+          signal()<small>fuente de datos</small>
+        </div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-node computed">
+          computed()<small>derivado</small>
+        </div>
+        <div class="diagram-arrow">→</div>
+        <div class="diagram-node effect">
+          effect()<small>efecto secundario</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── signal() ─── -->
+    <section>
+      <div class="section-label red"><span class="num">3</span> SIGNAL</div>
+      <h2>Crear y mutar un Signal</h2>
+      <p>Usa <code>signal()</code> para crear, <code>.set()</code> para reemplazar, <code>.update()</code> para transformar.</p>
+
+      <div class="code-card">
+        <div class="code-header">
+          <span class="filename">counter.component.ts</span>
+          <div class="dots"><span></span><span></span><span></span></div>
+        </div>
+<pre><span class="kw">import</span> { <span class="fn">Component</span>, <span class="fn">signal</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+<span class="dec">@Component</span>({
+  <span class="fn">selector</span>: <span class="str">'app-counter'</span>,
+  <span class="fn">standalone</span>: <span class="num">true</span>,
+  <span class="fn">template</span>: <span class="str">`
+    &lt;h2&gt;Contador: {{ count() }}&lt;/h2&gt;
+    &lt;button (click)="increment()"&gt;+1&lt;/button&gt;
+    &lt;button (click)="reset()"&gt;Reset&lt;/button&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="typ">CounterComponent</span> {
+
+  <span class="cmt">// Crear un signal con valor inicial 0</span>
+  <span class="fn">count</span> <span class="op">=</span> <span class="fn">signal</span>(<span class="num">0</span>);
+
+  <span class="fn">increment</span>() {
+    <span class="cmt">// .update() recibe el valor actual</span>
+    <span class="kw">this</span>.<span class="fn">count</span>.<span class="fn">update</span>(<span class="fn">v</span> <span class="op">=></span> v <span class="op">+</span> <span class="num">1</span>);
+  }
+
+  <span class="fn">reset</span>() {
+    <span class="cmt">// .set() reemplaza el valor directamente</span>
+    <span class="kw">this</span>.<span class="fn">count</span>.<span class="fn">set</span>(<span class="num">0</span>);
+  }
+}</pre>
+      </div>
+    </section>
+
+    <!-- ─── computed() ─── -->
+    <section>
+      <div class="section-label blue"><span class="num">4</span> COMPUTED</div>
+      <h2>Valores derivados con computed()</h2>
+      <p>Un <code>computed()</code> es de solo lectura y se recalcula automáticamente cuando sus dependencias cambian.</p>
+
+      <div class="code-card">
+        <div class="code-header">
+          <span class="filename">cart.component.ts</span>
+          <div class="dots"><span></span><span></span><span></span></div>
+        </div>
+<pre><span class="kw">import</span> { <span class="fn">Component</span>, <span class="fn">signal</span>, <span class="fn">computed</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+<span class="dec">@Component</span>({
+  <span class="fn">selector</span>: <span class="str">'app-cart'</span>,
+  <span class="fn">standalone</span>: <span class="num">true</span>,
+  <span class="fn">template</span>: <span class="str">`
+    &lt;p&gt;Precio: {{ price() }}€&lt;/p&gt;
+    &lt;p&gt;Cantidad: {{ quantity() }}&lt;/p&gt;
+    &lt;p&gt;&lt;strong&gt;Total: {{ total() }}€&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;button (click)="addItem()"&gt;+1 unidad&lt;/button&gt;
+    &lt;button (click)="removeItem()"&gt;-1 unidad&lt;/button&gt;
+    &lt;button (click)="applyDiscount()"&gt;Aplicar 20% dto&lt;/button&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="typ">CartComponent</span> {
+
+  <span class="fn">price</span>    <span class="op">=</span> <span class="fn">signal</span>(<span class="num">29.99</span>);
+  <span class="fn">quantity</span> <span class="op">=</span> <span class="fn">signal</span>(<span class="num">2</span>);
+
+  <span class="cmt">// ⚙️ Se recalcula AUTOMÁTICAMENTE cuando price o quantity cambian</span>
+  <span class="cmt">// No necesitas suscribirte ni llamarlo manualmente</span>
+  <span class="fn">total</span> <span class="op">=</span> <span class="fn">computed</span>(() <span class="op">=></span>
+    Math.<span class="fn">round</span>(<span class="kw">this</span>.<span class="fn">price</span>() <span class="op">*</span> <span class="kw">this</span>.<span class="fn">quantity</span>() <span class="op">*</span> <span class="num">100</span>) <span class="op">/</span> <span class="num">100</span>
+  );
+
+  <span class="cmt">// Al cambiar quantity → total() se recalcula</span>
+  <span class="fn">addItem</span>() {
+    <span class="kw">this</span>.<span class="fn">quantity</span>.<span class="fn">update</span>(<span class="fn">q</span> <span class="op">=></span> q <span class="op">+</span> <span class="num">1</span>);
+  }
+
+  <span class="fn">removeItem</span>() {
+    <span class="kw">this</span>.<span class="fn">quantity</span>.<span class="fn">update</span>(<span class="fn">q</span> <span class="op">=></span> Math.<span class="fn">max</span>(<span class="num">0</span>, q <span class="op">-</span> <span class="num">1</span>));
+  }
+
+  <span class="cmt">// Al cambiar price → total() también se recalcula</span>
+  <span class="fn">applyDiscount</span>() {
+    <span class="kw">this</span>.<span class="fn">price</span>.<span class="fn">update</span>(<span class="fn">p</span> <span class="op">=></span>
+      Math.<span class="fn">round</span>(p <span class="op">*</span> <span class="num">0.8</span> <span class="op">*</span> <span class="num">100</span>) <span class="op">/</span> <span class="num">100</span>
+    );
+  }
+}</pre>
+      </div>
+    </section>
+
+    <!-- ─── effect() ─── -->
+    <section>
+      <div class="section-label green"><span class="num">5</span> EFFECT</div>
+      <h2>Efectos secundarios con effect()</h2>
+      <p>Los effects se ejecutan automáticamente cuando las signals que leen cambian. Perfecto para sincronizar con APIs externas.</p>
+
+      <div class="code-card">
+        <div class="code-header">
+          <span class="filename">search-logger.component.ts</span>
+          <div class="dots"><span></span><span></span><span></span></div>
+        </div>
+<pre><span class="kw">import</span> { <span class="fn">Component</span>, <span class="fn">signal</span>, <span class="fn">computed</span>, <span class="fn">effect</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="typ">AnalyticsService</span> } <span class="kw">from</span> <span class="str">'./analytics.service'</span>;
+
+<span class="dec">@Component</span>({ ... })
+<span class="kw">export class</span> <span class="typ">SearchComponent</span> {
+
+  <span class="cmt">// Signals (datos)</span>
+  <span class="fn">query</span>    <span class="op">=</span> <span class="fn">signal</span>(<span class="str">''</span>);
+  <span class="fn">category</span> <span class="op">=</span> <span class="fn">signal</span>(<span class="str">'todos'</span>);
+
+  <span class="cmt">// Computed (derivado)</span>
+  <span class="fn">searchUrl</span> <span class="op">=</span> <span class="fn">computed</span>(() <span class="op">=></span>
+    <span class="str">`/api/search?q=${</span><span class="kw">this</span>.<span class="fn">query</span>()<span class="str">}&cat=${</span><span class="kw">this</span>.<span class="fn">category</span>()<span class="str">}`</span>
+  );
+
+  <span class="kw">constructor</span>(<span class="kw">private</span> <span class="fn">analytics</span>: <span class="typ">AnalyticsService</span>) {
+
+    <span class="cmt">// ⚡ EFFECT: se ejecuta SOLO cuando query o category cambian</span>
+    <span class="cmt">// Angular detecta automáticamente qué signals lee</span>
+    <span class="fn">effect</span>(() <span class="op">=></span> {
+      <span class="kw">const</span> q   <span class="op">=</span> <span class="kw">this</span>.<span class="fn">query</span>();
+      <span class="kw">const</span> cat <span class="op">=</span> <span class="kw">this</span>.<span class="fn">category</span>();
+
+      <span class="cmt">// Efecto secundario 1: guardar en localStorage</span>
+      localStorage.<span class="fn">setItem</span>(<span class="str">'lastSearch'</span>, <span class="fn">JSON</span>.<span class="fn">stringify</span>({ q, cat }));
+
+      <span class="cmt">// Efecto secundario 2: enviar analytics</span>
+      <span class="kw">this</span>.<span class="fn">analytics</span>.<span class="fn">track</span>(<span class="str">'search'</span>, { q, cat });
+
+      <span class="cmt">// Efecto secundario 3: log en consola</span>
+      console.<span class="fn">log</span>(<span class="str">`🔍 Buscando "${q}" en ${cat}`</span>);
+    });
+  }
+}</pre>
+      </div>
+
+      <div class="info-grid" style="margin-top: 20px;">
+        <div class="info-box green">
+          <div class="icon">🔑</div>
+          <h3>La diferencia clave</h3>
+          <p><strong>signal()</strong> almacena datos. <strong>effect()</strong> no devuelve nada — solo ejecuta acciones externas (localStorage, HTTP, logs, DOM) cuando los signals que lee cambian.</p>
+        </div>
+        <div class="info-box orange">
+          <div class="icon">🚫</div>
+          <h3>No confundir con computed</h3>
+          <p><strong>computed()</strong> calcula un valor derivado. <strong>effect()</strong> produce efectos secundarios. Nunca uses effect() para derivar valores.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Demo Interactiva ─── -->
+    <section>
+      <div class="section-label purple"><span class="num">6</span> DEMO EN VIVO</div>
+      <h2>Pruébalo ahora</h2>
+      <p>Esta demo simula el comportamiento de signals, computed y effect directamente en el navegador.</p>
+
+      <div class="demo-card">
+        <h3>Simulador de Signals</h3>
+        <p class="subtitle">Precio × Cantidad = Total (computed) · Los cambios se registran via effect()</p>
+
+        <div class="demo-values">
+          <div class="demo-val signal">
+            <div class="label">signal: precio</div>
+            <div class="value" id="priceVal">10</div>
+          </div>
+          <div class="demo-val signal">
+            <div class="label">signal: cantidad</div>
+            <div class="value" id="qtyVal">1</div>
+          </div>
+          <div class="demo-val computed">
+            <div class="label">computed: total</div>
+            <div class="value" id="totalVal">10</div>
+          </div>
+        </div>
+
+        <div class="demo-buttons">
+          <button class="demo-btn" onclick="changePrice(-5)">Precio −5</button>
+          <button class="demo-btn primary" onclick="changePrice(5)">Precio +5</button>
+          <button class="demo-btn" onclick="changeQty(-1)">Cantidad −1</button>
+          <button class="demo-btn primary" onclick="changeQty(1)">Cantidad +1</button>
+          <button class="demo-btn" onclick="resetAll()">Reset</button>
+        </div>
+
+        <div class="effect-log" id="logContainer">
+          <div class="log-entry"><span class="time">[init]</span> effect() registrado — escuchando cambios...</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Angular Signals — disponible desde <code>@angular/core v16+</code> · Estable en v17
+  </footer>
+
+  <script>
+    // ── Mini-simulador de Signals ──
+    let price = 10;
+    let qty = 1;
+
+    function computeTotal() {
+      return price * qty;
+    }
+
+    function render() {
+      document.getElementById('priceVal').textContent = price + '€';
+      document.getElementById('qtyVal').textContent = qty;
+      document.getElementById('totalVal').textContent = computeTotal() + '€';
+    }
+
+    function logEffect(msg) {
+      const container = document.getElementById('logContainer');
+      const now = new Date().toLocaleTimeString('es-ES');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `<span class="time">[${now}]</span> ${msg}`;
+      container.prepend(entry);
+      if (container.children.length > 20) container.lastChild.remove();
+    }
+
+    function changePrice(delta) {
+      price = Math.max(0, price + delta);
+      logEffect(`effect() → precio.set(${price}) · total recalculado: ${computeTotal()}`);
+      render();
+    }
+
+    function changeQty(delta) {
+      qty = Math.max(0, qty + delta);
+      logEffect(`effect() → cantidad.set(${qty}) · total recalculado: ${computeTotal()}`);
+      render();
+    }
+
+    function resetAll() {
+      price = 10; qty = 1;
+      logEffect('effect() → reset! precio=10, cantidad=1, total=10');
+      render();
+    }
+
+    render();
+  </script>
+
+</body>
+</html>

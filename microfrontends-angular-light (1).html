@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microfrontends con Angular - Module Federation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f7fa; color: #1a202c; line-height: 1.6; }
+
+  .header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 20px 40px;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .header-logo { font-size: 26px; font-weight: 800; color: #c3002f; letter-spacing: -1px; }
+  .header-logo span { color: #dd0031; }
+  .header-sub { font-size: 12px; color: #718096; margin-top: 2px; }
+  .badge { background: #ebf8ff; color: #2b6cb0; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid #bee3f8; }
+
+  .layout { display: grid; grid-template-columns: 255px 1fr; min-height: calc(100vh - 69px); }
+
+  /* Sidebar */
+  .sidebar {
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
+    padding: 20px 0;
+    position: sticky; top: 0; height: calc(100vh - 69px); overflow-y: auto;
+  }
+  .sidebar-section { margin-bottom: 6px; }
+  .sidebar-title { font-size: 10px; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 1px; padding: 8px 20px; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; cursor: pointer; transition: all 0.15s;
+    border-left: 3px solid transparent; font-size: 13px; color: #4a5568;
+  }
+  .sidebar-item:hover { background: #f7fafc; color: #1a202c; }
+  .sidebar-item.active { background: #fff5f5; color: #c3002f; border-left-color: #dd0031; font-weight: 600; }
+  .sidebar-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-host { background: #3182ce; }
+  .dot-mfe1 { background: #38a169; }
+  .dot-mfe2 { background: #dd6b20; }
+  .dot-shared { background: #805ad5; }
+
+  /* Main content */
+  .main { padding: 32px 44px; overflow-y: auto; max-width: 880px; }
+
+  h2 { font-size: 21px; font-weight: 700; margin-bottom: 6px; color: #1a202c; }
+  h3 { font-size: 14px; font-weight: 700; margin: 24px 0 10px; color: #2d3748; text-transform: uppercase; letter-spacing: 0.5px; }
+  p { color: #718096; font-size: 14px; margin-bottom: 16px; }
+
+  /* Architecture diagram */
+  .arch {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .arch-title { font-size: 10px; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+  .arch-diagram { display: flex; flex-direction: column; gap: 12px; }
+  .arch-shell {
+    background: #ebf8ff;
+    border: 2px solid #90cdf4;
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .arch-shell-title { font-size: 12px; font-weight: 700; color: #2b6cb0; margin-bottom: 3px; }
+  .arch-shell-sub { font-size: 11px; color: #718096; }
+  .arch-mfes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .arch-mfe { background: #ffffff; border-radius: 10px; padding: 14px 16px; }
+  .arch-mfe.green { border: 2px solid #9ae6b4; background: #f0fff4; }
+  .arch-mfe.orange { border: 2px solid #fbd38d; background: #fffaf0; }
+  .arch-mfe-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .arch-mfe.green .arch-mfe-title { color: #276749; }
+  .arch-mfe.orange .arch-mfe-title { color: #7b341e; }
+  .arch-mfe-sub { font-size: 11px; color: #718096; }
+  .arch-shared {
+    background: #faf5ff;
+    border: 2px dashed #d6bcfa;
+    border-radius: 10px;
+    padding: 12px 16px;
+    text-align: center;
+  }
+  .arch-shared-title { font-size: 12px; font-weight: 700; color: #6b46c1; }
+  .arch-shared-sub { font-size: 11px; color: #a0aec0; }
+  .arch-arrow { text-align: center; font-size: 16px; color: #cbd5e0; }
+
+  /* Code blocks */
+  .file-block {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin: 16px 0;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .file-header {
+    background: #f7fafc;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 9px 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .file-icon { font-size: 14px; }
+  .file-name { font-size: 12px; font-weight: 600; color: #2d3748; font-family: 'Consolas', monospace; }
+  .file-app { font-size: 11px; margin-left: auto; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .file-app.host { color: #2b6cb0; background: #ebf8ff; }
+  .file-app.mfe1 { color: #276749; background: #f0fff4; }
+  .file-app.mfe2 { color: #7b341e; background: #fffaf0; }
+  pre {
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 12.5px;
+    line-height: 1.75;
+    background: #ffffff;
+    color: #2d3748;
+  }
+
+  /* Syntax highlighting — light theme */
+  .kw  { color: #d53f8c; font-weight: 600; }
+  .fn  { color: #2b6cb0; }
+  .str { color: #276749; }
+  .cm  { color: #a0aec0; font-style: italic; }
+  .prop{ color: #c05621; }
+  .num { color: #6b46c1; }
+  .cls { color: #2c5282; font-weight: 600; }
+  .tag { color: #c53030; }
+  .attr{ color: #276749; }
+  .val { color: #2f855a; }
+  .dec { color: #c53030; }
+
+  /* Highlighted line */
+  .hl { background: #fff5f5; display: block; margin: 0 -20px; padding: 0 20px; border-left: 3px solid #fc8181; }
+
+  /* Info boxes */
+  .info-box {
+    background: #ebf8ff;
+    border-left: 3px solid #63b3ed;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-size: 13px;
+    color: #4a5568;
+  }
+  .info-box.green { background: #f0fff4; border-left-color: #68d391; }
+  .info-box.yellow { background: #fffaf0; border-left-color: #f6ad55; }
+  .info-box strong { color: #1a202c; }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; gap: 4px; margin: 20px 0; }
+  .step { display: flex; gap: 16px; align-items: flex-start; padding: 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%; background: #dd0031;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0; color: white;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-size: 13px; font-weight: 600; color: #1a202c; margin-bottom: 3px; }
+  .step-desc { font-size: 12px; color: #718096; }
+  .cmd {
+    background: #1a202c;
+    border-radius: 6px;
+    padding: 9px 14px;
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+    color: #68d391;
+    margin-top: 8px;
+    display: block;
+    white-space: pre-line;
+  }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* Divider */
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-logo">Angular <span>MFE</span></div>
+    <div class="header-sub">Microfrontends con Module Federation</div>
+  </div>
+  <div style="margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap;">
+    <span class="badge">Webpack 5</span>
+    <span class="badge">Angular 17</span>
+    <span class="badge">Module Federation</span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Visión General</div>
+      <div class="sidebar-item active" onclick="show('arquitectura', this)">
+        <span class="dot dot-shared"></span> Arquitectura
+      </div>
+      <div class="sidebar-item" onclick="show('setup', this)">
+        <span class="dot dot-shared"></span> Instalación
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">🔵 Shell (Host)</div>
+      <div class="sidebar-item" onclick="show('shell-webpack', this)">
+        <span class="dot dot-host"></span> webpack.config.js
+      </div>
+      <div class="sidebar-item" onclick="show('shell-routing', this)">
+        <span class="dot dot-host"></span> app-routing.module.ts
+      </div>
+      <div class="sidebar-item" onclick="show('shell-component', this)">
+        <span class="dot dot-host"></span> app.component.html
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">🟢 MFE Productos</div>
+      <div class="sidebar-item" onclick="show('mfe1-webpack', this)">
+        <span class="dot dot-mfe1"></span> webpack.config.js
+      </div>
+      <div class="sidebar-item" onclick="show('mfe1-module', this)">
+        <span class="dot dot-mfe1"></span> productos.module.ts
+      </div>
+      <div class="sidebar-item" onclick="show('mfe1-component', this)">
+        <span class="dot dot-mfe1"></span> productos.component.ts
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">🟠 MFE Carrito</div>
+      <div class="sidebar-item" onclick="show('mfe2-webpack', this)">
+        <span class="dot dot-mfe2"></span> webpack.config.js
+      </div>
+      <div class="sidebar-item" onclick="show('mfe2-module', this)">
+        <span class="dot dot-mfe2"></span> carrito.module.ts
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Comunicación</div>
+      <div class="sidebar-item" onclick="show('comunicacion', this)">
+        <span class="dot dot-shared"></span> Entre MFEs
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- ARQUITECTURA -->
+    <div id="arquitectura" class="section active">
+      <h2>Arquitectura del Proyecto</h2>
+      <p>Tres aplicaciones Angular independientes que trabajan juntas en tiempo de ejecución.</p>
+
+      <div class="arch">
+        <div class="arch-title">📐 Diagrama de la solución</div>
+        <div class="arch-diagram">
+          <div class="arch-shell">
+            <div class="arch-shell-title">🔵 Shell — App Host (puerto 4200)</div>
+            <div class="arch-shell-sub">Punto de entrada · Navegación · Layout global · Carga los MFEs dinámicamente</div>
+          </div>
+          <div class="arch-arrow">↕ carga en runtime via remoteEntry.js</div>
+          <div class="arch-mfes">
+            <div class="arch-mfe green">
+              <div class="arch-mfe-title">🟢 MFE Productos (4201)</div>
+              <div class="arch-mfe-sub">Catálogo · Detalle · Búsqueda</div>
+              <div class="arch-mfe-sub" style="margin-top:6px; color:#276749; font-weight:600;">Expone → ProductosModule</div>
+            </div>
+            <div class="arch-mfe orange">
+              <div class="arch-mfe-title">🟠 MFE Carrito (4202)</div>
+              <div class="arch-mfe-sub">Cesta · Checkout · Pagos</div>
+              <div class="arch-mfe-sub" style="margin-top:6px; color:#c05621; font-weight:600;">Expone → CarritoModule</div>
+            </div>
+          </div>
+          <div class="arch-shared">
+            <div class="arch-shared-title">📦 Shared Libraries</div>
+            <div class="arch-shared-sub">@angular/core · @angular/router · rxjs (singleton compartidos)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>¿Cómo funciona?</strong> Webpack 5 Module Federation permite que el <em>shell</em> descargue módulos Angular de otras apps en tiempo de ejecución. El archivo <code>remoteEntry.js</code> actúa como el "contrato" que expone lo que cada MFE ofrece.
+      </div>
+
+      <h3>Estructura de carpetas</h3>
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📁</span>
+          <span class="file-name">Monorepo (o 3 repos separados)</span>
+        </div>
+        <pre><span class="cm">projects/</span>
+  <span class="prop">shell/</span>            <span class="cm">← App principal (host)</span>
+    src/app/
+      app-routing.module.ts
+      app.component.html
+    webpack.config.js
+
+  <span class="prop">mfe-productos/</span>    <span class="cm">← Microfrontend 1</span>
+    src/app/
+      productos/
+        productos.module.ts
+        productos.component.ts
+    webpack.config.js
+
+  <span class="prop">mfe-carrito/</span>      <span class="cm">← Microfrontend 2</span>
+    src/app/
+      carrito/
+        carrito.module.ts
+        carrito.component.ts
+    webpack.config.js</pre>
+      </div>
+    </div>
+
+    <!-- SETUP -->
+    <div id="setup" class="section">
+      <h2>Instalación y Setup</h2>
+      <p>Sigue estos pasos para configurar el proyecto desde cero.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Crear las tres apps Angular</div>
+            <div class="step-desc">Usa el Angular CLI para generar cada proyecto.</div>
+            <code class="cmd">ng new shell --routing
+ng new mfe-productos --routing
+ng new mfe-carrito --routing</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Instalar el plugin de Module Federation en cada app</div>
+            <div class="step-desc">Este paquete configura Webpack automáticamente para Angular.</div>
+            <code class="cmd">cd shell && ng add @angular-architects/module-federation --project shell --port 4200 --type host
+
+cd mfe-productos && ng add @angular-architects/module-federation --project mfe-productos --port 4201 --type remote
+
+cd mfe-carrito && ng add @angular-architects/module-federation --project mfe-carrito --port 4202 --type remote</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Configurar webpack.config.js en cada app</div>
+            <div class="step-desc">Definir qué expone cada MFE y qué consume el shell (ver secciones del menú).</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Levantar los tres proyectos</div>
+            <code class="cmd"># Terminal 1
+cd mfe-productos && ng serve
+
+# Terminal 2
+cd mfe-carrito && ng serve
+
+# Terminal 3
+cd shell && ng serve</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box green">
+        <strong>Tip:</strong> En producción cada MFE se despliega en su propio servidor/CDN. El shell solo necesita saber la URL del <code>remoteEntry.js</code> de cada uno.
+      </div>
+    </div>
+
+    <!-- SHELL WEBPACK -->
+    <div id="shell-webpack" class="section">
+      <h2>Shell — webpack.config.js</h2>
+      <p>El host declara qué apps remotas va a consumir y qué librerías se comparten como singletons.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">⚙️</span>
+          <span class="file-name">webpack.config.js</span>
+          <span class="file-app host">shell (host) — puerto 4200</span>
+        </div>
+        <pre><span class="kw">const</span> { <span class="cls">ModuleFederationPlugin</span> } = <span class="fn">require</span>(<span class="str">'webpack/lib/container/ModuleFederationPlugin'</span>);
+<span class="kw">const</span> mf = <span class="fn">require</span>(<span class="str">'@angular-architects/module-federation/webpack'</span>);
+<span class="kw">const</span> path = <span class="fn">require</span>(<span class="str">'path'</span>);
+<span class="kw">const</span> share = mf.<span class="prop">share</span>;
+
+<span class="kw">const</span> sharedMappings = <span class="kw">new</span> mf.<span class="cls">SharedMappings</span>();
+sharedMappings.<span class="fn">register</span>(
+  path.<span class="fn">join</span>(__dirname, <span class="str">'tsconfig.json'</span>)
+);
+
+module.<span class="prop">exports</span> = {
+  output: { uniqueName: <span class="str">'shell'</span>, publicPath: <span class="str">'auto'</span> },
+  optimization: { runtimeChunk: <span class="kw">false</span> },
+  plugins: [
+    <span class="kw">new</span> <span class="cls">ModuleFederationPlugin</span>({
+      <span class="cm">// ✅ Apps remotas que el shell va a consumir</span>
+<span class="hl">      remotes: {
+        <span class="str">'mfeProductos'</span>: <span class="str">'mfeProductos@http://localhost:4201/remoteEntry.js'</span>,
+        <span class="str">'mfeCarrito'</span>: <span class="str">'mfeCarrito@http://localhost:4202/remoteEntry.js'</span>,
+      },</span>
+
+      <span class="cm">// ✅ Librerías compartidas (se cargan una sola vez)</span>
+      shared: <span class="fn">share</span>({
+        <span class="str">'@angular/core'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        <span class="str">'@angular/common'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        <span class="str">'@angular/router'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        <span class="str">'rxjs'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        ...sharedMappings.<span class="fn">getDescriptors</span>()
+      })
+    }),
+    ...sharedMappings.<span class="fn">getPlugins</span>()
+  ]
+};</pre>
+      </div>
+
+      <div class="info-box yellow">
+        <strong>singleton: true</strong> es crucial. Garantiza que Angular se cargue una sola vez aunque cada MFE lo incluya en su bundle. Sin esto, tendrías múltiples instancias de Angular y errores extraños.
+      </div>
+    </div>
+
+    <!-- SHELL ROUTING -->
+    <div id="shell-routing" class="section">
+      <h2>Shell — Routing</h2>
+      <p>El shell usa lazy loading para cargar cada MFE solo cuando el usuario navega a esa ruta.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🔀</span>
+          <span class="file-name">app-routing.module.ts</span>
+          <span class="file-app host">shell (host)</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">NgModule</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="cls">RouterModule</span>, <span class="cls">Routes</span> } <span class="kw">from</span> <span class="str">'@angular/router'</span>;
+<span class="kw">import</span> { <span class="fn">loadRemoteModule</span> } <span class="kw">from</span> <span class="str">'@angular-architects/module-federation'</span>;
+
+<span class="kw">const</span> routes: <span class="cls">Routes</span> = [
+  {
+    path: <span class="str">''</span>,
+    pathMatch: <span class="str">'full'</span>,
+    redirectTo: <span class="str">'productos'</span>
+  },
+  {
+    <span class="cm">// 🟢 Carga el MFE Productos dinámicamente</span>
+<span class="hl">    path: <span class="str">'productos'</span>,
+    loadChildren: () =>
+      <span class="fn">loadRemoteModule</span>({
+        type: <span class="str">'module'</span>,
+        remoteEntry: <span class="str">'http://localhost:4201/remoteEntry.js'</span>,
+        exposedModule: <span class="str">'./ProductosModule'</span>
+      }).<span class="fn">then</span>(m => m.<span class="cls">ProductosModule</span>),</span>
+  },
+  {
+    <span class="cm">// 🟠 Carga el MFE Carrito dinámicamente</span>
+<span class="hl">    path: <span class="str">'carrito'</span>,
+    loadChildren: () =>
+      <span class="fn">loadRemoteModule</span>({
+        type: <span class="str">'module'</span>,
+        remoteEntry: <span class="str">'http://localhost:4202/remoteEntry.js'</span>,
+        exposedModule: <span class="str">'./CarritoModule'</span>
+      }).<span class="fn">then</span>(m => m.<span class="cls">CarritoModule</span>),</span>
+  },
+  { path: <span class="str">'**'</span>, redirectTo: <span class="str">'productos'</span> }
+];
+
+@<span class="fn">NgModule</span>({
+  imports: [<span class="cls">RouterModule</span>.<span class="fn">forRoot</span>(routes)],
+  exports: [<span class="cls">RouterModule</span>]
+})
+<span class="kw">export class</span> <span class="cls">AppRoutingModule</span> {}</pre>
+      </div>
+
+      <div class="info-box">
+        <strong>¿Por qué loadRemoteModule?</strong> Es la función de <code>@angular-architects/module-federation</code> que reemplaza al <code>import()</code> dinámico. Permite especificar la URL del <code>remoteEntry.js</code> directamente, facilitando su configuración mediante variables de entorno en producción.
+      </div>
+    </div>
+
+    <!-- SHELL COMPONENT -->
+    <div id="shell-component" class="section">
+      <h2>Shell — Componente principal</h2>
+      <p>El shell provee el layout compartido: header, navegación y el <code>router-outlet</code> donde se renderizan los MFEs.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🖼️</span>
+          <span class="file-name">app.component.html</span>
+          <span class="file-app host">shell (host)</span>
+        </div>
+        <pre><span class="tag">&lt;header</span> <span class="attr">class</span>=<span class="val">"navbar"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>🛒 Mi Tienda<span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;nav&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">routerLink</span>=<span class="val">"/productos"</span> <span class="attr">routerLinkActive</span>=<span class="val">"active"</span><span class="tag">&gt;</span>Productos<span class="tag">&lt;/a&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">routerLink</span>=<span class="val">"/carrito"</span> <span class="attr">routerLinkActive</span>=<span class="val">"active"</span><span class="tag">&gt;</span>Carrito<span class="tag">&lt;/a&gt;</span>
+  <span class="tag">&lt;/nav&gt;</span>
+<span class="tag">&lt;/header&gt;</span>
+
+<span class="cm">&lt;!-- Aquí se inyectan los MFEs --&gt;</span>
+<span class="hl"><span class="tag">&lt;router-outlet&gt;&lt;/router-outlet&gt;</span></span>
+
+<span class="tag">&lt;footer&gt;</span>Shell v1.0 — Microfrontends con Angular<span class="tag">&lt;/footer&gt;</span></pre>
+      </div>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🎨</span>
+          <span class="file-name">app.component.ts</span>
+          <span class="file-app host">shell (host)</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">Component</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+@<span class="fn">Component</span>({
+  selector: <span class="str">'app-root'</span>,
+  templateUrl: <span class="str">'./app.component.html'</span>,
+  styleUrls: [<span class="str">'./app.component.scss'</span>]
+})
+<span class="kw">export class</span> <span class="cls">AppComponent</span> {
+  title = <span class="str">'shell'</span>;
+}</pre>
+      </div>
+    </div>
+
+    <!-- MFE1 WEBPACK -->
+    <div id="mfe1-webpack" class="section">
+      <h2>MFE Productos — webpack.config.js</h2>
+      <p>El MFE declara qué módulos expone para que el shell (u otros MFEs) los consuman.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">⚙️</span>
+          <span class="file-name">webpack.config.js</span>
+          <span class="file-app mfe1">mfe-productos — puerto 4201</span>
+        </div>
+        <pre><span class="kw">const</span> { <span class="cls">ModuleFederationPlugin</span> } = <span class="fn">require</span>(<span class="str">'webpack/lib/container/ModuleFederationPlugin'</span>);
+<span class="kw">const</span> mf = <span class="fn">require</span>(<span class="str">'@angular-architects/module-federation/webpack'</span>);
+<span class="kw">const</span> path = <span class="fn">require</span>(<span class="str">'path'</span>);
+<span class="kw">const</span> share = mf.<span class="prop">share</span>;
+
+<span class="kw">const</span> sharedMappings = <span class="kw">new</span> mf.<span class="cls">SharedMappings</span>();
+sharedMappings.<span class="fn">register</span>(path.<span class="fn">join</span>(__dirname, <span class="str">'tsconfig.json'</span>));
+
+module.<span class="prop">exports</span> = {
+  output: {
+    uniqueName: <span class="str">'mfeProductos'</span>,
+    publicPath: <span class="str">'auto'</span>
+  },
+  optimization: { runtimeChunk: <span class="kw">false</span> },
+  plugins: [
+    <span class="kw">new</span> <span class="cls">ModuleFederationPlugin</span>({
+      name: <span class="str">'mfeProductos'</span>,
+
+      <span class="cm">// ✅ Lo que este MFE expone al mundo exterior</span>
+<span class="hl">      exposes: {
+        <span class="str">'./ProductosModule'</span>: <span class="str">'./src/app/productos/productos.module.ts'</span>
+      },</span>
+
+      shared: <span class="fn">share</span>({
+        <span class="str">'@angular/core'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        <span class="str">'@angular/common'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        <span class="str">'@angular/router'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        <span class="str">'rxjs'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        ...sharedMappings.<span class="fn">getDescriptors</span>()
+      })
+    }),
+    ...sharedMappings.<span class="fn">getPlugins</span>()
+  ]
+};</pre>
+      </div>
+    </div>
+
+    <!-- MFE1 MODULE -->
+    <div id="mfe1-module" class="section">
+      <h2>MFE Productos — Module y Routing</h2>
+      <p>El módulo funciona exactamente igual que cualquier módulo Angular con lazy loading.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📦</span>
+          <span class="file-name">productos.module.ts</span>
+          <span class="file-app mfe1">mfe-productos</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">NgModule</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="cls">CommonModule</span> } <span class="kw">from</span> <span class="str">'@angular/common'</span>;
+<span class="kw">import</span> { <span class="cls">RouterModule</span>, <span class="cls">Routes</span> } <span class="kw">from</span> <span class="str">'@angular/router'</span>;
+<span class="kw">import</span> { <span class="cls">ProductosComponent</span> } <span class="kw">from</span> <span class="str">'./productos.component'</span>;
+<span class="kw">import</span> { <span class="cls">DetalleComponent</span> } <span class="kw">from</span> <span class="str">'./detalle/detalle.component'</span>;
+
+<span class="kw">const</span> routes: <span class="cls">Routes</span> = [
+  { path: <span class="str">''</span>, component: <span class="cls">ProductosComponent</span> },
+  { path: <span class="str">':id'</span>, component: <span class="cls">DetalleComponent</span> }
+];
+
+@<span class="fn">NgModule</span>({
+  declarations: [<span class="cls">ProductosComponent</span>, <span class="cls">DetalleComponent</span>],
+  imports: [
+    <span class="cls">CommonModule</span>,
+<span class="hl">    <span class="cls">RouterModule</span>.<span class="fn">forChild</span>(routes)   <span class="cm">// forChild, NO forRoot</span></span>
+  ]
+})
+<span class="kw">export class</span> <span class="cls">ProductosModule</span> {}
+<span class="cm">// ☝️ Este es el módulo que el shell carga remotamente</span></pre>
+      </div>
+    </div>
+
+    <!-- MFE1 COMPONENT -->
+    <div id="mfe1-component" class="section">
+      <h2>MFE Productos — Componente</h2>
+      <p>El componente es un componente Angular normal. No sabe que vive en un microfrontend.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🎨</span>
+          <span class="file-name">productos.component.ts</span>
+          <span class="file-app mfe1">mfe-productos</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">Component</span>, <span class="cls">OnInit</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="cls">ProductosService</span> } <span class="kw">from</span> <span class="str">'./productos.service'</span>;
+
+<span class="kw">interface</span> <span class="cls">Producto</span> {
+  id: <span class="kw">number</span>;
+  nombre: <span class="kw">string</span>;
+  precio: <span class="kw">number</span>;
+  imagen: <span class="kw">string</span>;
+}
+
+@<span class="fn">Component</span>({
+  selector: <span class="str">'app-productos'</span>,
+  template: <span class="str">`
+    &lt;div class="productos-container"&gt;
+      &lt;h2&gt;🛍️ Catálogo de Productos&lt;/h2&gt;
+      &lt;div class="grid"&gt;
+        &lt;div *ngFor="let p of productos" class="card"&gt;
+          &lt;img [src]="p.imagen" [alt]="p.nombre"&gt;
+          &lt;h3&gt;{{ p.nombre }}&lt;/h3&gt;
+          &lt;p class="precio"&gt;{{ p.precio | currency:'EUR' }}&lt;/p&gt;
+          &lt;button (click)="agregarAlCarrito(p)"&gt;Añadir al carrito&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="cls">ProductosComponent</span> <span class="kw">implements</span> <span class="cls">OnInit</span> {
+  productos: <span class="cls">Producto</span>[] = [];
+
+  <span class="kw">constructor</span>(<span class="kw">private</span> productosService: <span class="cls">ProductosService</span>) {}
+
+  <span class="fn">ngOnInit</span>() {
+    <span class="kw">this</span>.productosService.<span class="fn">getProductos</span>()
+      .<span class="fn">subscribe</span>(p => <span class="kw">this</span>.productos = p);
+  }
+
+  <span class="fn">agregarAlCarrito</span>(producto: <span class="cls">Producto</span>) {
+    <span class="cm">// Comunicación con MFE Carrito via Custom Events</span>
+<span class="hl">    window.<span class="fn">dispatchEvent</span>(<span class="kw">new</span> <span class="cls">CustomEvent</span>(<span class="str">'agregar-al-carrito'</span>, {
+      detail: { producto }
+    }));</span>
+  }
+}</pre>
+      </div>
+    </div>
+
+    <!-- MFE2 WEBPACK -->
+    <div id="mfe2-webpack" class="section">
+      <h2>MFE Carrito — webpack.config.js</h2>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">⚙️</span>
+          <span class="file-name">webpack.config.js</span>
+          <span class="file-app mfe2">mfe-carrito — puerto 4202</span>
+        </div>
+        <pre><span class="kw">const</span> { <span class="cls">ModuleFederationPlugin</span> } = <span class="fn">require</span>(<span class="str">'webpack/lib/container/ModuleFederationPlugin'</span>);
+<span class="kw">const</span> mf = <span class="fn">require</span>(<span class="str">'@angular-architects/module-federation/webpack'</span>);
+<span class="kw">const</span> path = <span class="fn">require</span>(<span class="str">'path'</span>);
+<span class="kw">const</span> share = mf.<span class="prop">share</span>;
+
+<span class="kw">const</span> sharedMappings = <span class="kw">new</span> mf.<span class="cls">SharedMappings</span>();
+sharedMappings.<span class="fn">register</span>(path.<span class="fn">join</span>(__dirname, <span class="str">'tsconfig.json'</span>));
+
+module.<span class="prop">exports</span> = {
+  output: {
+    uniqueName: <span class="str">'mfeCarrito'</span>,
+    publicPath: <span class="str">'auto'</span>
+  },
+  optimization: { runtimeChunk: <span class="kw">false</span> },
+  plugins: [
+    <span class="kw">new</span> <span class="cls">ModuleFederationPlugin</span>({
+      name: <span class="str">'mfeCarrito'</span>,
+<span class="hl">      exposes: {
+        <span class="str">'./CarritoModule'</span>: <span class="str">'./src/app/carrito/carrito.module.ts'</span>
+      },</span>
+      shared: <span class="fn">share</span>({
+        <span class="str">'@angular/core'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        <span class="str">'@angular/common'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        <span class="str">'@angular/router'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        <span class="str">'rxjs'</span>: { <span class="prop">singleton</span>: <span class="kw">true</span>, <span class="prop">strictVersion</span>: <span class="kw">true</span>, <span class="prop">requiredVersion</span>: <span class="str">'auto'</span> },
+        ...sharedMappings.<span class="fn">getDescriptors</span>()
+      })
+    }),
+    ...sharedMappings.<span class="fn">getPlugins</span>()
+  ]
+};</pre>
+      </div>
+    </div>
+
+    <!-- MFE2 MODULE -->
+    <div id="mfe2-module" class="section">
+      <h2>MFE Carrito — Module</h2>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📦</span>
+          <span class="file-name">carrito.module.ts</span>
+          <span class="file-app mfe2">mfe-carrito</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">NgModule</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="cls">CommonModule</span> } <span class="kw">from</span> <span class="str">'@angular/common'</span>;
+<span class="kw">import</span> { <span class="cls">RouterModule</span>, <span class="cls">Routes</span> } <span class="kw">from</span> <span class="str">'@angular/router'</span>;
+<span class="kw">import</span> { <span class="cls">CarritoComponent</span> } <span class="kw">from</span> <span class="str">'./carrito.component'</span>;
+
+<span class="kw">const</span> routes: <span class="cls">Routes</span> = [
+  { path: <span class="str">''</span>, component: <span class="cls">CarritoComponent</span> }
+];
+
+@<span class="fn">NgModule</span>({
+  declarations: [<span class="cls">CarritoComponent</span>],
+  imports: [
+    <span class="cls">CommonModule</span>,
+    <span class="cls">RouterModule</span>.<span class="fn">forChild</span>(routes)
+  ]
+})
+<span class="kw">export class</span> <span class="cls">CarritoModule</span> {}</pre>
+      </div>
+    </div>
+
+    <!-- COMUNICACION -->
+    <div id="comunicacion" class="section">
+      <h2>Comunicación entre MFEs</h2>
+      <p>Como los MFEs son independientes, no pueden inyectarse servicios entre sí directamente.</p>
+
+      <h3>Opción 1 — Custom Events (más simple)</h3>
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📡</span>
+          <span class="file-name">Emisor — MFE Productos</span>
+        </div>
+        <pre><span class="cm">// Emite un evento nativo del browser</span>
+<span class="fn">agregarAlCarrito</span>(producto: <span class="cls">Producto</span>) {
+<span class="hl">  window.<span class="fn">dispatchEvent</span>(
+    <span class="kw">new</span> <span class="cls">CustomEvent</span>(<span class="str">'agregar-al-carrito'</span>, {
+      detail: { producto }, bubbles: <span class="kw">true</span>
+    })
+  );</span>
+}</pre>
+      </div>
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📡</span>
+          <span class="file-name">Receptor — MFE Carrito</span>
+        </div>
+        <pre><span class="cm">// Escucha el evento en ngOnInit</span>
+<span class="fn">ngOnInit</span>() {
+<span class="hl">  window.<span class="fn">addEventListener</span>(<span class="str">'agregar-al-carrito'</span>, (event: Event) => {
+    <span class="kw">const</span> { producto } = (event <span class="kw">as</span> <span class="cls">CustomEvent</span>).detail;
+    <span class="kw">this</span>.items.<span class="fn">push</span>(producto);
+  });</span>
+}</pre>
+      </div>
+
+      <h3>Opción 2 — Shared Service con BehaviorSubject</h3>
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🔗</span>
+          <span class="file-name">cart.service.ts (librería compartida)</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">Injectable</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="cls">BehaviorSubject</span> } <span class="kw">from</span> <span class="str">'rxjs'</span>;
+
+@<span class="fn">Injectable</span>({ providedIn: <span class="str">'root'</span> })
+<span class="kw">export class</span> <span class="cls">CartService</span> {
+<span class="hl">  <span class="kw">private</span> items$ = <span class="kw">new</span> <span class="cls">BehaviorSubject</span>&lt;<span class="kw">any</span>[]&gt;([]);
+  items = <span class="kw">this</span>.items$.<span class="fn">asObservable</span>();</span>
+
+  <span class="fn">agregar</span>(producto: <span class="kw">any</span>) {
+    <span class="kw">this</span>.items$.<span class="fn">next</span>([...<span class="kw">this</span>.items$.value, producto]);
+  }
+
+  <span class="fn">eliminar</span>(id: <span class="kw">number</span>) {
+    <span class="kw">this</span>.items$.<span class="fn">next</span>(
+      <span class="kw">this</span>.items$.value.<span class="fn">filter</span>(p => p.id !== id)
+    );
+  }
+}
+<span class="cm">// Publicar como librería y ambos MFEs la importan como singleton</span></pre>
+      </div>
+
+      <div class="info-box green">
+        <strong>Recomendación:</strong> para eventos simples usa <strong>Custom Events</strong> — no acoplan los MFEs. Para estado compartido complejo, una <strong>librería compartida</strong> con BehaviorSubject o NgRx es la mejor opción.
+      </div>
+
+      <h3>Comparativa de estrategias</h3>
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📋</span>
+          <span class="file-name">Resumen</span>
+        </div>
+        <pre><span class="cm">Estrategia          | Acoplamiento | Complejidad | Recomendado para</span>
+<span class="cm">--------------------|--------------|-------------|--------------------</span>
+<span class="prop">Custom Events</span>       | Bajo         | Baja        | Eventos simples
+<span class="prop">URL / Query Params</span>  | Ninguno      | Baja        | Navegación entre MFEs
+<span class="prop">Shared Service</span>      | Medio        | Media       | Estado compartido
+<span class="prop">NgRx / Store</span>        | Alto         | Alta        | Apps muy complejas</pre>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

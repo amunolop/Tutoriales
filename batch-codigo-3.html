@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Especificación: Motor Spring Batch Dinámico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f8fafc; color: #334155; }
+        .code-block { background: #f1f5f9; border-left: 4px solid #6366f1; padding: 1rem; border-radius: 0 8px 8px 0; font-family: 'Fira Code', monospace; font-size: 0.85rem; margin-bottom: 1.5rem; overflow-x: auto; }
+        .keyword { color: #0000ff; font-weight: bold; }
+        .string { color: #a31515; }
+        .comment { color: #008000; italic; }
+        .type { color: #267f99; }
+        .annotation { color: #af00db; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-200">
+        
+        <header class="bg-indigo-600 p-8 text-white">
+            <h1 class="text-3xl font-bold italic tracking-tight">MOTOR BATCH <span class="text-indigo-200 underline">RESILIENTE</span></h1>
+            <p class="mt-2 opacity-90 text-lg">Arquitectura de Procesamiento con SkipLimit Dinámico (%)</p>
+        </header>
+
+        <main class="p-8 space-y-10">
+
+            <section>
+                <h2 class="text-xl font-bold text-indigo-800 mb-4 flex items-center">
+                    <span class="bg-indigo-100 p-2 rounded-lg mr-3">⚙️</span> 1. Propiedades de Negocio (application.properties)
+                </h2>
+                <div class="code-block">
+                    <span class="comment"># Definimos el margen de error permitido (del 1% al 5%)</span><br>
+                    batch.error.threshold.percentage=<span class="string">1.0</span><br>
+                    batch.error.max.allowed.percentage=<span class="string">5.0</span>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold text-indigo-800 mb-4 flex items-center">
+                    <span class="bg-indigo-100 p-2 rounded-lg mr-3">🧮</span> 2. Cálculo Dinámico del Umbral
+                </h2>
+                <p class="mb-4 text-slate-600 text-sm">Este componente cuenta las líneas del archivo y calcula cuántos registros se pueden saltar antes de fallar el Job.</p>
+                <div class="code-block">
+                    <span class="annotation">@Value</span>(<span class="string">"${batch.error.threshold.percentage:1.0}"</span>)<br>
+                    <span class="keyword">private double</span> threshold;<br><br>
+                    <span class="annotation">@Override</span><br>
+                    <span class="keyword">public</span> RepeatStatus <span class="type">execute</span>(...) {<br>
+                    &nbsp;&nbsp;<span class="keyword">long</span> lines = Files.lines(path).count();<br>
+                    &nbsp;&nbsp;<span class="keyword">long</span> skipLimit = (<span class="keyword">long</span>) Math.ceil(lines * (threshold / <span class="string">100.0</span>));<br>
+                    &nbsp;&nbsp;<span class="comment">// Guardamos en el contexto del Job para el siguiente Step</span><br>
+                    &nbsp;&nbsp;jobExecutionContext.put(<span class="string">"computedSkipLimit"</span>, skipLimit);<br>
+                    &nbsp;&nbsp;<span class="keyword">return</span> RepeatStatus.FINISHED;<br>
+                    }
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold text-indigo-800 mb-4 flex items-center">
+                    <span class="bg-indigo-100 p-2 rounded-lg mr-3">🏗️</span> 3. Step con Late Binding
+                </h2>
+                <div class="code-block">
+                    <span class="annotation">@Bean</span><br>
+                    <span class="annotation">@StepScope</span><br>
+                    <span class="keyword">public</span> Step <span class="type">mainStep</span>(<br>
+                    &nbsp;&nbsp;<span class="annotation">@Value</span>(<span class="string">"#{jobExecutionContext['computedSkipLimit']}"</span>) Integer limit) {<br>
+                    &nbsp;&nbsp;<span class="keyword">return new</span> StepBuilder(<span class="string">"step"</span>, repository)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;.chunk(<span class="string">50</span>, tm)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;.faultTolerant()<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;.skip(Exception.<span class="keyword">class</span>).skipLimit(limit)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;.listener(auditListener)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+                    }
+                </div>
+            </section>
+
+            <section class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                <h2 class="text-xl font-bold text-indigo-800 mb-6 tracking-tight italic">LABORATORIO DE PRUEBAS DINÁMICO</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase">Tamaño del Fichero (Líneas):</label>
+                            <input type="number" id="fileSize" value="200" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase">Umbral de Error (%):</label>
+                            <input type="number" id="thresholdPerc" value="1" step="0.5" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <button onclick="iniciarSimulacion()" id="btnSim" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-lg">
+                            CALCULAR Y EJECUTAR
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-center text-center">
+                        <p class="text-sm text-slate-500 uppercase font-bold">Límite Calculado (SkipLimit):</p>
+                        <p id="calcRes" class="text-5xl font-black text-indigo-600 my-2">--</p>
+                        <p id="statusMsg" class="text-xs font-medium text-slate-400 italic">Esperando entrada...</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-slate-900 text-green-400 p-4 rounded-lg font-mono text-xs h-40 overflow-y-auto shadow-inner border-t-4 border-indigo-500" id="monitor">
+                    <div>> Sistema inicializado. Listo para el Tasklet...</div>
+                </div>
+            </section>
+
+        </main>
+        
+        <footer class="bg-slate-100 p-6 text-center text-slate-500 text-sm border-t border-slate-200">
+            Manual de Ingeniería - Spring Batch Fault Tolerance Architecture
+        </footer>
+    </div>
+
+    <script>
+        function addMonitor(msg, color="text-green-400") {
+            const m = document.getElementById('monitor');
+            m.innerHTML += `<div class="${color}">> ${msg}</div>`;
+            m.scrollTop = m.scrollHeight;
+        }
+
+        async function iniciarSimulacion() {
+            const size = parseInt(document.getElementById('fileSize').value);
+            const perc = parseFloat(document.getElementById('thresholdPerc').value);
+            const btn = document.getElementById('btnSim');
+            
+            // 1. Fase de Tasklet
+            btn.disabled = true;
+            addMonitor("Iniciando Tasklet: CountLinesTasklet...", "text-white");
+            await sleep(800);
+            
+            const limit = Math.ceil(size * (perc / 100));
+            document.getElementById('calcRes').innerText = limit;
+            document.getElementById('statusMsg').innerText = `Basado en el ${perc}% de ${size} registros`;
+            
+            addMonitor(`Archivo detectado: ${size} líneas.`);
+            addMonitor(`Política aplicada: ${perc}% de error máximo.`);
+            addMonitor(`SkipLimit inyectado en Step: ${limit}`, "text-indigo-300 font-bold");
+            
+            await sleep(1000);
+            
+            // 2. Fase de Step
+            addMonitor("Iniciando Step principal (Modo Chunk 50)...", "text-yellow-400");
+            
+            // Simulamos encontrar errores
+            for(let i=1; i <= limit + 1; i++) {
+                await sleep(400);
+                if(i <= limit) {
+                    addMonitor(`Error en reg. #${Math.floor(Math.random()*size)}: Skip usado (${i}/${limit})`, "text-orange-400");
+                } else {
+                    addMonitor(`!!! FATAL: Error ${i} excede el límite de ${limit}.`, "text-red-500 font-bold");
+                    addMonitor("STEP STATUS: FAILED", "text-red-600 bg-red-100 font-black");
+                    btn.disabled = false;
+                    return;
+                }
+            }
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+    </script>
+</body>
+</html>

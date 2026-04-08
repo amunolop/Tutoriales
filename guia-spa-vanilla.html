@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía SPA Vanilla · Web Components Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f0e8;
+  --surface: #fffefb;
+  --surface2: #ece8dd;
+  --border: #ccc5af;
+  --border-strong: #a89d84;
+  --ink: #18140e;
+  --ink2: #3d3425;
+  --muted: #7a6e58;
+  --accent: #bf3d0a;
+  --accent2: #2a6e4e;
+  --accent3: #1a4a8a;
+  --yellow: #c98a10;
+  --purple: #6b2fb5;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  min-height: 100vh;
+  line-height: 1.7;
+  position: relative;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+}
+
+.container {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 52px 28px 110px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── HEADER ─────────────────────────────────────────── */
+header {
+  border-bottom: 3px solid var(--ink);
+  padding-bottom: 28px;
+  margin-bottom: 36px;
+}
+
+.doc-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.stamp {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  padding: 3px 10px;
+  transform: rotate(-1deg);
+  display: inline-block;
+}
+
+.stamp.blue {
+  color: var(--accent3);
+  border-color: var(--accent3);
+  transform: rotate(0.5deg);
+}
+
+.doc-version {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-family: var(--sans);
+  font-size: clamp(28px, 4.5vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+h1 em {
+  font-style: normal;
+  color: var(--accent);
+  border-bottom: 3px solid var(--accent);
+}
+
+.subtitle {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 14px;
+  line-height: 1.65;
+  max-width: 680px;
+}
+
+.meta-grid {
+  display: flex;
+  gap: 0;
+  margin-top: 28px;
+  border: 2px solid var(--border-strong);
+  border-radius: 6px;
+  overflow: hidden;
+  width: fit-content;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 24px;
+  border-right: 2px solid var(--border-strong);
+}
+
+.meta-item:last-child { border-right: none; }
+
+.meta-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--sans);
+  line-height: 1;
+}
+
+.meta-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+/* ── KEY PRINCIPLE ───────────────────────────────────── */
+.key-principle {
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: 6px;
+  padding: 18px 24px;
+  margin-bottom: 36px;
+  font-size: 12px;
+  line-height: 1.65;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.key-principle-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.key-principle strong { color: #f5c060; }
+
+/* ── TABS ────────────────────────────────────────────── */
+.mode-toggle {
+  display: flex;
+  gap: 0;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 36px;
+  width: fit-content;
+  flex-wrap: wrap;
+}
+
+.mode-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 10px 16px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  letter-spacing: 0.8px;
+  transition: all .15s;
+  border-right: 2px solid var(--ink);
+  white-space: nowrap;
+}
+
+.mode-btn:last-child { border-right: none; }
+.mode-btn:hover { background: var(--surface2); color: var(--ink); }
+.mode-btn.active { background: var(--ink); color: var(--bg); }
+
+.mode-panel { display: none; }
+.mode-panel.active {
+  display: block;
+  animation: fadeUp .35s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTION TITLE ───────────────────────────────────── */
+.sec-title {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 40px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sec-title:first-child { margin-top: 0; }
+
+.sec-title::before {
+  content: attr(data-n);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  font-family: var(--mono);
+}
+
+/* ── CALLOUTS ────────────────────────────────────────── */
+.callout {
+  border-left: 4px solid;
+  padding: 13px 18px;
+  margin: 14px 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink2);
+  border-radius: 0 4px 4px 0;
+}
+
+.callout.orange  { border-color: var(--accent);  background: rgba(191,61,10,.06); }
+.callout.green   { border-color: var(--accent2); background: rgba(42,110,78,.06); }
+.callout.blue    { border-color: var(--accent3); background: rgba(26,74,138,.06); }
+.callout.yellow  { border-color: var(--yellow);  background: rgba(201,138,16,.06); }
+.callout.purple  { border-color: var(--purple);  background: rgba(107,47,181,.06); }
+
+.callout strong { color: var(--ink); }
+.callout code {
+  background: var(--surface2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+/* ── CODE BLOCKS ─────────────────────────────────────── */
+.code-block {
+  border: 2px solid var(--border-strong);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 14px 0;
+  background: var(--surface);
+}
+
+.code-header {
+  background: var(--surface2);
+  border-bottom: 2px solid var(--border-strong);
+  padding: 9px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.code-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink2);
+  letter-spacing: 0.5px;
+}
+
+.code-lang {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.code-content { padding: 16px 18px; overflow-x: auto; }
+
+.code-content pre {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--ink2);
+  white-space: pre;
+}
+
+/* syntax-like highlights */
+.code-content pre .kw  { color: var(--accent3); font-weight: 600; }
+.code-content pre .str { color: var(--accent2); }
+.code-content pre .cmt { color: var(--muted); font-style: italic; }
+.code-content pre .cls { color: var(--purple); font-weight: 600; }
+.code-content pre .fn  { color: var(--accent); }
+
+/* ── ARCHITECTURE DIAGRAM ────────────────────────────── */
+.arch-diagram {
+  border: 2px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 28px 24px;
+  background: var(--surface);
+  margin: 14px 0;
+  font-size: 12px;
+  overflow-x: auto;
+}
+
+.arch-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 560px;
+}
+
+.arch-layer {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.arch-layer-label {
+  width: 90px;
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: right;
+  padding-right: 10px;
+  border-right: 2px solid var(--border);
+}
+
+.arch-layer-content {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.arch-box {
+  border: 2px solid var(--border-strong);
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg);
+  white-space: nowrap;
+}
+
+.arch-box.accent  { border-color: var(--accent);  color: var(--accent);  background: rgba(191,61,10,.05); }
+.arch-box.green   { border-color: var(--accent2); color: var(--accent2); background: rgba(42,110,78,.05); }
+.arch-box.blue    { border-color: var(--accent3); color: var(--accent3); background: rgba(26,74,138,.05); }
+.arch-box.purple  { border-color: var(--purple);  color: var(--purple);  background: rgba(107,47,181,.05); }
+.arch-box.yellow  { border-color: var(--yellow);  color: var(--yellow);  background: rgba(201,138,16,.05); }
+.arch-box.dark    { border-color: var(--ink); color: var(--bg); background: var(--ink); }
+
+.arch-arrow {
+  color: var(--muted);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* ── FILE TREE ───────────────────────────────────────── */
+.file-tree {
+  border: 2px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--surface);
+  padding: 18px 20px;
+  font-size: 12px;
+  margin: 14px 0;
+}
+
+.file-tree ul { list-style: none; padding-left: 20px; }
+.file-tree > ul { padding-left: 0; }
+
+.file-tree li {
+  position: relative;
+  padding: 2px 0 2px 18px;
+  color: var(--ink2);
+  line-height: 1.5;
+}
+
+.file-tree li::before {
+  content: '├─';
+  position: absolute;
+  left: 0;
+  color: var(--border-strong);
+  font-size: 10px;
+}
+
+.file-tree li:last-child::before { content: '└─'; }
+
+.ft-dir  { color: var(--accent3); font-weight: 700; }
+.ft-key  { color: var(--accent);  font-weight: 700; }
+.ft-note { color: var(--muted);   font-size: 10px; font-style: italic; margin-left: 8px; }
+
+/* ── STEP CARDS ──────────────────────────────────────── */
+.step-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+
+.step-card {
+  border: 2px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 18px;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+
+.step-card::before {
+  content: attr(data-step);
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  font-family: var(--sans);
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--border);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.step-card h3 {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.step-card p {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.65;
+  position: relative;
+}
+
+.step-card code {
+  background: var(--surface2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+/* ── COMPARISON TABLE ────────────────────────────────── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 12px;
+}
+
+.compare-table th {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.compare-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--ink2);
+}
+
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:nth-child(even) td { background: var(--surface2); }
+
+.compare-table code {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.tag-good { color: var(--accent2); font-weight: 700; }
+.tag-warn { color: var(--yellow);  font-weight: 700; }
+
+/* ── CHECKLIST ───────────────────────────────────────── */
+.checklist-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 14px 0 20px;
+  font-size: 12px;
+}
+
+.progress-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 99px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent2);
+  border-radius: 99px;
+  width: 0%;
+  transition: width .4s ease;
+}
+
+.progress-text { color: var(--muted); font-size: 11px; white-space: nowrap; }
+
+.check-category {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin: 20px 0 10px;
+}
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background .15s;
+  border: 1px solid transparent;
+  margin-bottom: 4px;
+}
+
+.check-item:hover { background: var(--surface2); }
+.check-item.checked { background: rgba(42,110,78,.06); border-color: rgba(42,110,78,.2); }
+
+.check-box {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-strong);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+  color: transparent;
+  transition: all .15s;
+  margin-top: 2px;
+}
+
+.check-item.checked .check-box {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  color: white;
+}
+
+.check-text {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.6;
+}
+
+.check-item.checked .check-text {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--accent2);
+}
+
+.check-text code {
+  background: var(--surface2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.check-text strong { color: var(--ink); }
+.check-item.checked .check-text strong { color: var(--muted); }
+
+/* ── INLINE BADGES ───────────────────────────────────── */
+.badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+.badge.new    { background: rgba(42,110,78,.12);  color: var(--accent2); border: 1px solid rgba(42,110,78,.3); }
+.badge.core   { background: rgba(26,74,138,.12);  color: var(--accent3); border: 1px solid rgba(26,74,138,.3); }
+.badge.danger { background: rgba(191,61,10,.12);  color: var(--accent);  border: 1px solid rgba(191,61,10,.3); }
+
+/* ── DIVIDER ─────────────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 28px 0;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 640px) {
+  .meta-grid { flex-direction: column; }
+  .meta-item { border-right: none; border-bottom: 2px solid var(--border-strong); }
+  .meta-item:last-child { border-bottom: none; }
+  .step-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ── HEADER ─────────────────────────────────────────── -->
+<header>
+  <div class="doc-meta">
+    <span class="stamp">Arquitectura</span>
+    <span class="stamp blue">Vanilla JS</span>
+    <span class="doc-version">v1.0 · Sin frameworks · Sin bundlers</span>
+  </div>
+
+  <h1>Guía <em>SPA</em> con Web Components<br>Vanilla JS · HTML · CSS</h1>
+
+  <p class="subtitle">
+    Una arquitectura modular basada en Web Components nativos donde <strong>cada página es un componente registrado</strong>,
+    el router es el único orquestador y añadir una nueva ruta es escribir un único archivo.
+    Sin React, sin Vue, sin Webpack. Solo la plataforma.
+  </p>
+
+  <div class="meta-grid">
+    <div class="meta-item">
+      <span class="meta-value">0</span>
+      <span class="meta-label">Dependencias</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-value">5</span>
+      <span class="meta-label">Archivos core</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-value">1</span>
+      <span class="meta-label">Archivo por página</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-value">ES6+</span>
+      <span class="meta-label">Target mínimo</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── PRINCIPIO CLAVE ─────────────────────────────────── -->
+<div class="key-principle">
+  <div class="key-principle-icon">⚡</div>
+  <div>
+    <strong>El contrato de la arquitectura:</strong> cada página es un Web Component que vive en <code style="background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px">pages/</code>.
+    El router lee el hash de la URL, importa el componente dinámicamente y lo monta en <code style="background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px">&lt;main&gt;</code>.
+    <strong>Añadir una página = crear un archivo. Nada más.</strong>
+  </div>
+</div>
+
+<!-- ── TABS ────────────────────────────────────────────── -->
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setView('arquitectura', this)">01 · Arquitectura</button>
+  <button class="mode-btn" onclick="setView('componentes', this)">02 · Web Components</button>
+  <button class="mode-btn" onclick="setView('router', this)">03 · Router</button>
+  <button class="mode-btn" onclick="setView('paginas', this)">04 · Añadir páginas</button>
+  <button class="mode-btn" onclick="setView('patrones', this)">05 · Patrones</button>
+  <button class="mode-btn" onclick="setView('checklist', this)">☑ Checklist</button>
+</div>
+
+<!-- ═══════════════════ PANEL 01: ARQUITECTURA ════════════ -->
+<div id="view-arquitectura" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">Visión general del sistema</div>
+
+  <div class="callout blue">
+    La SPA tiene <strong>tres responsabilidades separadas</strong>: el shell HTML estático que nunca cambia,
+    el router que escucha la URL, y los page components que se montan y desmontan solos.
+  </div>
+
+  <div class="arch-diagram">
+    <div class="arch-layers">
+      <div class="arch-layer">
+        <div class="arch-layer-label">Entrada</div>
+        <div class="arch-layer-content">
+          <div class="arch-box dark">index.html</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box dark">main.js</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box blue">router.js</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Shell</div>
+        <div class="arch-layer-content">
+          <div class="arch-box blue">&lt;app-nav&gt;</div>
+          <div class="arch-box blue">&lt;app-header&gt;</div>
+          <div class="arch-box accent">&lt;main id="outlet"&gt;</div>
+          <div class="arch-box blue">&lt;app-footer&gt;</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Router</div>
+        <div class="arch-layer-content">
+          <div class="arch-box yellow">hashchange</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box yellow">match route</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box yellow">import() lazy</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box yellow">mount en outlet</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Páginas</div>
+        <div class="arch-layer-content">
+          <div class="arch-box green">&lt;page-home&gt;</div>
+          <div class="arch-box green">&lt;page-about&gt;</div>
+          <div class="arch-box green">&lt;page-contact&gt;</div>
+          <div class="arch-box green">&lt;page-*&gt;</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Shared</div>
+        <div class="arch-layer-content">
+          <div class="arch-box purple">store.js</div>
+          <div class="arch-box purple">api.js</div>
+          <div class="arch-box purple">events.js</div>
+          <div class="arch-box purple">utils.js</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Estructura de archivos</div>
+
+  <div class="callout green">
+    <strong>Regla de oro:</strong> todo lo que vive en <code>pages/</code> es una página. Todo lo que vive en <code>components/</code>
+    es un componente reutilizable. El router solo conoce <code>pages/</code>.
+  </div>
+
+  <div class="file-tree">
+    <ul>
+      <li><span class="ft-dir">📁 src/</span>
+        <ul>
+          <li><span class="ft-key">index.html</span> <span class="ft-note">shell estático · nunca se recarga</span></li>
+          <li><span class="ft-key">main.js</span> <span class="ft-note">punto de entrada · registra componentes globales</span></li>
+          <li><span class="ft-key">router.js</span> <span class="ft-note">lee el hash · importa páginas bajo demanda</span></li>
+          <li><span class="ft-dir">📁 pages/</span> <span class="ft-note">← aquí viven las páginas</span>
+            <ul>
+              <li>home.js <span class="ft-note">→ &lt;page-home&gt;</span></li>
+              <li>about.js <span class="ft-note">→ &lt;page-about&gt;</span></li>
+              <li>contact.js <span class="ft-note">→ &lt;page-contact&gt;</span></li>
+              <li>not-found.js <span class="ft-note">→ &lt;page-not-found&gt;</span></li>
+            </ul>
+          </li>
+          <li><span class="ft-dir">📁 components/</span> <span class="ft-note">componentes UI reutilizables</span>
+            <ul>
+              <li>app-nav.js</li>
+              <li>app-header.js</li>
+              <li>app-footer.js</li>
+            </ul>
+          </li>
+          <li><span class="ft-dir">📁 shared/</span>
+            <ul>
+              <li>store.js <span class="ft-note">estado global reactivo mínimo</span></li>
+              <li>api.js <span class="ft-note">capa de fetching centralizada</span></li>
+              <li>events.js <span class="ft-note">event bus para comunicación</span></li>
+            </ul>
+          </li>
+          <li><span class="ft-dir">📁 styles/</span>
+            <ul>
+              <li>global.css <span class="ft-note">variables · reset · tipografía</span></li>
+              <li>utilities.css <span class="ft-note">clases de utilidad</span></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="sec-title" data-n="3">Cuándo usar esta arquitectura</div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Escenario</th>
+        <th>¿Encaja?</th>
+        <th>Alternativa si no encaja</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Portfolio, landing multi-sección, app interna</td>
+        <td><span class="tag-good">✓ Ideal</span></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>App con 5–30 páginas sin SSR necesario</td>
+        <td><span class="tag-good">✓ Ideal</span></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>Equipo pequeño, sin build tooling</td>
+        <td><span class="tag-good">✓ Ideal</span></td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>App con SEO crítico y contenido dinámico</td>
+        <td><span class="tag-warn">⚠ Parcial</span></td>
+        <td>Añadir SSR o usar Astro/Next</td>
+      </tr>
+      <tr>
+        <td>App con estado complejo y tiempo real</td>
+        <td><span class="tag-warn">⚠ Parcial</span></td>
+        <td>Svelte o React + Zustand</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- ═══════════════════ PANEL 02: WEB COMPONENTS ══════════ -->
+<div id="view-componentes" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Anatomía de un Web Component</div>
+
+  <div class="callout blue">
+    Un Web Component es una <strong>clase que extiende HTMLElement</strong> y se registra con <code>customElements.define()</code>.
+    Tiene un ciclo de vida propio: <code>connectedCallback</code> (montado) y <code>disconnectedCallback</code> (desmontado).
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">components/app-nav.js — Componente de navegación con Shadow DOM</div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="cmt">// Cada componente es un archivo independiente</span>
+<span class="kw">class</span> <span class="cls">AppNav</span> <span class="kw">extends</span> HTMLElement {
+
+  <span class="cmt">// Shadow DOM aísla los estilos del componente</span>
+  <span class="fn">constructor</span>() {
+    <span class="kw">super</span>();
+    this._shadow = this.attachShadow({ mode: <span class="str">'open'</span> });
+  }
+
+  <span class="cmt">// Se ejecuta al insertar el elemento en el DOM</span>
+  <span class="fn">connectedCallback</span>() {
+    this._render();
+    this._bindEvents();
+  }
+
+  <span class="cmt">// Se ejecuta al retirar el elemento del DOM</span>
+  <span class="fn">disconnectedCallback</span>() {
+    <span class="cmt">// Limpia event listeners, timers, subscripciones</span>
+    this._cleanup?.();
+  }
+
+  <span class="fn">_render</span>() {
+    this._shadow.innerHTML = <span class="str">`
+      &lt;style&gt;
+        nav { display: flex; gap: 1rem; padding: 1rem; }
+        a { color: inherit; text-decoration: none; }
+        a.active { font-weight: bold; }
+      &lt;/style&gt;
+      &lt;nav&gt;
+        &lt;a href="#/"&gt;Inicio&lt;/a&gt;
+        &lt;a href="#/about"&gt;Sobre mí&lt;/a&gt;
+        &lt;a href="#/contact"&gt;Contacto&lt;/a&gt;
+      &lt;/nav&gt;
+    `</span>;
+  }
+
+  <span class="fn">_bindEvents</span>() {
+    <span class="cmt">// Marcar el link activo al cambiar la ruta</span>
+    <span class="kw">const</span> markActive = () =&gt; {
+      <span class="kw">const</span> hash = location.hash || <span class="str">'#/'</span>;
+      this._shadow.querySelectorAll(<span class="str">'a'</span>).forEach(a =&gt; {
+        a.classList.toggle(<span class="str">'active'</span>, a.getAttribute(<span class="str">'href'</span>) === hash);
+      });
+    };
+    window.addEventListener(<span class="str">'hashchange'</span>, markActive);
+    markActive();
+    this._cleanup = () =&gt; window.removeEventListener(<span class="str">'hashchange'</span>, markActive);
+  }
+}
+
+<span class="cmt">// Registro: el nombre debe contener un guion</span>
+customElements.define(<span class="str">'app-nav'</span>, <span class="cls">AppNav</span>);</pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Shadow DOM vs Light DOM</div>
+
+  <div class="callout yellow">
+    <strong>Cuándo usar Shadow DOM:</strong> componentes UI con estilos propios (nav, modal, card).
+    <strong>Cuándo evitarlo:</strong> páginas completas — el Shadow DOM impide que los estilos globales lleguen al contenido.
+  </div>
+
+  <div class="step-grid">
+    <div class="step-card" data-step="A">
+      <h3>Shadow DOM <span class="badge core">Componentes</span></h3>
+      <p>Encapsula estilos. Ideal para <code>&lt;app-nav&gt;</code>, <code>&lt;app-modal&gt;</code>, <code>&lt;ui-card&gt;</code>.
+      Los estilos no se filtran ni hacia dentro ni hacia afuera.</p>
+    </div>
+    <div class="step-card" data-step="B">
+      <h3>Light DOM <span class="badge new">Páginas</span></h3>
+      <p>Sin Shadow DOM. Las páginas (<code>&lt;page-home&gt;</code>) usan <code>this.innerHTML</code> directamente.
+      Reciben los estilos globales del <code>global.css</code>.</p>
+    </div>
+    <div class="step-card" data-step="C">
+      <h3>Atributos reactivos <span class="badge core">Avanzado</span></h3>
+      <p>Usa <code>observedAttributes</code> y <code>attributeChangedCallback</code> para que el componente
+      reaccione a cambios en sus atributos HTML como si fueran props.</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">Atributos reactivos — componente con "props"</div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="kw">class</span> <span class="cls">UserCard</span> <span class="kw">extends</span> HTMLElement {
+
+  <span class="cmt">// Declara qué atributos quieres observar</span>
+  <span class="kw">static</span> get <span class="fn">observedAttributes</span>() {
+    <span class="kw">return</span> [<span class="str">'name'</span>, <span class="str">'avatar'</span>];
+  }
+
+  <span class="cmt">// Se ejecuta cuando cambia un atributo observado</span>
+  <span class="fn">attributeChangedCallback</span>(name, oldVal, newVal) {
+    <span class="kw">if</span> (oldVal !== newVal) this._render();
+  }
+
+  <span class="fn">connectedCallback</span>() { this._render(); }
+
+  <span class="fn">_render</span>() {
+    <span class="kw">const</span> name   = this.getAttribute(<span class="str">'name'</span>)   || <span class="str">'Anónimo'</span>;
+    <span class="kw">const</span> avatar = this.getAttribute(<span class="str">'avatar'</span>) || <span class="str">'/default.png'</span>;
+    this.innerHTML = <span class="str">`
+      &lt;div class="user-card"&gt;
+        &lt;img src="${avatar}" alt="${name}" /&gt;
+        &lt;span&gt;${name}&lt;/span&gt;
+      &lt;/div&gt;
+    `</span>;
+  }
+}
+
+customElements.define(<span class="str">'user-card'</span>, <span class="cls">UserCard</span>);
+
+<span class="cmt">// Uso en HTML: &lt;user-card name="Ana" avatar="/ana.jpg"&gt;&lt;/user-card&gt;</span></pre>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════ PANEL 03: ROUTER ═════════════════ -->
+<div id="view-router" class="mode-panel">
+
+  <div class="sec-title" data-n="1">El router basado en hash</div>
+
+  <div class="callout orange">
+    <strong>Por qué hash (#) y no History API:</strong> el hash funciona sin servidor. Con History API necesitas
+    configurar el servidor para que devuelva siempre <code>index.html</code>. Para empezar, el hash es cero fricción.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">router.js — El corazón de la SPA</div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="cmt">/**
+ * router.js
+ * ─────────────────────────────────────────────
+ * - Lee window.location.hash
+ * - Importa el módulo de página dinámicamente
+ * - Monta el componente en el outlet &lt;main&gt;
+ * - Soporta params: #/user/:id → { id: '42' }
+ */</span>
+
+<span class="kw">const</span> routes = [
+  { path: <span class="str">'/'</span>,        component: <span class="str">'page-home'</span>,      module: <span class="str">'./pages/home.js'</span>      },
+  { path: <span class="str">'/about'</span>,   component: <span class="str">'page-about'</span>,     module: <span class="str">'./pages/about.js'</span>     },
+  { path: <span class="str">'/contact'</span>, component: <span class="str">'page-contact'</span>,   module: <span class="str">'./pages/contact.js'</span>   },
+  { path: <span class="str">'/user/:id'</span>,component: <span class="str">'page-user'</span>,      module: <span class="str">'./pages/user.js'</span>      },
+  { path: <span class="str">'*'</span>,        component: <span class="str">'page-not-found'</span>, module: <span class="str">'./pages/not-found.js'</span> },
+];
+
+<span class="kw">const</span> outlet = document.getElementById(<span class="str">'outlet'</span>);
+
+<span class="cmt">// ── Matching con soporte a parámetros ─────────────────────</span>
+<span class="kw">function</span> <span class="fn">matchRoute</span>(hash) {
+  <span class="kw">const</span> path = hash.replace(<span class="str">'#'</span>, <span class="str">''</span>) || <span class="str">'/'</span>;
+
+  <span class="kw">for</span> (<span class="kw">const</span> route <span class="kw">of</span> routes) {
+    <span class="kw">if</span> (route.path === <span class="str">'*'</span>) <span class="kw">continue</span>;
+
+    <span class="cmt">// Convierte '/user/:id' en regex '/user/([^/]+)'</span>
+    <span class="kw">const</span> pattern = route.path.replace(<span class="str">/:([^/]+)/g</span>, <span class="str">'([^/]+)'</span>);
+    <span class="kw">const</span> match   = path.match(<span class="kw">new</span> RegExp(<span class="str">`^${pattern}$`</span>));
+
+    <span class="kw">if</span> (match) {
+      <span class="kw">const</span> keys   = [...route.path.matchAll(<span class="str">/:([^/]+)/g</span>)].map(m =&gt; m[1]);
+      <span class="kw">const</span> params = Object.fromEntries(keys.map((k, i) =&gt; [k, match[i + 1]]));
+      <span class="kw">return</span> { ...route, params };
+    }
+  }
+  <span class="kw">return</span> routes.find(r =&gt; r.path === <span class="str">'*'</span>); <span class="cmt">// fallback 404</span>
+}
+
+<span class="cmt">// ── Navegación ────────────────────────────────────────────</span>
+<span class="kw">async function</span> <span class="fn">navigate</span>() {
+  <span class="kw">const</span> route = matchRoute(window.location.hash);
+
+  <span class="cmt">// 1. Importar el módulo solo si no está ya registrado</span>
+  <span class="kw">if</span> (!customElements.get(route.component)) {
+    <span class="kw">await</span> import(route.module);
+  }
+
+  <span class="cmt">// 2. Limpiar el outlet (activa disconnectedCallback)</span>
+  outlet.innerHTML = <span class="str">''</span>;
+
+  <span class="cmt">// 3. Crear y montar el componente</span>
+  <span class="kw">const</span> el = document.createElement(route.component);
+
+  <span class="cmt">// 4. Pasar params como dataset: dataset.id, dataset.slug…</span>
+  <span class="kw">if</span> (route.params) {
+    Object.entries(route.params).forEach(([k, v]) =&gt; {
+      el.dataset[k] = v;
+    });
+  }
+
+  outlet.appendChild(el);
+}
+
+<span class="cmt">// ── Inicialización ────────────────────────────────────────</span>
+window.addEventListener(<span class="str">'hashchange'</span>, navigate);
+navigate(); <span class="cmt">// carga inicial</span></pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">El index.html — el shell</div>
+
+  <div class="callout green">
+    El HTML base <strong>no cambia nunca</strong>. Solo define la estructura permanente (nav, header, footer)
+    y el <code>&lt;main id="outlet"&gt;</code> donde el router monta las páginas.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">index.html — único HTML de la aplicación</div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="cmt">&lt;!-- index.html --&gt;</span>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="es"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Mi SPA&lt;/title&gt;
+  &lt;link rel="stylesheet" href="./styles/global.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  <span class="cmt">&lt;!-- Componentes permanentes del shell --&gt;</span>
+  &lt;app-header&gt;&lt;/app-header&gt;
+  &lt;app-nav&gt;&lt;/app-nav&gt;
+
+  <span class="cmt">&lt;!-- OUTLET: el router monta aquí cada página --&gt;</span>
+  &lt;main id="outlet"&gt;&lt;/main&gt;
+
+  &lt;app-footer&gt;&lt;/app-footer&gt;
+
+  <span class="cmt">&lt;!-- Punto de entrada: type="module" activa ES Modules --&gt;</span>
+  &lt;script type="module" src="./main.js"&gt;&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">main.js — registra componentes del shell e inicia el router</div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="cmt">// main.js — punto de entrada</span>
+<span class="cmt">// Importa los componentes que siempre están presentes</span>
+<span class="kw">import</span> <span class="str">'./components/app-header.js'</span>;
+<span class="kw">import</span> <span class="str">'./components/app-nav.js'</span>;
+<span class="kw">import</span> <span class="str">'./components/app-footer.js'</span>;
+
+<span class="cmt">// Inicia el router — las páginas se importan lazy</span>
+<span class="kw">import</span> <span class="str">'./router.js'</span>;</pre>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════ PANEL 04: AÑADIR PÁGINAS ══════════ -->
+<div id="view-paginas" class="mode-panel">
+
+  <div class="sec-title" data-n="1">El flujo de trabajo: añadir una página nueva</div>
+
+  <div class="callout green">
+    <strong>Son exactamente 2 pasos.</strong> No toques el router existente si ya funciona,
+    no toques el index.html, no registres nada en main.js. Solo añade el archivo y la ruta.
+  </div>
+
+  <div class="step-grid">
+    <div class="step-card" data-step="1">
+      <h3>Crea el archivo de página</h3>
+      <p>Añade <code>pages/blog.js</code> con la clase del componente y su <code>customElements.define()</code>.</p>
+    </div>
+    <div class="step-card" data-step="2">
+      <h3>Registra la ruta</h3>
+      <p>Añade una entrada al array <code>routes</code> en <code>router.js</code>. Eso es todo.</p>
+    </div>
+    <div class="step-card" data-step="3">
+      <h3>Navega</h3>
+      <p>Enlaza con <code>href="#/blog"</code> en la navegación. El router importa el módulo la primera vez que se visita.</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">pages/blog.js — plantilla base para cualquier página nueva</div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="cmt">/**
+ * pages/blog.js
+ * Plantilla base — copia, renombra y personaliza.
+ * ──────────────────────────────────────────────
+ * CONVENCIONES:
+ *   - Nombre del tag:  page-[nombre]   (siempre con guion)
+ *   - Nombre de clase: Page[Nombre]    (PascalCase)
+ *   - No usar Shadow DOM en páginas   (los estilos globales deben llegar)
+ */</span>
+
+<span class="kw">class</span> <span class="cls">PageBlog</span> <span class="kw">extends</span> HTMLElement {
+
+  <span class="fn">connectedCallback</span>() {
+    <span class="cmt">// Leer params pasados por el router via dataset</span>
+    <span class="kw">const</span> page = this.dataset.page || <span class="str">'1'</span>;
+
+    this._render(page);
+    this._loadData(page);
+  }
+
+  <span class="fn">disconnectedCallback</span>() {
+    <span class="cmt">// Cancelar fetches, limpiar intervalos, desuscribirse del store</span>
+    this._abortController?.abort();
+  }
+
+  <span class="fn">_render</span>(page) {
+    this.innerHTML = <span class="str">`
+      &lt;section class="page page--blog"&gt;
+        &lt;h1&gt;Blog&lt;/h1&gt;
+        &lt;p class="page__subtitle"&gt;Página ${page}&lt;/p&gt;
+        &lt;div id="blog-list" class="blog-list"&gt;
+          &lt;p&gt;Cargando artículos…&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+    `</span>;
+  }
+
+  <span class="kw">async</span> <span class="fn">_loadData</span>(page) {
+    this._abortController = <span class="kw">new</span> AbortController();
+
+    <span class="kw">try</span> {
+      <span class="kw">const</span> res  = <span class="kw">await</span> fetch(<span class="str">`/api/posts?page=${page}`</span>, {
+        signal: this._abortController.signal
+      });
+      <span class="kw">const</span> data = <span class="kw">await</span> res.json();
+      this._renderPosts(data.posts);
+    } <span class="kw">catch</span> (err) {
+      <span class="kw">if</span> (err.name !== <span class="str">'AbortError'</span>) {
+        this.querySelector(<span class="str">'#blog-list'</span>).innerHTML =
+          <span class="str">'&lt;p class="error"&gt;Error cargando artículos.&lt;/p&gt;'</span>;
+      }
+    }
+  }
+
+  <span class="fn">_renderPosts</span>(posts) {
+    <span class="kw">const</span> list = this.querySelector(<span class="str">'#blog-list'</span>);
+    list.innerHTML = posts.map(p =&gt; <span class="str">`
+      &lt;article class="post-card"&gt;
+        &lt;h2&gt;&lt;a href="#/post/${p.id}"&gt;${p.title}&lt;/a&gt;&lt;/h2&gt;
+        &lt;p&gt;${p.excerpt}&lt;/p&gt;
+      &lt;/article&gt;
+    `</span>).join(<span class="str">''</span>);
+  }
+}
+
+customElements.define(<span class="str">'page-blog'</span>, <span class="cls">PageBlog</span>);
+
+<span class="cmt">// Paso 2: añadir en router.js:
+// { path: '/blog', component: 'page-blog', module: './pages/blog.js' },
+// { path: '/blog/:page', component: 'page-blog', module: './pages/blog.js' },</span></pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Subpáginas y rutas anidadas</div>
+
+  <div class="callout purple">
+    <strong>Patrón recomendado para subpáginas:</strong> una página padre actúa como mini-router interno
+    usando un segundo outlet. La URL queda como <code>#/settings/profile</code> o <code>#/settings/security</code>.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">pages/settings.js — página con sub-navegación interna</div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="cmt">// Subrutas registradas en router.js:
+// { path: '/settings',          component: 'page-settings', ... }
+// { path: '/settings/:section', component: 'page-settings', ... }</span>
+
+<span class="kw">class</span> <span class="cls">PageSettings</span> <span class="kw">extends</span> HTMLElement {
+
+  <span class="kw">static</span> <span class="fn">subRoutes</span> = {
+    <span class="str">'profile'</span>  : () =&gt; import(<span class="str">'./settings/profile.js'</span>),
+    <span class="str">'security'</span> : () =&gt; import(<span class="str">'./settings/security.js'</span>),
+    <span class="str">'billing'</span>  : () =&gt; import(<span class="str">'./settings/billing.js'</span>),
+  };
+
+  <span class="fn">connectedCallback</span>() {
+    <span class="kw">const</span> section = this.dataset.section || <span class="str">'profile'</span>;
+    this._render(section);
+    this._loadSection(section);
+  }
+
+  <span class="fn">_render</span>(active) {
+    this.innerHTML = <span class="str">`
+      &lt;div class="settings-layout"&gt;
+        &lt;aside class="settings-nav"&gt;
+          &lt;a href="#/settings/profile"   class="${active==='profile'  ?'active':''}"&gt;Perfil&lt;/a&gt;
+          &lt;a href="#/settings/security"  class="${active==='security' ?'active':''}"&gt;Seguridad&lt;/a&gt;
+          &lt;a href="#/settings/billing"   class="${active==='billing'  ?'active':''}"&gt;Facturación&lt;/a&gt;
+        &lt;/aside&gt;
+        &lt;main id="sub-outlet" class="settings-content"&gt;
+          &lt;p&gt;Cargando…&lt;/p&gt;
+        &lt;/main&gt;
+      &lt;/div&gt;
+    `</span>;
+  }
+
+  <span class="kw">async</span> <span class="fn">_loadSection</span>(section) {
+    <span class="kw">const</span> loader = PageSettings.subRoutes[section]
+                || PageSettings.subRoutes[<span class="str">'profile'</span>];
+
+    <span class="kw">await</span> loader(); <span class="cmt">// importa el módulo si no está registrado</span>
+
+    <span class="kw">const</span> subOutlet = this.querySelector(<span class="str">'#sub-outlet'</span>);
+    subOutlet.innerHTML = <span class="str">''</span>;
+    subOutlet.appendChild(document.createElement(<span class="str">`settings-${section}`</span>));
+  }
+}
+
+customElements.define(<span class="str">'page-settings'</span>, <span class="cls">PageSettings</span>);</pre>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════ PANEL 05: PATRONES ═══════════════ -->
+<div id="view-patrones" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Estado global mínimo</div>
+
+  <div class="callout blue">
+    No necesitas Redux. Un objeto reactivo con suscriptores es suficiente para el 90% de los casos.
+    Las páginas se suscriben en <code>connectedCallback</code> y se desuscriben en <code>disconnectedCallback</code>.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">shared/store.js — estado reactivo sin dependencias</div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="kw">class</span> <span class="cls">Store</span> {
+  #state       = {};
+  #subscribers = <span class="kw">new</span> Map();
+
+  <span class="fn">setState</span>(slice) {
+    this.#state = { ...this.#state, ...slice };
+    <span class="cmt">// Notifica solo a los suscriptores de las claves cambiadas</span>
+    Object.keys(slice).forEach(key =&gt; {
+      this.#subscribers.get(key)?.forEach(fn =&gt; fn(this.#state[key]));
+    });
+  }
+
+  <span class="fn">getState</span>() { <span class="kw">return</span> { ...this.#state }; }
+
+  <span class="fn">subscribe</span>(key, fn) {
+    <span class="kw">if</span> (!this.#subscribers.has(key)) this.#subscribers.set(key, <span class="kw">new</span> Set());
+    this.#subscribers.get(key).add(fn);
+    <span class="kw">return</span> () =&gt; this.#subscribers.get(key).delete(fn); <span class="cmt">// retorna unsubscribe</span>
+  }
+}
+
+<span class="kw">export const</span> store = <span class="kw">new</span> <span class="cls">Store</span>();
+
+<span class="cmt">// Uso en una página:
+// import { store } from '../shared/store.js';
+//
+// connectedCallback() {
+//   this._unsub = store.subscribe('user', u =&gt; this._updateUser(u));
+// }
+//
+// disconnectedCallback() {
+//   this._unsub(); // limpia la suscripción
+// }</span></pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Comunicación entre componentes</div>
+
+  <div class="step-grid">
+    <div class="step-card" data-step="→">
+      <h3>Props hacia abajo <span class="badge core">dataset</span></h3>
+      <p>El router pasa datos a la página via <code>el.dataset.id = value</code>.
+      La página los lee con <code>this.dataset.id</code> en <code>connectedCallback</code>.</p>
+    </div>
+    <div class="step-card" data-step="↑">
+      <h3>Eventos hacia arriba <span class="badge new">CustomEvent</span></h3>
+      <p>Un componente hijo dispara <code>this.dispatchEvent(new CustomEvent('user-selected', { detail, bubbles: true }))</code>
+      y el padre lo escucha en el DOM.</p>
+    </div>
+    <div class="step-card" data-step="⇄">
+      <h3>Hermanos <span class="badge core">store / bus</span></h3>
+      <p>Usa el <code>store.js</code> o un event bus para comunicar páginas o componentes que no tienen relación directa en el DOM.</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">shared/events.js — event bus simple</div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="cmt">// Event bus: alternativa ligera al store para eventos puntuales</span>
+<span class="kw">const</span> bus = <span class="kw">new</span> EventTarget();
+
+<span class="kw">export const</span> <span class="fn">emit</span>  = (event, detail) =&gt;
+  bus.dispatchEvent(<span class="kw">new</span> CustomEvent(event, { detail }));
+
+<span class="kw">export const</span> <span class="fn">on</span>    = (event, fn) =&gt; { bus.addEventListener(event, fn);    };
+<span class="kw">export const</span> <span class="fn">off</span>   = (event, fn) =&gt; { bus.removeEventListener(event, fn); };
+
+<span class="cmt">// Uso:
+// import { emit, on, off } from '../shared/events.js';
+//
+// on('cart:updated', e =&gt; this._updateCart(e.detail));
+// emit('cart:updated', { items: 3, total: 29.90 });</span></pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">Transiciones entre páginas</div>
+
+  <div class="callout yellow">
+    Con la <strong>View Transitions API</strong> (Chrome 111+) tienes animaciones de página con 3 líneas de JS.
+    El fallback para navegadores sin soporte es simplemente navegar sin animación.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">router.js — navegación con View Transitions API</div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="kw">async function</span> <span class="fn">navigate</span>() {
+  <span class="kw">const</span> doNavigate = <span class="kw">async</span> () =&gt; {
+    <span class="kw">const</span> route = matchRoute(window.location.hash);
+    <span class="kw">if</span> (!customElements.get(route.component)) <span class="kw">await</span> import(route.module);
+    outlet.innerHTML = <span class="str">''</span>;
+    <span class="kw">const</span> el = document.createElement(route.component);
+    <span class="kw">if</span> (route.params) Object.entries(route.params)
+      .forEach(([k, v]) =&gt; el.dataset[k] = v);
+    outlet.appendChild(el);
+  };
+
+  <span class="cmt">// View Transitions API — animación nativa del browser</span>
+  <span class="kw">if</span> (document.startViewTransition) {
+    document.startViewTransition(doNavigate);
+  } <span class="kw">else</span> {
+    <span class="kw">await</span> doNavigate();
+  }
+}
+
+<span class="cmt">/* En global.css — personaliza la transición:
+::view-transition-old(root) {
+  animation: 200ms ease-out fade-out;
+}
+::view-transition-new(root) {
+  animation: 300ms ease-in fade-in;
+} */</span></pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">SEO y meta tags dinámicos</div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-title">shared/meta.js — actualizar title y description por página</div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-content">
+      <pre><span class="kw">export function</span> <span class="fn">setMeta</span>({ title, description, canonical }) {
+  <span class="kw">if</span> (title)       document.title = <span class="str">`${title} · Mi SPA`</span>;
+  <span class="kw">if</span> (description) {
+    <span class="kw">let</span> meta = document.querySelector(<span class="str">'meta[name="description"]'</span>);
+    <span class="kw">if</span> (!meta) {
+      meta = document.createElement(<span class="str">'meta'</span>);
+      meta.name = <span class="str">'description'</span>;
+      document.head.appendChild(meta);
+    }
+    meta.content = description;
+  }
+}
+
+<span class="cmt">// Uso en connectedCallback de cualquier página:
+// import { setMeta } from '../shared/meta.js';
+// setMeta({ title: 'Blog', description: 'Artículos sobre desarrollo web' });</span></pre>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════ PANEL: CHECKLIST ════════════════ -->
+<div id="view-checklist" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Estructura base</div>
+  <div class="callout orange">
+    <strong>Completa esta lista antes de empezar a añadir páginas de contenido.</strong>
+    El esqueleto debe funcionar al 100% primero.
+  </div>
+
+  <div class="checklist-progress">
+    <span id="progress-count" style="font-weight:700;color:var(--accent);">0/24</span>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+    <span class="progress-text" id="progress-pct">0% completado</span>
+  </div>
+
+  <div class="check-category">Shell y estructura de archivos</div>
+
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Creada la carpeta <code>src/</code> con subcarpetas <code>pages/</code>, <code>components/</code>, <code>shared/</code>, <code>styles/</code></div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text"><code>index.html</code> tiene <code>&lt;main id="outlet"&gt;</code> y carga <code>main.js</code> con <strong><code>type="module"</code></strong></div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text"><code>global.css</code> tiene variables CSS (<code>--color-primary</code>, <code>--spacing-*</code>) y reset básico</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text"><code>main.js</code> importa los componentes del shell y arranca el router</div>
+  </div>
+
+  <div class="check-category" style="margin-top:14px;">Router</div>
+
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text"><code>router.js</code> tiene el array <code>routes</code> con al menos <code>/</code> y la ruta wildcard <code>*</code></div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">El router escucha <code>hashchange</code> y llama a <code>navigate()</code> en la carga inicial</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">El router usa <strong>import dinámico</strong> (<code>await import()</code>) y no importa todas las páginas en arranque</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">El router limpia el outlet con <code>outlet.innerHTML = ''</code> antes de montar la nueva página</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Existe <code>page-not-found</code> y el router hace fallback a ella cuando ninguna ruta hace match</div>
+  </div>
+
+  <div class="check-category" style="margin-top:14px;">Web Components</div>
+
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Todos los tags personalizados tienen <strong>al menos un guion</strong> en el nombre (<code>page-home</code>, no <code>pagehome</code>)</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Los componentes del shell usan <strong>Shadow DOM</strong> para encapsular estilos propios</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Las páginas <strong>no usan Shadow DOM</strong> para recibir los estilos globales correctamente</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Cada página implementa <code>disconnectedCallback</code> y cancela fetches / limpia listeners</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Los fetches usan <code>AbortController</code> para cancelarse si la página se desmonta antes de terminar</div>
+  </div>
+
+  <div class="check-category" style="margin-top:14px;">Navegación y UX</div>
+
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">El componente de navegación marca el link activo al cambiar de ruta</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Se muestra un estado de carga mientras se importa el módulo de la página (skeleton o spinner)</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Las páginas con rutas paramétricas leen correctamente el valor de <code>this.dataset.*</code></div>
+  </div>
+
+  <div class="check-category" style="margin-top:14px;">Calidad y buenas prácticas</div>
+
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Cada nueva página actualiza el <code>document.title</code> en <code>connectedCallback</code></div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Los errores de fetch se muestran al usuario con un mensaje visible, no solo en consola</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">La SPA funciona sirviéndose desde un servidor local (<code>npx serve src</code>) — no desde <code>file://</code></div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">Las variables CSS globales están definidas en <code>:root</code> y son la única fuente de verdad de colores y espaciado</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">No hay imports cruzados entre páginas — las páginas solo importan de <code>shared/</code></div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text">El proyecto se puede deployar como archivos estáticos en Netlify / GitHub Pages / Vercel sin configuración extra</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box">✓</div>
+    <div class="check-text"><strong>Verificación final:</strong> navegar entre todas las rutas, hacer F5 en cada una y comprobar que no hay errores en consola</div>
+  </div>
+
+</div>
+
+</div><!-- /container -->
+
+<script>
+function setView(view, btn) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function toggleCheck(item) {
+  item.classList.toggle('checked');
+  updateProgress();
+}
+
+function updateProgress() {
+  const items = document.querySelectorAll('.check-item');
+  const done  = document.querySelectorAll('.check-item.checked').length;
+  const total = items.length;
+  const pct   = Math.round((done / total) * 100);
+  document.getElementById('progress-count').textContent = done + '/' + total;
+  document.getElementById('progress-bar').style.width   = pct + '%';
+  document.getElementById('progress-pct').textContent   = pct + '% completado';
+}
+
+updateProgress();
+</script>
+</body>
+</html>

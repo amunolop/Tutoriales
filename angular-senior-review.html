@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Repaso Técnico — Angular Senior (v14–v16)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f7fa; color: #1a202c; line-height: 1.6; }
+
+  .header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 20px 40px;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .header-logo { font-size: 26px; font-weight: 800; color: #c3002f; letter-spacing: -1px; }
+  .header-logo span { color: #dd0031; }
+  .header-sub { font-size: 12px; color: #718096; margin-top: 2px; }
+  .badge { background: #ebf8ff; color: #2b6cb0; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid #bee3f8; }
+
+  .layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 69px); }
+
+  /* Sidebar */
+  .sidebar {
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
+    padding: 20px 0;
+    position: sticky; top: 0; height: calc(100vh - 69px); overflow-y: auto;
+  }
+  .sidebar-section { margin-bottom: 6px; }
+  .sidebar-title { font-size: 10px; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 1px; padding: 8px 20px; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; cursor: pointer; transition: all 0.15s;
+    border-left: 3px solid transparent; font-size: 13px; color: #4a5568;
+  }
+  .sidebar-item:hover { background: #f7fafc; color: #1a202c; }
+  .sidebar-item.active { background: #fff5f5; color: #c3002f; border-left-color: #dd0031; font-weight: 600; }
+  .sidebar-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-red { background: #dd0031; }
+  .dot-blue { background: #3182ce; }
+  .dot-purple { background: #805ad5; }
+  .dot-amber { background: #d69e2e; }
+  .dot-cyan { background: #0891b2; }
+  .dot-teal { background: #319795; }
+  .dot-green { background: #38a169; }
+
+  /* Main content */
+  .main { padding: 32px 44px; overflow-y: auto; max-width: 880px; }
+
+  h2 { font-size: 21px; font-weight: 700; margin-bottom: 6px; color: #1a202c; }
+  h3 { font-size: 14px; font-weight: 700; margin: 24px 0 10px; color: #2d3748; text-transform: uppercase; letter-spacing: 0.5px; }
+  p { color: #718096; font-size: 14px; margin-bottom: 16px; }
+
+  /* Code blocks */
+  .file-block {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin: 16px 0;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .file-header {
+    background: #f7fafc;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 9px 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .file-icon { font-size: 14px; }
+  .file-name { font-size: 12px; font-weight: 600; color: #2d3748; font-family: 'Consolas', monospace; }
+  .file-tag { font-size: 11px; margin-left: auto; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .file-tag.perf   { color: #c3002f; background: #fff5f5; }
+  .file-tag.form   { color: #2b6cb0; background: #ebf8ff; }
+  .file-tag.rxjs   { color: #6b46c1; background: #faf5ff; }
+  .file-tag.css    { color: #975a16; background: #fffff0; }
+  .file-tag.sec    { color: #086f83; background: #e6fffa; }
+  .file-tag.type   { color: #276749; background: #f0fff4; }
+  .file-tag.test   { color: #285e61; background: #e6fffa; }
+
+  pre {
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 12.5px;
+    line-height: 1.75;
+    background: #ffffff;
+    color: #2d3748;
+  }
+
+  /* Syntax highlighting */
+  .kw  { color: #d53f8c; font-weight: 600; }
+  .fn  { color: #2b6cb0; }
+  .str { color: #276749; }
+  .cm  { color: #a0aec0; font-style: italic; }
+  .prop{ color: #c05621; }
+  .num { color: #6b46c1; }
+  .cls { color: #2c5282; font-weight: 600; }
+  .dec { color: #c53030; }
+
+  /* Highlighted line */
+  .hl { background: #fff5f5; display: block; margin: 0 -20px; padding: 0 20px; border-left: 3px solid #fc8181; }
+
+  /* Info boxes */
+  .info-box {
+    background: #ebf8ff;
+    border-left: 3px solid #63b3ed;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-size: 13px;
+    color: #4a5568;
+  }
+  .info-box.green  { background: #f0fff4; border-left-color: #68d391; }
+  .info-box.yellow { background: #fffaf0; border-left-color: #f6ad55; }
+  .info-box.purple { background: #faf5ff; border-left-color: #b794f4; }
+  .info-box.red    { background: #fff5f5; border-left-color: #fc8181; }
+  .info-box.teal   { background: #e6fffa; border-left-color: #4fd1c5; }
+  .info-box strong { color: #1a202c; }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
+
+  /* Checklist */
+  .check-list { margin: 12px 0 16px; }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 12px; background: #ffffff; border: 1px solid #e2e8f0;
+    border-radius: 8px; margin-bottom: 4px; font-size: 13px; color: #4a5568; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .check-item:hover { background: #f7fafc; }
+  .check-item.done { background: #f0fff4; border-color: #c6f6d5; }
+  .check-item.done .check-icon { background: #38a169; color: white; }
+  .check-icon {
+    width: 20px; height: 20px; border-radius: 5px; border: 2px solid #cbd5e0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+    transition: all 0.15s;
+  }
+
+  /* Comparison table style inside pre */
+  .tbl { color: #718096; }
+  .tbl-head { color: #2d3748; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-logo">Angular <span>Senior</span></div>
+    <div class="header-sub">Repaso Técnico — Perfil Senior v14 – v16</div>
+  </div>
+  <div style="margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap;">
+    <span class="badge">Angular 14–16</span>
+    <span class="badge">RxJS</span>
+    <span class="badge">Jasmine / Karma</span>
+    <span class="badge">TypeScript</span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Arquitectura</div>
+      <div class="sidebar-item active" onclick="show('onpush', this)">
+        <span class="dot dot-red"></span> Change Detection OnPush
+      </div>
+      <div class="sidebar-item" onclick="show('inmutabilidad', this)">
+        <span class="dot dot-red"></span> Inmutabilidad
+      </div>
+      <div class="sidebar-item" onclick="show('standalone', this)">
+        <span class="dot dot-red"></span> Standalone Components
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Formularios Reactivos</div>
+      <div class="sidebar-item" onclick="show('forms-data', this)">
+        <span class="dot dot-blue"></span> patchValue / getRawValue
+      </div>
+      <div class="sidebar-item" onclick="show('cva', this)">
+        <span class="dot dot-blue"></span> ControlValueAccessor
+      </div>
+      <div class="sidebar-item" onclick="show('formarray', this)">
+        <span class="dot dot-blue"></span> FormArray dinámico
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">RxJS y Concurrencia</div>
+      <div class="sidebar-item" onclick="show('behaviorsubject', this)">
+        <span class="dot dot-purple"></span> BehaviorSubject
+      </div>
+      <div class="sidebar-item" onclick="show('operadores', this)">
+        <span class="dot dot-purple"></span> switchMap / mergeMap
+      </div>
+      <div class="sidebar-item" onclick="show('descargas', this)">
+        <span class="dot dot-purple"></span> Panel de descargas
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Maquetación</div>
+      <div class="sidebar-item" onclick="show('cssgrid', this)">
+        <span class="dot dot-amber"></span> CSS Grid
+      </div>
+      <div class="sidebar-item" onclick="show('herencia', this)">
+        <span class="dot dot-amber"></span> Herencia de componentes
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Resiliencia</div>
+      <div class="sidebar-item" onclick="show('interceptors', this)">
+        <span class="dot dot-cyan"></span> Interceptors HTTP
+      </div>
+      <div class="sidebar-item" onclick="show('memoria', this)">
+        <span class="dot dot-cyan"></span> Memory Leaks
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Interfaces y Tipos</div>
+      <div class="sidebar-item" onclick="show('interfaces', this)">
+        <span class="dot dot-green"></span> Interfaces vs Types
+      </div>
+      <div class="sidebar-item" onclick="show('generics', this)">
+        <span class="dot dot-green"></span> Genéricos y servicios
+      </div>
+      <div class="sidebar-item" onclick="show('strictmode', this)">
+        <span class="dot dot-green"></span> Strict Mode
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Testing Jasmine / Karma</div>
+      <div class="sidebar-item" onclick="show('testbed', this)">
+        <span class="dot dot-teal"></span> TestBed
+      </div>
+      <div class="sidebar-item" onclick="show('spies', this)">
+        <span class="dot dot-teal"></span> Spies y Mocks
+      </div>
+      <div class="sidebar-item" onclick="show('http-test', this)">
+        <span class="dot dot-teal"></span> HttpClientTesting
+      </div>
+      <div class="sidebar-item" onclick="show('forms-test', this)">
+        <span class="dot dot-teal"></span> Testing de Forms
+      </div>
+      <div class="sidebar-item" onclick="show('async-test', this)">
+        <span class="dot dot-teal"></span> fakeAsync / tick
+      </div>
+      <div class="sidebar-item" onclick="show('karma-config', this)">
+        <span class="dot dot-teal"></span> Karma y cobertura
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- ════════════════ ONPUSH ════════════════ -->
+    <div id="onpush" class="section active">
+      <h2>Change Detection — OnPush</h2>
+      <p>Con la estrategia <strong>OnPush</strong>, Angular deja de revisar el componente en cada ciclo. Solo se marca como "dirty" en tres casos concretos.</p>
+
+      <h3>¿Cuándo se revisa un componente OnPush?</h3>
+      <div class="check-list">
+        <div class="check-item" onclick="this.classList.toggle('done')">
+          <div class="check-icon">✓</div>
+          <span>Cambia la <strong>referencia</strong> de un <code>@Input()</code> — no basta mutar el objeto, hay que crear uno nuevo.</span>
+        </div>
+        <div class="check-item" onclick="this.classList.toggle('done')">
+          <div class="check-icon">✓</div>
+          <span>Un <strong>evento del DOM</strong> ocurre dentro del propio componente (click, keyup, etc.).</span>
+        </div>
+        <div class="check-item" onclick="this.classList.toggle('done')">
+          <div class="check-icon">✓</div>
+          <span>Un <strong>Observable emite</strong> un valor a través del pipe <code>| async</code> en el template.</span>
+        </div>
+      </div>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">⚡</span>
+          <span class="file-name">mi-componente.component.ts</span>
+          <span class="file-tag perf">rendimiento</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">Component</span>, <span class="cls">ChangeDetectionStrategy</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+@<span class="fn">Component</span>({
+  selector: <span class="str">'app-mi-componente'</span>,
+  templateUrl: <span class="str">'./mi-componente.component.html'</span>,
+<span class="hl">  changeDetection: <span class="cls">ChangeDetectionStrategy</span>.<span class="prop">OnPush</span></span>
+})
+<span class="kw">export class</span> <span class="cls">MiComponente</span> {
+  <span class="cm">// Solo se actualizará si cambia la referencia del @Input</span>
+  <span class="cm">// o si un evento del DOM ocurre dentro de este componente</span>
+}</pre>
+      </div>
+
+      <div class="info-box yellow">
+        <strong>⚠️ Error común:</strong> en un componente OnPush, si haces <code>this.items.push(newItem)</code>, la vista NO se actualiza porque la referencia del array no cambió. Necesitas <code>this.items = [...this.items, newItem]</code>.
+      </div>
+    </div>
+
+    <!-- ════════════════ INMUTABILIDAD ════════════════ -->
+    <div id="inmutabilidad" class="section">
+      <h2>Inmutabilidad</h2>
+      <p>La clave de OnPush: siempre crear nuevas referencias en lugar de mutar objetos existentes.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📋</span>
+          <span class="file-name">patrones-inmutabilidad.ts</span>
+          <span class="file-tag perf">rendimiento</span>
+        </div>
+        <pre><span class="cm">// ═══════ ARRAYS ═══════</span>
+
+<span class="cm">// ❌ Muta — OnPush NO detecta el cambio</span>
+<span class="kw">this</span>.items.<span class="fn">push</span>(newItem);
+<span class="kw">this</span>.items.<span class="fn">splice</span>(index, <span class="num">1</span>);
+
+<span class="cm">// ✅ Inmutable — crea nueva referencia</span>
+<span class="hl"><span class="kw">this</span>.items = [...<span class="kw">this</span>.items, newItem];                   <span class="cm">// agregar</span></span>
+<span class="hl"><span class="kw">this</span>.items = <span class="kw">this</span>.items.<span class="fn">filter</span>((_, i) => i !== index);    <span class="cm">// eliminar</span></span>
+<span class="hl"><span class="kw">this</span>.items = <span class="kw">this</span>.items.<span class="fn">map</span>(i => i.id === id ? updated : i); <span class="cm">// actualizar</span></span>
+
+
+<span class="cm">// ═══════ OBJETOS ═══════</span>
+
+<span class="cm">// ❌ Muta</span>
+<span class="kw">this</span>.user.name = <span class="str">'Nuevo'</span>;
+
+<span class="cm">// ✅ Inmutable</span>
+<span class="hl"><span class="kw">this</span>.user = { ...<span class="kw">this</span>.user, <span class="prop">name</span>: <span class="str">'Nuevo'</span> };</span>
+
+
+<span class="cm">// ═══════ OBJETOS ANIDADOS ═══════</span>
+
+<span class="cm">// ✅ Spread profundo</span>
+<span class="kw">this</span>.config = {
+  ...<span class="kw">this</span>.config,
+  <span class="prop">ui</span>: { ...<span class="kw">this</span>.config.ui, <span class="prop">theme</span>: <span class="str">'dark'</span> }
+};</pre>
+      </div>
+
+      <div class="info-box green">
+        <strong>Tip:</strong> con formularios reactivos, <code>patchValue()</code> ya crea internamente nuevas referencias — no necesitas preocuparte por la inmutabilidad dentro del <code>FormGroup</code>.
+      </div>
+    </div>
+
+    <!-- ════════════════ STANDALONE ════════════════ -->
+    <div id="standalone" class="section">
+      <h2>Standalone Components (v14+)</h2>
+      <p>A partir de Angular 14, los componentes pueden declararse sin necesidad de un <code>NgModule</code>. En v16 se convierte en el enfoque recomendado.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🚀</span>
+          <span class="file-name">main.ts</span>
+          <span class="file-tag perf">bootstrap</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="fn">bootstrapApplication</span> } <span class="kw">from</span> <span class="str">'@angular/platform-browser'</span>;
+<span class="kw">import</span> { <span class="cls">AppComponent</span> } <span class="kw">from</span> <span class="str">'./app/app.component'</span>;
+<span class="kw">import</span> { <span class="fn">provideRouter</span> } <span class="kw">from</span> <span class="str">'@angular/router'</span>;
+<span class="kw">import</span> { <span class="fn">provideHttpClient</span> } <span class="kw">from</span> <span class="str">'@angular/common/http'</span>;
+<span class="kw">import</span> { routes } <span class="kw">from</span> <span class="str">'./app/app.routes'</span>;
+
+<span class="fn">bootstrapApplication</span>(<span class="cls">AppComponent</span>, {
+  providers: [
+<span class="hl">    <span class="fn">provideRouter</span>(routes),</span>
+<span class="hl">    <span class="fn">provideHttpClient</span>()</span>
+  ]
+});</pre>
+      </div>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🎨</span>
+          <span class="file-name">mi-componente.component.ts</span>
+          <span class="file-tag perf">standalone</span>
+        </div>
+        <pre>@<span class="fn">Component</span>({
+<span class="hl">  standalone: <span class="kw">true</span>,</span>
+<span class="hl">  imports: [<span class="cls">CommonModule</span>, <span class="cls">ReactiveFormsModule</span>],</span>
+  selector: <span class="str">'app-mi-componente'</span>,
+  templateUrl: <span class="str">'./mi-componente.component.html'</span>,
+  changeDetection: <span class="cls">ChangeDetectionStrategy</span>.<span class="prop">OnPush</span>
+})
+<span class="kw">export class</span> <span class="cls">MiComponente</span> { }</pre>
+      </div>
+
+      <div class="info-box">
+        <strong>Ventajas:</strong> eliminan la complejidad de los NgModules, mejoran el tree-shaking, y facilitan el lazy loading a nivel de componente con <code>loadComponent</code> en las rutas.
+      </div>
+    </div>
+
+    <!-- ════════════════ FORMS DATA ════════════════ -->
+    <div id="forms-data" class="section">
+      <h2>patchValue y getRawValue</h2>
+      <p>El patrón <strong>Data Mapping</strong> — cómo mover datos entre el backend JSON y el formulario reactivo.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📝</span>
+          <span class="file-name">editar-usuario.component.ts</span>
+          <span class="file-tag form">formulario</span>
+        </div>
+        <pre><span class="kw">export class</span> <span class="cls">EditarUsuarioComponent</span> <span class="kw">implements</span> <span class="cls">OnInit</span> {
+  form = <span class="kw">this</span>.fb.<span class="fn">group</span>({
+    nombre:   [<span class="str">''</span>, <span class="cls">Validators</span>.<span class="prop">required</span>],
+    email:    [<span class="str">''</span>, [<span class="cls">Validators</span>.<span class="prop">required</span>, <span class="cls">Validators</span>.<span class="prop">email</span>]],
+    <span class="cm">// disabled → no aparece en .value pero SÍ en getRawValue()</span>
+    codigoInterno: [{ value: <span class="str">''</span>, disabled: <span class="kw">true</span> }]
+  });
+
+  <span class="fn">ngOnInit</span>() {
+    <span class="kw">this</span>.api.<span class="fn">getUsuario</span>(id).<span class="fn">subscribe</span>(data => {
+<span class="hl">      <span class="kw">this</span>.form.<span class="fn">patchValue</span>(data);  <span class="cm">// ← carga parcial del JSON</span></span>
+    });
+  }
+
+  <span class="fn">guardar</span>() {
+<span class="hl">    <span class="kw">const</span> payload = <span class="kw">this</span>.form.<span class="fn">getRawValue</span>();  <span class="cm">// ← incluye disabled</span></span>
+    <span class="kw">this</span>.api.<span class="fn">update</span>(payload).<span class="fn">subscribe</span>();
+  }
+}</pre>
+      </div>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📋</span>
+          <span class="file-name">Comparativa</span>
+        </div>
+        <pre><span class="tbl-head">Método            Incluye disabled   Carga parcial   Uso típico</span>
+<span class="tbl">────────────────  ─────────────────  ──────────────  ──────────────────────</span>
+<span class="prop">setValue()</span>         <span class="tbl">No                 No (requiere    Carga completa</span>
+                  <span class="tbl">                   todos los       del formulario</span>
+                  <span class="tbl">                   campos)</span>
+<span class="prop">patchValue()</span>      <span class="tbl">No                 Sí              Carga desde API</span>
+<span class="prop">.value</span>            <span class="tbl">No                 —               Lectura rápida</span>
+<span class="prop">getRawValue()</span>     <span class="tbl">Sí ✅              —               Enviar al backend</span></pre>
+      </div>
+    </div>
+
+    <!-- ════════════════ CVA ════════════════ -->
+    <div id="cva" class="section">
+      <h2>ControlValueAccessor (CVA)</h2>
+      <p>El patrón que permite que un componente hijo funcione como un <strong>control de formulario nativo</strong>. Así puedes usar <code>formControlName</code> directamente sobre tu componente custom.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🔗</span>
+          <span class="file-name">selector-pais.component.ts</span>
+          <span class="file-tag form">CVA</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">ControlValueAccessor</span>, <span class="cls">NG_VALUE_ACCESSOR</span> } <span class="kw">from</span> <span class="str">'@angular/forms'</span>;
+
+@<span class="fn">Component</span>({
+  selector: <span class="str">'app-selector-pais'</span>,
+  template: <span class="str">`&lt;select (change)="onChange($event.target.value)"&gt;...&lt;/select&gt;`</span>,
+  providers: [{
+    provide: <span class="cls">NG_VALUE_ACCESSOR</span>,
+    useExisting: <span class="cls">SelectorPaisComponent</span>,
+    multi: <span class="kw">true</span>
+  }]
+})
+<span class="kw">export class</span> <span class="cls">SelectorPaisComponent</span> <span class="kw">implements</span> <span class="cls">ControlValueAccessor</span> {
+  valor: <span class="kw">string</span> = <span class="str">''</span>;
+
+<span class="hl">  <span class="cm">// Angular llama este método para pasarte el valor del form</span>
+  <span class="fn">writeValue</span>(val: <span class="kw">string</span>): <span class="kw">void</span> { <span class="kw">this</span>.valor = val; }</span>
+
+<span class="hl">  <span class="cm">// Registra la función que notifica al form padre de cambios</span>
+  <span class="fn">registerOnChange</span>(fn: <span class="kw">any</span>): <span class="kw">void</span> { <span class="kw">this</span>.onChange = fn; }</span>
+
+<span class="hl">  <span class="cm">// Registra la función para cuando el control pierde el foco</span>
+  <span class="fn">registerOnTouched</span>(fn: <span class="kw">any</span>): <span class="kw">void</span> { <span class="kw">this</span>.onTouched = fn; }</span>
+
+  onChange = (val: <span class="kw">string</span>) => {};
+  onTouched = () => {};
+}</pre>
+      </div>
+
+      <div class="info-box">
+        <strong>Uso en el padre:</strong> <code>&lt;app-selector-pais formControlName="pais"&gt;&lt;/app-selector-pais&gt;</code> — funciona exactamente igual que un <code>&lt;input&gt;</code> nativo.
+      </div>
+    </div>
+
+    <!-- ════════════════ FORMARRAY ════════════════ -->
+    <div id="formarray" class="section">
+      <h2>FormArray — Listas dinámicas</h2>
+      <p>Gestión de colecciones dinámicas de controles. Ideal para múltiples documentos, direcciones o líneas de pedido.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📄</span>
+          <span class="file-name">documentos-form.component.ts</span>
+          <span class="file-tag form">dinámico</span>
+        </div>
+        <pre><span class="kw">export class</span> <span class="cls">DocumentosFormComponent</span> {
+  form = <span class="kw">this</span>.fb.<span class="fn">group</span>({
+    documentos: <span class="kw">this</span>.fb.<span class="fn">array</span>([])
+  });
+
+  <span class="kw">get</span> <span class="fn">documentos</span>(): <span class="cls">FormArray</span> {
+    <span class="kw">return this</span>.form.<span class="fn">get</span>(<span class="str">'documentos'</span>) <span class="kw">as</span> <span class="cls">FormArray</span>;
+  }
+
+<span class="hl">  <span class="fn">agregarDoc</span>() {
+    <span class="kw">this</span>.documentos.<span class="fn">push</span>(<span class="kw">this</span>.fb.<span class="fn">group</span>({
+      tipo:   [<span class="str">''</span>, <span class="cls">Validators</span>.<span class="prop">required</span>],
+      numero: [<span class="str">''</span>, <span class="cls">Validators</span>.<span class="prop">required</span>]
+    }));
+  }</span>
+
+  <span class="fn">eliminarDoc</span>(i: <span class="kw">number</span>) {
+    <span class="kw">this</span>.documentos.<span class="fn">removeAt</span>(i);
+  }
+}</pre>
+      </div>
+
+      <div class="info-box yellow">
+        <strong>Tip:</strong> siempre crea un getter tipado para acceder al FormArray. Evita castear en cada uso y mantiene el template limpio: <code>*ngFor="let doc of documentos.controls; let i = index"</code>.
+      </div>
+    </div>
+
+    <!-- ════════════════ BEHAVIORSUBJECT ════════════════ -->
+    <div id="behaviorsubject" class="section">
+      <h2>BehaviorSubject — Estado local</h2>
+      <p>Gestión reactiva del estado de la UI: spinners, mensajes de error, datos del usuario. A diferencia de <code>Subject</code>, siempre tiene un valor inicial y emite el último valor a los nuevos suscriptores.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🔄</span>
+          <span class="file-name">usuario.service.ts</span>
+          <span class="file-tag rxjs">RxJS</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">BehaviorSubject</span>, <span class="cls">Observable</span> } <span class="kw">from</span> <span class="str">'rxjs'</span>;
+
+@<span class="fn">Injectable</span>({ providedIn: <span class="str">'root'</span> })
+<span class="kw">export class</span> <span class="cls">UsuarioService</span> {
+<span class="hl">  <span class="kw">private</span> loading$ = <span class="kw">new</span> <span class="cls">BehaviorSubject</span>&lt;<span class="kw">boolean</span>&gt;(<span class="kw">false</span>);</span>
+<span class="hl">  <span class="kw">private</span> error$   = <span class="kw">new</span> <span class="cls">BehaviorSubject</span>&lt;<span class="kw">string</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>);</span>
+
+  <span class="cm">// Exponer como Observable (solo lectura)</span>
+  isLoading$: <span class="cls">Observable</span>&lt;<span class="kw">boolean</span>&gt; = <span class="kw">this</span>.loading$.<span class="fn">asObservable</span>();
+  error:      <span class="cls">Observable</span>&lt;<span class="kw">string</span> | <span class="kw">null</span>&gt; = <span class="kw">this</span>.error$.<span class="fn">asObservable</span>();
+
+  <span class="fn">cargarUsuario</span>(id: <span class="kw">number</span>) {
+    <span class="kw">this</span>.loading$.<span class="fn">next</span>(<span class="kw">true</span>);
+    <span class="kw">this</span>.error$.<span class="fn">next</span>(<span class="kw">null</span>);
+
+    <span class="kw">return this</span>.http.<span class="fn">get</span>&lt;<span class="cls">Usuario</span>&gt;(<span class="str">`/api/users/${id}`</span>).<span class="fn">pipe</span>(
+      <span class="fn">finalize</span>(() => <span class="kw">this</span>.loading$.<span class="fn">next</span>(<span class="kw">false</span>)),
+      <span class="fn">catchError</span>(err => {
+        <span class="kw">this</span>.error$.<span class="fn">next</span>(err.message);
+        <span class="kw">return</span> <span class="cls">EMPTY</span>;
+      })
+    );
+  }
+}
+<span class="cm">// Template: *ngIf="service.isLoading$ | async"</span></pre>
+      </div>
+    </div>
+
+    <!-- ════════════════ OPERADORES ════════════════ -->
+    <div id="operadores" class="section">
+      <h2>switchMap vs mergeMap vs concatMap</h2>
+      <p>Los tres operadores de "aplanamiento" de RxJS. Saber cuándo usar cada uno es clave a nivel senior.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📋</span>
+          <span class="file-name">Comparativa de operadores</span>
+        </div>
+        <pre><span class="tbl-head">Operador      Cancela anterior    Concurrencia    Caso de uso</span>
+<span class="tbl">────────────  ──────────────────  ──────────────  ─────────────────────────</span>
+<span class="prop">switchMap</span>     <span class="tbl">Sí ✅               1               Búsquedas typeahead</span>
+<span class="prop">mergeMap</span>      <span class="tbl">No                  ∞ (configurable) Descargas en paralelo</span>
+<span class="prop">concatMap</span>     <span class="tbl">No                  1 (en serie)     Orden garantizado</span>
+<span class="prop">exhaustMap</span>   <span class="tbl">Ignora nuevas       1               Doble-click en submit</span></pre>
+      </div>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🔍</span>
+          <span class="file-name">buscador.component.ts</span>
+          <span class="file-tag rxjs">switchMap</span>
+        </div>
+        <pre><span class="cm">// switchMap — cancela la petición anterior si el usuario sigue tecleando</span>
+<span class="kw">this</span>.searchControl.valueChanges.<span class="fn">pipe</span>(
+  <span class="fn">debounceTime</span>(<span class="num">300</span>),
+  <span class="fn">distinctUntilChanged</span>(),
+<span class="hl">  <span class="fn">switchMap</span>(term => <span class="kw">this</span>.api.<span class="fn">buscar</span>(term))</span>
+).<span class="fn">subscribe</span>(results => <span class="kw">this</span>.resultados = results);</pre>
+      </div>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📥</span>
+          <span class="file-name">descargas.service.ts</span>
+          <span class="file-tag rxjs">mergeMap</span>
+        </div>
+        <pre><span class="cm">// mergeMap — descarga hasta 3 archivos en paralelo</span>
+<span class="fn">from</span>(archivos).<span class="fn">pipe</span>(
+<span class="hl">  <span class="fn">mergeMap</span>(archivo => <span class="kw">this</span>.http.<span class="fn">get</span>(archivo.url, {</span>
+<span class="hl">    responseType: <span class="str">'blob'</span></span>
+<span class="hl">  }), <span class="num">3</span>)  <span class="cm">// ← concurrencia máxima: 3</span></span>
+).<span class="fn">subscribe</span>(blob => <span class="kw">this</span>.<span class="fn">guardarArchivo</span>(blob));</pre>
+      </div>
+    </div>
+
+    <!-- ════════════════ DESCARGAS ════════════════ -->
+    <div id="descargas" class="section">
+      <h2>Panel de Descargas — Blobs</h2>
+      <p>Patrón avanzado para descargar archivos, mostrar progreso y limpiar memoria.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">💾</span>
+          <span class="file-name">download.util.ts</span>
+          <span class="file-tag rxjs">blob</span>
+        </div>
+        <pre><span class="fn">descargarArchivo</span>(blob: <span class="cls">Blob</span>, nombre: <span class="kw">string</span>): <span class="kw">void</span> {
+  <span class="kw">const</span> url = URL.<span class="fn">createObjectURL</span>(blob);
+  <span class="kw">const</span> a   = document.<span class="fn">createElement</span>(<span class="str">'a'</span>);
+  a.href     = url;
+  a.download = nombre;
+  a.<span class="fn">click</span>();
+
+<span class="hl">  <span class="cm">// ⚠️ Liberar la memoria — sin esto hay memory leak</span>
+  URL.<span class="fn">revokeObjectURL</span>(url);</span>
+}</pre>
+      </div>
+
+      <div class="info-box red">
+        <strong>⚠️ Memory Leak:</strong> cada <code>createObjectURL</code> reserva memoria en el navegador hasta que se cierre la pestaña o se llame <code>revokeObjectURL</code>. En un panel de descargas con muchos archivos, esto puede acumularse rápidamente.
+      </div>
+    </div>
+
+    <!-- ════════════════ CSS GRID ════════════════ -->
+    <div id="cssgrid" class="section">
+      <h2>CSS Grid — Formularios complejos</h2>
+      <p>Usar Grid para estructurar formularios bidimensionalmente, reduciendo el anidamiento excesivo de HTML.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🎨</span>
+          <span class="file-name">formulario.component.scss</span>
+          <span class="file-tag css">CSS</span>
+        </div>
+        <pre><span class="cls">.form-grid</span> {
+  <span class="prop">display</span>: grid;
+<span class="hl">  <span class="prop">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="fn">auto-fit</span>, <span class="fn">minmax</span>(<span class="num">280px</span>, <span class="num">1fr</span>));</span>
+  <span class="prop">gap</span>: <span class="num">1rem</span>;
+}
+
+<span class="cm">/* Campo que ocupa toda la fila */</span>
+<span class="cls">.full-width</span> { <span class="prop">grid-column</span>: <span class="num">1</span> / <span class="num">-1</span>; }
+
+<span class="cm">/* Layout fijo: nombre-apellido | email-teléfono | dirección completa */</span>
+<span class="cls">.form-fixed</span> {
+  <span class="prop">display</span>: grid;
+  <span class="prop">grid-template-columns</span>: <span class="num">1fr</span> <span class="num">1fr</span>;
+  <span class="prop">grid-template-areas</span>:
+    <span class="str">"nombre   apellido"</span>
+    <span class="str">"email    telefono"</span>
+    <span class="str">"direccion direccion"</span>;
+  <span class="prop">gap</span>: <span class="num">1rem</span>;
+}</pre>
+      </div>
+    </div>
+
+    <!-- ════════════════ HERENCIA ════════════════ -->
+    <div id="herencia" class="section">
+      <h2>Herencia de Componentes</h2>
+      <p>Compartir lógica de ciclo de vida y métodos comunes usando una clase base abstracta.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🏗️</span>
+          <span class="file-name">base-viewer.component.ts</span>
+          <span class="file-tag css">patrón</span>
+        </div>
+        <pre><span class="kw">export abstract class</span> <span class="cls">BaseViewerComponent</span> <span class="kw">implements</span> <span class="cls">OnInit</span>, <span class="cls">OnDestroy</span> {
+  <span class="kw">protected</span> destroy$ = <span class="kw">new</span> <span class="cls">Subject</span>&lt;<span class="kw">void</span>&gt;();
+
+  <span class="kw">abstract</span> <span class="fn">cargarDatos</span>(): <span class="kw">void</span>;
+
+  <span class="fn">ngOnInit</span>() {
+    <span class="kw">this</span>.<span class="fn">cargarDatos</span>();
+  }
+
+  <span class="fn">ngOnDestroy</span>() {
+<span class="hl">    <span class="kw">this</span>.destroy$.<span class="fn">next</span>();
+    <span class="kw">this</span>.destroy$.<span class="fn">complete</span>();</span>
+  }
+}
+
+<span class="cm">// Componente hijo — hereda OnDestroy automáticamente</span>
+@<span class="fn">Component</span>({ <span class="cm">/* ... */</span> })
+<span class="kw">export class</span> <span class="cls">PdfViewerComponent</span> <span class="kw">extends</span> <span class="cls">BaseViewerComponent</span> {
+  <span class="fn">cargarDatos</span>() {
+    <span class="kw">this</span>.api.<span class="fn">getPdf</span>(id).<span class="fn">pipe</span>(
+      <span class="fn">takeUntil</span>(<span class="kw">this</span>.destroy$)
+    ).<span class="fn">subscribe</span>();
+  }
+}</pre>
+      </div>
+    </div>
+
+    <!-- ════════════════ INTERCEPTORS ════════════════ -->
+    <div id="interceptors" class="section">
+      <h2>Interceptors HTTP</h2>
+      <p>Captura global de errores y gestión automática de tokens de autenticación.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🔐</span>
+          <span class="file-name">auth.interceptor.ts</span>
+          <span class="file-tag sec">seguridad</span>
+        </div>
+        <pre>@<span class="fn">Injectable</span>()
+<span class="kw">export class</span> <span class="cls">AuthInterceptor</span> <span class="kw">implements</span> <span class="cls">HttpInterceptor</span> {
+
+  <span class="kw">constructor</span>(<span class="kw">private</span> auth: <span class="cls">AuthService</span>) {}
+
+  <span class="fn">intercept</span>(req: <span class="cls">HttpRequest</span>&lt;<span class="kw">any</span>&gt;, next: <span class="cls">HttpHandler</span>): <span class="cls">Observable</span>&lt;<span class="cls">HttpEvent</span>&lt;<span class="kw">any</span>&gt;&gt; {
+    <span class="kw">const</span> token = <span class="kw">this</span>.auth.<span class="fn">getToken</span>();
+<span class="hl">    <span class="kw">const</span> authReq = req.<span class="fn">clone</span>({
+      <span class="fn">setHeaders</span>: { Authorization: <span class="str">`Bearer ${token}`</span> }
+    });</span>
+
+    <span class="kw">return</span> next.<span class="fn">handle</span>(authReq).<span class="fn">pipe</span>(
+      <span class="fn">catchError</span>((error: <span class="cls">HttpErrorResponse</span>) => {
+<span class="hl">        <span class="kw">if</span> (error.status === <span class="num">401</span>) {
+          <span class="kw">this</span>.auth.<span class="fn">logout</span>();
+        }</span>
+        <span class="kw">return</span> <span class="fn">throwError</span>(() => error);
+      })
+    );
+  }
+}</pre>
+      </div>
+
+      <div class="info-box">
+        <strong>Registro:</strong> en NgModules se registra en <code>providers</code> con <code>HTTP_INTERCEPTORS</code>. En standalone, se usa <code>provideHttpClient(withInterceptors([authInterceptor]))</code>.
+      </div>
+    </div>
+
+    <!-- ════════════════ MEMORIA ════════════════ -->
+    <div id="memoria" class="section">
+      <h2>Manejo de Memory Leaks</h2>
+      <p>Dos fuentes principales de fugas de memoria en Angular: suscripciones no cerradas y URLs de objetos no liberadas.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🧹</span>
+          <span class="file-name">Patrones de limpieza</span>
+          <span class="file-tag sec">memoria</span>
+        </div>
+        <pre><span class="cm">// ═══════ PATRÓN 1: takeUntil + Subject ═══════</span>
+<span class="kw">private</span> destroy$ = <span class="kw">new</span> <span class="cls">Subject</span>&lt;<span class="kw">void</span>&gt;();
+
+<span class="fn">ngOnInit</span>() {
+  <span class="kw">this</span>.service.datos$.<span class="fn">pipe</span>(
+<span class="hl">    <span class="fn">takeUntil</span>(<span class="kw">this</span>.destroy$)</span>
+  ).<span class="fn">subscribe</span>();
+}
+
+<span class="fn">ngOnDestroy</span>() {
+  <span class="kw">this</span>.destroy$.<span class="fn">next</span>();
+  <span class="kw">this</span>.destroy$.<span class="fn">complete</span>();
+}
+
+
+<span class="cm">// ═══════ PATRÓN 2: Pipe async (automático) ═══════</span>
+<span class="cm">// En el template: {{ datos$ | async }}</span>
+<span class="cm">// Angular se desuscribe solo al destruir el componente ✅</span>
+
+
+<span class="cm">// ═══════ PATRÓN 3: revokeObjectURL ═══════</span>
+<span class="kw">const</span> url = URL.<span class="fn">createObjectURL</span>(blob);
+<span class="cm">// ... usar url ...</span>
+<span class="hl">URL.<span class="fn">revokeObjectURL</span>(url); <span class="cm">// ← OBLIGATORIO</span></span></pre>
+      </div>
+
+      <div class="info-box green">
+        <strong>Preferir <code>| async</code>:</strong> es la forma más segura porque Angular maneja automáticamente la suscripción y desuscripción. Además, funciona perfectamente con OnPush.
+      </div>
+    </div>
+
+    <!-- ════════════════ INTERFACES ════════════════ -->
+    <div id="interfaces" class="section">
+      <h2>Interfaces vs Types — Cuándo usar cada uno</h2>
+      <p>TypeScript ofrece <code>interface</code> y <code>type</code> para definir formas de datos. En Angular, el estándar es usar <strong>interfaces para modelos de datos</strong> y types para uniones/utilidades.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📐</span>
+          <span class="file-name">models/usuario.model.ts</span>
+          <span class="file-tag type">interfaces</span>
+        </div>
+        <pre><span class="cm">// ═══════ INTERFACES — para modelos de datos ═══════</span>
+
+<span class="kw">export interface</span> <span class="cls">Usuario</span> {
+  id:        <span class="kw">number</span>;
+  nombre:    <span class="kw">string</span>;
+  email:     <span class="kw">string</span>;
+  rol:       <span class="cls">Rol</span>;
+  activo:    <span class="kw">boolean</span>;
+  direccion: <span class="cls">Direccion</span>;
+}
+
+<span class="kw">export interface</span> <span class="cls">Direccion</span> {
+  calle:    <span class="kw">string</span>;
+  ciudad:   <span class="kw">string</span>;
+  codigoPostal: <span class="kw">string</span>;
+}
+
+<span class="cm">// Interfaces para respuestas de API</span>
+<span class="kw">export interface</span> <span class="cls">ApiResponse</span>&lt;<span class="cls">T</span>&gt; {
+  data:    <span class="cls">T</span>;
+  status:  <span class="kw">number</span>;
+  message: <span class="kw">string</span>;
+}
+
+<span class="kw">export interface</span> <span class="cls">PaginatedResponse</span>&lt;<span class="cls">T</span>&gt; <span class="kw">extends</span> <span class="cls">ApiResponse</span>&lt;<span class="cls">T</span>[]&gt; {
+  total:       <span class="kw">number</span>;
+  page:        <span class="kw">number</span>;
+  pageSize:    <span class="kw">number</span>;
+}</pre>
+      </div>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🔧</span>
+          <span class="file-name">models/tipos-utilidad.ts</span>
+          <span class="file-tag type">types</span>
+        </div>
+        <pre><span class="cm">// ═══════ TYPES — para uniones, alias y utilidades ═══════</span>
+
+<span class="kw">export type</span> <span class="cls">Rol</span> = <span class="str">'admin'</span> | <span class="str">'editor'</span> | <span class="str">'viewer'</span>;
+
+<span class="kw">export type</span> <span class="cls">EstadoPedido</span> = <span class="str">'pendiente'</span> | <span class="str">'procesando'</span> | <span class="str">'enviado'</span> | <span class="str">'entregado'</span>;
+
+<span class="cm">// Tipo derivado — crea una versión parcial para formularios</span>
+<span class="kw">export type</span> <span class="cls">UsuarioForm</span> = <span class="cls">Omit</span>&lt;<span class="cls">Usuario</span>, <span class="str">'id'</span>&gt;;
+
+<span class="cm">// Tipo para payloads de actualización parcial</span>
+<span class="kw">export type</span> <span class="cls">UsuarioUpdate</span> = <span class="cls">Partial</span>&lt;<span class="cls">Pick</span>&lt;<span class="cls">Usuario</span>, <span class="str">'nombre'</span> | <span class="str">'email'</span> | <span class="str">'rol'</span>&gt;&gt;;
+
+<span class="cm">// Callback tipado</span>
+<span class="kw">export type</span> <span class="cls">OnChangeCallback</span>&lt;<span class="cls">T</span>&gt; = (value: <span class="cls">T</span>) => <span class="kw">void</span>;</pre>
+      </div>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📋</span>
+          <span class="file-name">Cuándo usar cada uno</span>
+        </div>
+        <pre><span class="tbl-head">Escenario                         interface    type</span>
+<span class="tbl">────────────────────────────────  ───────────  ──────────</span>
+<span class="prop">Modelos de datos (User, Product)</span>  <span class="tbl">✅ Sí         Posible</span>
+<span class="prop">Respuestas de API</span>                 <span class="tbl">✅ Sí         Posible</span>
+<span class="prop">Contratos de servicios</span>            <span class="tbl">✅ Sí         No</span>
+<span class="prop">Uniones de strings (roles)</span>        <span class="tbl">No           ✅ Sí</span>
+<span class="prop">Utility types (Pick, Omit)</span>        <span class="tbl">No           ✅ Sí</span>
+<span class="prop">Tipos derivados o mapeados</span>       <span class="tbl">No           ✅ Sí</span>
+<span class="prop">Extensión / herencia de formas</span>    <span class="tbl">✅ extends    &amp; intersección</span></pre>
+      </div>
+
+      <div class="info-box green">
+        <strong>Regla práctica:</strong> si describe la forma de un objeto que viaja entre capas (API → servicio → componente), usa <code>interface</code>. Si necesitas uniones, alias o tipos derivados, usa <code>type</code>.
+      </div>
+    </div>
+
+    <!-- ════════════════ GENERICS ════════════════ -->
+    <div id="generics" class="section">
+      <h2>Genéricos en Servicios</h2>
+      <p>Un servicio base tipado evita repetir la misma lógica CRUD en cada servicio. Los genéricos garantizan que cada instancia trabaje con su tipo correcto.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🔗</span>
+          <span class="file-name">base-crud.service.ts</span>
+          <span class="file-tag type">genérico</span>
+        </div>
+        <pre><span class="kw">export abstract class</span> <span class="cls">BaseCrudService</span>&lt;<span class="cls">T</span>&gt; {
+  <span class="kw">constructor</span>(
+    <span class="kw">protected</span> http: <span class="cls">HttpClient</span>,
+    <span class="kw">protected</span> endpoint: <span class="kw">string</span>
+  ) {}
+
+<span class="hl">  <span class="fn">getAll</span>(): <span class="cls">Observable</span>&lt;<span class="cls">T</span>[]&gt; {</span>
+    <span class="kw">return this</span>.http.<span class="fn">get</span>&lt;<span class="cls">T</span>[]&gt;(<span class="kw">this</span>.endpoint);
+  }
+
+<span class="hl">  <span class="fn">getById</span>(id: <span class="kw">number</span>): <span class="cls">Observable</span>&lt;<span class="cls">T</span>&gt; {</span>
+    <span class="kw">return this</span>.http.<span class="fn">get</span>&lt;<span class="cls">T</span>&gt;(<span class="str">`${<span class="kw">this</span>.endpoint}/${id}`</span>);
+  }
+
+  <span class="fn">create</span>(body: <span class="cls">Partial</span>&lt;<span class="cls">T</span>&gt;): <span class="cls">Observable</span>&lt;<span class="cls">T</span>&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">post</span>&lt;<span class="cls">T</span>&gt;(<span class="kw">this</span>.endpoint, body);
+  }
+
+  <span class="fn">update</span>(id: <span class="kw">number</span>, body: <span class="cls">Partial</span>&lt;<span class="cls">T</span>&gt;): <span class="cls">Observable</span>&lt;<span class="cls">T</span>&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">put</span>&lt;<span class="cls">T</span>&gt;(<span class="str">`${<span class="kw">this</span>.endpoint}/${id}`</span>, body);
+  }
+
+  <span class="fn">delete</span>(id: <span class="kw">number</span>): <span class="cls">Observable</span>&lt;<span class="kw">void</span>&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">delete</span>&lt;<span class="kw">void</span>&gt;(<span class="str">`${<span class="kw">this</span>.endpoint}/${id}`</span>);
+  }
+}
+
+<span class="cm">// ═══════ USO ═══════</span>
+@<span class="fn">Injectable</span>({ providedIn: <span class="str">'root'</span> })
+<span class="kw">export class</span> <span class="cls">UsuarioService</span> <span class="kw">extends</span> <span class="cls">BaseCrudService</span>&lt;<span class="cls">Usuario</span>&gt; {
+  <span class="kw">constructor</span>(http: <span class="cls">HttpClient</span>) {
+    <span class="kw">super</span>(http, <span class="str">'/api/usuarios'</span>);
+  }
+}
+<span class="cm">// UsuarioService.getAll() devuelve Observable&lt;Usuario[]&gt; ✅</span></pre>
+      </div>
+    </div>
+
+    <!-- ════════════════ STRICT MODE ════════════════ -->
+    <div id="strictmode" class="section">
+      <h2>Strict Mode — tsconfig</h2>
+      <p>Angular con <code>strict: true</code> activa todas las comprobaciones estrictas de TypeScript. Es imprescindible en proyectos senior.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">⚙️</span>
+          <span class="file-name">tsconfig.json</span>
+          <span class="file-tag type">config</span>
+        </div>
+        <pre>{
+  <span class="prop">"compilerOptions"</span>: {
+<span class="hl">    <span class="prop">"strict"</span>: <span class="kw">true</span>,                   <span class="cm">// activa TODOS los flags de abajo</span></span>
+    <span class="prop">"strictNullChecks"</span>: <span class="kw">true</span>,        <span class="cm">// null y undefined son tipos distintos</span>
+    <span class="prop">"strictPropertyInitialization"</span>: <span class="kw">true</span>, <span class="cm">// propiedades deben inicializarse</span>
+    <span class="prop">"noImplicitAny"</span>: <span class="kw">true</span>,           <span class="cm">// prohíbe any implícito</span>
+    <span class="prop">"noImplicitReturns"</span>: <span class="kw">true</span>,       <span class="cm">// todas las ramas deben retornar</span>
+    <span class="prop">"strictTemplates"</span>: <span class="kw">true</span>          <span class="cm">// ← Angular: verifica tipos en templates</span>
+  }
+}</pre>
+      </div>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📋</span>
+          <span class="file-name">Errores comunes con strictNullChecks</span>
+        </div>
+        <pre><span class="cm">// ❌ Error: Object is possibly 'undefined'</span>
+<span class="kw">const</span> nombre = usuario.direccion.calle;
+
+<span class="cm">// ✅ Optional chaining</span>
+<span class="hl"><span class="kw">const</span> nombre = usuario.direccion<span class="op">?.</span>calle;</span>
+
+<span class="cm">// ✅ Non-null assertion (solo cuando estás 100% seguro)</span>
+<span class="kw">const</span> nombre = usuario.direccion<span class="op">!</span>.calle;
+
+<span class="cm">// ✅ Narrowing con guard</span>
+<span class="kw">if</span> (usuario.direccion) {
+  <span class="kw">const</span> nombre = usuario.direccion.calle; <span class="cm">// ← TypeScript sabe que existe</span>
+}</pre>
+      </div>
+
+      <div class="info-box yellow">
+        <strong>any vs unknown:</strong> evita <code>any</code> a toda costa. Si no conoces el tipo, usa <code>unknown</code> — te obliga a hacer type narrowing antes de usarlo, lo cual es más seguro.
+      </div>
+    </div>
+
+    <!-- ════════════════ TESTBED ════════════════ -->
+    <div id="testbed" class="section">
+      <h2>TestBed — Configuración base</h2>
+      <p><code>TestBed</code> crea un módulo Angular temporal para compilar y testear componentes aislados de la app.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🧪</span>
+          <span class="file-name">mi-componente.component.spec.ts</span>
+          <span class="file-tag test">test</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">ComponentFixture</span>, <span class="cls">TestBed</span> } <span class="kw">from</span> <span class="str">'@angular/core/testing'</span>;
+
+<span class="fn">describe</span>(<span class="str">'MiComponente'</span>, () => {
+  <span class="kw">let</span> component: <span class="cls">MiComponente</span>;
+  <span class="kw">let</span> fixture: <span class="cls">ComponentFixture</span>&lt;<span class="cls">MiComponente</span>&gt;;
+
+<span class="hl">  <span class="fn">beforeEach</span>(<span class="kw">async</span> () => {
+    <span class="kw">await</span> <span class="cls">TestBed</span>.<span class="fn">configureTestingModule</span>({
+      declarations: [<span class="cls">MiComponente</span>],
+      imports: [<span class="cls">ReactiveFormsModule</span>],
+      providers: [
+        { provide: <span class="cls">MiServicio</span>, useValue: mockServicio }
+      ]
+    }).<span class="fn">compileComponents</span>();
+  });</span>
+
+  <span class="fn">beforeEach</span>(() => {
+    fixture = <span class="cls">TestBed</span>.<span class="fn">createComponent</span>(<span class="cls">MiComponente</span>);
+    component = fixture.componentInstance;
+    fixture.<span class="fn">detectChanges</span>();
+  });
+
+  <span class="fn">it</span>(<span class="str">'debería crearse'</span>, () => {
+    <span class="fn">expect</span>(component).<span class="fn">toBeTruthy</span>();
+  });
+});</pre>
+      </div>
+
+      <h3>Standalone Components en TestBed</h3>
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🧪</span>
+          <span class="file-name">standalone.component.spec.ts</span>
+          <span class="file-tag test">standalone</span>
+        </div>
+        <pre><span class="cm">// Con standalone NO usas declarations — importas el componente</span>
+<span class="fn">beforeEach</span>(<span class="kw">async</span> () => {
+  <span class="kw">await</span> <span class="cls">TestBed</span>.<span class="fn">configureTestingModule</span>({
+<span class="hl">    imports: [<span class="cls">MiStandaloneComponent</span>],  <span class="cm">// ← va en imports, NO declarations</span></span>
+    providers: [
+      { provide: <span class="cls">MiServicio</span>, useValue: mockServicio }
+    ]
+  }).<span class="fn">compileComponents</span>();
+});</pre>
+      </div>
+    </div>
+
+    <!-- ════════════════ SPIES ════════════════ -->
+    <div id="spies" class="section">
+      <h2>Spies y Mocks de Servicios</h2>
+      <p>Aislar el componente de sus dependencias usando <code>jasmine.createSpyObj</code>.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🕵️</span>
+          <span class="file-name">usuario.component.spec.ts</span>
+          <span class="file-tag test">mocking</span>
+        </div>
+        <pre><span class="cm">// ═══════ CREAR EL MOCK ═══════</span>
+<span class="kw">const</span> mockServicio = jasmine.<span class="fn">createSpyObj</span>(<span class="str">'UsuarioService'</span>, [
+  <span class="str">'getData'</span>, <span class="str">'save'</span>, <span class="str">'delete'</span>
+]);
+
+<span class="cm">// Configurar respuestas</span>
+<span class="hl">mockServicio.getData.<span class="fn">and</span>.<span class="fn">returnValue</span>(<span class="fn">of</span>({ nombre: <span class="str">'Test'</span>, id: <span class="num">1</span> }));</span>
+mockServicio.save.<span class="fn">and</span>.<span class="fn">returnValue</span>(<span class="fn">of</span>({ success: <span class="kw">true</span> }));
+
+<span class="cm">// Registrar en TestBed</span>
+providers: [
+  { provide: <span class="cls">UsuarioService</span>, useValue: mockServicio }
+]
+
+<span class="cm">// ═══════ VERIFICAR LLAMADAS ═══════</span>
+<span class="fn">it</span>(<span class="str">'debería llamar a getData al iniciar'</span>, () => {
+<span class="hl">  <span class="fn">expect</span>(mockServicio.getData).<span class="fn">toHaveBeenCalled</span>();</span>
+});
+
+<span class="fn">it</span>(<span class="str">'debería guardar con el payload correcto'</span>, () => {
+  component.<span class="fn">guardar</span>();
+<span class="hl">  <span class="fn">expect</span>(mockServicio.save).<span class="fn">toHaveBeenCalledWith</span>({
+    nombre: <span class="str">'Test'</span>,
+    email: <span class="str">'test@mail.com'</span>
+  });</span>
+});
+
+<span class="cm">// ═══════ SIMULAR ERROR ═══════</span>
+<span class="fn">it</span>(<span class="str">'debería manejar errores'</span>, () => {
+  mockServicio.save.<span class="fn">and</span>.<span class="fn">returnValue</span>(
+    <span class="fn">throwError</span>(() => <span class="kw">new</span> <span class="cls">Error</span>(<span class="str">'Error de red'</span>))
+  );
+  component.<span class="fn">guardar</span>();
+  <span class="fn">expect</span>(component.error).<span class="fn">toBe</span>(<span class="str">'Error de red'</span>);
+});</pre>
+      </div>
+    </div>
+
+    <!-- ════════════════ HTTP TEST ════════════════ -->
+    <div id="http-test" class="section">
+      <h2>HttpClientTestingModule</h2>
+      <p>Testear servicios que hacen peticiones HTTP sin tocar el backend real. <code>HttpTestingController</code> intercepta y simula respuestas.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">🌐</span>
+          <span class="file-name">usuario.service.spec.ts</span>
+          <span class="file-tag test">HTTP</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="cls">HttpClientTestingModule</span>, <span class="cls">HttpTestingController</span> }
+  <span class="kw">from</span> <span class="str">'@angular/common/http/testing'</span>;
+
+<span class="kw">let</span> service: <span class="cls">UsuarioService</span>;
+<span class="kw">let</span> httpMock: <span class="cls">HttpTestingController</span>;
+
+<span class="fn">beforeEach</span>(() => {
+  <span class="cls">TestBed</span>.<span class="fn">configureTestingModule</span>({
+    imports: [<span class="cls">HttpClientTestingModule</span>],
+    providers: [<span class="cls">UsuarioService</span>]
+  });
+  service  = <span class="cls">TestBed</span>.<span class="fn">inject</span>(<span class="cls">UsuarioService</span>);
+  httpMock = <span class="cls">TestBed</span>.<span class="fn">inject</span>(<span class="cls">HttpTestingController</span>);
+});
+
+<span class="fn">it</span>(<span class="str">'debería obtener usuarios (GET)'</span>, () => {
+  <span class="kw">const</span> mockUsers: <span class="cls">Usuario</span>[] = [
+    { id: <span class="num">1</span>, nombre: <span class="str">'Ana'</span>, email: <span class="str">'ana@mail.com'</span> }
+  ];
+
+  service.<span class="fn">getAll</span>().<span class="fn">subscribe</span>(users => {
+    <span class="fn">expect</span>(users.length).<span class="fn">toBe</span>(<span class="num">1</span>);
+    <span class="fn">expect</span>(users[<span class="num">0</span>].nombre).<span class="fn">toBe</span>(<span class="str">'Ana'</span>);
+  });
+
+<span class="hl">  <span class="kw">const</span> req = httpMock.<span class="fn">expectOne</span>(<span class="str">'/api/usuarios'</span>);
+  <span class="fn">expect</span>(req.request.method).<span class="fn">toBe</span>(<span class="str">'GET'</span>);
+  req.<span class="fn">flush</span>(mockUsers);  <span class="cm">// ← simula la respuesta</span></span>
+});
+
+<span class="fn">it</span>(<span class="str">'debería manejar error 500'</span>, () => {
+  service.<span class="fn">getAll</span>().<span class="fn">subscribe</span>({
+    error: (err) => <span class="fn">expect</span>(err.status).<span class="fn">toBe</span>(<span class="num">500</span>)
+  });
+
+  <span class="kw">const</span> req = httpMock.<span class="fn">expectOne</span>(<span class="str">'/api/usuarios'</span>);
+<span class="hl">  req.<span class="fn">flush</span>(<span class="str">'Server Error'</span>, {
+    status: <span class="num">500</span>, statusText: <span class="str">'Internal Server Error'</span>
+  });</span>
+});
+
+<span class="hl"><span class="fn">afterEach</span>(() => {
+  httpMock.<span class="fn">verify</span>();  <span class="cm">// ← verifica que no hay peticiones pendientes</span>
+});</span></pre>
+      </div>
+
+      <div class="info-box red">
+        <strong>⚠️ Nunca olvides <code>httpMock.verify()</code></strong> en el <code>afterEach</code>. Detecta peticiones HTTP no esperadas o no consumidas, que normalmente indican un bug en el test o en el servicio.
+      </div>
+    </div>
+
+    <!-- ════════════════ FORMS TEST ════════════════ -->
+    <div id="forms-test" class="section">
+      <h2>Testing de Reactive Forms</h2>
+      <p>Testear la lógica del formulario directamente, sin necesidad de interactuar con el DOM.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">📝</span>
+          <span class="file-name">registro.component.spec.ts</span>
+          <span class="file-tag test">forms</span>
+        </div>
+        <pre><span class="fn">describe</span>(<span class="str">'RegistroComponent — Form'</span>, () => {
+
+  <span class="fn">it</span>(<span class="str">'debería ser inválido si el email está vacío'</span>, () => {
+    component.form.controls[<span class="str">'email'</span>].<span class="fn">setValue</span>(<span class="str">''</span>);
+<span class="hl">    <span class="fn">expect</span>(component.form.valid).<span class="fn">toBeFalse</span>();</span>
+  });
+
+  <span class="fn">it</span>(<span class="str">'debería ser válido con datos correctos'</span>, () => {
+    component.form.<span class="fn">patchValue</span>({
+      nombre: <span class="str">'Juan'</span>,
+      email:  <span class="str">'juan@mail.com'</span>,
+      pais:   <span class="str">'ES'</span>
+    });
+<span class="hl">    <span class="fn">expect</span>(component.form.valid).<span class="fn">toBeTrue</span>();</span>
+  });
+
+  <span class="fn">it</span>(<span class="str">'debería mostrar error de email inválido'</span>, () => {
+    <span class="kw">const</span> emailCtrl = component.form.controls[<span class="str">'email'</span>];
+    emailCtrl.<span class="fn">setValue</span>(<span class="str">'no-es-email'</span>);
+    emailCtrl.<span class="fn">markAsTouched</span>();
+<span class="hl">    <span class="fn">expect</span>(emailCtrl.errors?.[<span class="str">'email'</span>]).<span class="fn">toBeTruthy</span>();</span>
+  });
+
+  <span class="fn">it</span>(<span class="str">'debería extraer datos con getRawValue'</span>, () => {
+    component.form.<span class="fn">patchValue</span>({ nombre: <span class="str">'Ana'</span>, email: <span class="str">'ana@mail.com'</span> });
+    <span class="kw">const</span> raw = component.form.<span class="fn">getRawValue</span>();
+<span class="hl">    <span class="fn">expect</span>(raw.nombre).<span class="fn">toBe</span>(<span class="str">'Ana'</span>);</span>
+  });
+});</pre>
+      </div>
+
+      <div class="info-box green">
+        <strong>Tip:</strong> testea la lógica del <code>FormGroup</code> (validaciones, valores, estado) antes de testear el DOM. Es más rápido, fiable y no depende de la estructura del template.
+      </div>
+    </div>
+
+    <!-- ════════════════ ASYNC TEST ════════════════ -->
+    <div id="async-test" class="section">
+      <h2>fakeAsync y tick</h2>
+      <p>Controlar el tiempo en tests asíncronos. <code>fakeAsync</code> crea una zona simulada y <code>tick</code> avanza el reloj virtual.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">⏱️</span>
+          <span class="file-name">buscador.component.spec.ts</span>
+          <span class="file-tag test">async</span>
+        </div>
+        <pre><span class="kw">import</span> { <span class="fn">fakeAsync</span>, <span class="fn">tick</span> } <span class="kw">from</span> <span class="str">'@angular/core/testing'</span>;
+
+<span class="fn">it</span>(<span class="str">'debería hacer debounce de 300ms en la búsqueda'</span>,
+<span class="hl">  <span class="fn">fakeAsync</span>(() => {</span>
+    component.searchControl.<span class="fn">setValue</span>(<span class="str">'angular'</span>);
+
+    <span class="cm">// A los 100ms NO se ha llamado aún</span>
+    <span class="fn">tick</span>(<span class="num">100</span>);
+    <span class="fn">expect</span>(mockServicio.buscar).<span class="fn">not</span>.<span class="fn">toHaveBeenCalled</span>();
+
+    <span class="cm">// A los 300ms SÍ se dispara</span>
+<span class="hl">    <span class="fn">tick</span>(<span class="num">200</span>);  <span class="cm">// total: 300ms</span>
+    <span class="fn">expect</span>(mockServicio.buscar).<span class="fn">toHaveBeenCalledWith</span>(<span class="str">'angular'</span>);</span>
+  })
+);
+
+<span class="fn">it</span>(<span class="str">'debería resolver un setTimeout'</span>,
+  <span class="fn">fakeAsync</span>(() => {
+    <span class="kw">let</span> done = <span class="kw">false</span>;
+    <span class="fn">setTimeout</span>(() => done = <span class="kw">true</span>, <span class="num">1000</span>);
+
+    <span class="fn">tick</span>(<span class="num">1000</span>);
+    <span class="fn">expect</span>(done).<span class="fn">toBeTrue</span>();
+  })
+);
+
+<span class="fn">it</span>(<span class="str">'debería avanzar todo el tiempo pendiente'</span>,
+  <span class="fn">fakeAsync</span>(() => {
+    component.<span class="fn">iniciarPolling</span>();  <span class="cm">// setInterval cada 5s</span>
+
+<span class="hl">    <span class="fn">tick</span>(<span class="num">15000</span>);  <span class="cm">// simula 15 segundos</span>
+    <span class="fn">expect</span>(mockServicio.refresh).<span class="fn">toHaveBeenCalledTimes</span>(<span class="num">3</span>);</span>
+
+    <span class="fn">discardPeriodicTasks</span>();  <span class="cm">// limpia timers pendientes</span>
+  })
+);</pre>
+      </div>
+
+      <div class="info-box purple">
+        <strong>waitForAsync vs fakeAsync:</strong> <code>waitForAsync</code> espera a que las promesas reales se resuelvan (más lento). <code>fakeAsync + tick</code> simula el paso del tiempo instantáneamente — siempre preferible para debounce, polling y timeouts.
+      </div>
+    </div>
+
+    <!-- ════════════════ KARMA CONFIG ════════════════ -->
+    <div id="karma-config" class="section">
+      <h2>Karma — Ejecución y Cobertura</h2>
+      <p>Karma ejecuta los tests de Jasmine en un navegador real. Configurar umbrales de cobertura asegura la calidad del código.</p>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">⚙️</span>
+          <span class="file-name">karma.conf.js</span>
+          <span class="file-tag test">config</span>
+        </div>
+        <pre>module.<span class="prop">exports</span> = <span class="kw">function</span>(config) {
+  config.<span class="fn">set</span>({
+    basePath: <span class="str">''</span>,
+    frameworks: [<span class="str">'jasmine'</span>, <span class="str">'@angular-devkit/build-angular'</span>],
+    plugins: [
+      <span class="fn">require</span>(<span class="str">'karma-jasmine'</span>),
+      <span class="fn">require</span>(<span class="str">'karma-chrome-launcher'</span>),
+      <span class="fn">require</span>(<span class="str">'karma-coverage'</span>),
+      <span class="fn">require</span>(<span class="str">'karma-jasmine-html-reporter'</span>),
+      <span class="fn">require</span>(<span class="str">'@angular-devkit/build-angular/plugins/karma'</span>)
+    ],
+    reporters: [<span class="str">'progress'</span>, <span class="str">'kjhtml'</span>],
+    browsers: [<span class="str">'ChromeHeadless'</span>],  <span class="cm">// sin UI para CI/CD</span>
+
+<span class="hl">    coverageReporter: {
+      dir: <span class="fn">require</span>(<span class="str">'path'</span>).<span class="fn">join</span>(__dirname, <span class="str">'./coverage'</span>),
+      subdir: <span class="str">'.'</span>,
+      reporters: [
+        { type: <span class="str">'html'</span> },       <span class="cm">// reporte visual</span>
+        { type: <span class="str">'text-summary'</span> } <span class="cm">// resumen en consola</span>
+      ],
+      check: {
+        global: {
+          statements: <span class="num">80</span>,
+          branches:   <span class="num">75</span>,
+          functions:  <span class="num">80</span>,
+          lines:      <span class="num">80</span>
+        }
+      }
+    }</span>
+  });
+};</pre>
+      </div>
+
+      <div class="file-block">
+        <div class="file-header">
+          <span class="file-icon">💻</span>
+          <span class="file-name">Comandos de ejecución</span>
+        </div>
+        <pre><span class="cm"># Ejecutar tests una vez</span>
+<span class="prop">ng test</span> --watch=<span class="kw">false</span> --browsers=ChromeHeadless
+
+<span class="cm"># Ejecutar con reporte de cobertura</span>
+<span class="prop">ng test</span> --code-coverage
+
+<span class="cm"># Ver el reporte HTML</span>
+<span class="prop">open</span> coverage/index.html
+
+<span class="cm"># Ejecutar solo un archivo de spec</span>
+<span class="prop">ng test</span> --include=<span class="str">'**/usuario.component.spec.ts'</span></pre>
+      </div>
+
+      <div class="info-box teal">
+        <strong>Buenas prácticas:</strong> testear la lógica del componente más que el DOM. Usar <code>createSpyObj</code> para aislar dependencias. Verificar siempre con <code>httpMock.verify()</code>. En componentes OnPush, recordar que <code>fixture.detectChanges()</code> necesita que cambies la referencia del input.
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

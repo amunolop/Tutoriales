@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evolución de los Frameworks Java</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --surface: #fff;
+    --surface2: #f0ebe0;
+    --border: #d4c9b0;
+    --ink: #1a1410;
+    --ink2: #4a3f30;
+    --muted: #8a7a65;
+    --accent:  #c1440e;
+    --accent2: #2a6e4e;
+    --accent3: #1a4a8a;
+    --yellow:  #e8a020;
+    --purple:  #7a3a9a;
+    --mono:    'IBM Plex Mono', monospace;
+    --display: 'Clash Display', 'IBM Plex Mono', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--mono); min-height: 100vh; position: relative; }
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999; opacity: 0.5;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 48px 28px 100px; }
+
+  /* ── HEADER ── */
+  header { border-bottom: 3px solid var(--ink); padding-bottom: 24px; margin-bottom: 48px; animation: fadeIn .5s ease both; }
+  .stamp { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); border: 2px solid var(--accent); padding: 3px 10px; margin-bottom: 14px; transform: rotate(-1deg); }
+  h1 { font-family: var(--display); font-size: clamp(26px,4vw,46px); font-weight: 700; line-height: 1.1; }
+  h1 em { font-style: normal; color: var(--accent); border-bottom: 3px solid var(--accent); }
+  .subtitle { font-size: 13px; color: var(--muted); margin-top: 12px; line-height: 1.7; max-width: 660px; }
+
+  /* ── LEYENDA GLOBAL ── */
+  .legend {
+    display: flex; gap: 20px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 40px;
+    padding: 12px 18px;
+    border: 2px solid var(--ink); border-radius: 4px;
+    background: var(--surface2);
+    font-size: 11px;
+  }
+  .legend-title { font-weight: 700; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  .leg-item { display: flex; align-items: center; gap: 8px; }
+  .leg-box {
+    width: 52px; height: 26px; border-radius: 3px; border: 2px solid;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; flex-shrink: 0;
+  }
+  .leg-you   { background: rgba(193,68,14,0.12); border-color: var(--accent); color: var(--accent); }
+  .leg-fw    { background: rgba(26,74,138,0.12); border-color: var(--accent3); color: var(--accent3); }
+  .leg-both  { background: rgba(42,110,78,0.12); border-color: var(--accent2); color: var(--accent2); }
+  .leg-desc  { font-size: 11px; color: var(--ink2); }
+
+  /* ── TIMELINE SPINE ── */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: ''; position: absolute; left: 88px; top: 0; bottom: 0; width: 3px;
+    background: repeating-linear-gradient(to bottom, var(--ink) 0px, var(--ink) 8px, transparent 8px, transparent 14px);
+    opacity: 0.18;
+  }
+
+  /* ── EPOCH ── */
+  .epoch { display: flex; gap: 0; align-items: stretch; animation: fadeUp .5s ease both; }
+  .epoch:nth-child(1){animation-delay:.05s} .epoch:nth-child(2){animation-delay:.12s}
+  .epoch:nth-child(3){animation-delay:.19s} .epoch:nth-child(4){animation-delay:.26s}
+  .epoch:nth-child(5){animation-delay:.33s} .epoch:nth-child(6){animation-delay:.40s}
+  .epoch:nth-child(7){animation-delay:.47s} .epoch:nth-child(8){animation-delay:.54s}
+
+  .epoch-year-col {
+    width: 88px; flex-shrink: 0; display: flex; flex-direction: column;
+    align-items: flex-end; padding-right: 22px; padding-top: 28px; position: relative;
+  }
+  .epoch-year-col::after {
+    content: ''; position: absolute; right: -6px; top: 36px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--epoch-color); border: 3px solid var(--bg); box-shadow: 0 0 0 2px var(--epoch-color);
+  }
+  .year-label { font-family: var(--display); font-size: 13px; font-weight: 700; color: var(--epoch-color); line-height: 1; text-align: right; }
+  .era-label  { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-align: right; margin-top: 4px; line-height: 1.4; }
+
+  .epoch-body {
+    flex: 1; border: 2px solid var(--border); border-left: 4px solid var(--epoch-color);
+    border-radius: 0 6px 6px 0; background: var(--surface); margin: 16px 0 32px 0;
+    overflow: hidden; transition: box-shadow .2s;
+  }
+  .epoch-body:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+  .epoch-topbar {
+    background: var(--surface2); border-bottom: 2px solid var(--border);
+    padding: 14px 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .fw-name    { font-family: var(--display); font-size: 20px; font-weight: 700; }
+  .fw-version { font-size: 10px; font-weight: 700; letter-spacing: 2px; padding: 3px 9px; border-radius: 3px; text-transform: uppercase; border: 1.5px solid var(--epoch-color); color: var(--epoch-color); }
+  .fw-tagline { font-size: 12px; color: var(--muted); margin-left: auto; font-style: italic; }
+  .epoch-content { padding: 22px 22px 26px; }
+
+  /* ── PROBLEM / SOLUTION ── */
+  .ps-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .ps-box { flex: 1; min-width: 220px; border-radius: 4px; padding: 13px 15px; border: 1.5px solid var(--border); font-size: 11px; line-height: 1.7; }
+  .ps-box.problem  { background: rgba(193,68,14,0.04); border-color: rgba(193,68,14,0.25); }
+  .ps-box.solution { background: rgba(42,110,78,0.04);  border-color: rgba(42,110,78,0.25); }
+  .ps-label { font-size: 8px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .ps-box.problem  .ps-label { color: var(--accent); }
+  .ps-box.solution .ps-label { color: var(--accent2); }
+  .ps-box p { color: var(--ink2); }
+
+  /* ── ARCH DIAGRAM ── */
+  .arch-title { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .arch-flow  { display: flex; align-items: flex-start; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .arch-arrow { color: var(--muted); font-size: 18px; flex-shrink: 0; padding-top: 10px; }
+
+  /* ── NODE — base ── */
+  .node {
+    border-radius: 4px; padding: 9px 12px; font-size: 10px; font-weight: 700;
+    border: 2px solid; text-align: center; line-height: 1.35; min-width: 82px;
+    position: relative;
+  }
+  .node-name  { font-size: 11px; font-weight: 700; line-height: 1.3; }
+  .node-sub   { font-size: 9px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+  /* ownership badge on node */
+  .node::before {
+    content: attr(data-own);
+    position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+    font-size: 7px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 1px 5px; border-radius: 2px; white-space: nowrap;
+    border: 1px solid;
+  }
+  /* YOU */
+  .own-you  { background: rgba(193,68,14,0.07);  border-color: var(--accent);  color: var(--ink); }
+  .own-you::before  { background: rgba(193,68,14,0.15); border-color: var(--accent);  color: var(--accent); }
+  /* FRAMEWORK */
+  .own-fw   { background: rgba(26,74,138,0.07);  border-color: var(--accent3); color: var(--ink); }
+  .own-fw::before   { background: rgba(26,74,138,0.15); border-color: var(--accent3); color: var(--accent3); }
+  /* BOTH */
+  .own-both { background: rgba(42,110,78,0.07);  border-color: var(--accent2); color: var(--ink); }
+  .own-both::before { background: rgba(42,110,78,0.15); border-color: var(--accent2); color: var(--accent2); }
+
+  /* ── COMPLEXITY ── */
+  .complexity-row { display: flex; align-items: center; gap: 10px; margin: 16px 0; font-size: 10px; color: var(--muted); }
+  .complexity-label { white-space: nowrap; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .complexity-bar-bg { flex: 1; height: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+  .complexity-bar-fill { height: 100%; border-radius: 3px; }
+
+  /* ── PILLS ── */
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .pill { font-size: 9px; padding: 3px 8px; border-radius: 3px; letter-spacing: 0.5px; background: var(--surface2); color: var(--ink2); border: 1px solid var(--border); font-weight: 600; }
+  .pill.new { border-color: var(--epoch-color); color: var(--epoch-color); background: transparent; }
+
+  /* ── CALLOUT ── */
+  .callout { border-left: 4px solid; padding: 12px 16px; margin-top: 14px; font-size: 11px; line-height: 1.7; color: var(--ink2); border-radius: 0 4px 4px 0; }
+  .callout.orange { border-color: var(--accent);  background: rgba(193,68,14,0.05); }
+  .callout.green  { border-color: var(--accent2); background: rgba(42,110,78,0.05); }
+  .callout.blue   { border-color: var(--accent3); background: rgba(26,74,138,0.05); }
+  .callout.yellow { border-color: var(--yellow);  background: rgba(232,160,32,0.05); }
+  .callout.purple { border-color: var(--purple);  background: rgba(122,58,154,0.05); }
+  .callout.orange strong { color: var(--accent); }
+  .callout.green  strong { color: var(--accent2); }
+  .callout.blue   strong { color: var(--accent3); }
+  .callout.yellow strong { color: var(--yellow); }
+  .callout.purple strong { color: var(--purple); }
+  .callout code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 2px; }
+
+  /* ── TABLE ── */
+  .sec-title { font-family: var(--display); font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin: 52px 0 20px; display: flex; align-items: center; gap: 12px; }
+  .sec-title::before { content: attr(data-n); display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: var(--ink); color: var(--bg); font-size: 10px; border-radius: 2px; flex-shrink: 0; }
+  .table-wrap { border: 2px solid var(--border); border-radius: 6px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  thead th { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-align: left; padding: 10px 13px; background: var(--surface2); border-bottom: 2px solid var(--border); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  td { padding: 10px 13px; vertical-align: middle; color: var(--ink2); line-height: 1.5; }
+  td:first-child { font-weight: 700; color: var(--ink); font-family: var(--display); font-size: 12px; }
+  .you-pill  { font-size: 8px; font-weight:700; padding:2px 6px; border-radius:2px; background:rgba(193,68,14,0.1); border:1px solid var(--accent); color:var(--accent); white-space:nowrap; display:inline-block; margin:1px; }
+  .fw-pill   { font-size: 8px; font-weight:700; padding:2px 6px; border-radius:2px; background:rgba(26,74,138,0.1); border:1px solid var(--accent3); color:var(--accent3); white-space:nowrap; display:inline-block; margin:1px; }
+
+  /* ── TOGGLE ── */
+  .mode-toggle {
+    display: flex; gap: 0; border: 2px solid var(--ink); border-radius: 4px;
+    overflow: hidden; margin-bottom: 36px; width: fit-content;
+  }
+  .mode-btn {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    padding: 10px 24px; cursor: pointer; border: none; background: transparent;
+    color: var(--muted); letter-spacing: 1px; transition: all 0.15s;
+    border-right: 2px solid var(--ink);
+  }
+  .mode-btn:last-child { border-right: none; }
+  .mode-btn:hover { background: var(--surface2); color: var(--ink); }
+  .mode-btn.active { background: var(--ink); color: var(--bg); }
+  .mode-panel { display: none; }
+  .mode-panel.active { display: block; }
+
+  /* ── NARRATIVE ── */
+  .narr-intro {
+    font-size: 13px; color: var(--ink2); line-height: 1.9; max-width: 720px;
+    margin-bottom: 44px; padding: 18px 22px;
+    background: var(--surface); border: 2px solid var(--border);
+    border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0;
+  }
+  .narr-intro strong { color: var(--accent); }
+
+  .narr-timeline { position: relative; }
+  .narr-timeline::before {
+    content: ''; position: absolute; left: 88px; top: 0; bottom: 0; width: 3px;
+    background: repeating-linear-gradient(to bottom, var(--ink) 0px, var(--ink) 8px, transparent 8px, transparent 14px);
+    opacity: 0.18;
+  }
+
+  .narr-block { display: flex; gap: 0; align-items: stretch; animation: fadeUp .4s ease both; }
+  .narr-block:nth-child(1){animation-delay:.05s} .narr-block:nth-child(2){animation-delay:.10s}
+  .narr-block:nth-child(3){animation-delay:.15s} .narr-block:nth-child(4){animation-delay:.20s}
+  .narr-block:nth-child(5){animation-delay:.25s} .narr-block:nth-child(6){animation-delay:.30s}
+  .narr-block:nth-child(7){animation-delay:.35s} .narr-block:nth-child(8){animation-delay:.40s}
+
+  .narr-year-col {
+    width: 88px; flex-shrink: 0; display: flex; flex-direction: column;
+    align-items: flex-end; padding-right: 22px; padding-top: 28px; position: relative;
+  }
+  .narr-year-col::after {
+    content: ''; position: absolute; right: -6px; top: 36px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--narr-color); border: 3px solid var(--bg); box-shadow: 0 0 0 2px var(--narr-color);
+  }
+  .narr-year { font-family: var(--display); font-size: 13px; font-weight: 700; color: var(--narr-color); text-align: right; }
+  .narr-era  { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-align: right; margin-top: 4px; line-height: 1.4; }
+
+  .narr-body {
+    flex: 1; border: 2px solid var(--border); border-left: 4px solid var(--narr-color);
+    border-radius: 0 6px 6px 0; background: var(--surface);
+    margin: 16px 0 0 0; padding: 22px 26px 26px; transition: box-shadow .2s;
+  }
+  .narr-body:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+
+  .narr-fw-name { font-family: var(--display); font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .narr-concept {
+    display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 3px;
+    border: 1.5px solid var(--narr-color); color: var(--narr-color); margin-bottom: 14px;
+  }
+  .narr-text { font-size: 12.5px; color: var(--ink2); line-height: 1.85; margin-bottom: 14px; }
+  .narr-text strong { color: var(--ink); }
+  .narr-text code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 2px; font-size: 11px; }
+
+  .narr-key { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .narr-key-box {
+    flex: 1; min-width: 160px; padding: 11px 14px; border-radius: 4px;
+    border: 1.5px solid var(--border); font-size: 11px; line-height: 1.7; background: var(--surface2);
+  }
+  .narr-key-label { font-size: 8px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; color: var(--muted); }
+  .narr-key-box.ganó   { border-color: rgba(42,110,78,0.4);  background: rgba(42,110,78,0.04); }
+  .narr-key-box.ganó   .narr-key-label { color: var(--accent2); }
+  .narr-key-box.perdió { border-color: rgba(193,68,14,0.3);  background: rgba(193,68,14,0.03); }
+  .narr-key-box.perdió .narr-key-label { color: var(--accent); }
+
+  /* curva de control */
+  .curve-section { margin: 52px 0 8px; }
+  .curve-title {
+    font-family: var(--display); font-size: 11px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+  }
+  .curve-title::after { content:''; flex:1; height:1px; background: var(--border); }
+  .curve-row {
+    display: flex; align-items: stretch; gap: 0;
+    border: 2px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 8px;
+  }
+  .curve-fw {
+    width: 120px; flex-shrink: 0; padding: 12px 12px;
+    font-family: var(--display); font-size: 12px; font-weight: 700;
+    border-right: 2px solid var(--border); background: var(--surface2);
+    display: flex; align-items: center;
+  }
+  .curve-bar-wrap { flex: 1; display: flex; align-items: stretch; }
+  .curve-segment {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    padding: 12px 6px; text-align: center; line-height: 1.4;
+    border-right: 1px solid rgba(255,255,255,0.4);
+  }
+  .curve-segment:last-child { border-right: none; }
+  .seg-you { background: rgba(193,68,14,0.15); color: var(--accent); }
+  .seg-ext { background: rgba(42,110,78,0.15);  color: var(--accent2); }
+  .seg-fw  { background: rgba(26,74,138,0.15);  color: var(--accent3); }
+  .curve-legend { display: flex; gap: 18px; margin-top: 16px; font-size: 11px; flex-wrap: wrap; }
+  .curve-legend-item { display: flex; align-items: center; gap: 7px; color: var(--ink2); }
+  .curve-legend-dot  { width:12px; height:12px; border-radius:2px; flex-shrink:0; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="stamp">Historia · 1997 → Hoy</div>
+    <h1>Evolución de los <em>Frameworks Java</em></h1>
+    <p class="subtitle">Cada época resolvió un problema nuevo. La arquitectura fue creciendo en capas a medida que las aplicaciones se volvían más complejas.</p>
+  </header>
+
+  <!-- TOGGLE -->
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setView('timeline', this)">⬡ Línea temporal</button>
+    <button class="mode-btn" onclick="setView('narrative', this)">◎ Evolución narrativa</button>
+  </div>
+
+  <!-- ══ PANEL 1: TIMELINE ══ -->
+  <div id="view-timeline" class="mode-panel active">
+
+  <!-- LEYENDA -->
+  <div class="legend">
+    <span class="legend-title">Leyenda</span>
+    <div class="leg-item">
+      <div class="leg-box leg-you">TÚ</div>
+      <span class="leg-desc"><strong>Lo escribes tú</strong> — tu clase, tu lógica de negocio</span>
+    </div>
+    <div class="leg-item">
+      <div class="leg-box leg-fw">FW</div>
+      <span class="leg-desc"><strong>Lo provee el framework</strong> — ya existe, solo lo usas</span>
+    </div>
+    <div class="leg-item">
+      <div class="leg-box leg-both">EXT</div>
+      <span class="leg-desc"><strong>Extiendes el framework</strong> — implementas una interfaz suya</span>
+    </div>
+  </div>
+
+  <div class="timeline">
+
+    <!-- ══════════════════════════════════════════
+         1997 · Java Servlets
+    ══════════════════════════════════════════ -->
+    <div class="epoch" style="--epoch-color:#8a7a65">
+      <div class="epoch-year-col">
+        <span class="year-label">1997</span>
+        <span class="era-label">Era CGI</span>
+      </div>
+      <div class="epoch-body">
+        <div class="epoch-topbar">
+          <span class="fw-name">Java Servlets</span>
+          <span class="fw-version">Servlet 2.1</span>
+          <span class="fw-tagline">La petición llega, tú escribes el HTML a mano</span>
+        </div>
+        <div class="epoch-content">
+          <div class="ps-row">
+            <div class="ps-box problem"><div class="ps-label">Problema</div><p>CGI creaba un proceso nuevo por cada petición. Lento, sin reutilización de código ni estado entre peticiones.</p></div>
+            <div class="ps-box solution"><div class="ps-label">Solución</div><p>Servlets: clases Java persistentes en Tomcat. Un único proceso atiende múltiples peticiones. Se introduce el ciclo <code>init → service → destroy</code>.</p></div>
+          </div>
+
+          <div class="arch-title">Arquitectura — todo en un único servlet</div>
+          <div class="arch-flow" style="margin-top:18px">
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">HttpServlet</div>
+              <div class="node-sub">clase base</div>
+            </div>
+            <span class="arch-arrow">←</span>
+            <div class="node own-both" data-own="EXT">
+              <div class="node-name">MiServlet</div>
+              <div class="node-sub">extends HttpServlet<br>doGet() / doPost()</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">JDBC directo</div>
+              <div class="node-sub">SQL crudo en el<br>mismo método</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">out.println()</div>
+              <div class="node-sub">HTML generado<br>en Java</div>
+            </div>
+          </div>
+
+          <div class="complexity-row">
+            <span class="complexity-label">Complejidad</span>
+            <div class="complexity-bar-bg"><div class="complexity-bar-fill" style="width:10%;background:#8a7a65"></div></div>
+            <span>1 capa · todo en TÚ</span>
+          </div>
+          <div class="pills">
+            <span class="pill">HttpServlet</span><span class="pill">doGet() / doPost()</span>
+            <span class="pill">HttpServletRequest</span><span class="pill">HttpServletResponse</span>
+            <span class="pill">web.xml</span><span class="pill">Sin DI · Sin ORM · Sin MVC</span>
+          </div>
+          <div class="callout orange"><strong>Todo mezclado:</strong> lógica de negocio, SQL y generación de HTML en el mismo método <code>doGet()</code>. Funcional pero imposible de mantener a escala.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         2001 · Apache Struts
+    ══════════════════════════════════════════ -->
+    <div class="epoch" style="--epoch-color:#c1440e">
+      <div class="epoch-year-col">
+        <span class="year-label">2001</span>
+        <span class="era-label">Era MVC</span>
+      </div>
+      <div class="epoch-body">
+        <div class="epoch-topbar">
+          <span class="fw-name">Apache Struts</span>
+          <span class="fw-version">Struts 1.x</span>
+          <span class="fw-tagline">Por fin: separar la vista del controlador</span>
+        </div>
+        <div class="epoch-content">
+          <div class="ps-row">
+            <div class="ps-box problem"><div class="ps-label">Problema</div><p>Los Servlets mezclaban lógica y presentación. Se necesitaba un patrón que separara responsabilidades.</p></div>
+            <div class="ps-box solution"><div class="ps-label">Solución</div><p>Struts impuso el patrón MVC. Un <strong>ActionServlet</strong> central enruta las peticiones. Las <strong>Actions</strong> contienen la lógica. Las <strong>JSPs</strong> solo pintan.</p></div>
+          </div>
+
+          <div class="arch-title">Arquitectura — MVC con XML central</div>
+          <div class="arch-flow" style="margin-top:18px">
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">ActionServlet</div>
+              <div class="node-sub">controlador frontal<br>del framework</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-both" data-own="EXT">
+              <div class="node-name">Action</div>
+              <div class="node-sub">extends Action<br>execute()</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-both" data-own="EXT">
+              <div class="node-name">ActionForm</div>
+              <div class="node-sub">extends ActionForm<br>datos del form</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">JSP</div>
+              <div class="node-sub">solo muestra<br>datos</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:var(--muted);padding:8px 10px;border:1px dashed var(--border);border-radius:4px;">
+            ⚙ <strong>struts-config.xml</strong> — todo el enrutado declarado en XML. Un cambio de URL → editar el XML a mano.
+          </div>
+
+          <div class="complexity-row">
+            <span class="complexity-label">Complejidad</span>
+            <div class="complexity-bar-bg"><div class="complexity-bar-fill" style="width:25%;background:#c1440e"></div></div>
+            <span>3 capas · MVC separado</span>
+          </div>
+          <div class="pills">
+            <span class="pill">Patrón MVC</span><span class="pill">ActionServlet (FW)</span>
+            <span class="pill">Action (EXT)</span><span class="pill">ActionForm (EXT)</span>
+            <span class="pill">struts-config.xml</span>
+            <span class="pill new">🆕 Vista separada de lógica</span>
+            <span class="pill new">🆕 Enrutado centralizado</span>
+          </div>
+          <div class="callout orange"><strong>Problema heredado:</strong> configuración XML masiva, acoplamiento fuerte y sin gestión de dependencias. El desarrollador seguía instanciando objetos con <code>new</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         2004 · JSF
+    ══════════════════════════════════════════ -->
+    <div class="epoch" style="--epoch-color:#2a6e4e">
+      <div class="epoch-year-col">
+        <span class="year-label">2004</span>
+        <span class="era-label">Era Componentes</span>
+      </div>
+      <div class="epoch-body">
+        <div class="epoch-topbar">
+          <span class="fw-name">JavaServer Faces</span>
+          <span class="fw-version">JSF 1.0</span>
+          <span class="fw-tagline">La UI como árbol de componentes, no como plantillas de texto</span>
+        </div>
+        <div class="epoch-content">
+          <div class="ps-row">
+            <div class="ps-box problem"><div class="ps-label">Problema</div><p>Struts seguía siendo orientado a peticiones HTTP crudas. El desarrollador construía la vista página a página con JSPs. Sin componentes reutilizables ni gestión automática del estado del formulario.</p></div>
+            <div class="ps-box solution"><div class="ps-label">Solución</div><p>JSF introduce un modelo de <strong>componentes de UI</strong> (botones, tablas, formularios) con estado gestionado por el servidor. El ciclo de vida del formulario lo gestiona el framework, no el desarrollador.</p></div>
+          </div>
+
+          <div class="arch-title">Arquitectura — ciclo de vida de 6 fases + árbol de componentes</div>
+          <div class="arch-flow" style="margin-top:18px">
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">FacesServlet</div>
+              <div class="node-sub">controlador frontal<br>del framework</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">Ciclo de vida JSF</div>
+              <div class="node-sub">6 fases automáticas<br>Restore→Render</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">Managed Bean</div>
+              <div class="node-sub">@ManagedBean<br>lógica + estado</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">Facelets (.xhtml)</div>
+              <div class="node-sub">vista con<br>componentes JSF</div>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;font-size:10px;color:var(--muted);padding:10px 13px;background:rgba(42,110,78,0.04);border:1.5px solid rgba(42,110,78,0.2);border-radius:4px;line-height:1.8;">
+            ♻ <strong style="color:var(--accent2)">Ciclo de vida JSF</strong> (gestionado por FW):
+            <strong>1</strong> Restore View →
+            <strong>2</strong> Apply Request →
+            <strong>3</strong> Process Validations →
+            <strong>4</strong> Update Model →
+            <strong>5</strong> Invoke Application →
+            <strong>6</strong> Render Response
+          </div>
+
+          <div class="complexity-row">
+            <span class="complexity-label">Complejidad</span>
+            <div class="complexity-bar-bg"><div class="complexity-bar-fill" style="width:36%;background:#2a6e4e"></div></div>
+            <span>3 capas · componentes con estado</span>
+          </div>
+          <div class="pills">
+            <span class="pill">FacesServlet (FW)</span>
+            <span class="pill">Ciclo 6 fases (FW)</span>
+            <span class="pill">@ManagedBean (TÚ)</span>
+            <span class="pill">Facelets .xhtml (TÚ)</span>
+            <span class="pill">h:form / h:dataTable (FW)</span>
+            <span class="pill">faces-config.xml</span>
+            <span class="pill new">🆕 Componentes UI reutilizables</span>
+            <span class="pill new">🆕 Estado del formulario gestionado por FW</span>
+            <span class="pill new">🆕 Validación automática</span>
+          </div>
+          <div class="callout green"><strong>Diferencia clave con Struts:</strong> en Struts tú gestionabas cada campo del formulario a mano. En JSF el framework mantiene el estado de los componentes entre peticiones (ViewState) y ejecuta el ciclo de validación y binding automáticamente. Tú solo defines el Bean y el Facelet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         2003 · Spring Framework
+    ══════════════════════════════════════════ -->
+    <div class="epoch" style="--epoch-color:#1a4a8a">
+      <div class="epoch-year-col">
+        <span class="year-label">2003</span>
+        <span class="era-label">Era IoC / DI</span>
+      </div>
+      <div class="epoch-body">
+        <div class="epoch-topbar">
+          <span class="fw-name">Spring Framework</span>
+          <span class="fw-version">Spring 1.0</span>
+          <span class="fw-tagline">El contenedor gestiona los objetos por ti</span>
+        </div>
+        <div class="epoch-content">
+          <div class="ps-row">
+            <div class="ps-box problem"><div class="ps-label">Problema</div><p>J2EE / EJBs eran enormes. El código estaba lleno de <code>new MiServicio()</code>. Sin gestión automática de dependencias ni ciclos de vida.</p></div>
+            <div class="ps-box solution"><div class="ps-label">Solución</div><p>Spring introdujo el <strong>IoC Container</strong>: el contenedor crea los beans y los inyecta donde se necesitan. Tú declaras qué necesitas, Spring lo construye.</p></div>
+          </div>
+
+          <div class="arch-title">Arquitectura — contenedor IoC + capas bien definidas</div>
+          <div class="arch-flow" style="margin-top:18px">
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">@Controller</div>
+              <div class="node-sub">POJO tuyo<br>+ anotación Spring</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">@Service</div>
+              <div class="node-sub">POJO tuyo<br>+ @Transactional</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">@Repository</div>
+              <div class="node-sub">POJO tuyo<br>+ JDBC Template</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">ApplicationContext</div>
+              <div class="node-sub">contenedor IoC<br>gestiona todo</div>
+            </div>
+          </div>
+
+          <div class="complexity-row">
+            <span class="complexity-label">Complejidad</span>
+            <div class="complexity-bar-bg"><div class="complexity-bar-fill" style="width:45%;background:#1a4a8a"></div></div>
+            <span>4 capas + contenedor IoC</span>
+          </div>
+          <div class="pills">
+            <span class="pill">IoC Container (FW)</span><span class="pill">@Autowired (FW)</span>
+            <span class="pill">@Controller / @Service / @Repository (TÚ)</span>
+            <span class="pill">AOP (FW)</span><span class="pill">@Transactional (FW)</span>
+            <span class="pill new">🆕 Inversión de Control</span>
+            <span class="pill new">🆕 Sin EJB, sin servidor pesado</span>
+            <span class="pill new">🆕 Testable por diseño</span>
+          </div>
+          <div class="callout blue"><strong>El cambio mental clave:</strong> antes tú creabas los objetos (<code>new Servicio()</code>). Con IoC el framework los crea e inyecta. Tus clases ya no dependen unas de otras directamente — dependen del contenedor.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         2006 · Hibernate / JPA
+    ══════════════════════════════════════════ -->
+    <div class="epoch" style="--epoch-color:#2a6e4e">
+      <div class="epoch-year-col">
+        <span class="year-label">2006</span>
+        <span class="era-label">Era ORM</span>
+      </div>
+      <div class="epoch-body">
+        <div class="epoch-topbar">
+          <span class="fw-name">Hibernate + JPA</span>
+          <span class="fw-version">JPA 1.0</span>
+          <span class="fw-tagline">El SQL desaparece del código Java</span>
+        </div>
+        <div class="epoch-content">
+          <div class="ps-row">
+            <div class="ps-box problem"><div class="ps-label">Problema</div><p>El acceso a datos era manual: <code>PreparedStatement</code>, mapeo de <code>ResultSet</code>... Código repetitivo y propenso a errores.</p></div>
+            <div class="ps-box solution"><div class="ps-label">Solución</div><p>Hibernate mapea clases Java a tablas automáticamente. <strong>JPA</strong> estandarizó el modelo. Spring Data añadió repositorios sin implementación.</p></div>
+          </div>
+
+          <div class="arch-title">Arquitectura — capa de persistencia con ORM</div>
+          <div class="arch-flow" style="margin-top:18px">
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">@Entity</div>
+              <div class="node-sub">tu clase Java<br>↔ tabla DB</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-both" data-own="EXT">
+              <div class="node-name">JpaRepository</div>
+              <div class="node-sub">interfaz tuya<br>implementa Spring</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">EntityManager</div>
+              <div class="node-sub">JPA / Hibernate<br>lo gestiona todo</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">SQL generado</div>
+              <div class="node-sub">Hibernate produce<br>el SQL solo</div>
+            </div>
+          </div>
+
+          <div class="complexity-row">
+            <span class="complexity-label">Complejidad</span>
+            <div class="complexity-bar-bg"><div class="complexity-bar-fill" style="width:58%;background:#2a6e4e"></div></div>
+            <span>5 capas + ORM</span>
+          </div>
+          <div class="pills">
+            <span class="pill">@Entity / @Table (TÚ)</span><span class="pill">@Id / @Column (TÚ)</span>
+            <span class="pill">JpaRepository (EXT)</span><span class="pill">EntityManager (FW)</span>
+            <span class="pill">@OneToMany / @ManyToOne (TÚ)</span>
+            <span class="pill">Lazy Loading (FW)</span><span class="pill">Caché L1/L2 (FW)</span>
+            <span class="pill new">🆕 Sin SQL manual</span>
+            <span class="pill new">🆕 findBy…() autogenerado</span>
+          </div>
+          <div class="callout green"><strong>Spring Data JPA:</strong> con solo declarar <code>interface UserRepo extends JpaRepository&lt;User,Long&gt;</code> obtienes <code>findAll()</code>, <code>save()</code>, <code>deleteById()</code>… Spring genera la implementación en tiempo de arranque.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         2014 · Spring Boot
+    ══════════════════════════════════════════ -->
+    <div class="epoch" style="--epoch-color:#e8a020">
+      <div class="epoch-year-col">
+        <span class="year-label">2014</span>
+        <span class="era-label">Era Boot</span>
+      </div>
+      <div class="epoch-body">
+        <div class="epoch-topbar">
+          <span class="fw-name">Spring Boot</span>
+          <span class="fw-version">Boot 1.0</span>
+          <span class="fw-tagline">Cero configuración, arranca en segundos</span>
+        </div>
+        <div class="epoch-content">
+          <div class="ps-row">
+            <div class="ps-box problem"><div class="ps-label">Problema</div><p>Spring era potente pero configurarlo era costoso: decenas de XMLs, dependencias manuales, servidor de aplicaciones externo. Un proyecto nuevo tardaba días.</p></div>
+            <div class="ps-box solution"><div class="ps-label">Solución</div><p>Spring Boot = Spring + autoconfiguración + servidor embebido. Un solo <code>@SpringBootApplication</code> y <code>mvn spring-boot:run</code>. El framework detecta el classpath y se configura solo.</p></div>
+          </div>
+
+          <div class="arch-title">Arquitectura — Fat JAR ejecutable</div>
+          <div class="arch-flow" style="margin-top:18px">
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">@SpringBootApplication</div>
+              <div class="node-sub">main() en tu clase</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">Auto-configuration</div>
+              <div class="node-sub">detecta classpath<br>configura beans</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">Embedded Tomcat</div>
+              <div class="node-sub">sin deploy<br>externo</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">Actuator</div>
+              <div class="node-sub">/health<br>/metrics</div>
+            </div>
+          </div>
+
+          <div class="complexity-row">
+            <span class="complexity-label">Complejidad</span>
+            <div class="complexity-bar-bg"><div class="complexity-bar-fill" style="width:68%;background:#e8a020"></div></div>
+            <span>Compleja por dentro · simple por fuera</span>
+          </div>
+          <div class="pills">
+            <span class="pill">@SpringBootApplication (TÚ)</span>
+            <span class="pill">application.properties (TÚ)</span>
+            <span class="pill">Auto-configuration (FW)</span>
+            <span class="pill">Starters en pom.xml (FW)</span>
+            <span class="pill">Embedded Tomcat (FW)</span>
+            <span class="pill">Actuator (FW)</span>
+            <span class="pill new">🆕 Convention over configuration</span>
+            <span class="pill new">🆕 Fat JAR deployable</span>
+            <span class="pill new">🆕 DevTools hot reload</span>
+          </div>
+          <div class="callout yellow"><strong>El salto de productividad más grande:</strong> lo que antes requería días de configuración pasó a funcionar en 5 minutos. Spring Boot democratizó el desarrollo Java profesional.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         2014 · Spring Batch
+    ══════════════════════════════════════════ -->
+    <div class="epoch" style="--epoch-color:#c1440e">
+      <div class="epoch-year-col">
+        <span class="year-label">2014</span>
+        <span class="era-label">Era Batch</span>
+      </div>
+      <div class="epoch-body">
+        <div class="epoch-topbar">
+          <span class="fw-name">Spring Batch</span>
+          <span class="fw-version">Batch 3.0</span>
+          <span class="fw-tagline">Procesa millones de registros con reintentos y puntos de control</span>
+        </div>
+        <div class="epoch-content">
+          <div class="ps-row">
+            <div class="ps-box problem"><div class="ps-label">Problema</div><p>Procesar grandes volúmenes de datos (ficheros, migraciones, reportes nocturnos) requería gestionar reintentos, tolerancia a fallos, transacciones por lote y logging de ejecución a mano.</p></div>
+            <div class="ps-box solution"><div class="ps-label">Solución</div><p>Spring Batch provee la infraestructura completa: <strong>Job → Steps → Chunk(Read/Process/Write)</strong>. Tú solo implementas la lógica de lectura, transformación y escritura.</p></div>
+          </div>
+
+          <div class="arch-title">Arquitectura — Job con Steps de tipo Chunk</div>
+          <div class="arch-flow" style="margin-top:18px; flex-direction: column; gap: 10px;">
+
+            <!-- Nivel 1: Job / JobLauncher -->
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+              <div class="node own-fw" data-own="FW" style="min-width:110px">
+                <div class="node-name">JobLauncher</div>
+                <div class="node-sub">lanza el Job</div>
+              </div>
+              <span class="arch-arrow">→</span>
+              <div class="node own-both" data-own="EXT" style="min-width:110px">
+                <div class="node-name">@Bean Job</div>
+                <div class="node-sub">defines los steps<br>con JobBuilder (FW)</div>
+              </div>
+              <span class="arch-arrow">→</span>
+              <div class="node own-fw" data-own="FW" style="min-width:110px">
+                <div class="node-name">JobRepository</div>
+                <div class="node-sub">persiste estado<br>en DB</div>
+              </div>
+              <span class="arch-arrow">→</span>
+              <div class="node own-fw" data-own="FW" style="min-width:110px">
+                <div class="node-name">JobExecution</div>
+                <div class="node-sub">estado: COMPLETED<br>FAILED · STOPPED</div>
+              </div>
+            </div>
+
+            <!-- Nivel 2: Step / Chunk -->
+            <div style="padding:12px 14px;background:rgba(42,110,78,0.04);border:1.5px solid rgba(42,110,78,0.2);border-radius:4px;">
+              <div style="font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;">Dentro de cada Step — Chunk Processing</div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <div class="node own-both" data-own="EXT" style="min-width:100px">
+                  <div class="node-name">ItemReader</div>
+                  <div class="node-sub">implementas tú<br>lee 1 item</div>
+                </div>
+                <span class="arch-arrow">→</span>
+                <div class="node own-both" data-own="EXT" style="min-width:100px">
+                  <div class="node-name">ItemProcessor</div>
+                  <div class="node-sub">implementas tú<br>transforma item</div>
+                </div>
+                <span class="arch-arrow">→</span>
+                <div class="node own-both" data-own="EXT" style="min-width:100px">
+                  <div class="node-name">ItemWriter</div>
+                  <div class="node-sub">implementas tú<br>escribe el chunk</div>
+                </div>
+                <span class="arch-arrow">→</span>
+                <div class="node own-fw" data-own="FW" style="min-width:100px">
+                  <div class="node-name">Transacción</div>
+                  <div class="node-sub">commit/rollback<br>por chunk (FW)</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; font-size:10px;">
+            <div style="flex:1;min-width:180px;padding:10px 13px;background:rgba(193,68,14,0.05);border:1.5px solid rgba(193,68,14,0.2);border-radius:4px;line-height:1.8;color:var(--ink2);">
+              <strong style="color:var(--accent);font-size:9px;letter-spacing:1px;text-transform:uppercase;">TÚ escribes</strong><br>
+              <code>ItemReader</code> — leer fichero/DB<br>
+              <code>ItemProcessor</code> — transformar dato<br>
+              <code>ItemWriter</code> — guardar resultado<br>
+              <code>@Bean Job</code> — definir el flujo
+            </div>
+            <div style="flex:1;min-width:180px;padding:10px 13px;background:rgba(26,74,138,0.05);border:1.5px solid rgba(26,74,138,0.2);border-radius:4px;line-height:1.8;color:var(--ink2);">
+              <strong style="color:var(--accent3);font-size:9px;letter-spacing:1px;text-transform:uppercase;">Framework provee</strong><br>
+              <code>JobLauncher</code> / <code>JobRepository</code><br>
+              <code>JobBuilder</code> / <code>StepBuilder</code><br>
+              Transacciones por chunk<br>
+              Reintentos, skip, restart
+            </div>
+          </div>
+
+          <div class="complexity-row">
+            <span class="complexity-label">Complejidad</span>
+            <div class="complexity-bar-bg"><div class="complexity-bar-fill" style="width:72%;background:#c1440e"></div></div>
+            <span>Infrastructura completa · tú pones la lógica</span>
+          </div>
+          <div class="pills">
+            <span class="pill">Job / Step (EXT)</span>
+            <span class="pill">ItemReader (EXT)</span>
+            <span class="pill">ItemProcessor (EXT)</span>
+            <span class="pill">ItemWriter (EXT)</span>
+            <span class="pill">JobLauncher (FW)</span>
+            <span class="pill">JobRepository (FW)</span>
+            <span class="pill">chunk-size (TÚ configuras)</span>
+            <span class="pill new">🆕 Reintentos automáticos</span>
+            <span class="pill new">🆕 Restart desde el punto de fallo</span>
+            <span class="pill new">🆕 Skip de registros erróneos</span>
+          </div>
+          <div class="callout orange"><strong>La clave del modelo Batch:</strong> el framework gestiona <em>cuándo</em> y <em>cómo</em> se ejecuta cada chunk (transacción, reintento, logging). Tú solo decides <em>qué</em> leer, <em>cómo</em> transformarlo y <em>dónde</em> escribirlo.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         2019 · Quarkus
+    ══════════════════════════════════════════ -->
+    <div class="epoch" style="--epoch-color:#7a3a9a">
+      <div class="epoch-year-col">
+        <span class="year-label">2019</span>
+        <span class="era-label">Era Cloud</span>
+      </div>
+      <div class="epoch-body">
+        <div class="epoch-topbar">
+          <span class="fw-name">Quarkus</span>
+          <span class="fw-version">Quarkus 1.0</span>
+          <span class="fw-tagline">Java nativo para la era de los contenedores</span>
+        </div>
+        <div class="epoch-content">
+          <div class="ps-row">
+            <div class="ps-box problem"><div class="ps-label">Problema</div><p>Spring Boot arranca en ~3-5 segundos y consume ~250 MB de RAM. En Kubernetes con cientos de pods o en funciones serverless, esto es demasiado.</p></div>
+            <div class="ps-box solution"><div class="ps-label">Solución</div><p>Quarkus mueve el trabajo pesado (reflexión, escaneo de anotaciones, DI) al <strong>tiempo de compilación</strong>. Con GraalVM compila a binario nativo: arranca en &lt;50ms y usa ~30 MB.</p></div>
+          </div>
+
+          <div class="arch-title">Arquitectura — build-time vs runtime</div>
+          <div class="arch-flow" style="margin-top:18px">
+            <div class="node own-you" data-own="TÚ">
+              <div class="node-name">@Path / @GET</div>
+              <div class="node-sub">tu endpoint<br>JAX-RS</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">Augmentation</div>
+              <div class="node-sub">DI + wiring<br>en compilación</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">Native Image</div>
+              <div class="node-sub">GraalVM<br>binario sin JVM</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="node own-fw" data-own="FW">
+              <div class="node-name">Pod K8s</div>
+              <div class="node-sub">&lt;50ms · ~30MB</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:150px;padding:12px;background:rgba(26,74,138,0.05);border:1.5px solid rgba(26,74,138,0.2);border-radius:4px;font-size:10px;text-align:center;">
+              <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--accent3);margin-bottom:6px;text-transform:uppercase;">Spring Boot</div>
+              <div style="font-size:22px;font-weight:700;font-family:var(--display);color:var(--ink);">3–5s</div>
+              <div style="color:var(--muted);margin-top:2px;">~250 MB RAM</div>
+            </div>
+            <div style="flex:1;min-width:150px;padding:12px;background:rgba(122,58,154,0.05);border:1.5px solid rgba(122,58,154,0.2);border-radius:4px;font-size:10px;text-align:center;">
+              <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--purple);margin-bottom:6px;text-transform:uppercase;">Quarkus Native</div>
+              <div style="font-size:22px;font-weight:700;font-family:var(--display);color:var(--ink);">&lt;50ms</div>
+              <div style="color:var(--muted);margin-top:2px;">~30 MB RAM</div>
+            </div>
+          </div>
+
+          <div class="complexity-row">
+            <span class="complexity-label">Complejidad</span>
+            <div class="complexity-bar-bg"><div class="complexity-bar-fill" style="width:85%;background:#7a3a9a"></div></div>
+            <span>Compleja internamente · API familiar</span>
+          </div>
+          <div class="pills">
+            <span class="pill">@Path / @GET (TÚ)</span>
+            <span class="pill">@ApplicationScoped (TÚ)</span>
+            <span class="pill">@Inject (FW)</span>
+            <span class="pill">Build-time DI (FW)</span>
+            <span class="pill">GraalVM Native Image (FW)</span>
+            <span class="pill">Dev Mode live reload (FW)</span>
+            <span class="pill new">🆕 Arranque en milisegundos</span>
+            <span class="pill new">🆕 Huella mínima de memoria</span>
+            <span class="pill new">🆕 Serverless-ready</span>
+          </div>
+          <div class="callout purple"><strong>¿Y Micronaut?</strong> Misma idea, distinto motor: DI resuelto con procesadores de anotaciones Java estándar, sin GraalVM obligatorio. Ambos son respuestas al mismo problema: Java es demasiado pesado para la nube.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /timeline -->
+
+  <!-- ══ TABLA RESUMEN ══ -->
+  <div class="sec-title" data-n="→">Resumen · qué escribe cada quién</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Framework</th>
+          <th>TÚ escribes</th>
+          <th>El FRAMEWORK provee</th>
+          <th>Añadido clave</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Servlets</td>
+          <td><span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:2px;background:rgba(42,110,78,0.1);border:1px solid var(--accent2);color:var(--accent2);white-space:nowrap;display:inline-block;margin:1px;">EXT MiServlet</span> <span class="you-pill">SQL crudo</span> <span class="you-pill">HTML out.println()</span></td>
+          <td><span class="fw-pill">HttpServlet base</span> <span class="fw-pill">Tomcat</span></td>
+          <td>Servidor persistente en Java</td>
+        </tr>
+        <tr>
+          <td>Struts</td>
+          <td><span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:2px;background:rgba(42,110,78,0.1);border:1px solid var(--accent2);color:var(--accent2);white-space:nowrap;display:inline-block;margin:1px;">EXT Action</span> <span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:2px;background:rgba(42,110,78,0.1);border:1px solid var(--accent2);color:var(--accent2);white-space:nowrap;display:inline-block;margin:1px;">EXT ActionForm</span> <span class="you-pill">JSP</span></td>
+          <td><span class="fw-pill">ActionServlet</span> <span class="fw-pill">Enrutado XML</span></td>
+          <td>Patrón MVC separado</td>
+        </tr>
+        <tr>
+          <td>JSF</td>
+          <td><span class="you-pill">@ManagedBean</span> <span class="you-pill">Facelets .xhtml</span></td>
+          <td><span class="fw-pill">FacesServlet</span> <span class="fw-pill">Ciclo 6 fases</span> <span class="fw-pill">h:form / h:dataTable</span> <span class="fw-pill">ViewState</span></td>
+          <td>Componentes UI con estado</td>
+        </tr>
+        <tr>
+          <td>Spring</td>
+          <td><span class="you-pill">@Controller</span> <span class="you-pill">@Service</span> <span class="you-pill">@Repository</span></td>
+          <td><span class="fw-pill">ApplicationContext</span> <span class="fw-pill">@Autowired</span> <span class="fw-pill">AOP</span></td>
+          <td>IoC / DI automático</td>
+        </tr>
+        <tr>
+          <td>Hibernate / JPA</td>
+          <td><span class="you-pill">@Entity</span> <span class="you-pill">JpaRepository (interfaz)</span></td>
+          <td><span class="fw-pill">EntityManager</span> <span class="fw-pill">SQL generado</span> <span class="fw-pill">Caché</span></td>
+          <td>ORM sin SQL manual</td>
+        </tr>
+        <tr>
+          <td>Spring Boot</td>
+          <td><span class="you-pill">@SpringBootApplication</span> <span class="you-pill">application.properties</span></td>
+          <td><span class="fw-pill">Auto-config</span> <span class="fw-pill">Tomcat embebido</span> <span class="fw-pill">Actuator</span></td>
+          <td>Cero configuración</td>
+        </tr>
+        <tr>
+          <td>Spring Batch</td>
+          <td><span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:2px;background:rgba(42,110,78,0.1);border:1px solid var(--accent2);color:var(--accent2);white-space:nowrap;display:inline-block;margin:1px;">EXT ItemReader</span> <span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:2px;background:rgba(42,110,78,0.1);border:1px solid var(--accent2);color:var(--accent2);white-space:nowrap;display:inline-block;margin:1px;">EXT ItemProcessor</span> <span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:2px;background:rgba(42,110,78,0.1);border:1px solid var(--accent2);color:var(--accent2);white-space:nowrap;display:inline-block;margin:1px;">EXT ItemWriter</span> <span class="you-pill">@Bean Job</span></td>
+          <td><span class="fw-pill">JobLauncher</span> <span class="fw-pill">JobRepository</span> <span class="fw-pill">Transacciones</span> <span class="fw-pill">Reintentos</span></td>
+          <td>Procesamiento masivo estructurado</td>
+        </tr>
+        <tr>
+          <td>Quarkus</td>
+          <td><span class="you-pill">@Path / @GET</span> <span class="you-pill">@ApplicationScoped</span></td>
+          <td><span class="fw-pill">Build-time DI</span> <span class="fw-pill">Native Image</span> <span class="fw-pill">Dev Mode</span></td>
+          <td>Java nativo para la nube</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  </div><!-- /view-timeline -->
+
+  <!-- ══ PANEL 2: NARRATIVA ══ -->
+  <div id="view-narrative" class="mode-panel">
+
+    <div class="narr-intro">
+      <strong>La pregunta que cada generación intentó responder:</strong> ¿cuánto debería hacer el framework por ti, y cuánto deberías controlar tú? La evolución no fue un camino único — hubo bifurcaciones donde dos respuestas distintas compitieron a la vez (JSF vs Spring MVC). La que ganó no fue la más potente, sino la menos invasiva.
+    </div>
+
+    <div class="narr-timeline">
+
+      <div class="narr-block" style="--narr-color:#8a7a65">
+        <div class="narr-year-col">
+          <span class="narr-year">1997</span>
+          <span class="narr-era">Herramientas<br>sin estructura</span>
+        </div>
+        <div class="narr-body">
+          <div class="narr-fw-name">Java Servlets</div>
+          <span class="narr-concept">Herencia pura</span>
+          <p class="narr-text">El primer paso fue simplemente meter Java en el servidor. <code>HttpServlet</code> te daba herramientas — <code>request</code>, <code>response</code>, el ciclo <code>init/destroy</code> — pero <strong>ninguna opinión sobre cómo organizar tu código</strong>. La herencia era el único contrato: extiende esta clase y sobreescribe <code>doGet()</code>. Lo demás era territorio libre.</p>
+          <p class="narr-text">El resultado predecible: lógica de negocio, SQL y generación de HTML mezclados en el mismo método. Funcionaba, pero no escalaba. El framework te dio un martillo y te dijo "construye lo que quieras".</p>
+          <div class="narr-key">
+            <div class="narr-key-box ganó"><div class="narr-key-label">Lo que aportó</div>Servidor persistente. Un proceso para múltiples peticiones. Java en la web.</div>
+            <div class="narr-key-box perdió"><div class="narr-key-label">Lo que faltaba</div>Cualquier tipo de estructura. El desarrollador organizaba (o no) a su criterio.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="narr-block" style="--narr-color:#c1440e">
+        <div class="narr-year-col">
+          <span class="narr-year">2001</span>
+          <span class="narr-era">Estructura<br>por herencia</span>
+        </div>
+        <div class="narr-body">
+          <div class="narr-fw-name">Apache Struts</div>
+          <span class="narr-concept">MVC obligatorio via herencia</span>
+          <p class="narr-text">Struts fue la primera vez que un framework Java dijo: <strong>"no solo te doy herramientas, te digo dónde va cada cosa"</strong>. El patrón MVC pasó de ser una recomendación a ser un contrato. Si quieres que tu lógica funcione, extiende <code>Action</code>. Si quieres que el formulario funcione, extiende <code>ActionForm</code>.</p>
+          <p class="narr-text">El mecanismo seguía siendo <strong>herencia</strong> — el mismo que Servlets — pero ahora con propósito arquitectural: separar controlador, modelo y vista. El <code>ActionServlet</code> central enrutaba todo según el <code>struts-config.xml</code>. El desarrollador rellenaba los huecos definidos por el framework.</p>
+          <div class="narr-key">
+            <div class="narr-key-box ganó"><div class="narr-key-label">El salto</div>De "organízate como quieras" a "hay un sitio para cada cosa". Primera estructura MVC real en Java web.</div>
+            <div class="narr-key-box perdió"><div class="narr-key-label">El precio</div>Acoplamiento fuerte via herencia. XML masivo. Sin gestión de dependencias: <code>new MiServicio()</code> por todas partes.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="narr-block" style="--narr-color:#1a4a8a">
+        <div class="narr-year-col">
+          <span class="narr-year">2003</span>
+          <span class="narr-era">Inversión<br>de control</span>
+        </div>
+        <div class="narr-body">
+          <div class="narr-fw-name">Spring Framework</div>
+          <span class="narr-concept">IoC · POJOs · sin herencia forzada · configuración XML</span>
+          <p class="narr-text">Spring nació como reacción directa a J2EE y Struts: en lugar de tomar <em>más</em> control, tomó <em>menos</em>. <strong>Tus clases son POJOs normales</strong>, sin extender ni implementar nada del framework. Spring las gestiona desde fuera mediante el contenedor IoC, configurado inicialmente en <code>applicationContext.xml</code>.</p>
+          <p class="narr-text">Este es el cambio conceptual más profundo de toda la evolución. Antes el desarrollador <em>llamaba</em> al framework (<code>extends Action</code>, <code>new MiServicio()</code>). Con Spring, <strong>el framework te llama a ti</strong>: lee la configuración, construye los objetos, inyecta las dependencias. Tú declaras <em>qué</em> necesitas, Spring decide <em>cómo</em> construirlo. Las anotaciones (<code>@Component</code>, <code>@Autowired</code>) llegarían en Spring 2.0 (2006), pero la inversión de control ya era el núcleo desde el día uno.</p>
+          <div class="narr-key">
+            <div class="narr-key-box ganó"><div class="narr-key-label">El salto conceptual</div>Inversión de Control. POJOs testables sin servidor. Ganó la guerra contra J2EE y JSF porque era menos invasivo, no más.</div>
+            <div class="narr-key-box perdió"><div class="narr-key-label">El precio inicial</div>Configuración XML enorme. Arrancar un proyecto nuevo seguía siendo costoso. Ese problema lo resolvería Boot 10 años después.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="narr-block" style="--narr-color:#2a6e4e">
+        <div class="narr-year-col">
+          <span class="narr-year">2004</span>
+          <span class="narr-era">El framework<br>toma el control</span>
+        </div>
+        <div class="narr-body">
+          <div class="narr-fw-name">JavaServer Faces</div>
+          <span class="narr-concept">Componentes con estado · ciclo de vida gestionado</span>
+          <p class="narr-text">Justo cuando Spring apostaba por menos invasión, Sun/Oracle apostó por más: JSF llevó la idea de Struts al extremo proponiendo que el framework gestionara también <strong>el estado de cada componente de UI</strong>. A diferencia de Struts, JSF no usaba herencia — usaba <code>@ManagedBean</code> (un POJO anotado) — pero el nivel de control del framework era mucho mayor: cada botón, tabla y formulario tenía su ciclo de vida de 6 fases ejecutado automáticamente.</p>
+          <p class="narr-text">Era la apuesta oficial de Java EE y prometía máxima productividad. Pero llevó el acoplamiento al límite: el <strong>ViewState</strong> serializaba el estado de toda la página, las pruebas eran difíciles, y el modelo chocaba con la llegada de REST y AJAX. <strong>La historia demostró que Spring tenía razón: menos invasión gana a más control.</strong></p>
+          <div class="narr-key">
+            <div class="narr-key-box ganó"><div class="narr-key-label">La idea</div>Componentes UI reutilizables. El framework gestiona validación, binding y estado automáticamente.</div>
+            <div class="narr-key-box perdió"><div class="narr-key-label">El problema</div>Acoplamiento máximo. Difícil de testar. ViewState pesado. Mal encaje con REST. Perdió terreno frente a Spring MVC.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="narr-block" style="--narr-color:#7a3a9a">
+        <div class="narr-year-col">
+          <span class="narr-year">2006</span>
+          <span class="narr-era">El SQL<br>desaparece</span>
+        </div>
+        <div class="narr-body">
+          <div class="narr-fw-name">Hibernate / JPA</div>
+          <span class="narr-concept">ORM · anotaciones como contrato · el framework genera el SQL</span>
+          <p class="narr-text">Mientras Spring resolvía la organización del código, Hibernate (existía desde 2001) recibió en 2006 la estandarización de JPA. La filosofía era la misma que Spring: <strong>tú describes el modelo con anotaciones</strong> (<code>@Entity</code>, <code>@OneToMany</code>), el framework genera el SQL. Sin extender clases, sin implementar nada — solo anotar tu POJO.</p>
+          <p class="narr-text">Spring Data JPA fue el paso final: ni siquiera necesitas implementar el repositorio. Declaras la <em>interfaz</em> y Spring genera la implementación completa en tiempo de arranque. <code>findByEmailAndStatus()</code> existe porque tú lo declaras, no porque lo programes.</p>
+          <div class="narr-key">
+            <div class="narr-key-box ganó"><div class="narr-key-label">El patrón</div>Anotaciones como contrato. El framework lee tu modelo y genera comportamiento. Sin herencia, sin implementación.</div>
+            <div class="narr-key-box perdió"><div class="narr-key-label">La trampa</div>La "magia" del ORM tiene coste: N+1 queries, Lazy Loading inesperado. Saber qué hace Hibernate por debajo sigue siendo esencial.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="narr-block" style="--narr-color:#e8a020">
+        <div class="narr-year-col">
+          <span class="narr-year">2014</span>
+          <span class="narr-era">Estructura<br>completa</span>
+        </div>
+        <div class="narr-body">
+          <div class="narr-fw-name">Spring Boot</div>
+          <span class="narr-concept">Autoconfiguración · convention over configuration</span>
+          <p class="narr-text">Spring resolvió el <em>cómo organizar</em> el código. Boot resolvió el <em>cómo arrancar</em>. Si tienes <code>spring-boot-starter-web</code> en el classpath, Spring Boot configura Tomcat, Spring MVC y Jackson automáticamente. <strong>No hay nada que declarar porque el framework infiere lo que necesitas.</strong></p>
+          <p class="narr-text">Es el punto de llegada de la filosofía IoC: ahora ni siquiera describes la configuración. El framework observa lo que tienes y toma decisiones. Tú solo escribes tu <code>@SpringBootApplication</code>, tus <code>@RestController</code>, tus <code>@Service</code>. <strong>La estructura completa viene dada.</strong></p>
+          <div class="narr-key">
+            <div class="narr-key-box ganó"><div class="narr-key-label">La madurez</div>De días de configuración a 5 minutos. El desarrollador junior puede arrancar un proyecto profesional desde el primer día.</div>
+            <div class="narr-key-box perdió"><div class="narr-key-label">El nuevo problema</div>Arranque lento (~3-5s) y alto consumo de RAM (~250MB). Aceptable en servidores, problemático en la nube con cientos de pods.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="narr-block" style="--narr-color:#c1440e">
+        <div class="narr-year-col">
+          <span class="narr-year">2014</span>
+          <span class="narr-era">Infraestructura<br>especializada</span>
+        </div>
+        <div class="narr-body">
+          <div class="narr-fw-name">Spring Batch</div>
+          <span class="narr-concept">El framework gestiona el cuándo · tú el qué</span>
+          <p class="narr-text">Spring Batch aplicó la filosofía IoC a un problema específico: procesar millones de registros. La separación entre <strong>"qué procesar"</strong> (tuyo: <code>ItemReader</code>, <code>ItemProcessor</code>, <code>ItemWriter</code>) y <strong>"cómo orquestar"</strong> (framework: reintentos, transacciones, restart) es total.</p>
+          <div class="narr-key">
+            <div class="narr-key-box ganó"><div class="narr-key-label">El patrón</div>Infraestructura batch completa. Tú pones la lógica pura. El framework orquesta todo lo demás.</div>
+            <div class="narr-key-box perdió"><div class="narr-key-label">La curva</div>El modelo Job/Step/Chunk tiene su propia lógica. La "magia" del restart y skip puede sorprender.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="narr-block" style="--narr-color:#7a3a9a">
+        <div class="narr-year-col">
+          <span class="narr-year">2019</span>
+          <span class="narr-era">La magia<br>al compilar</span>
+        </div>
+        <div class="narr-body">
+          <div class="narr-fw-name">Quarkus / Micronaut</div>
+          <span class="narr-concept">Build-time framework · la magia ocurre antes de ejecutar</span>
+          <p class="narr-text">El último giro: si el framework hace su trabajo leyendo anotaciones en tiempo de arranque, ¿por qué no hacerlo en tiempo de compilación? Quarkus y Micronaut mueven todo el trabajo pesado — escaneo, resolución de DI, proxies — <strong>al momento del build</strong>. El binario que arranca ya tiene todo resuelto.</p>
+          <p class="narr-text">La API para el desarrollador es casi idéntica a Spring (<code>@Inject</code>, <code>@Path</code>), pero el motor es completamente distinto. <strong>La misma filosofía IoC, ejecutada en un momento diferente del ciclo de vida.</strong></p>
+          <div class="narr-key">
+            <div class="narr-key-box ganó"><div class="narr-key-label">El siguiente paso</div>La "magia" no tiene coste en runtime. &lt;50ms de arranque, ~30MB de RAM. Java competitivo en serverless y Kubernetes.</div>
+            <div class="narr-key-box perdió"><div class="narr-key-label">La restricción</div>Lo que no se puede analizar en compilación no funciona fácilmente. El ecosistema aún madura respecto a Spring.</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /narr-timeline -->
+
+    <!-- CURVA DE CONTROL -->
+    <div class="curve-section">
+      <div class="curve-title">¿Quién controla qué? — reparto por framework</div>
+      <div class="curve-row">
+        <div class="curve-fw">Servlets</div>
+        <div class="curve-bar-wrap">
+          <div class="curve-segment seg-ext" style="flex:2">EXT MiServlet</div>
+          <div class="curve-segment seg-you" style="flex:7">TÚ — lógica + SQL + HTML</div>
+          <div class="curve-segment seg-fw"  style="flex:1">FW</div>
+        </div>
+      </div>
+      <div class="curve-row">
+        <div class="curve-fw">Struts</div>
+        <div class="curve-bar-wrap">
+          <div class="curve-segment seg-ext" style="flex:3">EXT Action · Form</div>
+          <div class="curve-segment seg-you" style="flex:4">TÚ — lógica + JSP</div>
+          <div class="curve-segment seg-fw"  style="flex:3">FW — MVC + enrutado</div>
+        </div>
+      </div>
+      <div class="curve-row">
+        <div class="curve-fw">Spring</div>
+        <div class="curve-bar-wrap">
+          <div class="curve-segment seg-you" style="flex:5">TÚ — POJOs + anotaciones</div>
+          <div class="curve-segment seg-fw"  style="flex:5">FW — IoC + DI + AOP</div>
+        </div>
+      </div>
+      <div class="curve-row">
+        <div class="curve-fw">JSF</div>
+        <div class="curve-bar-wrap">
+          <div class="curve-segment seg-you" style="flex:2">TÚ — Bean</div>
+          <div class="curve-segment seg-you" style="flex:1">TÚ — Facelet</div>
+          <div class="curve-segment seg-fw"  style="flex:7">FW — componentes + ciclo 6 fases + ViewState</div>
+        </div>
+      </div>
+      <div class="curve-row">
+        <div class="curve-fw">Hibernate</div>
+        <div class="curve-bar-wrap">
+          <div class="curve-segment seg-you" style="flex:3">TÚ — @Entity</div>
+          <div class="curve-segment seg-ext" style="flex:2">EXT JpaRepository</div>
+          <div class="curve-segment seg-fw"  style="flex:5">FW — SQL + caché + transacciones</div>
+        </div>
+      </div>
+      <div class="curve-row">
+        <div class="curve-fw">Spring Boot</div>
+        <div class="curve-bar-wrap">
+          <div class="curve-segment seg-you" style="flex:4">TÚ — Controllers · Services · Repos</div>
+          <div class="curve-segment seg-fw"  style="flex:6">FW — autoconfig + Tomcat + Actuator</div>
+        </div>
+      </div>
+      <div class="curve-row">
+        <div class="curve-fw">Spring Batch</div>
+        <div class="curve-bar-wrap">
+          <div class="curve-segment seg-ext" style="flex:4">EXT — Reader · Processor · Writer</div>
+          <div class="curve-segment seg-fw"  style="flex:6">FW — Job + transacciones + reintentos + restart</div>
+        </div>
+      </div>
+      <div class="curve-row">
+        <div class="curve-fw">Quarkus</div>
+        <div class="curve-bar-wrap">
+          <div class="curve-segment seg-you" style="flex:2">TÚ — @Path · lógica</div>
+          <div class="curve-segment seg-ext" style="flex:2">EXT — @Inject · CDI</div>
+          <div class="curve-segment seg-fw"  style="flex:6">FW — DI build-time + Native Image + runtime mínimo</div>
+        </div>
+      </div>
+      <div class="curve-legend">
+        <div class="curve-legend-item"><div class="curve-legend-dot" style="background:rgba(193,68,14,0.5)"></div><strong>TÚ</strong> — lógica propia, POJOs, sin contrato del framework</div>
+        <div class="curve-legend-item"><div class="curve-legend-dot" style="background:rgba(42,110,78,0.5)"></div><strong>EXT</strong> — extiende / implementa una clase o interfaz del framework</div>
+        <div class="curve-legend-item"><div class="curve-legend-dot" style="background:rgba(26,74,138,0.5)"></div><strong>FW</strong> — lo gestiona el framework, tú no tocas nada</div>
+      </div>
+    </div>
+
+  </div><!-- /view-narrative -->
+
+</div><!-- /container -->
+<script>
+function setView(name, btn) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

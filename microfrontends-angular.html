@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Micro Frontends — Angular</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --surface: #fff;
+    --surface2: #f0ebe0;
+    --border: #d4c9b0;
+    --ink: #1a1410;
+    --ink2: #4a3f30;
+    --muted: #8a7a65;
+    --accent: #c1440e;
+    --accent2: #2a6e4e;
+    --accent3: #1a4a8a;
+    --yellow: #e8a020;
+    --purple: #6d28d9;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Clash Display', 'IBM Plex Mono', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    min-height: 100vh;
+    position: relative;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.5;
+  }
+  .container { max-width: 1080px; margin: 0 auto; padding: 48px 28px 100px; }
+  header {
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+    animation: fadeIn 0.5s ease both;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .stamp {
+    display: inline-block;
+    font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--accent); border: 2px solid var(--accent);
+    padding: 3px 10px; margin-bottom: 14px; transform: rotate(-1deg);
+  }
+  h1 { font-family: var(--display); font-size: clamp(28px,4vw,48px); font-weight: 700; line-height: 1.1; }
+  h1 em { font-style: normal; color: var(--accent); border-bottom: 3px solid var(--accent); }
+  .subtitle { font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+  /* ── TOGGLE ── */
+  .mode-toggle {
+    display: flex; gap: 0; border: 2px solid var(--ink); border-radius: 4px;
+    overflow: hidden; margin-bottom: 40px; width: fit-content;
+    animation: fadeIn 0.5s 0.1s ease both;
+  }
+  .mode-btn {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    padding: 10px 24px; cursor: pointer; border: none; background: transparent;
+    color: var(--muted); letter-spacing: 1px; transition: all 0.15s;
+    border-right: 2px solid var(--ink);
+  }
+  .mode-btn:last-child { border-right: none; }
+  .mode-btn:hover { background: var(--surface2); color: var(--ink); }
+  .mode-btn.active { background: var(--ink); color: var(--bg); }
+  .mode-panel { display: none; animation: fadeUp 0.4s ease both; }
+  .mode-panel.active { display: block; }
+
+  /* ── SEC TITLE ── */
+  .sec-title {
+    font-family: var(--display); font-size: 11px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--muted);
+    margin: 40px 0 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .sec-title:first-child { margin-top: 0; }
+  .sec-title::before {
+    content: attr(data-n);
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; background: var(--ink); color: var(--bg);
+    font-size: 10px; border-radius: 2px; flex-shrink: 0;
+  }
+
+  /* ── DIAGRAM BOX ── */
+  .dia-box {
+    background: linear-gradient(135deg,#faf8f4 0%,#f0ebe0 100%);
+    border: 3px solid var(--accent); border-radius: 8px;
+    padding: 28px 32px 32px; margin-bottom: 32px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    animation: fadeUp 0.5s 0.1s ease both;
+  }
+  .dia-box.green { border-color: var(--accent2); }
+  .dia-box.blue { border-color: var(--accent3); }
+  .dia-box.yellow { border-color: var(--yellow); }
+  .dia-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .tag { font-size: 9px; font-weight: 700; letter-spacing: 2px; padding: 4px 10px; border-radius: 3px; text-transform: uppercase; }
+  .tag-mf { background: rgba(193,68,14,0.12); color: var(--accent); border: 2px solid var(--accent); }
+  .tag-shell { background: rgba(26,74,138,0.12); color: var(--accent3); border: 2px solid var(--accent3); }
+  .tag-remote { background: rgba(42,110,78,0.12); color: var(--accent2); border: 2px solid var(--accent2); }
+  .tag-mono { background: rgba(232,160,32,0.12); color: var(--yellow); border: 2px solid var(--yellow); }
+  .tag-fed { background: rgba(109,40,217,0.12); color: var(--purple); border: 2px solid var(--purple); }
+  .dia-name { font-size: 20px; font-weight: 700; }
+  .dia-desc { font-size: 12px; color: var(--muted); margin-bottom: 24px; line-height: 1.7; }
+
+  /* ── ARCH BLOCKS ── */
+  .arch-row { display: flex; gap: 16px; align-items: stretch; flex-wrap: wrap; }
+  .arch-box {
+    flex: 1; min-width: 200px; background: var(--surface);
+    border: 2px solid var(--border); border-radius: 6px; padding: 20px;
+    transition: all 0.2s;
+  }
+  .arch-box:hover { border-color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .arch-box.shell { border-color: var(--accent3); border-left-width: 4px; }
+  .arch-box.remote { border-color: var(--accent2); border-left-width: 4px; }
+  .arch-box.shared { border-color: var(--yellow); border-left-width: 4px; }
+  .arch-box.module { border-color: var(--purple); border-left-width: 4px; }
+  .arch-label { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; font-weight: 700; }
+  .arch-box.shell .arch-label { color: var(--accent3); }
+  .arch-box.remote .arch-label { color: var(--accent2); }
+  .arch-box.shared .arch-label { color: var(--yellow); }
+  .arch-box.module .arch-label { color: var(--purple); }
+  .arch-name { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .arch-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
+  .arch-connector { display: flex; align-items: center; justify-content: center; min-width: 32px; color: var(--muted); font-size: 20px; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-left: 4px solid; padding: 14px 18px; margin: 16px 0;
+    font-size: 12px; line-height: 1.7; color: var(--ink2); border-radius: 0 4px 4px 0;
+  }
+  .callout.orange { border-color: var(--accent); background: rgba(193,68,14,0.05); }
+  .callout.orange strong { color: var(--accent); }
+  .callout.green { border-color: var(--accent2); background: rgba(42,110,78,0.05); }
+  .callout.green strong { color: var(--accent2); }
+  .callout.blue { border-color: var(--accent3); background: rgba(26,74,138,0.05); }
+  .callout.blue strong { color: var(--accent3); }
+  .callout.yellow { border-color: var(--yellow); background: rgba(232,160,32,0.05); }
+  .callout.yellow strong { color: var(--yellow); }
+  .callout.purple { border-color: var(--purple); background: rgba(109,40,217,0.05); }
+  .callout.purple strong { color: var(--purple); }
+  .callout code { background: rgba(0,0,0,0.06); padding: 1px 6px; border-radius: 2px; font-size: 11px; }
+
+  /* ── GRID ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* ── ITEM LIST ── */
+  .item-list { display: flex; flex-direction: column; gap: 0; }
+  .item {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    font-size: 12px; line-height: 1.6; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .item:last-child { border-bottom: none; }
+  .item-dot { flex-shrink: 0; margin-top: 2px; font-size: 14px; }
+  .item-dot.o { color: var(--accent); } .item-dot.g { color: var(--accent2); } .item-dot.b { color: var(--accent3); } .item-dot.y { color: var(--yellow); } .item-dot.p { color: var(--purple); }
+
+  /* ── CODE ── */
+  pre {
+    background: #faf8f4; border: 2px solid var(--border); border-radius: 6px;
+    padding: 20px; overflow-x: auto; font-family: var(--mono);
+    font-size: 12px; line-height: 1.8; color: var(--ink);
+    position: relative;
+  }
+  pre::before {
+    content: attr(data-file);
+    position: absolute; top: 0; left: 0;
+    font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 0 0 4px 0;
+  }
+  pre.file-shell::before { background: var(--accent3); color: #fff; }
+  pre.file-remote::before { background: var(--accent2); color: #fff; }
+  pre.file-mono::before { background: var(--yellow); color: #fff; }
+  pre.file-config::before { background: var(--accent); color: #fff; }
+  cm { color: var(--muted); font-style: italic; }
+  kw { color: var(--purple); font-weight: 600; }
+  cl { color: var(--accent3); font-weight: 600; }
+  an { color: var(--accent2); font-weight: 600; }
+  st { color: var(--accent); }
+  fn { color: #0369a1; }
+
+  /* ── VS TABLE ── */
+  .vs-table { width: 100%; border-collapse: collapse; border: 2px solid var(--ink); border-radius: 4px; overflow: hidden; margin: 16px 0; }
+  .vs-table th { background: var(--ink); color: var(--bg); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 12px 16px; text-align: left; }
+  .vs-table td { padding: 12px 16px; font-size: 12px; border-bottom: 1px solid var(--border); line-height: 1.6; }
+  .vs-table tr:last-child td { border-bottom: none; }
+  .vs-table tr:hover td { background: rgba(0,0,0,0.02); }
+  .vs-table td:first-child { font-weight: 700; color: var(--muted); background: var(--surface2); border-right: 1px solid var(--border); white-space: nowrap; }
+  .vs-table .col-mono { background: rgba(232,160,32,0.03); }
+  .vs-table .col-mf { background: rgba(193,68,14,0.03); }
+
+  /* ── MINI STAMP ── */
+  .mini-stamp { display: inline-block; font-size: 8px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; border: 1.5px solid; }
+  .ms-g { color: var(--accent2); border-color: var(--accent2); background: rgba(42,110,78,0.08); }
+  .ms-r { color: var(--accent); border-color: var(--accent); background: rgba(193,68,14,0.08); }
+  .ms-b { color: var(--accent3); border-color: var(--accent3); background: rgba(26,74,138,0.08); }
+  .ms-y { color: var(--yellow); border-color: var(--yellow); background: rgba(232,160,32,0.08); }
+  .ms-p { color: var(--purple); border-color: var(--purple); background: rgba(109,40,217,0.08); }
+
+  @media(max-width:768px) { .grid2,.grid3 { grid-template-columns: 1fr; } .arch-row { flex-direction: column; } .arch-connector { transform: rotate(90deg); } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Angular · Module Federation</div>
+  <h1><em>Micro Frontends</em> en Angular</h1>
+  <div class="subtitle">Arquitectura, diferencias con monolito y ejemplo práctico — Webpack Module Federation</div>
+</header>
+
+<!-- ── TOGGLE ── -->
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setView('conceptos')">Conceptos</button>
+  <button class="mode-btn" onclick="setView('diferencias')">Monolito vs MF</button>
+  <button class="mode-btn" onclick="setView('ejemplo')">Ejemplo práctico</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- VIEW 1: CONCEPTOS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="view-conceptos" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">¿Qué es un micro frontend?</div>
+
+  <div class="dia-box">
+    <div class="dia-header">
+      <span class="tag tag-mf">Concepto</span>
+      <span class="dia-name">Micro Frontends</span>
+    </div>
+    <div class="dia-desc">
+      Son la extensión de los microservicios al frontend. En vez de una única aplicación Angular monolítica, divides la UI en <strong>aplicaciones independientes</strong> que se desarrollan, despliegan y escalan por separado — y se componen en runtime dentro de un contenedor (shell).
+    </div>
+
+    <!-- DIAGRAMA ARQUITECTURA -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="text-align:center">
+        <span class="tag tag-shell" style="font-size:10px;padding:6px 14px;">Usuario navega a miapp.com</span>
+      </div>
+
+      <div style="text-align:center;color:var(--muted);font-size:16px">▼</div>
+
+      <div class="arch-box shell" style="text-align:center;padding:16px 24px">
+        <div class="arch-label">Shell (Host)</div>
+        <div class="arch-name">app-shell</div>
+        <div class="arch-desc">Aplicación contenedora. Gestiona routing global, navbar, auth. Carga los remotes bajo demanda.</div>
+      </div>
+
+      <div style="text-align:center;color:var(--muted);font-size:14px">┌──────────────┼──────────────┐</div>
+
+      <div class="arch-row">
+        <div class="arch-box remote">
+          <div class="arch-label">Remote App 1</div>
+          <div class="arch-name">mf-catalog</div>
+          <div class="arch-desc">Equipo Catálogo. Deploy independiente. Expone <code>CatalogModule</code> vía Module Federation.</div>
+        </div>
+        <div class="arch-box remote">
+          <div class="arch-label">Remote App 2</div>
+          <div class="arch-name">mf-checkout</div>
+          <div class="arch-desc">Equipo Checkout. Su propio repo, CI/CD y versión de Angular. Expone <code>CheckoutModule</code>.</div>
+        </div>
+        <div class="arch-box remote">
+          <div class="arch-label">Remote App 3</div>
+          <div class="arch-name">mf-admin</div>
+          <div class="arch-desc">Equipo Admin. Puede usar Angular diferente o incluso React. Expone <code>AdminModule</code>.</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;color:var(--muted);font-size:14px">└──────────────┼──────────────┘</div>
+
+      <div class="arch-box shared" style="text-align:center;padding:12px 24px">
+        <div class="arch-label">Shared Libraries</div>
+        <div class="arch-name">@angular/core, @angular/router, rxjs, auth-lib</div>
+        <div class="arch-desc">Dependencias compartidas entre shell y remotes. Se cargan una sola vez (singleton).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Piezas fundamentales</div>
+
+  <div class="grid3">
+    <div class="callout blue">
+      <strong>Shell (Host)</strong><br>
+      App contenedora que carga los micro frontends. Controla el layout global, la navegación principal y la autenticación. Define qué remotes carga y bajo qué rutas.
+    </div>
+    <div class="callout green">
+      <strong>Remote (MF)</strong><br>
+      Cada micro frontend es una app Angular completa e independiente. Expone uno o más módulos vía <code>ModuleFederationPlugin</code>. Se despliega y versiona por separado.
+    </div>
+    <div class="callout yellow">
+      <strong>Module Federation</strong><br>
+      Plugin de Webpack 5 que permite cargar módulos de otras aplicaciones en runtime. Es el mecanismo que hace posible los micro frontends sin iframes ni Web Components.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">Conceptos clave</div>
+
+  <div class="grid2">
+    <div>
+      <div class="dia-box green" style="padding:20px 24px;margin-bottom:16px">
+        <div class="arch-label" style="color:var(--accent2)">Carga en runtime</div>
+        <div style="font-size:12px;color:var(--ink2);line-height:1.7;margin-top:8px">
+          Los remotes se cargan <strong>bajo demanda</strong> cuando el usuario navega a su ruta. No están en el bundle inicial del shell. Webpack descarga el <code>remoteEntry.js</code> del remote y lo integra dinámicamente.
+        </div>
+      </div>
+      <div class="dia-box blue" style="padding:20px 24px;margin-bottom:0">
+        <div class="arch-label" style="color:var(--accent3)">Deploy independiente</div>
+        <div style="font-size:12px;color:var(--ink2);line-height:1.7;margin-top:8px">
+          Cada equipo tiene su propio repositorio, CI/CD pipeline y puede desplegar su micro frontend <strong>sin tocar ni redesplegar el shell</strong> ni otros remotes. Autonomía total.
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="dia-box yellow" style="padding:20px 24px;margin-bottom:16px">
+        <div class="arch-label" style="color:var(--yellow)">Shared dependencies</div>
+        <div style="font-size:12px;color:var(--ink2);line-height:1.7;margin-top:8px">
+          Angular core, router y RxJS se marcan como <code>shared: { singleton: true }</code>. Webpack los carga una sola vez para evitar duplicados y conflictos de versión. Reduce el tamaño total.
+        </div>
+      </div>
+      <div class="dia-box" style="padding:20px 24px;margin-bottom:0;border-color:var(--purple)">
+        <div class="arch-label" style="color:var(--purple)">Estrategias de integración</div>
+        <div style="font-size:12px;color:var(--ink2);line-height:1.7;margin-top:8px">
+          <strong>Module Federation</strong> (Webpack 5) es el estándar de facto. Alternativas: <strong>Native Federation</strong> (esbuild, Angular 17+), <strong>Single-SPA</strong>, <strong>iframes</strong> (legacy) o <strong>Web Components</strong>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">¿Cuándo usar micro frontends?</div>
+
+  <div class="grid2">
+    <div class="callout green" style="margin:0">
+      <strong>✓ Sí, cuando...</strong><br><br>
+      • Múltiples equipos trabajan en la misma app<br>
+      • Necesitas deploys independientes por equipo<br>
+      • La app es muy grande (10+ módulos, 50+ devs)<br>
+      • Quieres migrar gradualmente de AngularJS o React<br>
+      • Cada dominio tiene ciclos de release distintos
+    </div>
+    <div class="callout orange" style="margin:0">
+      <strong>✗ No, cuando...</strong><br><br>
+      • Un solo equipo pequeño (< 8 devs)<br>
+      • La app es de tamaño mediano o pequeño<br>
+      • No necesitas deploys independientes<br>
+      • El overhead de infra no se justifica<br>
+      • Prioridad: velocidad de desarrollo sin complejidad
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- VIEW 2: DIFERENCIAS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="view-diferencias" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Monolito angular vs micro frontends</div>
+
+  <div class="grid2" style="margin-bottom:32px">
+    <div class="dia-box yellow" style="margin-bottom:0">
+      <div class="dia-header">
+        <span class="tag tag-mono">Monolito</span>
+        <span class="dia-name">App Angular clásica</span>
+      </div>
+      <div class="dia-desc">Un solo proyecto, un solo build, un solo deploy. Todos los módulos viven juntos en el mismo repositorio y se compilan como un único bundle.</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="arch-box" style="border-color:var(--yellow);text-align:center;padding:10px"><div class="arch-label" style="color:var(--yellow)">Único build</div><div style="font-size:12px;font-weight:700">ng build → dist/</div></div>
+        <div style="text-align:center;color:var(--muted);font-size:14px">contiene todo</div>
+        <div style="display:flex;gap:6px">
+          <div style="flex:1;background:rgba(232,160,32,0.08);border:1.5px solid var(--yellow);border-radius:4px;padding:8px;text-align:center;font-size:10px;font-weight:700;color:var(--yellow)">Catálogo</div>
+          <div style="flex:1;background:rgba(232,160,32,0.08);border:1.5px solid var(--yellow);border-radius:4px;padding:8px;text-align:center;font-size:10px;font-weight:700;color:var(--yellow)">Checkout</div>
+          <div style="flex:1;background:rgba(232,160,32,0.08);border:1.5px solid var(--yellow);border-radius:4px;padding:8px;text-align:center;font-size:10px;font-weight:700;color:var(--yellow)">Admin</div>
+        </div>
+      </div>
+    </div>
+    <div class="dia-box" style="border-color:var(--accent);margin-bottom:0">
+      <div class="dia-header">
+        <span class="tag tag-mf">Micro Frontends</span>
+        <span class="dia-name">Apps independientes</span>
+      </div>
+      <div class="dia-desc">Múltiples proyectos, múltiples builds, deploys independientes. Cada módulo es una app completa que se compone en runtime.</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="arch-box shell" style="text-align:center;padding:10px"><div class="arch-label">Shell</div><div style="font-size:12px;font-weight:700">Carga remotes en runtime</div></div>
+        <div style="text-align:center;color:var(--muted);font-size:14px">↓ lazy ↓ lazy ↓ lazy</div>
+        <div style="display:flex;gap:6px">
+          <div style="flex:1;background:rgba(42,110,78,0.08);border:1.5px solid var(--accent2);border-radius:4px;padding:8px;text-align:center;font-size:10px;font-weight:700;color:var(--accent2)">mf-catalog</div>
+          <div style="flex:1;background:rgba(42,110,78,0.08);border:1.5px solid var(--accent2);border-radius:4px;padding:8px;text-align:center;font-size:10px;font-weight:700;color:var(--accent2)">mf-checkout</div>
+          <div style="flex:1;background:rgba(42,110,78,0.08);border:1.5px solid var(--accent2);border-radius:4px;padding:8px;text-align:center;font-size:10px;font-weight:700;color:var(--accent2)">mf-admin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Comparativa detallada</div>
+
+  <table class="vs-table">
+    <thead>
+      <tr>
+        <th>Aspecto</th>
+        <th style="color:var(--yellow)">Monolito Angular</th>
+        <th style="color:var(--accent)">Micro Frontends</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Repositorio</td><td class="col-mono">Un solo repo (o monorepo Nx)</td><td class="col-mf">Un repo por MF + repo shell</td></tr>
+      <tr><td>Build</td><td class="col-mono"><code>ng build</code> → un bundle</td><td class="col-mf">Cada MF tiene su propio <code>ng build</code></td></tr>
+      <tr><td>Deploy</td><td class="col-mono">Todo junto. Cambio en checkout → redespliegue completo</td><td class="col-mf">Independiente. Solo redespliegas el MF que cambió</td></tr>
+      <tr><td>Equipos</td><td class="col-mono">Todos trabajan en el mismo código, mismas PRs</td><td class="col-mf">Cada equipo es dueño de su MF. Autonomía total</td></tr>
+      <tr><td>Versión Angular</td><td class="col-mono">Una sola versión para toda la app</td><td class="col-mf">Cada MF puede tener su versión (con cuidado)</td></tr>
+      <tr><td>Routing</td><td class="col-mono"><code>AppRoutingModule</code> con lazy loading normal</td><td class="col-mf">Shell define rutas raíz, cada remote define sub-rutas</td></tr>
+      <tr><td>Comunicación</td><td class="col-mono">Servicios compartidos, @Input/@Output directo</td><td class="col-mf">Custom events, shared state (NgRx/Signal), pub-sub</td></tr>
+      <tr><td>Shared deps</td><td class="col-mono">Automático (un solo bundle)</td><td class="col-mf">Config explícita en <code>shared: { singleton: true }</code></td></tr>
+      <tr><td>Tamaño inicial</td><td class="col-mono">Bundle grande si no hay lazy loading</td><td class="col-mf">Solo shell + remote activo. Otros se cargan on-demand</td></tr>
+      <tr><td>Complejidad</td><td class="col-mono"><span class="mini-stamp ms-g">Baja</span> Simple y directo</td><td class="col-mf"><span class="mini-stamp ms-r">Alta</span> Infra, config webpack, shared deps, versiones</td></tr>
+      <tr><td>Testing</td><td class="col-mono">E2E de toda la app en un solo proceso</td><td class="col-mf">Cada MF testeable de forma aislada + contract tests</td></tr>
+      <tr><td>Caso ideal</td><td class="col-mono">Equipos pequeños, apps medianas, prototipado</td><td class="col-mf">+50 devs, enterprise, múltiples dominios, migración gradual</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title" data-n="3">Impacto en el flujo de desarrollo</div>
+
+  <div class="grid2">
+    <div>
+      <div class="callout yellow" style="margin-top:0">
+        <strong>Monolito — flujo típico</strong><br><br>
+        1. Dev hace cambio en <code>checkout.component.ts</code><br>
+        2. Abre PR al repo principal<br>
+        3. CI construye <strong>toda la app</strong><br>
+        4. Se despliega <strong>todo el bundle</strong> a producción<br>
+        5. Si falla → <strong>rollback de toda la app</strong>
+      </div>
+    </div>
+    <div>
+      <div class="callout orange" style="margin-top:0">
+        <strong>Micro Frontend — flujo típico</strong><br><br>
+        1. Dev hace cambio en <code>mf-checkout</code><br>
+        2. Abre PR al repo de <strong>checkout únicamente</strong><br>
+        3. CI construye <strong>solo mf-checkout</strong><br>
+        4. Se despliega <strong>solo el remoteEntry.js</strong> de checkout<br>
+        5. Si falla → rollback <strong>solo de checkout</strong>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- VIEW 3: EJEMPLO PRÁCTICO -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="view-ejemplo" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Ejemplo: e-commerce con catálogo y checkout</div>
+
+  <div class="callout blue" style="margin-top:0;margin-bottom:24px">
+    <strong>Escenario:</strong> Una app e-commerce con dos secciones principales: <strong>Catálogo</strong> (listar productos) y <strong>Checkout</strong> (carrito y pago). Veremos la misma app implementada como <strong>monolito</strong> y como <strong>micro frontends</strong>.
+  </div>
+
+  <!-- ── MONOLITO ── -->
+  <div class="sec-title" data-n="A">Versión monolito — una sola app</div>
+
+  <pre class="file-mono" data-file="app-routing.module.ts" style="margin-bottom:16px">
+
+<cm>// Routing monolito: todo en un solo proyecto</cm>
+<kw>const</kw> routes: Routes = [
+  { path: <st>''</st>, redirectTo: <st>'catalog'</st>, pathMatch: <st>'full'</st> },
+  {
+    path: <st>'catalog'</st>,
+    loadChildren: () =>
+      <kw>import</kw>(<st>'./catalog/catalog.module'</st>)
+        .then(m => m.<cl>CatalogModule</cl>)
+  },
+  {
+    path: <st>'checkout'</st>,
+    loadChildren: () =>
+      <kw>import</kw>(<st>'./checkout/checkout.module'</st>)
+        .then(m => m.<cl>CheckoutModule</cl>)
+  }
+];
+
+<an>@NgModule</an>({
+  imports: [<cl>RouterModule</cl>.forRoot(routes)],
+  exports: [<cl>RouterModule</cl>]
+})
+<kw>export class</kw> <cl>AppRoutingModule</cl> { }</pre>
+
+  <div class="grid2" style="margin-bottom:32px">
+    <pre class="file-mono" data-file="catalog.component.ts">
+
+<an>@Component</an>({
+  selector: <st>'app-catalog'</st>,
+  template: <st>`
+    &lt;h2&gt;Catálogo&lt;/h2&gt;
+    &lt;div *ngFor="let p of products"&gt;
+      {{ p.name }} - {{ p.price }}€
+      &lt;button (click)="addToCart(p)"&gt;
+        Añadir
+      &lt;/button&gt;
+    &lt;/div&gt;
+  `</st>
+})
+<kw>export class</kw> <cl>CatalogComponent</cl> {
+  products = <kw>inject</kw>(<cl>ProductService</cl>).getAll();
+
+  <cm>// Servicio compartido directo</cm>
+  <kw>private</kw> cart = <kw>inject</kw>(<cl>CartService</cl>);
+
+  addToCart(p: Product) {
+    <kw>this</kw>.cart.add(p);
+  }
+}</pre>
+    <pre class="file-mono" data-file="checkout.component.ts">
+
+<an>@Component</an>({
+  selector: <st>'app-checkout'</st>,
+  template: <st>`
+    &lt;h2&gt;Checkout&lt;/h2&gt;
+    &lt;div *ngFor="let item of items"&gt;
+      {{ item.name }} x{{ item.qty }}
+    &lt;/div&gt;
+    &lt;p&gt;Total: {{ total }}€&lt;/p&gt;
+    &lt;button (click)="pay()"&gt;Pagar&lt;/button&gt;
+  `</st>
+})
+<kw>export class</kw> <cl>CheckoutComponent</cl> {
+  <cm>// Acceso directo al servicio</cm>
+  <kw>private</kw> cart = <kw>inject</kw>(<cl>CartService</cl>);
+
+  items = <kw>this</kw>.cart.getItems();
+  total = <kw>this</kw>.cart.getTotal();
+
+  pay() { <cm>/* ... */</cm> }
+}</pre>
+  </div>
+
+  <div class="callout yellow">
+    <strong>Monolito:</strong> <code>CatalogComponent</code> y <code>CheckoutComponent</code> comparten <code>CartService</code> directamente vía inyección de dependencias. Un solo build, un solo deploy. Simple pero acoplado.
+  </div>
+
+  <!-- ── MICRO FRONTENDS ── -->
+  <div class="sec-title" data-n="B">Versión micro frontends — apps separadas</div>
+
+  <div class="callout purple" style="margin-top:0">
+    <strong>Estructura de repos:</strong><br>
+    <code>shell/</code> → App host (puerto 4200)<br>
+    <code>mf-catalog/</code> → Remote catálogo (puerto 4201)<br>
+    <code>mf-checkout/</code> → Remote checkout (puerto 4202)
+  </div>
+
+  <div class="sec-title" data-n="B1" style="margin-top:24px">Config webpack del shell (host)</div>
+
+  <pre class="file-shell" data-file="shell / webpack.config.js">
+
+<kw>const</kw> { share, withModuleFederationPlugin } =
+  require(<st>'@angular-architects/module-federation/webpack'</st>);
+
+module.exports = withModuleFederationPlugin({
+  remotes: {
+    <cm>// nombre → URL del remoteEntry.js</cm>
+    <st>"mfCatalog"</st>: <st>"http://localhost:4201/remoteEntry.js"</st>,
+    <st>"mfCheckout"</st>: <st>"http://localhost:4202/remoteEntry.js"</st>,
+  },
+  shared: share({
+    <st>"@angular/core"</st>:       { singleton: <kw>true</kw>, strictVersion: <kw>true</kw> },
+    <st>"@angular/common"</st>:     { singleton: <kw>true</kw>, strictVersion: <kw>true</kw> },
+    <st>"@angular/router"</st>:     { singleton: <kw>true</kw>, strictVersion: <kw>true</kw> },
+    <st>"rxjs"</st>:                { singleton: <kw>true</kw>, strictVersion: <kw>true</kw> },
+  })
+});</pre>
+
+  <div class="sec-title" data-n="B2">Routing del shell — carga los remotes</div>
+
+  <pre class="file-shell" data-file="shell / app.routes.ts">
+
+<kw>export const</kw> routes: Routes = [
+  { path: <st>''</st>, redirectTo: <st>'catalog'</st>, pathMatch: <st>'full'</st> },
+  {
+    path: <st>'catalog'</st>,
+    loadChildren: () =>
+      <cm>// Carga el módulo REMOTO de mf-catalog en runtime</cm>
+      <kw>import</kw>(<st>'mfCatalog/CatalogModule'</st>)
+        .then(m => m.<cl>CatalogModule</cl>)
+  },
+  {
+    path: <st>'checkout'</st>,
+    loadChildren: () =>
+      <cm>// Carga el módulo REMOTO de mf-checkout en runtime</cm>
+      <kw>import</kw>(<st>'mfCheckout/CheckoutModule'</st>)
+        .then(m => m.<cl>CheckoutModule</cl>)
+  }
+];</pre>
+
+  <div class="sec-title" data-n="B3">Config del remote (mf-catalog)</div>
+
+  <pre class="file-remote" data-file="mf-catalog / webpack.config.js">
+
+module.exports = withModuleFederationPlugin({
+  name: <st>"mfCatalog"</st>,
+  exposes: {
+    <cm>// Qué módulo expone al shell</cm>
+    <st>"./CatalogModule"</st>: <st>"./src/app/catalog/catalog.module.ts"</st>,
+  },
+  shared: share({
+    <st>"@angular/core"</st>:   { singleton: <kw>true</kw>, strictVersion: <kw>true</kw> },
+    <st>"@angular/common"</st>: { singleton: <kw>true</kw>, strictVersion: <kw>true</kw> },
+    <st>"@angular/router"</st>: { singleton: <kw>true</kw>, strictVersion: <kw>true</kw> },
+    <st>"rxjs"</st>:            { singleton: <kw>true</kw>, strictVersion: <kw>true</kw> },
+  })
+});</pre>
+
+  <div class="sec-title" data-n="B4">Comunicación entre MFs — Custom Events</div>
+
+  <pre class="file-remote" data-file="mf-catalog / catalog.component.ts">
+
+<cm>// En mf-catalog: emite evento global al añadir al carrito</cm>
+<an>@Component</an>({ <cm>...</cm> })
+<kw>export class</kw> <cl>CatalogComponent</cl> {
+
+  addToCart(product: Product) {
+    <cm>// Evento custom que el shell o mf-checkout puede escuchar</cm>
+    window.dispatchEvent(
+      <kw>new</kw> <cl>CustomEvent</cl>(<st>'cart:add'</st>, {
+        detail: { id: product.id, name: product.name, price: product.price }
+      })
+    );
+  }
+}</pre>
+
+  <pre class="file-shell" data-file="mf-checkout / checkout.component.ts" style="margin-top:16px">
+
+<cm>// En mf-checkout: escucha eventos del carrito</cm>
+<an>@Component</an>({ <cm>...</cm> })
+<kw>export class</kw> <cl>CheckoutComponent</cl> <kw>implements</kw> <cl>OnInit</cl> {
+
+  items = <kw>signal</kw>&lt;CartItem[]&gt;([]);
+
+  <kw>ngOnInit</kw>() {
+    window.addEventListener(<st>'cart:add'</st>, (e: <kw>any</kw>) => {
+      <kw>const</kw> product = e.detail;
+      <kw>this</kw>.items.update(items => [...items, product]);
+    });
+  }
+}</pre>
+
+  <div class="callout green" style="margin-top:20px">
+    <strong>Diferencia clave:</strong> En el monolito, <code>CartService</code> se inyecta directamente. En micro frontends, cada app es independiente, así que la comunicación es vía <strong>Custom Events</strong>, <strong>shared state</strong> (localStorage, BroadcastChannel) o una <strong>librería compartida</strong> expuesta en Module Federation.
+  </div>
+
+  <div style="margin-top:24px; background:#fafaf7; border:2px solid var(--border); border-radius:6px; padding:20px; font-size:11px; line-height:1.9; font-family:var(--mono);">
+    <div style="font-size:9px; color:var(--accent); font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;">Flujo en runtime</div>
+<span style="color:var(--accent3); font-weight:700;">Usuario navega a miapp.com/catalog</span>
+   │
+   ├─> Shell (4200) arranca, renderiza navbar
+   ├─> Router detecta ruta <span style="color:var(--accent3)">/catalog</span>
+   ├─> Webpack descarga <span style="color:var(--accent2)">http://localhost:4201/remoteEntry.js</span>
+   ├─> Carga CatalogModule dinámicamente
+   ├─> Renderiza CatalogComponent dentro del &lt;router-outlet&gt;
+   │
+   <span style="color:var(--muted)">// Usuario hace click en "Checkout"</span>
+   │
+   ├─> Router detecta ruta <span style="color:var(--accent3)">/checkout</span>
+   ├─> Webpack descarga <span style="color:var(--accent2)">http://localhost:4202/remoteEntry.js</span>
+   ├─> Carga CheckoutModule dinámicamente
+   └─> Renderiza CheckoutComponent con los items del carrito
+  </div>
+
+</div>
+
+</div>
+
+<script>
+function setView(name) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

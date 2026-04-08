@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical English for Developers — Plan 3 meses</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;position:relative}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1080px;margin:0 auto;padding:48px 28px 100px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:40px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(26px,4vw,44px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:40px;width:fit-content;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:10px 20px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:2px solid var(--ink)}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:40px 0 16px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:16px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  .ph{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:8px;transition:border-color .15s}
+  .ph:hover{border-color:var(--ink)}
+  .ph-en{padding:12px 16px;font-size:12px;font-weight:600;background:var(--surface);line-height:1.6}
+  .ph-es{padding:12px 16px;font-size:11px;color:var(--muted);background:var(--surface2);line-height:1.6;border-left:1px solid var(--border)}
+  .ph-tag{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 6px;border-radius:2px;display:inline-block;margin-bottom:4px}
+  .pht-o{color:var(--accent);background:rgba(193,68,14,.08)}.pht-g{color:var(--accent2);background:rgba(42,110,78,.08)}.pht-b{color:var(--accent3);background:rgba(26,74,138,.08)}.pht-y{color:var(--yellow);background:rgba(232,160,32,.08)}.pht-p{color:var(--purple);background:rgba(122,58,205,.08)}
+  .job-box{background:linear-gradient(135deg,#faf8f4 0%,#f0ebe0 100%);border:3px solid var(--accent);border-radius:8px;padding:24px 28px;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .job-box.green{border-color:var(--accent2)}.job-box.blue{border-color:var(--accent3)}.job-box.yellow{border-color:var(--yellow)}.job-box.purple{border-color:var(--purple)}
+  .job-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .tag{font-size:9px;font-weight:700;letter-spacing:2px;padding:4px 10px;border-radius:3px;text-transform:uppercase}
+  .tag-o{background:rgba(193,68,14,.12);color:var(--accent);border:2px solid var(--accent)}
+  .tag-g{background:rgba(42,110,78,.12);color:var(--accent2);border:2px solid var(--accent2)}
+  .tag-b{background:rgba(26,74,138,.12);color:var(--accent3);border:2px solid var(--accent3)}
+  .tag-y{background:rgba(232,160,32,.12);color:var(--yellow);border:2px solid var(--yellow)}
+  .tag-p{background:rgba(122,58,205,.12);color:var(--purple);border:2px solid var(--purple)}
+  .job-name{font-size:18px;font-weight:700}
+  .job-desc{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+  .lifecycle-flow{display:flex;align-items:stretch;gap:0;background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
+  .lf-step{flex:1;padding:18px 14px;text-align:center;position:relative;transition:background .2s;min-width:0}
+  .lf-step:not(:last-child)::after{content:'▶';position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;z-index:2}
+  .lf-step:not(:last-child){border-right:2px solid var(--border)}
+  .lf-step:hover{background:rgba(0,0,0,.02)}
+  .lf-num{font-size:9px;color:var(--muted);margin-bottom:6px}
+  .lf-icon{font-size:20px;margin-bottom:6px}
+  .lf-name{font-size:11px;font-weight:700;margin-bottom:4px}
+  .lf-desc{font-size:9px;color:var(--muted);line-height:1.5}
+  .steps-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+  .step-box{flex:1;min-width:200px;background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:18px;transition:all .2s}
+  .step-box:hover{border-color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .step-box.o{border-left:4px solid var(--accent)}.step-box.g{border-left:4px solid var(--accent2)}.step-box.b{border-left:4px solid var(--accent3)}
+  .step-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .step-label.o{color:var(--accent)}.step-label.g{color:var(--accent2)}.step-label.b{color:var(--accent3)}
+  .step-name{font-size:14px;font-weight:700;margin-bottom:6px}
+  .step-desc{font-size:11px;color:var(--muted);line-height:1.6}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:16px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 16px;text-align:left}
+  .vtable td{padding:11px 16px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td:first-child{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap}
+  .repo-box{background:linear-gradient(135deg,#fffaf0 0%,#faf5e8 100%);border:2px solid var(--yellow);border-radius:8px;padding:20px 28px;display:flex;align-items:flex-start;gap:20px;margin-bottom:20px}
+  .repo-box.o{border-color:var(--accent)}
+  .repo-icon{font-size:32px;flex-shrink:0}
+  .repo-title{font-size:17px;font-weight:700;margin-bottom:6px}
+  .repo-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+  .repo-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .rchip{font-size:10px;padding:4px 10px;border-radius:3px;border:1px solid}
+  .rchip.o{background:rgba(193,68,14,.06);border-color:rgba(193,68,14,.3);color:var(--accent)}
+  .rchip.g{background:rgba(42,110,78,.06);border-color:rgba(42,110,78,.3);color:var(--accent2)}
+  .rchip.b{background:rgba(26,74,138,.06);border-color:rgba(26,74,138,.3);color:var(--accent3)}
+  .rchip.y{background:rgba(232,160,32,.06);border-color:rgba(232,160,32,.3);color:var(--yellow)}
+  .rchip.p{background:rgba(122,58,205,.06);border-color:rgba(122,58,205,.3);color:var(--purple)}
+  .seq-box{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:20px;margin-bottom:20px;font-size:11.5px;line-height:1.85;font-family:var(--mono);white-space:pre-wrap;overflow-x:auto}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:700px){.grid2{grid-template-columns:1fr}.steps-row{flex-direction:column}.lifecycle-flow{flex-direction:column}.lf-step:not(:last-child)::after{content:'▼';right:auto;bottom:-10px;top:auto;left:50%;transform:translateX(-50%)}.lf-step:not(:last-child){border-right:none;border-bottom:2px solid var(--border)}.ph{grid-template-columns:1fr}.ph-es{border-left:none;border-top:1px solid var(--border)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">A1/B2 → Technical Professional · 3 months</div>
+  <h1><em>Technical English</em><br>for Developers</h1>
+  <p class="subtitle">// Java · Angular · Jenkins · SonarQube · CI/CD · Git — Gramática, frases y vocabulario para tu día a día como developer</p>
+</header>
+
+<!-- ═══════ DIAGRAMA NIVEL ═══════ -->
+<div class="job-box green">
+  <div class="job-header"><span class="tag tag-g">Tu ventaja</span><span class="job-name">Con A1/B2 ya tienes suficiente gramática</span></div>
+  <p class="job-desc">El inglés técnico usa un subconjunto muy reducido. Con <strong style="color:var(--accent2)">presente simple</strong>, <strong style="color:var(--accent3)">pasado simple</strong>, <strong style="color:var(--accent)">modales</strong> y <strong style="color:var(--yellow)">condicionales</strong> cubres el 90% de las conversaciones de desarrollo. No necesitas ser Shakespeare — necesitas ser <strong>claro y preciso</strong>.</p>
+  <div class="lifecycle-flow">
+    <div class="lf-step"><div class="lf-num">A1</div><div class="lf-icon">📗</div><div class="lf-name" style="color:var(--accent2)">Present Simple</div><div class="lf-desc">Cómo funciona<br>el código</div></div>
+    <div class="lf-step"><div class="lf-num">A1</div><div class="lf-icon">📘</div><div class="lf-name" style="color:var(--accent3)">Past Simple</div><div class="lf-desc">Qué hiciste<br>(standups)</div></div>
+    <div class="lf-step"><div class="lf-num">A2</div><div class="lf-icon">📙</div><div class="lf-name" style="color:var(--accent)">Modals</div><div class="lf-desc">should, could<br>need to, must</div></div>
+    <div class="lf-step"><div class="lf-num">B1</div><div class="lf-icon">📕</div><div class="lf-name" style="color:var(--yellow)">Conditionals</div><div class="lf-desc">If + present<br>would, might</div></div>
+    <div class="lf-step"><div class="lf-num">B1</div><div class="lf-icon">📓</div><div class="lf-name" style="color:var(--purple)">Passive</div><div class="lf-desc">Docs, tickets<br>commits</div></div>
+  </div>
+</div>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setView('grammar')">📗 Gramática</button>
+  <button class="mode-btn" onclick="setView('daily')">💬 Frases diarias</button>
+  <button class="mode-btn" onclick="setView('vocab')">🔧 Vocabulario</button>
+  <button class="mode-btn" onclick="setView('reviews')">👀 Code Reviews</button>
+  <button class="mode-btn" onclick="setView('meetings')">📞 Meetings</button>
+  <button class="mode-btn" onclick="setView('plan')">📅 Plan 3 meses</button>
+</div>
+
+<!-- ═══════ 1 · GRAMÁTICA ═══════ -->
+<div id="view-grammar" class="mode-panel active">
+  <div class="sec-title" data-n="1">Present Simple — describir cómo funciona algo</div>
+  <div class="callout blue" style="margin-top:0"><strong>Estructura:</strong> Subject + <code>verb</code> + object</div>
+  <div class="ph"><div class="ph-en">This service <strong>handles</strong> authentication.</div><div class="ph-es">Este servicio gestiona la autenticación.</div></div>
+  <div class="ph"><div class="ph-en">The pipeline <strong>runs</strong> every time we push to main.</div><div class="ph-es">El pipeline se ejecuta cada vez que pusheamos a main.</div></div>
+  <div class="ph"><div class="ph-en">Angular <strong>uses</strong> dependency injection to provide services.</div><div class="ph-es">Angular usa inyección de dependencias para proveer servicios.</div></div>
+  <div class="ph"><div class="ph-en">SonarQube <strong>analyzes</strong> the code and <strong>reports</strong> code smells.</div><div class="ph-es">SonarQube analiza el código y reporta code smells.</div></div>
+  <div class="ph"><div class="ph-en">This method <strong>returns</strong> a list of users.</div><div class="ph-es">Este método retorna una lista de usuarios.</div></div>
+  <div class="ph"><div class="ph-en">The @Component decorator <strong>defines</strong> the metadata.</div><div class="ph-es">El decorador @Component define los metadatos.</div></div>
+
+  <div class="sec-title" data-n="2">Present Continuous — lo que pasa ahora</div>
+  <div class="callout green" style="margin-top:0"><strong>Estructura:</strong> Subject + <code>am/is/are + verb-ing</code></div>
+  <div class="ph"><div class="ph-en">I <strong>am working on</strong> the login feature.</div><div class="ph-es">Estoy trabajando en la funcionalidad de login.</div></div>
+  <div class="ph"><div class="ph-en">The build <strong>is failing</strong> because of a dependency conflict.</div><div class="ph-es">El build está fallando por un conflicto de dependencias.</div></div>
+  <div class="ph"><div class="ph-en">We <strong>are migrating</strong> from AngularJS to Angular 17.</div><div class="ph-es">Estamos migrando de AngularJS a Angular 17.</div></div>
+  <div class="ph"><div class="ph-en">Jenkins <strong>is running</strong> the integration tests right now.</div><div class="ph-es">Jenkins está ejecutando los tests de integración ahora.</div></div>
+
+  <div class="sec-title" data-n="3">Past Simple — standups y commits</div>
+  <div class="callout orange" style="margin-top:0"><strong>Estructura:</strong> Subject + <code>verb-ed / irregular</code></div>
+  <div class="ph"><div class="ph-en">I <strong>fixed</strong> the NullPointerException in UserService.</div><div class="ph-es">Arreglé el NullPointerException en UserService.</div></div>
+  <div class="ph"><div class="ph-en">The deployment <strong>failed</strong> because the image was too large.</div><div class="ph-es">El despliegue falló porque la imagen era muy grande.</div></div>
+  <div class="ph"><div class="ph-en">We <strong>refactored</strong> the component to use signals.</div><div class="ph-es">Refactorizamos el componente para usar signals.</div></div>
+  <div class="ph"><div class="ph-en">I <strong>created</strong> a branch and <strong>pushed</strong> the changes.</div><div class="ph-es">Creé una rama y subí los cambios.</div></div>
+  <div class="ph"><div class="ph-en">The test <strong>passed</strong> after I <strong>added</strong> the mock.</div><div class="ph-es">El test pasó después de que añadí el mock.</div></div>
+
+  <div class="sec-title" data-n="4">Modals — sugerir, pedir, obligar</div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">should</span> sugerencia<br>We <strong>should</strong> add unit tests before merging.</div><div class="ph-es">Deberíamos añadir tests unitarios antes de mergear.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-b">could</span> posibilidad<br>We <strong>could</strong> use a cache to improve performance.</div><div class="ph-es">Podríamos usar caché para mejorar rendimiento.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">need to</span> necesidad<br>We <strong>need to</strong> upgrade the Angular version.</div><div class="ph-es">Necesitamos actualizar la versión de Angular.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">must</span> obligación<br>This endpoint <strong>must</strong> validate the JWT token.</div><div class="ph-es">Este endpoint debe validar el token JWT.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-p">might</span> incertidumbre<br>The timeout <strong>might</strong> be causing the failures.</div><div class="ph-es">El timeout podría estar causando los fallos.</div></div>
+
+  <div class="sec-title" data-n="5">Conditionals & Passive</div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">If + present → future</span><br>If we add an index, the query <strong>will be</strong> faster.</div><div class="ph-es">Si añadimos un índice, la query será más rápida.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">If + past → would</span><br>If we used lazy loading, the bundle <strong>would be</strong> smaller.</div><div class="ph-es">Si usáramos lazy loading, el bundle sería más pequeño.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-p">Passive</span><br>The request <strong>is validated</strong> by the middleware.</div><div class="ph-es">La request es validada por el middleware.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-p">Passive</span><br>Tests <strong>are executed</strong> automatically by Jenkins.</div><div class="ph-es">Los tests son ejecutados automáticamente por Jenkins.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-p">Passive</span><br>The bug <strong>was introduced</strong> in commit <code>a3f29b1</code>.</div><div class="ph-es">El bug fue introducido en el commit a3f29b1.</div></div>
+</div>
+
+<!-- ═══════ 2 · FRASES DIARIAS ═══════ -->
+<div id="view-daily" class="mode-panel">
+  <div class="sec-title" data-n="1">Git & Branching</div>
+  <div class="ph"><div class="ph-en">I need to <strong>create a branch</strong> from develop.</div><div class="ph-es">Necesito crear una rama desde develop.</div></div>
+  <div class="ph"><div class="ph-en">Can you <strong>review my pull request</strong>?</div><div class="ph-es">¿Puedes revisar mi pull request?</div></div>
+  <div class="ph"><div class="ph-en">I'll <strong>rebase</strong> my branch <strong>on top of</strong> main.</div><div class="ph-es">Voy a hacer rebase de mi rama sobre main.</div></div>
+  <div class="ph"><div class="ph-en">There's a <strong>merge conflict</strong> in the <code>pom.xml</code>.</div><div class="ph-es">Hay un conflicto de merge en el pom.xml.</div></div>
+  <div class="ph"><div class="ph-en">I already pushed. <strong>Ready for review</strong>.</div><div class="ph-es">Ya subí los cambios. Listo para revisión.</div></div>
+  <div class="ph"><div class="ph-en">Let me <strong>cherry-pick</strong> that commit into hotfix.</div><div class="ph-es">Déjame hacer cherry-pick de ese commit a hotfix.</div></div>
+
+  <div class="sec-title" data-n="2">Bugs & Debugging</div>
+  <div class="ph"><div class="ph-en">I found a bug <strong>in</strong> the payment module.</div><div class="ph-es">Encontré un bug en el módulo de pagos.</div></div>
+  <div class="ph"><div class="ph-en">It <strong>throws</strong> a NullPointerException when the list is empty.</div><div class="ph-es">Lanza NullPointerException cuando la lista está vacía.</div></div>
+  <div class="ph"><div class="ph-en">I can <strong>reproduce</strong> it <strong>by</strong> clicking submit twice.</div><div class="ph-es">Puedo reproducirlo haciendo click en submit dos veces.</div></div>
+  <div class="ph"><div class="ph-en">The <strong>root cause</strong> was a missing null check.</div><div class="ph-es">La causa raíz era un null check que faltaba.</div></div>
+  <div class="ph"><div class="ph-en">It works <strong>on my local</strong> but fails <strong>in staging</strong>.</div><div class="ph-es">Funciona en mi local pero falla en staging.</div></div>
+  <div class="ph"><div class="ph-en">I <strong>added some logs</strong> to trace the issue.</div><div class="ph-es">Añadí logs para rastrear el problema.</div></div>
+
+  <div class="sec-title" data-n="3">CI/CD & Jenkins</div>
+  <div class="ph"><div class="ph-en">The <strong>pipeline is broken</strong>. The build step failed.</div><div class="ph-es">El pipeline está roto. El paso de build falló.</div></div>
+  <div class="ph"><div class="ph-en">Jenkins <strong>triggered</strong> a build after my push.</div><div class="ph-es">Jenkins disparó un build después de mi push.</div></div>
+  <div class="ph"><div class="ph-en">The <strong>deployment to staging</strong> was successful.</div><div class="ph-es">El despliegue a staging fue exitoso.</div></div>
+  <div class="ph"><div class="ph-en">We need to <strong>roll back</strong> to the previous version.</div><div class="ph-es">Necesitamos hacer rollback a la versión anterior.</div></div>
+  <div class="ph"><div class="ph-en">The <strong>quality gate</strong> in SonarQube is <strong>not passing</strong>.</div><div class="ph-es">La quality gate en SonarQube no está pasando.</div></div>
+
+  <div class="sec-title" data-n="4">Angular & Java</div>
+  <div class="ph"><div class="ph-en">The component <strong>doesn't render</strong> because the observable has no subscribers.</div><div class="ph-es">El componente no renderiza porque el observable no tiene suscriptores.</div></div>
+  <div class="ph"><div class="ph-en">I'm going to <strong>lazy-load</strong> this module to reduce bundle size.</div><div class="ph-es">Voy a hacer lazy load de este módulo para reducir el bundle.</div></div>
+  <div class="ph"><div class="ph-en">This class <strong>implements</strong> the <code>UserRepository</code> interface.</div><div class="ph-es">Esta clase implementa la interfaz UserRepository.</div></div>
+  <div class="ph"><div class="ph-en">We should <strong>inject</strong> the dependency <strong>through</strong> the constructor.</div><div class="ph-es">Deberíamos inyectar la dependencia por el constructor.</div></div>
+  <div class="ph"><div class="ph-en">The endpoint <strong>returns</strong> a 404 when the resource is not found.</div><div class="ph-es">El endpoint devuelve 404 cuando no se encuentra el recurso.</div></div>
+</div>
+
+<!-- ═══════ 3 · VOCABULARIO ═══════ -->
+<div id="view-vocab" class="mode-panel">
+  <div class="sec-title" data-n="1">Vocabulario esencial — pronunciación + uso</div>
+  <table class="vtable">
+    <thead><tr><th>Término</th><th>Pronun.</th><th>Significado y ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td>Pipeline</td><td>/ˈpaɪp.laɪn/</td><td>Secuencia automatizada de pasos. <em>"The pipeline is green."</em></td></tr>
+      <tr><td>Build</td><td>/bɪld/</td><td>Compilar y empaquetar. <em>"The build failed on step 3."</em></td></tr>
+      <tr><td>Deploy</td><td>/dɪˈplɔɪ/</td><td>Llevar código a un entorno. <em>"We deployed to prod."</em></td></tr>
+      <tr><td>Rollback</td><td>/ˈroʊl.bæk/</td><td>Volver a versión anterior. <em>"Let's rollback to v2.3."</em></td></tr>
+      <tr><td>Artifact</td><td>/ˈɑːr.tɪ.fækt/</td><td>Resultado del build: .jar, Docker image.</td></tr>
+      <tr><td>Trigger</td><td>/ˈtrɪɡ.ər/</td><td>Lo que inicia el pipeline. <em>"A push triggered the build."</em></td></tr>
+      <tr><td>Quality Gate</td><td>/ˈkwɒl.ɪ.ti ɡeɪt/</td><td>Umbral de SonarQube. <em>"The quality gate failed."</em></td></tr>
+      <tr><td>Coverage</td><td>/ˈkʌv.ər.ɪdʒ/</td><td>% de código cubierto por tests. <em>"Coverage is at 78%."</em></td></tr>
+      <tr><td>Code Smell</td><td>/koʊd smel/</td><td>Código mal escrito. <em>"SonarQube found 12 smells."</em></td></tr>
+      <tr><td>Flaky test</td><td>/ˈfleɪ.ki/</td><td>Test inestable. <em>"This test is flaky."</em></td></tr>
+      <tr><td>Hotfix</td><td>/ˈhɒt.fɪks/</td><td>Fix urgente a producción.</td></tr>
+      <tr><td>Merge</td><td>/mɜːrdʒ/</td><td>Unir ramas. <em>"I'll merge after approval."</em></td></tr>
+      <tr><td>Rebase</td><td>/riːˈbeɪs/</td><td>Mover rama al último commit. <em>"Please rebase on main."</em></td></tr>
+      <tr><td>Downstream</td><td>/daʊnˈstriːm/</td><td>Lo que viene después en el pipeline.</td></tr>
+      <tr><td>Environment</td><td>/ɪnˈvaɪ.rən.mənt/</td><td>dev, staging, production.</td></tr>
+    </tbody>
+  </table>
+  <div class="sec-title" data-n="2">Verbos técnicos más usados</div>
+  <div class="repo-box o">
+    <div class="repo-icon">⚡</div>
+    <div>
+      <div class="repo-title" style="color:var(--accent)">Verbos del día a día — presente → pasado</div>
+      <div class="repo-desc">Memoriza estos verbos con su pasado. Son el 80% de tus conversaciones.</div>
+      <div class="repo-chips">
+        <span class="rchip o">deploy → deployed</span><span class="rchip b">build → built</span><span class="rchip g">run → ran</span><span class="rchip o">fix → fixed</span><span class="rchip b">push → pushed</span><span class="rchip g">pull → pulled</span><span class="rchip y">merge → merged</span><span class="rchip o">trigger → triggered</span><span class="rchip b">throw → threw</span><span class="rchip g">return → returned</span><span class="rchip p">handle → handled</span><span class="rchip y">implement → implemented</span><span class="rchip o">refactor → refactored</span><span class="rchip b">inject → injected</span><span class="rchip g">subscribe → subscribed</span><span class="rchip p">fetch → fetched</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ 4 · CODE REVIEWS ═══════ -->
+<div id="view-reviews" class="mode-panel">
+  <div class="sec-title" data-n="1">Dar feedback (tú revisas)</div>
+  <div class="callout green" style="margin-top:0"><strong>Regla de oro:</strong> Empieza positivo, luego sugiere. Usa <code>could</code>/<code>should</code> en vez de <code>must</code>.</div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">Aprobar</span><br>Looks good to me! <strong>LGTM</strong>. Approved.</div><div class="ph-es">¡Me parece bien! Aprobado.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">Elogiar</span><br>Nice approach! I like how you <strong>extracted</strong> the logic into a service.</div><div class="ph-es">Buen enfoque. Me gusta cómo extrajiste la lógica a un servicio.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">Sugerir</span><br>What do you think about <strong>using a constant</strong> instead of a magic number?</div><div class="ph-es">¿Qué te parece usar una constante en vez de un número mágico?</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">Sugerir</span><br>Could we <strong>add a null check</strong> before calling this method?</div><div class="ph-es">¿Podríamos añadir un null check antes de llamar a este método?</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">Pedir cambio</span><br>This method is doing too much. <strong>Should we split it</strong>?</div><div class="ph-es">Este método hace demasiado. ¿Lo dividimos?</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">Bug potencial</span><br>This might <strong>cause a memory leak</strong> if we don't unsubscribe.</div><div class="ph-es">Esto podría causar un memory leak si no nos desuscribimos.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">Tests</span><br>We <strong>need tests</strong> for this feature before merging.</div><div class="ph-es">Necesitamos tests para esta feature antes de mergear.</div></div>
+
+  <div class="sec-title" data-n="2">Recibir feedback (te revisan)</div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-b">Aceptar</span><br>Good point! I'll <strong>fix that</strong> in the next commit.</div><div class="ph-es">Buena observación. Lo arreglo en el siguiente commit.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-b">Aceptar</span><br>You're right, I <strong>missed that edge case</strong>. Updating now.</div><div class="ph-es">Tienes razón, se me pasó ese edge case. Actualizando.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-p">Explicar</span><br>I did it this way <strong>because</strong> the API requires the full object.</div><div class="ph-es">Lo hice así porque la API requiere el objeto completo.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">Preguntar</span><br>Do you mean I should <strong>move this to the service layer</strong>?</div><div class="ph-es">¿Quieres decir que debería mover esto a la capa de servicio?</div></div>
+
+  <div class="sec-title" data-n="3">Commit messages</div>
+  <div class="callout blue"><strong>Patrón:</strong> <code>type(scope): imperative description</code><br><br>
+  <code>fix(auth): validate token expiration before refresh</code><br>
+  <code>feat(catalog): add product search endpoint</code><br>
+  <code>refactor(checkout): extract payment logic into service</code><br>
+  <code>chore(ci): update Jenkins pipeline to use JDK 21</code><br>
+  <code>test(users): add unit tests for UserService</code></div>
+</div>
+
+<!-- ═══════ 5 · MEETINGS ═══════ -->
+<div id="view-meetings" class="mode-panel">
+  <div class="sec-title" data-n="1">Daily Standup — las 3 preguntas</div>
+  <div class="job-box blue">
+    <div class="job-header"><span class="tag tag-b">Daily</span><span class="job-name">Estructura de tu standup</span></div>
+    <div class="seq-box" style="margin-bottom:0"><span style="color:var(--accent3);font-weight:700">Yesterday</span> I + past simple (lo que hiciste)
+<span style="color:var(--accent2);font-weight:700">Today</span> I'm going to + infinitive (lo que harás)
+<span style="color:var(--accent);font-weight:700">Blockers</span> I'm blocked by / waiting for + noun</div>
+  </div>
+  <div class="callout green"><strong>Ejemplo:</strong> "Yesterday I <strong>finished</strong> the login component and <strong>opened</strong> a PR. Today I'm going to <strong>start working on</strong> the user profile page. No blockers."</div>
+  <div class="callout orange"><strong>Con blocker:</strong> "Yesterday I <strong>worked on</strong> the payment integration but I <strong>got stuck</strong> with the API response format. Today I'm going to <strong>continue debugging</strong>. I'm <strong>blocked by</strong> the API team — I need the updated docs."</div>
+
+  <div class="sec-title" data-n="2">Planning & Retro</div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-b">Estimar</span><br>I think this is a <strong>3-pointer</strong>. It's straightforward.</div><div class="ph-es">Creo que es de 3 puntos. Es directo.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-y">Dudar</span><br>I'm not sure about the complexity. <strong>Can we break it down</strong>?</div><div class="ph-es">No estoy seguro de la complejidad. ¿Podemos partirlo?</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">Dependencia</span><br>This story <strong>depends on</strong> the API being ready.</div><div class="ph-es">Esta historia depende de que la API esté lista.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-g">Positivo</span><br>The deploy process <strong>was much smoother</strong> this sprint.</div><div class="ph-es">El proceso de deploy fue mucho más fluido este sprint.</div></div>
+  <div class="ph"><div class="ph-en"><span class="ph-tag pht-o">Mejora</span><br>We should <strong>improve our code review turnaround</strong>.</div><div class="ph-es">Deberíamos mejorar el tiempo de respuesta en reviews.</div></div>
+
+  <div class="sec-title" data-n="3">Frases para cualquier meeting</div>
+  <div class="ph"><div class="ph-en">Can you <strong>share your screen</strong>, please?</div><div class="ph-es">¿Puedes compartir tu pantalla?</div></div>
+  <div class="ph"><div class="ph-en">Sorry, I didn't catch that. <strong>Could you repeat</strong>?</div><div class="ph-es">Perdona, no lo pillé. ¿Podrías repetir?</div></div>
+  <div class="ph"><div class="ph-en"><strong>Let me jump in</strong> — I have some context on this.</div><div class="ph-es">Déjame intervenir — tengo contexto sobre esto.</div></div>
+  <div class="ph"><div class="ph-en">I'll <strong>follow up</strong> on Slack with more details.</div><div class="ph-es">Hago follow up en Slack con más detalles.</div></div>
+  <div class="ph"><div class="ph-en"><strong>Makes sense</strong>. I agree with that approach.</div><div class="ph-es">Tiene sentido. Estoy de acuerdo.</div></div>
+  <div class="ph"><div class="ph-en">I'm going to <strong>drop off</strong>. I have another meeting.</div><div class="ph-es">Me salgo. Tengo otra reunión.</div></div>
+</div>
+
+<!-- ═══════ 6 · PLAN 3 MESES ═══════ -->
+<div id="view-plan" class="mode-panel">
+  <div class="sec-title" data-n="1">Plan de estudio — 30 min/día</div>
+  <div class="callout green" style="margin-top:0"><strong>Principio:</strong> No estudies gramática abstracta. Todo con material técnico real: docs de Angular, READMEs de GitHub, vídeos de conferencias Java, podcasts de desarrollo.</div>
+
+  <div class="job-box">
+    <div class="job-header"><span class="tag tag-o">Mes 1</span><span class="job-name">Foundations — Vocabulario y lectura</span></div>
+    <p class="job-desc">Objetivo: leer docs en inglés sin traductor y entender el 80% del vocabulario técnico.</p>
+    <div class="steps-row">
+      <div class="step-box o"><div class="step-label o">Lu + Mi</div><div class="step-name">Leer docs</div><div class="step-desc">15 min leyendo Angular docs, Spring docs, o MDN en inglés. Apunta 5 palabras nuevas en Anki.</div></div>
+      <div class="step-box o"><div class="step-label o">Ma + Ju</div><div class="step-name">GitHub PRs</div><div class="step-desc">Lee comentarios en PRs de repos open source. Aprende el tono de los code reviews.</div></div>
+      <div class="step-box o"><div class="step-label o">Viernes</div><div class="step-name">Flashcards</div><div class="step-desc">Repasa Anki. Repite frases de esta guía en voz alta. Grábate y escúchate.</div></div>
+    </div>
+    <div class="callout orange" style="margin-bottom:0"><strong>Recursos:</strong> angular.dev, Spring Boot reference, Stack Overflow, Anki (repetición espaciada).</div>
+  </div>
+
+  <div class="job-box blue">
+    <div class="job-header"><span class="tag tag-b">Mes 2</span><span class="job-name">Listening — Entender conversaciones</span></div>
+    <p class="job-desc">Objetivo: seguir una daily en inglés y entender charlas técnicas al 70%.</p>
+    <div class="steps-row">
+      <div class="step-box b"><div class="step-label b">Lu + Mi</div><div class="step-name">YouTube talks</div><div class="step-desc">1 vídeo de 15 min (ng-conf, Devoxx, SpringOne). Subtítulos EN, nunca ES.</div></div>
+      <div class="step-box b"><div class="step-label b">Ma + Ju</div><div class="step-name">Podcasts</div><div class="step-desc">Syntax.fm, The Changelog, Java Pub House. Mientras caminas o en transporte.</div></div>
+      <div class="step-box b"><div class="step-label b">Viernes</div><div class="step-name">Shadowing</div><div class="step-desc">Repite en voz alta lo que dice el speaker 1 segundo después. Imita entonación.</div></div>
+    </div>
+    <div class="callout blue" style="margin-bottom:0"><strong>Recursos:</strong> ng-conf, Devoxx, Fireship (YouTube), Syntax.fm (podcast).</div>
+  </div>
+
+  <div class="job-box green">
+    <div class="job-header"><span class="tag tag-g">Mes 3</span><span class="job-name">Speaking & Writing — Producir</span></div>
+    <p class="job-desc">Objetivo: hacer tu daily, escribir PRs y code reviews en inglés con confianza.</p>
+    <div class="steps-row">
+      <div class="step-box g"><div class="step-label g">Lu + Mi</div><div class="step-name">Escribir PRs</div><div class="step-desc">Descripciones de PRs en inglés. Usa las frases de la sección "Code Reviews".</div></div>
+      <div class="step-box g"><div class="step-label g">Ma + Ju</div><div class="step-name">Daily simulado</div><div class="step-desc">Practica tu standup en inglés cada mañana. Grábate. 30 seg: yesterday/today/blockers.</div></div>
+      <div class="step-box g"><div class="step-label g">Viernes</div><div class="step-name">Pair programming</div><div class="step-desc">Pair en inglés con compañero. Si no hay: CodeBuddies, Dev.to, iTalki.</div></div>
+    </div>
+    <div class="callout green" style="margin-bottom:0"><strong>Recursos:</strong> Tu propio trabajo (PRs, commits, Jira), CodeBuddies.org, iTalki, Claude/ChatGPT para practicar.</div>
+  </div>
+
+  <div class="sec-title" data-n="2">Las 5 reglas de oro</div>
+  <div class="repo-box o">
+    <div class="repo-icon">🎯</div>
+    <div>
+      <div class="repo-title" style="color:var(--accent)">Haz esto y en 3 meses notarás la diferencia</div>
+      <div class="repo-desc" style="line-height:2.1">
+        <strong style="color:var(--accent)">1.</strong> Cambia TODO tu entorno a inglés: IDE, SO, móvil, Stack Overflow.<br>
+        <strong style="color:var(--accent3)">2.</strong> No traduzcas. Piensa directamente: <em>"this method returns a list"</em>.<br>
+        <strong style="color:var(--accent2)">3.</strong> Prioriza vocabulario técnico sobre gramática perfecta.<br>
+        <strong style="color:var(--yellow)">4.</strong> Grábate hablando. Escúchate. Es incómodo pero funciona.<br>
+        <strong style="color:var(--purple)">5.</strong> Consistencia > intensidad. 30 min/día supera 3h los sábados.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function setView(name){document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+name).classList.add('active');event.target.classList.add('active')}
+</script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Batch Engineering - El Manual del Watchman</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .code-block { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 0.5rem; font-family: 'Courier New', Courier, monospace; overflow-x: auto; }
+        .keyword { color: #569cd6; }
+        .comment { color: #6a9955; }
+        .string { color: #ce9178; }
+        .log-entry { font-family: monospace; font-size: 0.85rem; border-bottom: 1px solid #334155; padding: 4px 0; }
+        .registro { transition: all 0.3s ease; }
+        @keyframes pulse-red { 0%, 100% { background-color: #ef4444; } 50% { background-color: #7f1d1d; } }
+        .fail-anim { animation: pulse-red 0.5s infinite; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans leading-relaxed">
+
+    <header class="bg-indigo-700 py-8 px-6 shadow-2xl">
+        <div class="max-w-5xl mx-auto">
+            <h1 class="text-3xl font-extrabold tracking-tight">Spring Batch: Motor Resiliente</h1>
+            <p class="mt-1 text-indigo-100 italic">Simulador de Tolerancia a Fallos (Retry & Skip)</p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-6">
+        
+        <section class="mb-10 bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-indigo-400">⚡ Laboratorio de Simulación de Chunks</h2>
+                <button onclick="simularProceso()" id="btnSimular" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-6 rounded-full transition-all transform active:scale-95 shadow-lg">
+                    Simular Carga (Chunk 5)
+                </button>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <p class="text-sm font-bold text-slate-400 mb-3 uppercase tracking-wider">Estado de la Transacción (Memoria)</p>
+                    <div id="contenedorRegistros" class="flex gap-2 flex-wrap min-h-[60px] p-4 bg-slate-900 rounded-lg">
+                        </div>
+                    <div class="mt-4 flex gap-4 text-xs">
+                        <span class="flex items-center"><span class="w-3 h-3 bg-blue-500 rounded-full mr-1"></span> Pendiente</span>
+                        <span class="flex items-center"><span class="w-3 h-3 bg-green-500 rounded-full mr-1"></span> Éxito</span>
+                        <span class="flex items-center"><span class="w-3 h-3 bg-red-500 rounded-full mr-1"></span> Error</span>
+                    </div>
+                </div>
+
+                <div class="bg-black p-4 rounded-lg border border-slate-600 h-64 overflow-y-auto" id="consoleLog">
+                    <p class="text-indigo-400 font-bold mb-2">System Console Output:</p>
+                    <div class="log-entry text-slate-500 italic">Esperando inicio de proceso...</div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <p class="text-sm font-bold text-red-400 mb-3 uppercase tracking-wider">Base de Datos de Auditoría (BATCH_ERROR_LOG)</p>
+                <table class="w-full text-left text-sm border-collapse bg-slate-900 rounded-lg overflow-hidden">
+                    <thead class="bg-slate-700 text-slate-300">
+                        <tr>
+                            <th class="p-3">ID_DATO</th>
+                            <th class="p-3">ESTADO</th>
+                            <th class="p-3">MOTIVO_SALTO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="errorTableBody">
+                        <tr id="emptyRow"><td colspan="3" class="p-3 text-center text-slate-600 italic">No hay errores registrados</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <nav class="flex space-x-4 mb-8 border-b border-slate-700">
+            <button onclick="showTab('java')" class="tab-btn py-2 px-4 border-b-2 border-indigo-500 font-bold hover:text-indigo-400">Configuración Java</button>
+            <button onclick="showTab('career')" class="tab-btn py-2 px-4 border-b-2 border-transparent hover:border-indigo-400">Perfil & Sueldo</button>
+        </nav>
+
+        <section id="java" class="tab-content active space-y-4">
+             <div class="code-block text-xs">
+                <span class="keyword">.faultTolerant()</span><br>
+                <span class="keyword">.retry</span>(Exception.class).retryLimit(<span class="keyword">2</span>)<br>
+                <span class="keyword">.skip</span>(Exception.class).skipLimit(<span class="keyword">2</span>)
+            </div>
+        </section>
+
+        <section id="career" class="tab-content space-y-4">
+            <div class="bg-indigo-900/30 p-4 rounded-xl border border-indigo-500/30">
+                <p class="text-xl font-bold">Arquitecto de Sistemas: 75.000€+</p>
+                <p class="text-sm">Capacidad de diseñar flujos que minimizan la intervención de soporte.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function log(msg, type = 'info') {
+            const consoleLog = document.getElementById('consoleLog');
+            const color = type === 'error' ? 'text-red-400' : type === 'success' ? 'text-green-400' : 'text-slate-300';
+            consoleLog.innerHTML += `<div class="log-entry ${color}">[${new Date().toLocaleTimeString()}] ${msg}</div>`;
+            consoleLog.scrollTop = consoleLog.scrollHeight;
+        }
+
+        async function simularProceso() {
+            const container = document.getElementById('contenedorRegistros');
+            const errorTable = document.getElementById('errorTableBody');
+            const btn = document.getElementById('btnSimular');
+            
+            btn.disabled = true;
+            container.innerHTML = '';
+            errorTable.innerHTML = '';
+            log("Iniciando Step: lectura de CSV...");
+
+            // Crear 5 bolitas (registros)
+            for(let i=1; i<=5; i++) {
+                container.innerHTML += `<div id="reg-${i}" class="registro w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white shadow-lg">${i}</div>`;
+            }
+
+            await sleep(1000);
+            log("Intentando Commit de Chunk (1-5)...");
+            
+            // Simular fallo en registro 3
+            const reg3 = document.getElementById('reg-3');
+            reg3.classList.add('fail-anim');
+            log("¡ERROR! Excepción detectada en registro 3", 'error');
+            
+            await sleep(1000);
+            log("Ejecutando ROLLBACK del chunk completo...", 'error');
+            document.querySelectorAll('.registro').forEach(r => r.classList.replace('bg-blue-500', 'bg-slate-600'));
+            
+            await sleep(1000);
+            log("Modo Escaneo: Procesando uno a uno (Fila 1: OK, Fila 2: OK)");
+            document.getElementById('reg-1').classList.replace('bg-slate-600', 'bg-green-500');
+            document.getElementById('reg-2').classList.replace('bg-slate-600', 'bg-green-500');
+
+            await sleep(1000);
+            log("Reintentando Fila 3 (Intento 1 de 2)...");
+            await sleep(800);
+            log("Fila 3 sigue fallando. Agotando reintentos...", 'error');
+
+            await sleep(1000);
+            log("Aplicando SKIP en Fila 3. Registrando en auditoría...", 'success');
+            reg3.classList.remove('fail-anim');
+            reg3.classList.replace('bg-slate-600', 'bg-red-500');
+            errorTable.innerHTML = `<tr><td class="p-3 font-mono">003</td><td class="p-3 text-red-500 font-bold uppercase">Skipped</td><td class="p-3">BadFormatException</td></tr>`;
+
+            await sleep(1000);
+            log("Continuando con Fila 4 y 5...");
+            document.getElementById('reg-4').classList.replace('bg-slate-600', 'bg-green-500');
+            document.getElementById('reg-5').classList.replace('bg-slate-600', 'bg-green-500');
+
+            log("STEP FINALIZADO: 4 éxitos, 1 saltado.", 'success');
+            btn.disabled = false;
+        }
+
+        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+        
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
