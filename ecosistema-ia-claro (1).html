@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecosistema IA — Guía Visual</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f5f1;
+    --bg-warm: #efeee8;
+    --surface: #ffffff;
+    --surface2: #f0efea;
+    --border: #ddd9d0;
+    --border-light: #e8e5de;
+    --text: #1a1a1a;
+    --text-mid: #4a4a4a;
+    --text-dim: #7a7a7a;
+    --accent-1: #2563eb;
+    --accent-2: #7c3aed;
+    --accent-3: #dc6b20;
+    --accent-4: #0891b2;
+    --accent-5: #db2777;
+    --accent-6: #16a34a;
+    --accent-7: #ca8a04;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.05), 0 1px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+    --radius: 14px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fff 0%, var(--bg) 100%);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40%; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(37,99,235,0.07) 0%, rgba(124,58,237,0.05) 40%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-1);
+    background: rgba(37,99,235,0.08);
+    border: 1px solid rgba(37,99,235,0.15);
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    color: var(--text);
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    max-width: 560px;
+    margin: 0 auto;
+    position: relative;
+    font-weight: 400;
+  }
+
+  /* ─── CONTAINER ─── */
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  /* ─── SECTION HEADERS ─── */
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-1);
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+  }
+
+  .section-title {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+  }
+
+  .section-intro {
+    color: var(--text-dim);
+    max-width: 640px;
+    margin-bottom: 2.5rem;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  /* ─── CONCEPT CARDS ─── */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 4.5rem;
+  }
+
+  .concept-card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 1.8rem;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .concept-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .concept-card .card-bar {
+    position: absolute; top: 0; left: 1.5rem; right: 1.5rem; height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--card-accent, var(--accent-1));
+  }
+
+  .concept-card .icon-box {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    background: color-mix(in srgb, var(--card-accent, var(--accent-1)) 8%, #fff);
+    border: 1px solid color-mix(in srgb, var(--card-accent, var(--accent-1)) 18%, #fff);
+  }
+
+  .concept-card .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--card-accent, var(--accent-1));
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+
+  .concept-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.01em;
+  }
+
+  .concept-card p {
+    color: var(--text-mid);
+    font-size: 0.88rem;
+    line-height: 1.65;
+  }
+
+  .tags {
+    display: flex; flex-wrap: wrap; gap: 0.35rem;
+    margin-top: 1rem;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-mid);
+    font-weight: 500;
+  }
+
+  /* ─── HIERARCHY ─── */
+  .hierarchy {
+    max-width: 660px;
+    margin: 0 auto 4.5rem;
+  }
+
+  .hier-item {
+    display: flex; align-items: center; gap: 1.2rem;
+    padding: 1.1rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    position: relative;
+  }
+
+  .hier-item:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+  .hier-item:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+  .hier-item + .hier-item { border-top: none; }
+
+  .hier-item::before {
+    content: '';
+    position: absolute; left:0; top:0; bottom:0; width: 3px;
+    background: var(--h-color, var(--accent-1));
+  }
+
+  .hier-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    min-width: 36px;
+    text-align: center;
+    color: var(--h-color, var(--accent-1));
+  }
+
+  .hier-text h4 {
+    font-size: 0.95rem; font-weight: 700;
+    margin-bottom: 0.15rem;
+  }
+
+  .hier-text p {
+    font-size: 0.8rem; color: var(--text-dim);
+  }
+
+  /* ─── FAMILY GROUPS ─── */
+  .families { margin-bottom: 4.5rem; }
+
+  .family {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 1.6rem 1.8rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.25s;
+  }
+
+  .family:hover { box-shadow: var(--shadow-md); }
+
+  .family::before {
+    content: '';
+    position: absolute; left:0; top:0; bottom:0; width: 4px;
+    background: var(--fam-color, var(--accent-1));
+  }
+
+  .family-head {
+    display: flex; align-items: center; gap: 0.8rem;
+    margin-bottom: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .family-head h3 {
+    font-size: 1.1rem; font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .family-org {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    color: var(--fam-color, var(--accent-1));
+    background: color-mix(in srgb, var(--fam-color, var(--accent-1)) 8%, #fff);
+    border: 1px solid color-mix(in srgb, var(--fam-color, var(--accent-1)) 18%, #fff);
+    font-weight: 500;
+  }
+
+  .family-desc {
+    color: var(--text-mid);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 0.8rem;
+  }
+
+  .model-chips {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+  }
+
+  .chip {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .chip:hover {
+    border-color: var(--fam-color, var(--accent-1));
+  }
+
+  .chip.main {
+    background: color-mix(in srgb, var(--fam-color, var(--accent-1)) 8%, #fff);
+    border-color: color-mix(in srgb, var(--fam-color, var(--accent-1)) 25%, #fff);
+    font-weight: 600;
+  }
+
+  /* ─── TOOLS GRID ─── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.1rem;
+    margin-bottom: 4.5rem;
+  }
+
+  .tool {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .tool:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .tool h4 {
+    font-size: 1rem; font-weight: 700;
+    margin-bottom: 0.15rem;
+  }
+
+  .tool .tool-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--t-color, var(--accent-1));
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+  }
+
+  .tool p {
+    color: var(--text-mid);
+    font-size: 0.84rem;
+    line-height: 1.6;
+  }
+
+  /* ─── TABLE ─── */
+  .table-container {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 4.5rem;
+  }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.85rem;
+    min-width: 720px;
+  }
+
+  thead th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.64rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent-1);
+    font-weight: 500;
+    text-align: left;
+    padding: 0.9rem 1.2rem;
+    background: var(--surface2);
+    border-bottom: 2px solid var(--border);
+  }
+
+  tbody td {
+    padding: 0.75rem 1.2rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-mid);
+    vertical-align: top;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--surface2); }
+
+  tbody td:first-child {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ─── SPECIALIZED GRID ─── */
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.1rem;
+    margin-bottom: 4rem;
+  }
+
+  .spec-card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 1.6rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .spec-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .spec-card .spec-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .spec-card .spec-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--s-color, var(--accent-1));
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+  }
+
+  .spec-card h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .spec-card p {
+    color: var(--text-mid);
+    font-size: 0.84rem;
+    line-height: 1.6;
+    margin-bottom: 0.8rem;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    padding: 2.5rem 2rem;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  .fade-up {
+    opacity: 0; transform: translateY(16px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .concept-grid > :nth-child(1) { animation-delay: 0.04s; }
+  .concept-grid > :nth-child(2) { animation-delay: 0.08s; }
+  .concept-grid > :nth-child(3) { animation-delay: 0.12s; }
+  .concept-grid > :nth-child(4) { animation-delay: 0.16s; }
+  .concept-grid > :nth-child(5) { animation-delay: 0.20s; }
+  .concept-grid > :nth-child(6) { animation-delay: 0.24s; }
+
+  @media (max-width: 600px) {
+    .concept-grid, .tools-grid, .spec-grid { grid-template-columns: 1fr; }
+    .container { padding: 0 1.2rem 3rem; }
+    .hero { padding: 3.5rem 1.2rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-badge">Guía de referencia · 2026</div>
+  <h1>Ecosistema <span>IA</span></h1>
+  <p>Entiende qué es cada cosa: LLMs, familias de modelos, chatbots, bots, agentes y todas las herramientas que existen hoy en inteligencia artificial.</p>
+</section>
+
+<div class="container">
+
+<!-- ═══ 01 — CONCEPTOS ═══ -->
+<div class="section-num">01 — Conceptos fundamentales</div>
+<h2 class="section-title">¿Qué es cada cosa?</h2>
+<p class="section-intro">Cada término describe una capa diferente de la tecnología. Entenderlos evita confusiones.</p>
+
+<div class="concept-grid">
+
+  <div class="concept-card fade-up" style="--card-accent: var(--accent-1);">
+    <div class="card-bar"></div>
+    <div class="icon-box">🧠</div>
+    <div class="label">La base de todo</div>
+    <h3>LLM — Large Language Model</h3>
+    <p>Un modelo de red neuronal entrenado con cantidades masivas de texto. Es el «cerebro» crudo: recibe texto y predice qué viene después. No tiene interfaz, no habla contigo — es solo matemáticas y pesos neuronales. Todo lo demás se construye encima.</p>
+    <div class="tags">
+      <span class="tag">GPT-4o</span>
+      <span class="tag">Claude Opus</span>
+      <span class="tag">Llama 3</span>
+      <span class="tag">Gemini Pro</span>
+      <span class="tag">Mistral Large</span>
+    </div>
+  </div>
+
+  <div class="concept-card fade-up" style="--card-accent: var(--accent-2);">
+    <div class="card-bar"></div>
+    <div class="icon-box">👨‍👩‍👧‍👦</div>
+    <div class="label">Versiones y variantes</div>
+    <h3>Familia de modelos</h3>
+    <p>Un conjunto de modelos relacionados que comparten arquitectura pero varían en tamaño, coste y capacidad. Cada empresa lanza una «familia» con versiones pequeñas (baratas y rápidas), medianas y grandes (potentes y caras). Como una gama de coches: mismo fabricante, diferente potencia.</p>
+    <div class="tags">
+      <span class="tag">GPT-4 → 4o, 4o-mini</span>
+      <span class="tag">Claude → Haiku, Sonnet, Opus</span>
+      <span class="tag">Llama → 8B, 70B, 405B</span>
+    </div>
+  </div>
+
+  <div class="concept-card fade-up" style="--card-accent: var(--accent-3);">
+    <div class="card-bar"></div>
+    <div class="icon-box">💬</div>
+    <div class="label">Interfaz conversacional</div>
+    <h3>Chatbot</h3>
+    <p>Una interfaz que te permite hablar con un LLM como si fuera una persona. Añade la capa de conversación: mantiene contexto, sigue instrucciones y da respuestas legibles. Es el «envoltorio» amigable alrededor del modelo.</p>
+    <div class="tags">
+      <span class="tag">ChatGPT</span>
+      <span class="tag">Claude.ai</span>
+      <span class="tag">Gemini</span>
+      <span class="tag">Copilot</span>
+    </div>
+  </div>
+
+  <div class="concept-card fade-up" style="--card-accent: var(--accent-5);">
+    <div class="card-bar"></div>
+    <div class="icon-box">🤖</div>
+    <div class="label">Automatización simple</div>
+    <h3>Bot</h3>
+    <p>Un programa que ejecuta tareas automáticas siguiendo reglas predefinidas. No necesita IA: un bot de Telegram que reenvía mensajes o un bot de Discord que modera son bots «clásicos». Sigue scripts fijos, no «piensa».</p>
+    <div class="tags">
+      <span class="tag">Bot de Telegram</span>
+      <span class="tag">Bot de Discord</span>
+      <span class="tag">Web scraper</span>
+      <span class="tag">Bot de trading</span>
+    </div>
+  </div>
+
+  <div class="concept-card fade-up" style="--card-accent: var(--accent-6);">
+    <div class="card-bar"></div>
+    <div class="icon-box">⚡</div>
+    <div class="label">IA con autonomía</div>
+    <h3>Agente de IA</h3>
+    <p>Un sistema que usa un LLM para razonar, planificar y ejecutar tareas de forma autónoma. Un chatbot responde lo que le preguntas; un agente decide qué hacer, usa herramientas (buscar en web, ejecutar código, llamar APIs) y completa objetivos complejos por su cuenta.</p>
+    <div class="tags">
+      <span class="tag">Claude Code</span>
+      <span class="tag">Devin</span>
+      <span class="tag">AutoGPT</span>
+      <span class="tag">Operator</span>
+      <span class="tag">Manus</span>
+    </div>
+  </div>
+
+  <div class="concept-card fade-up" style="--card-accent: var(--accent-4);">
+    <div class="card-bar"></div>
+    <div class="icon-box">🔌</div>
+    <div class="label">Acceso programático</div>
+    <h3>API de LLM</h3>
+    <p>La puerta de entrada para desarrolladores. En vez de chatear en una web, envías peticiones HTTP y recibes respuestas del modelo. Pagas por uso (tokens consumidos) y tienes control total sobre el comportamiento.</p>
+    <div class="tags">
+      <span class="tag">OpenAI API</span>
+      <span class="tag">Anthropic API</span>
+      <span class="tag">Google AI Studio</span>
+      <span class="tag">Together AI</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ 02 — JERARQUÍA ═══ -->
+<div class="section-num">02 — Cómo se relacionan</div>
+<h2 class="section-title">De abajo hacia arriba</h2>
+<p class="section-intro">Cada capa se construye sobre la anterior. Un agente usa un chatbot, que usa un LLM, que fue entrenado con datos.</p>
+
+<div class="hierarchy">
+  <div class="hier-item" style="--h-color: var(--accent-6);">
+    <div class="hier-num">5</div>
+    <div class="hier-text">
+      <h4>🧩 Agente IA</h4>
+      <p>Razona, planifica, usa herramientas, actúa de forma autónoma</p>
+    </div>
+  </div>
+  <div class="hier-item" style="--h-color: var(--accent-5);">
+    <div class="hier-num">4</div>
+    <div class="hier-text">
+      <h4>🛠️ App / Producto</h4>
+      <p>Interfaz completa con funciones extra: memoria, archivos, búsqueda web</p>
+    </div>
+  </div>
+  <div class="hier-item" style="--h-color: var(--accent-3);">
+    <div class="hier-num">3</div>
+    <div class="hier-text">
+      <h4>💬 Chatbot</h4>
+      <p>Interfaz conversacional que gestiona el diálogo con el modelo</p>
+    </div>
+  </div>
+  <div class="hier-item" style="--h-color: var(--accent-2);">
+    <div class="hier-num">2</div>
+    <div class="hier-text">
+      <h4>🔌 API</h4>
+      <p>Capa de acceso que expone el modelo a aplicaciones externas</p>
+    </div>
+  </div>
+  <div class="hier-item" style="--h-color: var(--accent-1);">
+    <div class="hier-num">1</div>
+    <div class="hier-text">
+      <h4>🧠 LLM (Modelo base)</h4>
+      <p>Red neuronal entrenada — la inteligencia pura sin interfaz</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 03 — FAMILIAS ═══ -->
+<div class="section-num">03 — Familias de modelos</div>
+<h2 class="section-title">Los grandes jugadores del mercado</h2>
+<p class="section-intro">Cada empresa tiene su propia familia de modelos con variantes para distintos usos y presupuestos.</p>
+
+<div class="families">
+
+  <div class="family" style="--fam-color: var(--accent-6);">
+    <div class="family-head">
+      <h3>OpenAI — GPT</h3>
+      <span class="family-org">OpenAI · San Francisco</span>
+    </div>
+    <p class="family-desc">La familia que popularizó los LLMs. GPT-4o es su modelo insignia multimodal (texto, imagen, audio). La serie «o» (o1, o3, o4-mini) añade razonamiento profundo paso a paso. GPT-4o-mini es la versión económica.</p>
+    <div class="model-chips">
+      <span class="chip main">GPT-4o</span>
+      <span class="chip main">o3</span>
+      <span class="chip">o4-mini</span>
+      <span class="chip">GPT-4o mini</span>
+      <span class="chip">GPT-4.1</span>
+      <span class="chip">DALL·E 3</span>
+      <span class="chip">Whisper</span>
+      <span class="chip">Sora</span>
+    </div>
+  </div>
+
+  <div class="family" style="--fam-color: var(--accent-3);">
+    <div class="family-head">
+      <h3>Anthropic — Claude</h3>
+      <span class="family-org">Anthropic · San Francisco</span>
+    </div>
+    <p class="family-desc">Enfocada en seguridad y fiabilidad. Claude destaca en razonamiento largo, escritura, código y seguir instrucciones complejas. Tres niveles: Haiku (rápido/barato), Sonnet (equilibrado) y Opus (máxima capacidad).</p>
+    <div class="model-chips">
+      <span class="chip main">Claude Opus 4.5</span>
+      <span class="chip main">Claude Sonnet 4.5</span>
+      <span class="chip">Claude Haiku 4.5</span>
+      <span class="chip">Claude Code</span>
+    </div>
+  </div>
+
+  <div class="family" style="--fam-color: var(--accent-4);">
+    <div class="family-head">
+      <h3>Google — Gemini</h3>
+      <span class="family-org">Google DeepMind · Mountain View</span>
+    </div>
+    <p class="family-desc">Nativamente multimodal (texto, imagen, audio, vídeo, código). Gemini 2.5 Pro destaca por su ventana de contexto enorme (1M+ tokens). Flash es la versión rápida y económica.</p>
+    <div class="model-chips">
+      <span class="chip main">Gemini 2.5 Pro</span>
+      <span class="chip">Gemini 2.0 Flash</span>
+      <span class="chip">Gemini 1.5 Pro</span>
+      <span class="chip">Gemma 2 (open)</span>
+      <span class="chip">Imagen 3</span>
+    </div>
+  </div>
+
+  <div class="family" style="--fam-color: var(--accent-2);">
+    <div class="family-head">
+      <h3>Meta — Llama</h3>
+      <span class="family-org">Meta AI · Menlo Park</span>
+    </div>
+    <p class="family-desc">La gran familia open-source. Puedes descargar y ejecutar los modelos en tu propio hardware. Disponible en varios tamaños. Base de muchísimos proyectos de código abierto.</p>
+    <div class="model-chips">
+      <span class="chip main">Llama 4 Maverick</span>
+      <span class="chip main">Llama 4 Scout</span>
+      <span class="chip">Llama 3.3 70B</span>
+      <span class="chip">Llama 3.1 405B</span>
+      <span class="chip">Llama 3.1 8B</span>
+      <span class="chip">Code Llama</span>
+    </div>
+  </div>
+
+  <div class="family" style="--fam-color: var(--accent-5);">
+    <div class="family-head">
+      <h3>Mistral AI</h3>
+      <span class="family-org">Mistral · París</span>
+    </div>
+    <p class="family-desc">Startup francesa con modelos open-source de alto rendimiento. Arquitectura MoE (Mixture of Experts) permite modelos muy eficientes. Mistral Large compite con los grandes.</p>
+    <div class="model-chips">
+      <span class="chip main">Mistral Large</span>
+      <span class="chip">Mistral Medium</span>
+      <span class="chip">Mistral Small</span>
+      <span class="chip">Mixtral 8x22B</span>
+      <span class="chip">Codestral</span>
+      <span class="chip">Pixtral</span>
+    </div>
+  </div>
+
+  <div class="family" style="--fam-color: var(--accent-7);">
+    <div class="family-head">
+      <h3>DeepSeek</h3>
+      <span class="family-org">DeepSeek · Hangzhou, China</span>
+    </div>
+    <p class="family-desc">Laboratorio chino que sorprendió con modelos de razonamiento open-source de nivel frontier. DeepSeek-R1 compite con o1 en razonamiento matemático. Usa MoE y destaca por eficiencia.</p>
+    <div class="model-chips">
+      <span class="chip main">DeepSeek-R1</span>
+      <span class="chip main">DeepSeek-V3</span>
+      <span class="chip">DeepSeek Coder V2</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ 04 — HERRAMIENTAS ═══ -->
+<div class="section-num">04 — Herramientas y plataformas</div>
+<h2 class="section-title">Dónde y cómo usas la IA</h2>
+<p class="section-intro">Más allá de los modelos, hay un ecosistema de herramientas para ejecutar, conectar y aprovechar la IA.</p>
+
+<div class="tools-grid">
+
+  <div class="tool" style="--t-color: var(--accent-1);">
+    <h4>Ollama</h4>
+    <div class="tool-label">Ejecución local de modelos</div>
+    <p>Software que te permite descargar y ejecutar LLMs open-source en tu propio ordenador. Sin internet, sin pagar API, todo privado. Soporta Llama, Mistral, Gemma, DeepSeek y más.</p>
+  </div>
+
+  <div class="tool" style="--t-color: var(--accent-2);">
+    <h4>ChatboxtAI</h4>
+    <div class="tool-label">Cliente de escritorio multi-modelo</div>
+    <p>Aplicación de escritorio como interfaz universal para múltiples LLMs. Conecta APIs de OpenAI, Anthropic, o modelos locales vía Ollama. Un solo lugar para todos tus modelos.</p>
+  </div>
+
+  <div class="tool" style="--t-color: var(--accent-3);">
+    <h4>LM Studio</h4>
+    <div class="tool-label">Ejecución local con interfaz gráfica</div>
+    <p>Similar a Ollama pero con interfaz visual completa. Descarga modelos de Hugging Face, chatea con ellos y ajusta parámetros. Ideal si prefieres no usar la terminal.</p>
+  </div>
+
+  <div class="tool" style="--t-color: var(--accent-5);">
+    <h4>Hugging Face</h4>
+    <div class="tool-label">Hub de modelos y datasets</div>
+    <p>El «GitHub de la IA». Repositorio donde se publican modelos, datasets y demos. Centro neurálgico de la comunidad open-source de Machine Learning.</p>
+  </div>
+
+  <div class="tool" style="--t-color: var(--accent-6);">
+    <h4>LangChain / LlamaIndex</h4>
+    <div class="tool-label">Frameworks para desarrollo</div>
+    <p>Frameworks de Python/JS para construir aplicaciones con LLMs. Encadenar llamadas, conectar bases de datos, hacer RAG, crear agentes. Las herramientas de los desarrolladores.</p>
+  </div>
+
+  <div class="tool" style="--t-color: var(--accent-4);">
+    <h4>OpenRouter / Together AI</h4>
+    <div class="tool-label">API gateway multi-modelo</div>
+    <p>Acceso a decenas de modelos con una sola API key. En vez de tener cuenta en cada proveedor, usas una interfaz para GPT-4, Claude, Llama, Mistral, etc.</p>
+  </div>
+
+</div>
+
+<!-- ═══ 05 — TABLA ═══ -->
+<div class="section-num">05 — Comparativa</div>
+<h2 class="section-title">Diferencias de un vistazo</h2>
+
+<div class="table-container">
+<table>
+  <thead>
+    <tr>
+      <th>Concepto</th>
+      <th>¿Qué es?</th>
+      <th>¿Quién lo usa?</th>
+      <th>¿Necesita internet?</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>LLM</td>
+      <td>Modelo de lenguaje (pesos neuronales)</td>
+      <td>Desarrolladores, investigadores</td>
+      <td>Depende</td>
+      <td>GPT-4o, Llama 3.1</td>
+    </tr>
+    <tr>
+      <td>Chatbot</td>
+      <td>Interfaz conversacional sobre un LLM</td>
+      <td>Cualquier persona</td>
+      <td>Generalmente sí</td>
+      <td>ChatGPT, Claude.ai</td>
+    </tr>
+    <tr>
+      <td>Bot clásico</td>
+      <td>Programa automatizado con reglas fijas</td>
+      <td>Usuarios y admins</td>
+      <td>Variable</td>
+      <td>Bot de moderación Discord</td>
+    </tr>
+    <tr>
+      <td>Agente IA</td>
+      <td>IA autónoma que planifica y ejecuta</td>
+      <td>Desarrolladores, profesionales</td>
+      <td>Generalmente sí</td>
+      <td>Claude Code, Devin</td>
+    </tr>
+    <tr>
+      <td>API</td>
+      <td>Acceso programático al modelo</td>
+      <td>Desarrolladores</td>
+      <td>Sí (excepto local)</td>
+      <td>OpenAI API, Anthropic API</td>
+    </tr>
+    <tr>
+      <td>Ejecución local</td>
+      <td>Correr modelos en tu hardware</td>
+      <td>Entusiastas, privacidad</td>
+      <td>No (tras descargar)</td>
+      <td>Ollama, LM Studio</td>
+    </tr>
+    <tr>
+      <td>Framework</td>
+      <td>Kit de herramientas para devs</td>
+      <td>Desarrolladores</td>
+      <td>Depende</td>
+      <td>LangChain, LlamaIndex</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ═══ 06 — ESPECIALIZADOS ═══ -->
+<div class="section-num">06 — Más allá del texto</div>
+<h2 class="section-title">IA especializada</h2>
+<p class="section-intro">Los LLMs son solo una parte. Existen modelos especializados en imagen, audio, vídeo y código.</p>
+
+<div class="spec-grid">
+
+  <div class="spec-card" style="--s-color: var(--accent-5);">
+    <div class="spec-icon">🎨</div>
+    <div class="spec-label">Generación de imágenes</div>
+    <h4>Modelos de imagen</h4>
+    <p>Generan imágenes a partir de texto. Usan difusión o transformers. Cada vez más integrados en los chatbots.</p>
+    <div class="tags">
+      <span class="tag">Midjourney</span>
+      <span class="tag">DALL·E 3</span>
+      <span class="tag">Stable Diffusion</span>
+      <span class="tag">Flux</span>
+      <span class="tag">Imagen 3</span>
+    </div>
+  </div>
+
+  <div class="spec-card" style="--s-color: var(--accent-7);">
+    <div class="spec-icon">🎬</div>
+    <div class="spec-label">Generación de vídeo</div>
+    <h4>Modelos de vídeo</h4>
+    <p>La frontera más nueva. Generan clips a partir de texto o imágenes. En fase inicial pero avanzando rápido.</p>
+    <div class="tags">
+      <span class="tag">Sora</span>
+      <span class="tag">Kling</span>
+      <span class="tag">Runway Gen-3</span>
+      <span class="tag">Veo 2</span>
+    </div>
+  </div>
+
+  <div class="spec-card" style="--s-color: var(--accent-4);">
+    <div class="spec-icon">🎵</div>
+    <div class="spec-label">Audio y voz</div>
+    <h4>Modelos de audio</h4>
+    <p>Transcriben voz, generan voz sintética y crean música. Cada vez más realistas e indistinguibles.</p>
+    <div class="tags">
+      <span class="tag">Whisper</span>
+      <span class="tag">ElevenLabs</span>
+      <span class="tag">Suno</span>
+      <span class="tag">Udio</span>
+    </div>
+  </div>
+
+  <div class="spec-card" style="--s-color: var(--accent-6);">
+    <div class="spec-icon">💻</div>
+    <div class="spec-label">Asistentes de código</div>
+    <h4>IA para programación</h4>
+    <p>Optimizados para escribir, revisar y depurar código. Se integran en editores o funcionan como agentes autónomos.</p>
+    <div class="tags">
+      <span class="tag">GitHub Copilot</span>
+      <span class="tag">Cursor</span>
+      <span class="tag">Claude Code</span>
+      <span class="tag">Windsurf</span>
+      <span class="tag">Devin</span>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<footer>
+  Ecosistema IA — Guía de referencia · Febrero 2026
+</footer>
+
+</body>
+</html>

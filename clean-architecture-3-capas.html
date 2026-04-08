@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clean Architecture — 3 Capas · Transporte / Dominio / Persistencia</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700;8..60,800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f3ee;--surface:#fff;--surface2:#f0ede6;--border:#d8d4ca;--border-light:#e5e1d8;--text:#1c1917;--text-mid:#44403c;--text-dim:#78716c;--code-bg:#fafaf8;--code-border:#e7e5e4;--accent:#b45309;--accent-light:#fef3c7;--accent-bg:rgba(180,83,9,.06);--blue:#1d4ed8;--blue-bg:rgba(29,78,216,.06);--green:#15803d;--green-bg:rgba(21,128,61,.06);--purple:#7e22ce;--purple-bg:rgba(126,34,206,.06);--rose:#be123c;--rose-bg:rgba(190,18,60,.06);--teal:#0f766e;--teal-bg:rgba(15,118,110,.06);--indigo:#4338ca;--indigo-bg:rgba(67,56,202,.06);--shadow-sm:0 1px 3px rgba(0,0,0,.04);--shadow-md:0 4px 14px rgba(0,0,0,.06);--radius:12px}*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}.hero{padding:4.5rem 2rem 3.5rem;text-align:center;background:linear-gradient(180deg,#fffdf7,var(--bg));position:relative;overflow:hidden}.hero::before{content:'{ DIP }';position:absolute;font-family:'IBM Plex Mono',monospace;font-size:14rem;font-weight:600;color:rgba(180,83,9,.03);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}.hero-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);background:var(--accent-light);border:1px solid rgba(180,83,9,.15);padding:.3rem .9rem;border-radius:999px;margin-bottom:1.2rem;font-weight:500;position:relative}.hero h1{font-family:'Source Serif 4',serif;font-size:clamp(2.1rem,5vw,3.6rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;position:relative;margin-bottom:.8rem}.hero h1 em{font-style:normal;color:var(--accent)}.hero p{font-size:1.05rem;color:var(--text-dim);max-width:640px;margin:0 auto;position:relative}.container{max-width:1100px;margin:0 auto;padding:0 2rem 4rem}.section-num{font-family:'IBM Plex Mono',monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.2em;color:var(--accent);font-weight:500;margin-bottom:.3rem}.section-title{font-family:'Source Serif 4',serif;font-size:clamp(1.4rem,2.8vw,2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:.6rem}.section-intro{color:var(--text-dim);max-width:680px;margin-bottom:2rem;font-size:.95rem}.cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:3.5rem}.cat-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:1.5rem 1.6rem;box-shadow:var(--shadow-sm);transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}.cat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}.cat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--c-color,var(--accent))}.cat-card .cat-icon{font-size:1.6rem;margin-bottom:.8rem}.cat-card .cat-label{font-family:'IBM Plex Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.14em;color:var(--c-color,var(--accent));font-weight:600;margin-bottom:.3rem}.cat-card h3{font-family:'Source Serif 4',serif;font-size:1.15rem;font-weight:700;margin-bottom:.5rem}.cat-card p{color:var(--text-mid);font-size:.85rem;line-height:1.6;margin-bottom:.8rem}.pattern-list{display:flex;flex-wrap:wrap;gap:.3rem}.pattern-tag{font-family:'IBM Plex Mono',monospace;font-size:.62rem;padding:.2rem .5rem;border-radius:5px;background:var(--surface2);border:1px solid var(--border);color:var(--text-mid);font-weight:500}.tabs-outer{margin-bottom:3.5rem}.tab-bar{display:flex;gap:.25rem;border-bottom:2px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}.tab-btn{font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;padding:.7rem 1.3rem;border:none;background:none;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;white-space:nowrap}.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}.tab-content{display:none;padding-top:1.5rem}.tab-content.active{display:block}.subtab-bar{display:flex;gap:.2rem;margin-bottom:1.5rem;flex-wrap:wrap}.subtab-btn{font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;padding:.4rem .9rem;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);cursor:pointer;border-radius:8px;transition:all .2s}.subtab-btn:hover{background:var(--surface2);color:var(--text)}.subtab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}.subtab-content{display:none}.subtab-content.active{display:block}.pattern-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);margin-bottom:1rem;box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s}.pattern-card:hover{box-shadow:var(--shadow-md)}.pattern-header{padding:1.3rem 1.5rem;cursor:pointer;display:flex;align-items:flex-start;gap:1rem;user-select:none}.pattern-header:hover{background:var(--surface2)}.pattern-badge{font-family:'IBM Plex Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;padding:.2rem .5rem;border-radius:5px;font-weight:600;white-space:nowrap;flex-shrink:0;margin-top:.15rem}.badge-domain{background:var(--purple-bg);color:var(--purple);border:1px solid rgba(126,34,206,.15)}.badge-transport{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(29,78,216,.15)}.badge-persist{background:var(--teal-bg);color:var(--teal);border:1px solid rgba(15,118,110,.15)}.badge-dip{background:var(--accent-bg);color:var(--accent);border:1px solid rgba(180,83,9,.15)}.badge-key{background:var(--green-bg);color:var(--green);border:1px solid rgba(21,128,61,.15)}.badge-theory{background:var(--rose-bg);color:var(--rose);border:1px solid rgba(190,18,60,.15)}.badge-wiring{background:var(--indigo-bg);color:var(--indigo);border:1px solid rgba(67,56,202,.15)}.badge-docgen{background:rgba(217,119,6,.06);color:#d97706;border:1px solid rgba(217,119,6,.15)}.pattern-info{flex:1}.pattern-info h4{font-size:1rem;font-weight:700;margin-bottom:.25rem}.pattern-info p{font-size:.84rem;color:var(--text-mid);line-height:1.55}.pattern-toggle{font-size:1rem;color:var(--text-dim);flex-shrink:0;transition:transform .25s;margin-top:.15rem}.pattern-card.open .pattern-toggle{transform:rotate(90deg)}.pattern-body{display:none;padding:0 1.5rem 1.5rem;border-top:1px solid var(--border-light)}.pattern-card.open .pattern-body{display:block}.when-use,.key-insight,.warning-box,.tip-box{border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;margin-top:1rem}.when-use{background:var(--accent-bg);border:1px solid rgba(180,83,9,.12)}.key-insight{background:var(--blue-bg);border:1px solid rgba(29,78,216,.12)}.warning-box{background:var(--rose-bg);border:1px solid rgba(190,18,60,.12)}.tip-box{background:var(--green-bg);border:1px solid rgba(21,128,61,.12)}.when-use strong,.key-insight strong,.warning-box strong,.tip-box strong{font-family:'IBM Plex Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:.3rem}.when-use strong{color:var(--accent)}.key-insight strong{color:var(--blue)}.warning-box strong{color:var(--rose)}.tip-box strong{color:var(--green)}.when-use p,.key-insight p,.warning-box p,.tip-box p{font-size:.82rem;color:var(--text-mid);line-height:1.55}.code-tabs{display:flex;gap:.2rem}.code-tab-btn{font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:500;padding:.3rem .7rem;border:1px solid var(--code-border);border-bottom:none;background:var(--surface2);color:var(--text-dim);cursor:pointer;border-radius:6px 6px 0 0;transition:all .15s}.code-tab-btn.active{background:var(--code-bg);color:var(--text)}.code-block{display:none;background:var(--code-bg);border:1px solid var(--code-border);border-radius:0 8px 8px 8px;padding:1rem 1.2rem;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:.76rem;line-height:1.7;color:var(--text);tab-size:2;white-space:pre}.code-block.active{display:block}.code-block .kw{color:var(--purple);font-weight:600}.code-block .fn{color:var(--blue)}.code-block .str{color:var(--green)}.code-block .cm{color:var(--text-dim);font-style:italic}.code-block .cls{color:var(--accent);font-weight:600}.code-block .dc{color:var(--teal)}.diagram-box{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;overflow-x:auto}.diagram-box pre{font-family:'IBM Plex Mono',monospace;font-size:.72rem;line-height:1.6;color:var(--text-mid);white-space:pre}.info-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.82rem}.info-table th{font-family:'IBM Plex Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);text-align:left;padding:.6rem .8rem;border-bottom:2px solid var(--border);background:var(--surface2)}.info-table td{padding:.5rem .8rem;border-bottom:1px solid var(--border-light);color:var(--text-mid);vertical-align:top}.info-table tr:hover td{background:var(--surface2)}.body-text{font-size:.84rem;color:var(--text-mid);line-height:1.65;margin-bottom:.8rem;margin-top:.8rem}.body-text strong{color:var(--text)}.body-text code{font-family:'IBM Plex Mono',monospace;font-size:.78rem;background:var(--surface2);padding:.1rem .35rem;border-radius:4px;border:1px solid var(--border-light)}footer{text-align:center;padding:2rem;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:.7rem;border-top:1px solid var(--border)}@media(max-width:640px){.container{padding:0 1rem 3rem}.hero{padding:3rem 1rem 2.5rem}.cat-grid{grid-template-columns:1fr}.tab-btn{font-size:.8rem;padding:.6rem .9rem}}
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="hero-badge">Clean Architecture · Transporte / Dominio / Persistencia</div>
+  <h1>Use Cases + <em>Repositories</em></h1>
+  <p>Dominio con Use Cases (reglas de negocio), persistencia con Repositories (BD, email, docs), transporte con Express/Servlets, y gestión documental XML/XSL/XSL-FO. Todo intercambiable.</p>
+</section>
+<div class="container">
+<div class="section-num">01 — Tu modelo de capas</div>
+<h2 class="section-title">Transporte · Dominio · Persistencia · Gestión Documental</h2>
+<p class="section-intro">El dominio contiene las reglas de negocio como Use Cases. La persistencia guarda facturas y datos con Repositories. El transporte es todo lo de Express/Servlets. La gestión documental transforma datos en documentos vía XML/XSL/XSL-FO.</p>
+<div class="cat-grid">
+  <div class="cat-card" style="--c-color:var(--blue)"><div class="cat-icon">🌐</div><div class="cat-label">Transporte</div><h3>Todo lo de Express</h3><p>Routes, controllers, middleware, validación HTTP. Al migrar a Go/Rust, se reescribe entera.</p><div class="pattern-list"><span class="pattern-tag">express.Router</span><span class="pattern-tag">Servlet</span><span class="pattern-tag">gin.Context</span></div></div>
+  <div class="cat-card" style="--c-color:var(--purple)"><div class="cat-icon">💎</div><div class="cat-label">Dominio</div><h3>Reglas de negocio = Use Cases</h3><p>Entidades puras (beans sin anotaciones), Use Cases, interfaces (contratos). Cero dependencias de framework.</p><div class="pattern-list"><span class="pattern-tag">Use Cases</span><span class="pattern-tag">Entities</span><span class="pattern-tag">Interfaces</span></div></div>
+  <div class="cat-card" style="--c-color:var(--teal)"><div class="cat-icon">🗄️</div><div class="cat-label">Persistencia</div><h3>Repositories + Servicios ext.</h3><p>Guardar facturas, datos en BD, enviar emails. Patrón Repository. Cambiar MySQL→Postgres = cambiar 1 Repository.</p><div class="pattern-list"><span class="pattern-tag">FormRepository</span><span class="pattern-tag">MailRepository</span><span class="pattern-tag">DocumentRepository</span></div></div>
+  <div class="cat-card" style="--c-color:#d97706"><div class="cat-icon">📄</div><div class="cat-label">Gestión Documental</div><h3>XML → XSL → XSL-FO → PDF</h3><p>Pipeline con múltiples plantillas. Vive en persistencia como un DocumentRepository más. Añadir nuevo tipo de doc = crear un .xsl.</p><div class="pattern-list"><span class="pattern-tag">XML datos</span><span class="pattern-tag">Plantillas XSL</span><span class="pattern-tag">XSL-FO</span><span class="pattern-tag">Apache FOP</span></div></div>
+</div>
+
+<div class="section-num">02 — Detalle completo</div>
+<h2 class="section-title">Teoría, código comparativo y gestión documental</h2>
+<p class="section-intro">Orden recomendado: Teoría → Dominio → Persistencia → Gestión Documental → Transporte → Cableado → Migración.</p>
+
+<div class="tabs-outer">
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="theory">🧭 Teoría</button>
+    <button class="tab-btn" data-tab="domain">💎 Dominio</button>
+    <button class="tab-btn" data-tab="persist">🗄️ Persistencia</button>
+    <button class="tab-btn" data-tab="docs">📄 Docs XML/XSL</button>
+    <button class="tab-btn" data-tab="transport">🌐 Transporte</button>
+    <button class="tab-btn" data-tab="wiring">⚡ Cableado</button>
+    <button class="tab-btn" data-tab="proof">✅ Migración</button>
+  </div>
+
+  <!-- ══ TEORÍA ══ -->
+  <div class="tab-content active" id="tab-theory">
+    <div class="pattern-card open"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-theory">Mapeo</span><div class="pattern-info"><h4>Clean Architecture → Tu modelo exacto</h4><p>Los anillos de Uncle Bob en tu Transporte / Dominio (Use Cases) / Persistencia (Repositories).</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="diagram-box"><pre>
+  <strong>CLEAN ARCHITECTURE</strong>                       <strong>TU MODELO EXACTO</strong>
+
+  ┌──────────────────────────────┐       ┌─────────────────────────────────┐
+  │  Frameworks &amp; Drivers        │       │  🌐 <strong>TRANSPORTE</strong>                   │
+  │  (Express, Servlets, Gin)    │       │  Todo lo de Express / HTTP      │
+  │  ┌────────────────────────┐  │       ├─────────────────────────────────┤
+  │  │  Interface Adapters    │  │ ═══►  │  🗄️ <strong>PERSISTENCIA</strong>                 │
+  │  │  (Controllers, Repos)  │  │       │  <strong>Repositories</strong> (BD, mail, docs)   │
+  │  │  ┌──────────────────┐  │  │       ├─────────────────────────────────┤
+  │  │  │  Use Cases       │  │  │       │  💎 <strong>DOMINIO</strong>                      │
+  │  │  │  ┌────────────┐  │  │  │       │  <strong>Use Cases</strong> = reglas de negocio   │
+  │  │  │  │ Entities   │  │  │  │       │  Entities = beans puros (POJOs) │
+  │  │  │  └────────────┘  │  │  │       │  Interfaces = contratos         │
+  │  │  └──────────────────┘  │  │       └─────────────────────────────────┘
+  │  └────────────────────────┘  │
+  └──────────────────────────────┘       📄 Gestión Documental = un Repository
+                                         dentro de Persistencia
+      </pre></div>
+      <div class="key-insight"><strong>💡 Tu nomenclatura vs la clásica</strong><p>Use Cases = reglas de negocio. Repositories = todo lo que guarda o envía (BD, email, documentos). La gestión documental XML/XSL/XSL-FO es un Repository que implementa <code>DocumentRepository</code> del dominio.</p></div>
+    </div></div>
+
+    <div class="pattern-card open"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-dip">DIP</span><div class="pattern-info"><h4>Inversión de Dependencias — Use Cases solo conocen interfaces</h4><p>Cambiar MySQL→Postgres, JavaMail→SendGrid, o FOP→WeasyPrint no toca los Use Cases.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="diagram-box"><pre>
+  <strong>❌ SIN DIP — Acoplado</strong>
+
+  UseCase ──► JdbcFormRepo ──► MySQL
+  UseCase ──► SmtpMailRepo ──► Gmail
+  UseCase ──► FopDocRepo   ──► Apache FOP
+
+  ─────────────────────────────────────────────────────────
+
+  <strong>✅ CON DIP — Desacoplado</strong>
+
+                    ┌───────────────────────────┐
+                    │  💎 DOMINIO                │
+  UseCase ───────►  │  <strong>interface</strong> FormRepository  │ ◄── JdbcFormRepo  (MySQL)
+                    │                           │ ◄── PgFormRepo    (Postgres)
+                    │                           │ ◄── MongoFormRepo (MongoDB)
+                    │                           │
+  UseCase ───────►  │  <strong>interface</strong> MailRepository  │ ◄── SmtpMailRepo    (JavaMail)
+                    │                           │ ◄── NodemailerRepo (Nodemailer)
+                    │                           │
+  UseCase ───────►  │  <strong>interface</strong> DocumentRepo   │ ◄── FopDocRepo  (Apache FOP)
+                    │                           │ ◄── XsltDocRepo (xsltproc)
+                    └───────────────────────────┘
+
+  Cambiar MySQL→Postgres = nuevo Repository. Use Case <strong>NO cambia</strong>.
+      </pre></div>
+      <div class="warning-box"><strong>⛔ La regla que no puedes romper</strong><p>Si tu entidad tiene <code>@Entity</code> de JPA, o tu Use Case hace <code>import javax.mail</code>, la inversión se rompe. El dominio depende de persistencia y ya no puedes migrar sin reescribir reglas de negocio.</p></div>
+    </div></div>
+
+    <div class="pattern-card"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-theory">Flujo</span><div class="pattern-info"><h4>Flujo: "Procesar, generar informe, enviar por email"</h4><p>Cómo atraviesa las 3 capas + gestión documental.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="diagram-box"><pre>
+  POST /api/forms
+       │
+  ┌────┴──────────────────────────────────────────────────────┐
+  │ 🌐 <strong>TRANSPORTE</strong>                                              │
+  │ formController.handleSubmit(req, res)                     │
+  │   1. Valida  2. Construye entidad  3. Llama Use Case      │
+  └────┬──────────────────────────────────────────────────────┘
+       │
+  ┌────┴──────────────────────────────────────────────────────┐
+  │ 💎 <strong>DOMINIO</strong> — ProcessAndSendFormUseCase.execute(form, tid)  │
+  │   1. form.markAsProcessed()                                │
+  │   2. formRepo.save(form)            ← <strong>interface</strong>            │
+  │   3. documentRepo.generate(form,tid) ← <strong>interface</strong>           │
+  │   4. mailRepo.send(to,subj,body,pdf) ← <strong>interface</strong>           │
+  │   5. form.markAsSent()  6. formRepo.save(form)             │
+  └────┬──────────────┬───────────────────┬────────────────────┘
+       │              │                   │
+  ┌────┴──────┐  ┌────┴──────────┐  ┌────┴──────────┐
+  │🗄️ FormRepo│  │📄 DocumentRepo│  │🗄️ MailRepo    │
+  │ JDBC / pg │  │ XML→XSL→FO→PDF│  │ SMTP          │
+  └───────────┘  └───────────────┘  └───────────────┘
+      </pre></div>
+    </div></div>
+  </div>
+
+  <!-- ══ DOMINIO ══ -->
+  <div class="tab-content" id="tab-domain">
+    <div class="subtab-bar"><button class="subtab-btn active" data-subtab="dom-entity">Entity</button><button class="subtab-btn" data-subtab="dom-iface">Interfaces</button><button class="subtab-btn" data-subtab="dom-uc">Use Case</button></div>
+
+    <div class="subtab-content active" id="subtab-dom-entity"><div class="pattern-card open"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-domain">Entity</span><div class="pattern-info"><h4>FormSubmission — Bean puro sin anotaciones</h4><p>Transiciones de estado como regla de negocio. Traducción casi 1:1 entre lenguajes.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="tip-box"><strong>✅ Regla de oro</strong><p>Cero imports de framework. Sin <code>@Entity</code>, sin <code>@Column</code>. Las reglas de negocio (validaciones, transiciones) viven en los métodos de la entidad.</p></div>
+      <div class="code-tabs"><button class="code-tab-btn active" onclick="switchCode(this,'entity')">Java</button><button class="code-tab-btn" onclick="switchCode(this,'entity')">TypeScript</button><button class="code-tab-btn" onclick="switchCode(this,'entity')">Go</button></div>
+      <pre class="code-block active" data-group="entity"><span class="cm">// domain/entities/FormSubmission.java — Bean puro</span>
+<span class="kw">public class</span> <span class="cls">FormSubmission</span> {
+    <span class="kw">private final</span> String id, senderName, senderEmail, subject, body;
+    <span class="kw">private</span> String status = <span class="str">"PENDING"</span>;
+    <span class="kw">private final</span> LocalDateTime createdAt = LocalDateTime.<span class="fn">now</span>();
+    <span class="kw">private</span> LocalDateTime processedAt;
+
+    <span class="kw">public</span> <span class="fn">FormSubmission</span>(String id, String name, String email,
+                          String subject, String body) {
+        <span class="kw">this</span>.id=id; <span class="kw">this</span>.senderName=name; <span class="kw">this</span>.senderEmail=email;
+        <span class="kw">this</span>.subject=subject; <span class="kw">this</span>.body=body;
+    }
+
+    <span class="kw">public void</span> <span class="fn">markAsProcessed</span>() {
+        status = <span class="str">"PROCESSED"</span>; processedAt = LocalDateTime.<span class="fn">now</span>();
+    }
+    <span class="kw">public void</span> <span class="fn">markAsSent</span>() {
+        <span class="kw">if</span> (!<span class="str">"PROCESSED"</span>.<span class="fn">equals</span>(status))
+            <span class="kw">throw new</span> <span class="cls">IllegalStateException</span>(<span class="str">"No procesado"</span>);
+        status = <span class="str">"SENT"</span>;
+    }
+    <span class="kw">public void</span> <span class="fn">markAsFailed</span>() { status = <span class="str">"FAILED"</span>; }
+
+    <span class="cm">// Getters (sin setters — inmutabilidad controlada)</span>
+    <span class="kw">public</span> String <span class="fn">getId</span>(){<span class="kw">return</span> id;} <span class="kw">public</span> String <span class="fn">getSenderEmail</span>(){<span class="kw">return</span> senderEmail;}
+    <span class="kw">public</span> String <span class="fn">getSubject</span>(){<span class="kw">return</span> subject;} <span class="kw">public</span> String <span class="fn">getBody</span>(){<span class="kw">return</span> body;}
+    <span class="kw">public</span> String <span class="fn">getStatus</span>(){<span class="kw">return</span> status;} <span class="kw">public</span> String <span class="fn">getSenderName</span>(){<span class="kw">return</span> senderName;}
+}</pre>
+      <pre class="code-block" data-group="entity"><span class="cm">// domain/entities/FormSubmission.ts — Clase pura</span>
+<span class="kw">export class</span> <span class="cls">FormSubmission</span> {
+  <span class="kw">public</span> status = <span class="str">"PENDING"</span>;
+  <span class="kw">public readonly</span> createdAt = <span class="kw">new</span> <span class="cls">Date</span>();
+  <span class="kw">public</span> processedAt?: <span class="cls">Date</span>;
+
+  <span class="kw">constructor</span>(
+    <span class="kw">public readonly</span> id: <span class="cls">string</span>,
+    <span class="kw">public readonly</span> senderName: <span class="cls">string</span>,
+    <span class="kw">public readonly</span> senderEmail: <span class="cls">string</span>,
+    <span class="kw">public readonly</span> subject: <span class="cls">string</span>,
+    <span class="kw">public readonly</span> body: <span class="cls">string</span>,
+  ) {}
+
+  <span class="fn">markAsProcessed</span>() { <span class="kw">this</span>.status=<span class="str">"PROCESSED"</span>; <span class="kw">this</span>.processedAt=<span class="kw">new</span> <span class="cls">Date</span>(); }
+  <span class="fn">markAsSent</span>() {
+    <span class="kw">if</span>(<span class="kw">this</span>.status!==<span class="str">"PROCESSED"</span>) <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">"No procesado"</span>);
+    <span class="kw">this</span>.status=<span class="str">"SENT"</span>;
+  }
+  <span class="fn">markAsFailed</span>() { <span class="kw">this</span>.status=<span class="str">"FAILED"</span>; }
+}</pre>
+      <pre class="code-block" data-group="entity"><span class="cm">// domain/form_submission.go — Struct puro</span>
+<span class="kw">package</span> domain
+<span class="kw">import</span> (<span class="str">"errors"</span>;<span class="str">"time"</span>)
+
+<span class="kw">type</span> <span class="cls">FormSubmission</span> <span class="kw">struct</span> {
+    ID, SenderName, SenderEmail, Subject, Body, Status <span class="cls">string</span>
+    CreatedAt <span class="cls">time.Time</span>; ProcessedAt *<span class="cls">time.Time</span>
+}
+<span class="kw">func</span> <span class="fn">NewFormSubmission</span>(id,n,e,s,b <span class="cls">string</span>) *<span class="cls">FormSubmission</span> {
+    <span class="kw">return</span> &amp;<span class="cls">FormSubmission</span>{ID:id,SenderName:n,SenderEmail:e,
+        Subject:s,Body:b,Status:<span class="str">"PENDING"</span>,CreatedAt:time.<span class="fn">Now</span>()}
+}
+<span class="kw">func</span> (f *<span class="cls">FormSubmission</span>) <span class="fn">MarkAsProcessed</span>() {
+    f.Status=<span class="str">"PROCESSED"</span>;now:=time.<span class="fn">Now</span>();f.ProcessedAt=&amp;now
+}
+<span class="kw">func</span> (f *<span class="cls">FormSubmission</span>) <span class="fn">MarkAsSent</span>() <span class="cls">error</span> {
+    <span class="kw">if</span> f.Status!=<span class="str">"PROCESSED"</span>{<span class="kw">return</span> errors.<span class="fn">New</span>(<span class="str">"no procesado"</span>)}
+    f.Status=<span class="str">"SENT"</span>;<span class="kw">return nil</span>
+}
+<span class="kw">func</span> (f *<span class="cls">FormSubmission</span>) <span class="fn">MarkAsFailed</span>() { f.Status=<span class="str">"FAILED"</span> }</pre>
+    </div></div></div>
+
+    <div class="subtab-content" id="subtab-dom-iface"><div class="pattern-card open"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-domain">Contratos</span><div class="pattern-info"><h4>Las 3 interfaces Repository — El corazón del DIP</h4><p>FormRepository (BD), DocumentRepository (docs), MailRepository (email).</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="code-tabs"><button class="code-tab-btn active" onclick="switchCode(this,'iface')">Java</button><button class="code-tab-btn" onclick="switchCode(this,'iface')">TypeScript</button><button class="code-tab-btn" onclick="switchCode(this,'iface')">Go</button></div>
+      <pre class="code-block active" data-group="iface"><span class="cm">// domain/interfaces/ — Los 3 contratos</span>
+<span class="kw">public interface</span> <span class="cls">FormRepository</span> {
+    <span class="kw">void</span> <span class="fn">save</span>(<span class="cls">FormSubmission</span> form);
+    Optional&lt;<span class="cls">FormSubmission</span>&gt; <span class="fn">findById</span>(String id);
+}
+<span class="kw">public interface</span> <span class="cls">DocumentRepository</span> {
+    <span class="kw">byte</span>[] <span class="fn">generate</span>(<span class="cls">FormSubmission</span> data, String templateId);
+}
+<span class="kw">public interface</span> <span class="cls">MailRepository</span> {
+    <span class="kw">void</span> <span class="fn">send</span>(String to, String subject, String body, <span class="kw">byte</span>[] attachment);
+}</pre>
+      <pre class="code-block" data-group="iface"><span class="cm">// domain/interfaces/</span>
+<span class="kw">export interface</span> <span class="cls">FormRepository</span> {
+  <span class="fn">save</span>(form: <span class="cls">FormSubmission</span>): <span class="cls">Promise</span>&lt;<span class="cls">void</span>&gt;;
+  <span class="fn">findById</span>(id: <span class="cls">string</span>): <span class="cls">Promise</span>&lt;<span class="cls">FormSubmission</span>|<span class="cls">null</span>&gt;;
+}
+<span class="kw">export interface</span> <span class="cls">DocumentRepository</span> {
+  <span class="fn">generate</span>(data: <span class="cls">FormSubmission</span>, templateId: <span class="cls">string</span>): <span class="cls">Promise</span>&lt;<span class="cls">Buffer</span>&gt;;
+}
+<span class="kw">export interface</span> <span class="cls">MailRepository</span> {
+  <span class="fn">send</span>(to:<span class="cls">string</span>, subj:<span class="cls">string</span>, body:<span class="cls">string</span>, att?:<span class="cls">Buffer</span>): <span class="cls">Promise</span>&lt;<span class="cls">void</span>&gt;;
+}</pre>
+      <pre class="code-block" data-group="iface"><span class="cm">// domain/interfaces.go</span>
+<span class="kw">package</span> domain
+<span class="kw">type</span> <span class="cls">FormRepository</span> <span class="kw">interface</span> {
+    <span class="fn">Save</span>(form *<span class="cls">FormSubmission</span>) <span class="cls">error</span>
+    <span class="fn">FindByID</span>(id <span class="cls">string</span>) (*<span class="cls">FormSubmission</span>, <span class="cls">error</span>)
+}
+<span class="kw">type</span> <span class="cls">DocumentRepository</span> <span class="kw">interface</span> {
+    <span class="fn">Generate</span>(data *<span class="cls">FormSubmission</span>, templateID <span class="cls">string</span>) ([]<span class="cls">byte</span>, <span class="cls">error</span>)
+}
+<span class="kw">type</span> <span class="cls">MailRepository</span> <span class="kw">interface</span> {
+    <span class="fn">Send</span>(to, subject, body <span class="cls">string</span>, attachment []<span class="cls">byte</span>) <span class="cls">error</span>
+}</pre>
+    </div></div></div>
+
+    <div class="subtab-content" id="subtab-dom-uc"><div class="pattern-card open"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-domain">Use Case</span><div class="pattern-info"><h4>ProcessAndSendFormUseCase — Recibe Repositories por constructor</h4><p>Orquesta: procesar → guardar → generar doc → enviar → actualizar. No conoce ninguna tecnología.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="code-tabs"><button class="code-tab-btn active" onclick="switchCode(this,'uc')">Java</button><button class="code-tab-btn" onclick="switchCode(this,'uc')">TypeScript</button><button class="code-tab-btn" onclick="switchCode(this,'uc')">Go</button></div>
+      <pre class="code-block active" data-group="uc"><span class="cm">// domain/usecases/ProcessAndSendFormUseCase.java</span>
+<span class="kw">public class</span> <span class="cls">ProcessAndSendFormUseCase</span> {
+    <span class="kw">private final</span> <span class="cls">FormRepository</span> formRepo;
+    <span class="kw">private final</span> <span class="cls">DocumentRepository</span> docRepo;
+    <span class="kw">private final</span> <span class="cls">MailRepository</span> mailRepo;
+
+    <span class="kw">public</span> <span class="fn">ProcessAndSendFormUseCase</span>(<span class="cls">FormRepository</span> f,
+            <span class="cls">DocumentRepository</span> d, <span class="cls">MailRepository</span> m) {
+        formRepo=f; docRepo=d; mailRepo=m;
+    }
+
+    <span class="kw">public void</span> <span class="fn">execute</span>(<span class="cls">FormSubmission</span> form, String templateId) {
+        form.<span class="fn">markAsProcessed</span>();
+        formRepo.<span class="fn">save</span>(form);
+        <span class="kw">try</span> {
+            <span class="kw">byte</span>[] pdf = docRepo.<span class="fn">generate</span>(form, templateId);
+            mailRepo.<span class="fn">send</span>(form.<span class="fn">getSenderEmail</span>(),
+                <span class="str">"Confirmación: "</span>+form.<span class="fn">getSubject</span>(),
+                <span class="str">"Adjuntamos su formulario procesado."</span>, pdf);
+            form.<span class="fn">markAsSent</span>();
+        } <span class="kw">catch</span>(Exception e) { form.<span class="fn">markAsFailed</span>(); }
+        formRepo.<span class="fn">save</span>(form);
+    }
+}</pre>
+      <pre class="code-block" data-group="uc"><span class="cm">// domain/usecases/ProcessAndSendFormUseCase.ts</span>
+<span class="kw">export class</span> <span class="cls">ProcessAndSendFormUseCase</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> formRepo:<span class="cls">FormRepository</span>,
+    <span class="kw">private</span> docRepo:<span class="cls">DocumentRepository</span>,
+    <span class="kw">private</span> mailRepo:<span class="cls">MailRepository</span>) {}
+
+  <span class="kw">async</span> <span class="fn">execute</span>(form:<span class="cls">FormSubmission</span>, templateId:<span class="cls">string</span>) {
+    form.<span class="fn">markAsProcessed</span>();
+    <span class="kw">await</span> <span class="kw">this</span>.formRepo.<span class="fn">save</span>(form);
+    <span class="kw">try</span> {
+      <span class="kw">const</span> pdf = <span class="kw">await</span> <span class="kw">this</span>.docRepo.<span class="fn">generate</span>(form, templateId);
+      <span class="kw">await</span> <span class="kw">this</span>.mailRepo.<span class="fn">send</span>(form.senderEmail,
+        <span class="str">`Confirmación: ${form.subject}`</span>,
+        <span class="str">"Adjuntamos su formulario."</span>, pdf);
+      form.<span class="fn">markAsSent</span>();
+    } <span class="kw">catch</span> { form.<span class="fn">markAsFailed</span>(); }
+    <span class="kw">await</span> <span class="kw">this</span>.formRepo.<span class="fn">save</span>(form);
+  }
+}</pre>
+      <pre class="code-block" data-group="uc"><span class="cm">// domain/process_and_send.go</span>
+<span class="kw">func</span> (uc *<span class="cls">ProcessAndSendFormUseCase</span>) <span class="fn">Execute</span>(
+    f *<span class="cls">FormSubmission</span>, tid <span class="cls">string</span>) <span class="cls">error</span> {
+    f.<span class="fn">MarkAsProcessed</span>()
+    <span class="kw">if</span> err:=uc.formRepo.<span class="fn">Save</span>(f);err!=<span class="kw">nil</span>{<span class="kw">return</span> err}
+    pdf,err:=uc.docRepo.<span class="fn">Generate</span>(f,tid)
+    <span class="kw">if</span> err!=<span class="kw">nil</span>{f.<span class="fn">MarkAsFailed</span>();uc.formRepo.<span class="fn">Save</span>(f);<span class="kw">return</span> err}
+    <span class="kw">if</span> err=uc.mailRepo.<span class="fn">Send</span>(f.SenderEmail,
+        <span class="str">"Confirmación: "</span>+f.Subject,
+        <span class="str">"Adjuntamos su formulario."</span>,pdf);err!=<span class="kw">nil</span>{
+        f.<span class="fn">MarkAsFailed</span>()
+    }<span class="kw">else</span>{f.<span class="fn">MarkAsSent</span>()}
+    <span class="kw">return</span> uc.formRepo.<span class="fn">Save</span>(f)
+}</pre>
+      <div class="key-insight"><strong>💡 Lógica idéntica en 3 lenguajes</strong><p>markAsProcessed → save → generate → send → markAsSent/Failed → save. Solo cambia la sintaxis. Portable porque solo depende de interfaces Repository.</p></div>
+    </div></div></div>
+  </div>
+
+  <!-- ══ PERSISTENCIA ══ -->
+  <div class="tab-content" id="tab-persist">
+    <div class="pattern-card open"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-persist">Repository</span><div class="pattern-info"><h4>FormRepository — JDBC MySQL vs pg Postgres vs sqlx Go</h4><p>La misma interfaz, 3 implementaciones. Cambiar BD = sustituir qué Repository se inyecta.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="code-tabs"><button class="code-tab-btn active" onclick="switchCode(this,'repo')">Java JDBC</button><button class="code-tab-btn" onclick="switchCode(this,'repo')">TypeScript pg</button><button class="code-tab-btn" onclick="switchCode(this,'repo')">Go sqlx</button></div>
+      <pre class="code-block active" data-group="repo"><span class="cm">// persistence/JdbcFormRepository.java — implements FormRepository</span>
+<span class="kw">public class</span> <span class="cls">JdbcFormRepository</span> <span class="kw">implements</span> <span class="cls">FormRepository</span> {
+    <span class="kw">private final</span> Connection conn;
+    <span class="kw">public</span> <span class="fn">JdbcFormRepository</span>(Connection c) { conn=c; }
+
+    <span class="dc">@Override</span> <span class="kw">public void</span> <span class="fn">save</span>(<span class="cls">FormSubmission</span> f) {
+        String sql = <span class="str">"INSERT INTO forms(id,sender_name,sender_email,"</span>
+            + <span class="str">"subject,body,status) VALUES(?,?,?,?,?,?) "</span>
+            + <span class="str">"ON DUPLICATE KEY UPDATE status=?"</span>;
+        <span class="kw">try</span>(PreparedStatement ps = conn.<span class="fn">prepareStatement</span>(sql)) {
+            ps.<span class="fn">setString</span>(1, f.<span class="fn">getId</span>()); ps.<span class="fn">setString</span>(2, f.<span class="fn">getSenderName</span>());
+            ps.<span class="fn">setString</span>(3, f.<span class="fn">getSenderEmail</span>()); ps.<span class="fn">setString</span>(4, f.<span class="fn">getSubject</span>());
+            ps.<span class="fn">setString</span>(5, f.<span class="fn">getBody</span>()); ps.<span class="fn">setString</span>(6, f.<span class="fn">getStatus</span>());
+            ps.<span class="fn">setString</span>(7, f.<span class="fn">getStatus</span>()); ps.<span class="fn">executeUpdate</span>();
+        } <span class="kw">catch</span>(SQLException e) { <span class="kw">throw new</span> <span class="cls">RuntimeException</span>(e); }
+    }
+}</pre>
+      <pre class="code-block" data-group="repo"><span class="cm">// persistence/PgFormRepository.ts — implements FormRepository</span>
+<span class="kw">export class</span> <span class="cls">PgFormRepository</span> <span class="kw">implements</span> <span class="cls">FormRepository</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> pool: <span class="cls">Pool</span>) {}
+  <span class="kw">async</span> <span class="fn">save</span>(f: <span class="cls">FormSubmission</span>) {
+    <span class="kw">await</span> <span class="kw">this</span>.pool.<span class="fn">query</span>(
+      <span class="str">`INSERT INTO forms(id,sender_name,sender_email,subject,body,status)
+       VALUES($1,$2,$3,$4,$5,$6)
+       ON CONFLICT(id) DO UPDATE SET status=$6`</span>,
+      [f.id, f.senderName, f.senderEmail, f.subject, f.body, f.status]);
+  }
+}</pre>
+      <pre class="code-block" data-group="repo"><span class="cm">// persistence/pg_form_repo.go — implements FormRepository</span>
+<span class="kw">func</span> (r *<span class="cls">PgFormRepository</span>) <span class="fn">Save</span>(f *domain.<span class="cls">FormSubmission</span>) <span class="cls">error</span> {
+    _, err := r.db.<span class="fn">Exec</span>(<span class="str">`INSERT INTO forms(id,sender_name,
+        sender_email,subject,body,status) VALUES($1,$2,$3,$4,$5,$6)
+        ON CONFLICT(id) DO UPDATE SET status=$6`</span>,
+        f.ID, f.SenderName, f.SenderEmail, f.Subject, f.Body, f.Status)
+    <span class="kw">return</span> err
+}</pre>
+      <div class="when-use"><strong>🔌 El punto clave del patrón Repository</strong><p>Las 3 implementaciones satisfacen la misma interfaz <code>FormRepository</code>. El Use Case no cambia. El controller no cambia. Solo cambia qué Repository se inyecta en el main().</p></div>
+    </div></div>
+  </div>
+
+  <!-- ══ DOCS XML/XSL ══ -->
+  <div class="tab-content" id="tab-docs">
+    <div class="pattern-card open"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-docgen">Pipeline</span><div class="pattern-info"><h4>Datos → XML → XSL → XSL-FO → PDF (múltiples plantillas)</h4><p>La gestión documental como DocumentRepository dentro de persistencia.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="diagram-box"><pre>
+  <strong>FormSubmission</strong> (Entidad)
+       │  serializa           <strong>Selección por templateId:</strong>
+       ▼                      ┌──────────────────────────────┐
+  ┌──────────┐                │  templates/                  │
+  │ <strong>XML</strong>      │───XSL────►    │  ├── informe-formal.xsl      │
+  │ datos    │                │  ├── factura.xsl              │
+  └──────────┘                │  ├── recibo-simple.xsl        │
+       │                      │  ├── certificado-oficial.xsl  │
+       ▼                      │  └── albaran-entrega.xsl      │
+  ┌──────────┐                └──────────────────────────────┘
+  │ <strong>XSL-FO</strong>   │
+  │ layout   │           <strong>Motor FO (enchufe):</strong>
+  └──────────┘           Apache FOP (Java) / fop CLI (Node/Go)
+       │                 WeasyPrint (Python) / wkhtmltopdf
+       ▼
+  ┌──────────┐
+  │ <strong>PDF</strong>      │──► Se adjunta al email vía MailRepository
+  └──────────┘
+      </pre></div>
+      <div class="tip-box"><strong>✅ Nuevo tipo de documento = 0 líneas de código</strong><p>Crear <code>factura.xsl</code> y pasar <code>"factura"</code> como templateId. No se toca ni Java, ni TypeScript, ni Go. Las plantillas XSL son compartidas entre todas las implementaciones.</p></div>
+
+      <div class="code-tabs"><button class="code-tab-btn active" onclick="switchCode(this,'xmlfo')">XML datos</button><button class="code-tab-btn" onclick="switchCode(this,'xmlfo')">XSL plantilla</button><button class="code-tab-btn" onclick="switchCode(this,'xmlfo')">XSL-FO resultado</button></div>
+      <pre class="code-block active" data-group="xmlfo"><span class="cm">&lt;!-- Generado desde FormSubmission --&gt;</span>
+<span class="kw">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="dc">&lt;form-submission&gt;</span>
+  <span class="dc">&lt;id&gt;</span>f-2026-00142<span class="dc">&lt;/id&gt;</span>
+  <span class="dc">&lt;sender-name&gt;</span>María García<span class="dc">&lt;/sender-name&gt;</span>
+  <span class="dc">&lt;sender-email&gt;</span>maria@empresa.com<span class="dc">&lt;/sender-email&gt;</span>
+  <span class="dc">&lt;subject&gt;</span>Alta de proveedor<span class="dc">&lt;/subject&gt;</span>
+  <span class="dc">&lt;body&gt;</span>Solicitamos el alta de ACME...<span class="dc">&lt;/body&gt;</span>
+  <span class="dc">&lt;status&gt;</span>PROCESSED<span class="dc">&lt;/status&gt;</span>
+<span class="dc">&lt;/form-submission&gt;</span></pre>
+      <pre class="code-block" data-group="xmlfo"><span class="cm">&lt;!-- templates/informe-formal.xsl --&gt;</span>
+<span class="kw">&lt;xsl:stylesheet</span> version=<span class="str">"1.0"</span>
+  xmlns:xsl=<span class="str">"http://www.w3.org/1999/XSL/Transform"</span>
+  xmlns:fo=<span class="str">"http://www.w3.org/1999/XSL/Format"</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;xsl:template</span> match=<span class="str">"/"</span><span class="kw">&gt;</span>
+    <span class="dc">&lt;fo:root&gt;</span>
+      <span class="dc">&lt;fo:layout-master-set&gt;</span>
+        <span class="dc">&lt;fo:simple-page-master</span> master-name=<span class="str">"A4"</span>
+            page-width=<span class="str">"210mm"</span> page-height=<span class="str">"297mm"</span>
+            margin=<span class="str">"25mm"</span><span class="dc">&gt;</span>
+          <span class="dc">&lt;fo:region-body/&gt;</span>
+        <span class="dc">&lt;/fo:simple-page-master&gt;</span>
+      <span class="dc">&lt;/fo:layout-master-set&gt;</span>
+      <span class="dc">&lt;fo:page-sequence</span> master-reference=<span class="str">"A4"</span><span class="dc">&gt;</span>
+        <span class="dc">&lt;fo:flow</span> flow-name=<span class="str">"xsl-region-body"</span><span class="dc">&gt;</span>
+          <span class="dc">&lt;fo:block</span> font-size=<span class="str">"18pt"</span> font-weight=<span class="str">"bold"</span><span class="dc">&gt;</span>
+            <span class="kw">&lt;xsl:value-of</span> select=<span class="str">"//subject"</span><span class="kw">/&gt;</span>
+          <span class="dc">&lt;/fo:block&gt;</span>
+          <span class="dc">&lt;fo:block</span> space-before=<span class="str">"8pt"</span><span class="dc">&gt;</span>
+            De: <span class="kw">&lt;xsl:value-of</span> select=<span class="str">"//sender-name"</span><span class="kw">/&gt;</span>
+          <span class="dc">&lt;/fo:block&gt;</span>
+          <span class="dc">&lt;fo:block</span> space-before=<span class="str">"18pt"</span><span class="dc">&gt;</span>
+            <span class="kw">&lt;xsl:value-of</span> select=<span class="str">"//body"</span><span class="kw">/&gt;</span>
+          <span class="dc">&lt;/fo:block&gt;</span>
+        <span class="dc">&lt;/fo:flow&gt;</span>
+      <span class="dc">&lt;/fo:page-sequence&gt;</span>
+    <span class="dc">&lt;/fo:root&gt;</span>
+  <span class="kw">&lt;/xsl:template&gt;</span>
+<span class="kw">&lt;/xsl:stylesheet&gt;</span></pre>
+      <pre class="code-block" data-group="xmlfo"><span class="cm">&lt;!-- XSL-FO resultado — lo que recibe Apache FOP --&gt;</span>
+<span class="dc">&lt;fo:root</span> xmlns:fo=<span class="str">"http://www.w3.org/1999/XSL/Format"</span><span class="dc">&gt;</span>
+  <span class="dc">&lt;fo:layout-master-set&gt;</span>
+    <span class="dc">&lt;fo:simple-page-master</span> master-name=<span class="str">"A4"</span>
+        page-width=<span class="str">"210mm"</span> page-height=<span class="str">"297mm"</span>
+        margin=<span class="str">"25mm"</span><span class="dc">&gt;</span>
+      <span class="dc">&lt;fo:region-body/&gt;</span>
+    <span class="dc">&lt;/fo:simple-page-master&gt;</span>
+  <span class="dc">&lt;/fo:layout-master-set&gt;</span>
+  <span class="dc">&lt;fo:page-sequence</span> master-reference=<span class="str">"A4"</span><span class="dc">&gt;</span>
+    <span class="dc">&lt;fo:flow</span> flow-name=<span class="str">"xsl-region-body"</span><span class="dc">&gt;</span>
+      <span class="dc">&lt;fo:block</span> font-size=<span class="str">"18pt"</span> font-weight=<span class="str">"bold"</span><span class="dc">&gt;</span>
+        Alta de proveedor<span class="dc">&lt;/fo:block&gt;</span>
+      <span class="dc">&lt;fo:block</span> space-before=<span class="str">"8pt"</span><span class="dc">&gt;</span>
+        De: María García<span class="dc">&lt;/fo:block&gt;</span>
+      <span class="dc">&lt;fo:block</span> space-before=<span class="str">"18pt"</span><span class="dc">&gt;</span>
+        Solicitamos el alta de ACME...<span class="dc">&lt;/fo:block&gt;</span>
+    <span class="dc">&lt;/fo:flow&gt;</span>
+  <span class="dc">&lt;/fo:page-sequence&gt;</span>
+<span class="dc">&lt;/fo:root&gt;</span></pre>
+    </div></div>
+
+    <div class="pattern-card"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-persist">Repository</span><div class="pattern-info"><h4>DocumentRepository — Apache FOP (Java) vs fop CLI (Node)</h4><p>Implementa la interfaz del dominio. Cada implementación usa el motor nativo de su ecosistema.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="code-tabs"><button class="code-tab-btn active" onclick="switchCode(this,'docgen')">Java — Apache FOP</button><button class="code-tab-btn" onclick="switchCode(this,'docgen')">TypeScript — xsltproc+fop</button></div>
+      <pre class="code-block active" data-group="docgen"><span class="cm">// persistence/FopDocumentRepository.java</span>
+<span class="kw">public class</span> <span class="cls">FopDocumentRepository</span> <span class="kw">implements</span> <span class="cls">DocumentRepository</span> {
+    <span class="kw">private final</span> String templatesDir;
+    <span class="kw">public</span> <span class="fn">FopDocumentRepository</span>(String dir) { templatesDir=dir; }
+
+    <span class="dc">@Override</span>
+    <span class="kw">public byte</span>[] <span class="fn">generate</span>(<span class="cls">FormSubmission</span> data, String templateId) {
+        String xml = <span class="fn">toXml</span>(data);
+        File xsl = <span class="kw">new</span> File(templatesDir, templateId+<span class="str">".xsl"</span>);
+        FopFactory ff = FopFactory.<span class="fn">newInstance</span>(<span class="kw">new</span> File(<span class="str">"."</span>).toURI());
+        ByteArrayOutputStream out = <span class="kw">new</span> ByteArrayOutputStream();
+        Fop fop = ff.<span class="fn">newFop</span>(MimeConstants.MIME_PDF, out);
+        Transformer t = TransformerFactory.<span class="fn">newInstance</span>()
+            .<span class="fn">newTransformer</span>(<span class="kw">new</span> StreamSource(xsl));
+        t.<span class="fn">transform</span>(<span class="kw">new</span> StreamSource(<span class="kw">new</span> StringReader(xml)),
+                    <span class="kw">new</span> SAXResult(fop.<span class="fn">getDefaultHandler</span>()));
+        <span class="kw">return</span> out.<span class="fn">toByteArray</span>();
+    }
+}</pre>
+      <pre class="code-block" data-group="docgen"><span class="cm">// persistence/XsltDocumentRepository.ts</span>
+<span class="kw">export class</span> <span class="cls">XsltDocumentRepository</span> <span class="kw">implements</span> <span class="cls">DocumentRepository</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> templatesDir: <span class="cls">string</span>) {}
+  <span class="kw">async</span> <span class="fn">generate</span>(data:<span class="cls">FormSubmission</span>, tid:<span class="cls">string</span>): <span class="cls">Promise</span>&lt;<span class="cls">Buffer</span>&gt; {
+    <span class="kw">const</span> xml = <span class="kw">this</span>.<span class="fn">toXml</span>(data);
+    <span class="kw">const</span> tmp = <span class="str">`/tmp/${data.id}`</span>;
+    <span class="fn">writeFileSync</span>(<span class="str">`${tmp}.xml`</span>, xml);
+    <span class="fn">execSync</span>(<span class="str">`xsltproc -o ${tmp}.fo ${<span class="kw">this</span>.templatesDir}/${tid}.xsl ${tmp}.xml`</span>);
+    <span class="fn">execSync</span>(<span class="str">`fop ${tmp}.fo ${tmp}.pdf`</span>);
+    <span class="kw">const</span> pdf = <span class="fn">readFileSync</span>(<span class="str">`${tmp}.pdf`</span>);
+    [<span class="str">".xml"</span>,<span class="str">".fo"</span>,<span class="str">".pdf"</span>].<span class="fn">forEach</span>(e=><span class="fn">unlinkSync</span>(tmp+e));
+    <span class="kw">return</span> pdf;
+  }
+}</pre>
+    </div></div>
+  </div>
+
+  <!-- ══ TRANSPORTE ══ -->
+  <div class="tab-content" id="tab-transport">
+    <div class="pattern-card open"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-transport">Controller</span><div class="pattern-info"><h4>Servlet vs Express vs Gin — Se reescribe al migrar</h4><p>Todos: validar → construir entidad → llamar Use Case → responder. Pero la API HTTP cambia al 100%.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="code-tabs"><button class="code-tab-btn active" onclick="switchCode(this,'ctrl')">Java Servlet</button><button class="code-tab-btn" onclick="switchCode(this,'ctrl')">TypeScript Express</button><button class="code-tab-btn" onclick="switchCode(this,'ctrl')">Go Gin</button></div>
+      <pre class="code-block active" data-group="ctrl"><span class="cm">// transport/FormServlet.java</span>
+<span class="kw">public class</span> <span class="cls">FormServlet</span> <span class="kw">extends</span> HttpServlet {
+    <span class="kw">private final</span> <span class="cls">ProcessAndSendFormUseCase</span> useCase;
+    <span class="kw">public</span> <span class="fn">FormServlet</span>(<span class="cls">ProcessAndSendFormUseCase</span> uc){useCase=uc;}
+
+    <span class="dc">@Override</span> <span class="kw">protected void</span> <span class="fn">doPost</span>(HttpServletRequest req,
+                                       HttpServletResponse resp) {
+        <span class="kw">var</span> form = <span class="kw">new</span> <span class="cls">FormSubmission</span>(UUID.<span class="fn">randomUUID</span>().<span class="fn">toString</span>(),
+            req.<span class="fn">getParameter</span>(<span class="str">"name"</span>), req.<span class="fn">getParameter</span>(<span class="str">"email"</span>),
+            req.<span class="fn">getParameter</span>(<span class="str">"subject"</span>), req.<span class="fn">getParameter</span>(<span class="str">"body"</span>));
+        String t = req.<span class="fn">getParameter</span>(<span class="str">"template"</span>);
+        useCase.<span class="fn">execute</span>(form, t!=<span class="kw">null</span>?t:<span class="str">"informe-formal"</span>);
+        resp.<span class="fn">setStatus</span>(201);
+    }
+}</pre>
+      <pre class="code-block" data-group="ctrl"><span class="cm">// transport/formRouter.ts — todo lo de Express</span>
+<span class="kw">export function</span> <span class="fn">createFormRouter</span>(uc:<span class="cls">ProcessAndSendFormUseCase</span>) {
+  <span class="kw">const</span> r = <span class="fn">Router</span>();
+  r.<span class="fn">post</span>(<span class="str">"/api/forms"</span>, <span class="kw">async</span>(req,res)=>{
+    <span class="kw">const</span> {name,email,subject,body,template} = req.body;
+    <span class="kw">const</span> form = <span class="kw">new</span> <span class="cls">FormSubmission</span>(<span class="fn">uuid</span>(),name,email,subject,body);
+    <span class="kw">await</span> uc.<span class="fn">execute</span>(form, template??<span class="str">"informe-formal"</span>);
+    res.<span class="fn">status</span>(201).<span class="fn">json</span>({id:form.id, status:form.status});
+  });
+  <span class="kw">return</span> r;
+}</pre>
+      <pre class="code-block" data-group="ctrl"><span class="cm">// transport/form_handler.go</span>
+<span class="kw">func</span>(h *<span class="cls">FormHandler</span>)<span class="fn">HandleSubmit</span>(c *gin.<span class="cls">Context</span>){
+    <span class="kw">var</span> req <span class="kw">struct</span>{Name,Email,Subject,Body,Template <span class="cls">string</span>}
+    c.<span class="fn">BindJSON</span>(&amp;req)
+    form:=domain.<span class="fn">NewFormSubmission</span>(uuid.<span class="fn">New</span>().<span class="fn">String</span>(),
+        req.Name,req.Email,req.Subject,req.Body)
+    t:=req.Template; <span class="kw">if</span> t==<span class="str">""</span>{t=<span class="str">"informe-formal"</span>}
+    h.uc.<span class="fn">Execute</span>(form,t)
+    c.<span class="fn">JSON</span>(201,gin.<span class="cls">H</span>{<span class="str">"id"</span>:form.ID})
+}</pre>
+    </div></div>
+  </div>
+
+  <!-- ══ CABLEADO ══ -->
+  <div class="tab-content" id="tab-wiring">
+    <div class="pattern-card open"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-wiring">Main</span><div class="pattern-info"><h4>El main() — Donde eliges qué Repositories inyectar</h4><p>ÚNICO lugar que conoce implementaciones concretas. Cambiar BD/mailer/docs = 1 línea.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="code-tabs"><button class="code-tab-btn active" onclick="switchCode(this,'wire')">Java</button><button class="code-tab-btn" onclick="switchCode(this,'wire')">TypeScript</button><button class="code-tab-btn" onclick="switchCode(this,'wire')">Go</button></div>
+      <pre class="code-block active" data-group="wire"><span class="cm">// Main.java — El "cableador"</span>
+Connection conn = DriverManager.<span class="fn">getConnection</span>(<span class="str">"jdbc:mysql://..."</span>);
+
+<span class="cls">FormRepository</span>     formRepo = <span class="kw">new</span> <span class="cls">JdbcFormRepository</span>(conn);
+<span class="cls">DocumentRepository</span> docRepo  = <span class="kw">new</span> <span class="cls">FopDocumentRepository</span>(<span class="str">"./templates"</span>);
+<span class="cls">MailRepository</span>     mailRepo = <span class="kw">new</span> <span class="cls">SmtpMailRepository</span>(<span class="str">"smtp.gmail.com"</span>, 587);
+
+<span class="kw">var</span> useCase = <span class="kw">new</span> <span class="cls">ProcessAndSendFormUseCase</span>(formRepo, docRepo, mailRepo);
+<span class="kw">var</span> servlet = <span class="kw">new</span> <span class="cls">FormServlet</span>(useCase);
+
+<span class="cm">// CAMBIAR BD:    new PgFormRepository(pgConn)      ← 1 línea</span>
+<span class="cm">// CAMBIAR MAIL:  new SendGridRepository(apiKey)     ← 1 línea</span>
+<span class="cm">// El UseCase y el Servlet NO se tocan.</span></pre>
+      <pre class="code-block" data-group="wire"><span class="cm">// app.ts — El "cableador"</span>
+<span class="kw">const</span> formRepo = <span class="kw">new</span> <span class="cls">PgFormRepository</span>(<span class="kw">new</span> <span class="cls">Pool</span>({connectionString:DB_URL}));
+<span class="kw">const</span> docRepo  = <span class="kw">new</span> <span class="cls">XsltDocumentRepository</span>(<span class="str">"./templates"</span>);
+<span class="kw">const</span> mailRepo = <span class="kw">new</span> <span class="cls">NodemailerRepository</span>(<span class="str">"smtp.gmail.com"</span>, 587);
+
+<span class="kw">const</span> useCase = <span class="kw">new</span> <span class="cls">ProcessAndSendFormUseCase</span>(formRepo, docRepo, mailRepo);
+<span class="kw">const</span> app = <span class="fn">express</span>(); app.<span class="fn">use</span>(express.<span class="fn">json</span>());
+app.<span class="fn">use</span>(<span class="fn">createFormRouter</span>(useCase)); app.<span class="fn">listen</span>(3000);
+
+<span class="cm">// CAMBIAR BD: new MongoFormRepository(client)  ← 1 línea</span></pre>
+      <pre class="code-block" data-group="wire"><span class="cm">// main.go — El "cableador"</span>
+db, _ := sqlx.<span class="fn">Connect</span>(<span class="str">"postgres"</span>, <span class="str">"postgres://..."</span>)
+formRepo := persistence.<span class="fn">NewPgFormRepository</span>(db)
+docRepo  := persistence.<span class="fn">NewFopDocRepository</span>(<span class="str">"./templates"</span>)
+mailRepo := persistence.<span class="fn">NewSmtpMailRepository</span>(<span class="str">"smtp.gmail.com"</span>, 587)
+
+uc := domain.<span class="fn">NewProcessAndSendForm</span>(formRepo, docRepo, mailRepo)
+h  := transport.<span class="fn">NewFormHandler</span>(uc)
+r  := gin.<span class="fn">Default</span>()
+r.<span class="fn">POST</span>(<span class="str">"/api/forms"</span>, h.HandleSubmit)
+r.<span class="fn">Run</span>(<span class="str">":3000"</span>)</pre>
+      <div class="key-insight"><strong>💡 El main() es el único lugar que "sabe todo"</strong><p>Solo aquí se conocen las clases concretas. El Use Case solo ve interfaces. El controller solo ve el Use Case. Cambiar cualquier tecnología = 1 línea aquí. El resto no se toca.</p></div>
+    </div></div>
+  </div>
+
+  <!-- ══ MIGRACIÓN ══ -->
+  <div class="tab-content" id="tab-proof">
+    <div class="pattern-card open"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-key">Tabla</span><div class="pattern-info"><h4>¿Qué cambia y qué NO cambia al migrar?</h4><p>La prueba definitiva.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <table class="info-table">
+        <thead><tr><th>Migración</th><th>💎 Dominio (Use Cases)</th><th>🗄️ Persistencia (Repos)</th><th>🌐 Transporte</th><th>📄 Plantillas XSL</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Servlets → Express</strong></td><td style="color:var(--green);font-weight:700">Se traduce</td><td style="color:var(--green);font-weight:700">Se traduce</td><td style="color:var(--rose)">Se reescribe</td><td style="color:var(--green);font-weight:700">NO cambian</td></tr>
+          <tr><td><strong>Express → Gin (Go)</strong></td><td style="color:var(--green);font-weight:700">Se traduce</td><td style="color:var(--green);font-weight:700">Se traduce</td><td style="color:var(--rose)">Se reescribe</td><td style="color:var(--green);font-weight:700">NO cambian</td></tr>
+          <tr><td><strong>MySQL → PostgreSQL</strong></td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--accent)">Nuevo FormRepo</td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--green);font-weight:700">NO cambian</td></tr>
+          <tr><td><strong>MySQL → MongoDB</strong></td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--accent)">Nuevo FormRepo</td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--green);font-weight:700">NO cambian</td></tr>
+          <tr><td><strong>JavaMail → SendGrid</strong></td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--accent)">Nuevo MailRepo</td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--green);font-weight:700">NO cambian</td></tr>
+          <tr><td><strong>FOP → WeasyPrint</strong></td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--accent)">Nuevo DocRepo</td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--green);font-weight:700">NO cambian</td></tr>
+          <tr><td><strong>Nueva plantilla</strong></td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--green);font-weight:700">NO cambia</td><td style="color:var(--accent)">+1 .xsl</td></tr>
+        </tbody>
+      </table>
+      <div class="tip-box"><strong>✅ Conclusión</strong><p>Las reglas de negocio (Use Cases) <strong>nunca cambian</strong> al sustituir persistencia. Al migrar de lenguaje, se "traducen" mecánicamente. Las plantillas XSL son reutilizables entre todas las implementaciones porque son XML puro independiente del lenguaje.</p></div>
+    </div></div>
+
+    <div class="pattern-card"><div class="pattern-header" onclick="togglePattern(this)"><span class="pattern-badge badge-dip">Carpetas</span><div class="pattern-info"><h4>Estructura de carpetas — Java vs TypeScript vs Go</h4><p><code>domain/</code> idéntica en los 3. <code>templates/</code> compartida tal cual.</p></div><span class="pattern-toggle">▶</span></div><div class="pattern-body">
+      <div class="code-tabs"><button class="code-tab-btn active" onclick="switchCode(this,'tree')">Java</button><button class="code-tab-btn" onclick="switchCode(this,'tree')">TypeScript</button><button class="code-tab-btn" onclick="switchCode(this,'tree')">Go</button></div>
+      <pre class="code-block active" data-group="tree"><span class="cm">src/</span>
+├── <span class="cls">domain/</span>                        <span class="cm">← 💎 USE CASES</span>
+│   ├── entities/FormSubmission.java
+│   ├── interfaces/
+│   │   ├── FormRepository.java
+│   │   ├── DocumentRepository.java
+│   │   └── MailRepository.java
+│   └── usecases/ProcessAndSendFormUseCase.java
+├── <span class="dc">persistence/</span>                   <span class="cm">← 🗄️ REPOSITORIES</span>
+│   ├── JdbcFormRepository.java     <span class="cm">MySQL</span>
+│   ├── FopDocumentRepository.java  <span class="cm">XML/XSL/FO→PDF</span>
+│   └── SmtpMailRepository.java     <span class="cm">JavaMail</span>
+├── <span class="fn">transport/</span>                     <span class="cm">← 🌐 SERVLETS</span>
+│   └── FormServlet.java
+├── <span class="str">templates/</span>                     <span class="cm">← 📄 PLANTILLAS</span>
+│   ├── informe-formal.xsl
+│   ├── factura.xsl
+│   └── certificado-oficial.xsl
+└── Main.java</pre>
+      <pre class="code-block" data-group="tree"><span class="cm">src/</span>
+├── <span class="cls">domain/</span>                        <span class="cm">← 💎 MISMA ESTRUCTURA</span>
+│   ├── entities/FormSubmission.ts
+│   ├── interfaces/{Form,Document,Mail}Repository.ts
+│   └── usecases/ProcessAndSendFormUseCase.ts
+├── <span class="dc">persistence/</span>                   <span class="cm">← 🗄️ DISTINTA TECH</span>
+│   ├── PgFormRepository.ts         <span class="cm">PostgreSQL</span>
+│   ├── XsltDocumentRepository.ts   <span class="cm">xsltproc+fop CLI</span>
+│   └── NodemailerRepository.ts     <span class="cm">Nodemailer</span>
+├── <span class="fn">transport/</span>                     <span class="cm">← 🌐 EXPRESS</span>
+│   └── formRouter.ts
+├── <span class="str">templates/</span>                     <span class="cm">← 📄 LAS MISMAS</span>
+│   ├── informe-formal.xsl
+│   ├── factura.xsl
+│   └── certificado-oficial.xsl
+└── app.ts</pre>
+      <pre class="code-block" data-group="tree"><span class="cm">myapp/</span>
+├── <span class="cls">domain/</span>                        <span class="cm">← 💎 MISMA ESTRUCTURA</span>
+│   ├── form_submission.go
+│   ├── interfaces.go
+│   └── process_and_send.go
+├── <span class="dc">persistence/</span>                   <span class="cm">← 🗄️ DISTINTA TECH</span>
+│   ├── pg_form_repo.go
+│   ├── fop_document_repo.go
+│   └── smtp_mail_repo.go
+├── <span class="fn">transport/</span>                     <span class="cm">← 🌐 GIN</span>
+│   └── form_handler.go
+├── <span class="str">templates/</span>                     <span class="cm">← 📄 LAS MISMAS</span>
+│   ├── informe-formal.xsl
+│   └── factura.xsl
+└── main.go</pre>
+    </div></div>
+  </div>
+
+</div><!-- /tabs-outer -->
+</div><!-- /container -->
+
+<footer>Clean Architecture — Transporte / Dominio (Use Cases) / Persistencia (Repositories) · XML/XSL/XSL-FO · Marzo 2026</footer>
+
+<script>
+document.querySelectorAll('.tab-bar .tab-btn').forEach(btn=>{btn.addEventListener('click',()=>{const p=btn.closest('.tabs-outer');p.querySelectorAll('.tab-bar .tab-btn').forEach(b=>b.classList.remove('active'));p.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.getElementById('tab-'+btn.dataset.tab).classList.add('active')})});
+document.querySelectorAll('.subtab-bar .subtab-btn').forEach(btn=>{btn.addEventListener('click',()=>{const bar=btn.closest('.subtab-bar'),ct=btn.closest('.tab-content');bar.querySelectorAll('.subtab-btn').forEach(b=>b.classList.remove('active'));ct.querySelectorAll('.subtab-content').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.getElementById('subtab-'+btn.dataset.subtab).classList.add('active')})});
+function togglePattern(h){h.closest('.pattern-card').classList.toggle('open')}
+function switchCode(btn,g){const bd=btn.closest('.pattern-body'),bs=btn.parentElement.querySelectorAll('.code-tab-btn'),bl=bd.querySelectorAll('.code-block[data-group="'+g+'"]'),i=Array.from(bs).indexOf(btn);bs.forEach(b=>b.classList.remove('active'));bl.forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(bl[i])bl[i].classList.add('active')}
+</script>
+</body>
+</html>

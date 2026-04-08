@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMI — Skills &amp; Agents para Cursor/VSCode</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700;8..60,800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --surface2: #f0ede6;
+  --surface3: #e8e5dc;
+  --border: #d8d4ca;
+  --border-light: #e5e1d8;
+  --text: #1c1917;
+  --text-mid: #44403c;
+  --text-dim: #78716c;
+  --code-bg: #fafaf8;
+  --code-border: #e7e5e4;
+  --accent: #b45309;
+  --accent-light: #fef3c7;
+  --accent-bg: rgba(180,83,9,0.06);
+  --blue: #1d4ed8;
+  --blue-bg: rgba(29,78,216,0.06);
+  --green: #15803d;
+  --green-bg: rgba(21,128,61,0.06);
+  --purple: #7e22ce;
+  --purple-bg: rgba(126,34,206,0.06);
+  --rose: #be123c;
+  --rose-bg: rgba(190,18,60,0.06);
+  --teal: #0f766e;
+  --teal-bg: rgba(15,118,110,0.06);
+  --indigo: #4338ca;
+  --indigo-bg: rgba(67,56,202,0.06);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+  --radius: 12px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══ HERO ═══ */
+.hero {
+  padding: 4.5rem 2rem 3.5rem;
+  text-align: center;
+  background: linear-gradient(180deg, #fffdf7 0%, var(--bg) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '⚙→';
+  position: absolute;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 16rem;
+  font-weight: 600;
+  color: rgba(180,83,9,0.03);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1px solid rgba(180,83,9,0.15);
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  margin-bottom: 1.2rem;
+  position: relative;
+  font-weight: 500;
+}
+
+.hero h1 {
+  font-family: 'Source Serif 4', serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  position: relative;
+  margin-bottom: 0.8rem;
+}
+
+.hero h1 em { font-style: normal; color: var(--accent); }
+
+.hero p {
+  font-size: 1.05rem;
+  color: var(--text-dim);
+  max-width: 580px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ═══ CONTAINER ═══ */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
+/* ═══ SECTION ═══ */
+.section-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.section-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: clamp(1.4rem, 2.8vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.6rem;
+}
+
+.section-intro {
+  color: var(--text-dim);
+  max-width: 680px;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+/* ═══ CATEGORY CARDS ═══ */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+
+.cat-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.6rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.cat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.cat-card::after {
+  content: '';
+  position: absolute; top:0; left:0; right:0; height: 3px;
+  background: var(--c-color, var(--accent));
+}
+
+.cat-card .cat-icon { font-size: 1.6rem; margin-bottom: 0.8rem; }
+
+.cat-card .cat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--c-color, var(--accent));
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.cat-card h3 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.cat-card p {
+  color: var(--text-mid);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+}
+
+.pattern-list { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+.pattern-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  font-weight: 500;
+}
+
+/* ═══ TABS ═══ */
+.tabs-outer { margin-bottom: 3.5rem; }
+
+.tab-bar {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.7rem 1.3rem;
+  border: none;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.tab-content { display: none; padding-top: 1.5rem; }
+.tab-content.active { display: block; }
+
+/* Sub-tabs */
+.subtab-bar { display: flex; gap: 0.2rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+
+.subtab-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.subtab-btn:hover { background: var(--surface2); color: var(--text); }
+.subtab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.subtab-content { display: none; }
+.subtab-content.active { display: block; }
+
+/* ═══ PATTERN CARDS ═══ */
+.pattern-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.pattern-card:hover { box-shadow: var(--shadow-md); }
+
+.pattern-header {
+  padding: 1.3rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  user-select: none;
+}
+
+.pattern-header:hover { background: var(--surface2); }
+
+.pattern-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.badge-fase { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(180,83,9,0.15); }
+.badge-skill { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(29,78,216,0.15); }
+.badge-agent { background: var(--green-bg); color: var(--green); border: 1px solid rgba(21,128,61,0.15); }
+.badge-rule { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(126,34,206,0.15); }
+.badge-command { background: var(--teal-bg); color: var(--teal); border: 1px solid rgba(15,118,110,0.15); }
+.badge-config { background: var(--rose-bg); color: var(--rose); border: 1px solid rgba(190,18,60,0.15); }
+.badge-parallel { background: var(--indigo-bg); color: var(--indigo); border: 1px solid rgba(67,56,202,0.15); }
+
+.pattern-info { flex: 1; }
+.pattern-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+.pattern-info p { font-size: 0.84rem; color: var(--text-mid); line-height: 1.55; }
+
+.pattern-toggle {
+  font-size: 1rem;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  transition: transform 0.25s;
+  margin-top: 0.15rem;
+}
+
+.pattern-card.open .pattern-toggle { transform: rotate(90deg); }
+
+.pattern-body {
+  display: none;
+  padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.pattern-card.open .pattern-body { display: block; }
+
+/* Callout boxes */
+.when-use, .key-insight, .warning-box, .tip-box {
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.when-use { background: var(--accent-bg); border: 1px solid rgba(180,83,9,0.12); }
+.when-use strong { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); display: block; margin-bottom: 0.3rem; }
+.when-use p { font-size: 0.82rem; color: var(--text-mid); line-height: 1.55; }
+
+.key-insight { background: var(--blue-bg); border: 1px solid rgba(29,78,216,0.12); }
+.key-insight strong { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--blue); display: block; margin-bottom: 0.3rem; }
+.key-insight p { font-size: 0.82rem; color: var(--text-mid); line-height: 1.55; }
+
+.warning-box { background: var(--rose-bg); border: 1px solid rgba(190,18,60,0.12); }
+.warning-box strong { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rose); display: block; margin-bottom: 0.3rem; }
+.warning-box p { font-size: 0.82rem; color: var(--text-mid); line-height: 1.55; }
+
+.tip-box { background: var(--green-bg); border: 1px solid rgba(21,128,61,0.12); }
+.tip-box strong { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green); display: block; margin-bottom: 0.3rem; }
+.tip-box p { font-size: 0.82rem; color: var(--text-mid); line-height: 1.55; }
+
+/* ═══ CODE BLOCKS ═══ */
+.code-tabs { display: flex; gap: 0.2rem; margin-bottom: 0; }
+
+.code-tab-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--code-border);
+  border-bottom: none;
+  background: var(--surface2);
+  color: var(--text-dim);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  transition: all 0.15s;
+}
+
+.code-tab-btn.active { background: var(--code-bg); color: var(--text); border-color: var(--code-border); }
+
+.code-block {
+  display: none;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: 0 8px 8px 8px;
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  line-height: 1.7;
+  color: var(--text);
+  tab-size: 2;
+  white-space: pre;
+}
+
+.code-block.active { display: block; }
+
+.code-block .kw { color: var(--purple); font-weight: 600; }
+.code-block .fn { color: var(--blue); }
+.code-block .str { color: var(--green); }
+.code-block .cm { color: var(--text-dim); font-style: italic; }
+.code-block .cls { color: var(--accent); font-weight: 600; }
+.code-block .dc { color: var(--teal); }
+
+/* ═══ DIAGRAM ═══ */
+.diagram-box {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.diagram-box pre {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--text-mid);
+  white-space: pre;
+}
+
+/* ═══ TABLE ═══ */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.82rem;
+}
+
+.info-table th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 2px solid var(--border);
+  background: var(--surface2);
+}
+
+.info-table td {
+  padding: 0.5rem 0.8rem;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-mid);
+  vertical-align: top;
+}
+
+.info-table tr:hover td { background: var(--surface2); }
+
+/* ═══ FLOW STEPS ═══ */
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.flow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 0.6rem 0;
+}
+
+.flow-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.flow-step p { font-size: 0.84rem; color: var(--text-mid); line-height: 1.55; }
+.flow-step p strong { color: var(--text); }
+
+/* Body text inside pattern body */
+.body-text {
+  font-size: 0.84rem;
+  color: var(--text-mid);
+  line-height: 1.65;
+  margin-bottom: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+.body-text strong { color: var(--text); }
+
+.body-text code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  background: var(--surface2);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+}
+
+/* ═══ FOOTER ═══ */
+footer {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-dim);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .container { padding: 0 1rem 3rem; }
+  .hero { padding: 3rem 1rem 2.5rem; }
+  .cat-grid { grid-template-columns: 1fr; }
+  .tab-btn { font-size: 0.8rem; padding: 0.6rem 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-badge">Framework de Migración de Intención · 2026</div>
+  <h1>Skills &amp; <em>Agents</em> para el FMI</h1>
+  <p>Arquitectura completa de skills, subagents paralelos y commands para ejecutar migraciones semánticas en Cursor, VSCode y Claude Code.</p>
+</section>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- 01 — TRES PILARES                                       -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-num">01 — Los tres pilares</div>
+<h2 class="section-title">Skills, Agents y Commands</h2>
+<p class="section-intro">El FMI se descompone en tres tipos de componentes que cooperan: skills reutilizables por fase, subagents paralelos para front/back, y commands para la experiencia del desarrollador.</p>
+
+<div class="cat-grid">
+  <div class="cat-card" style="--c-color: var(--blue);">
+    <div class="cat-icon">🧠</div>
+    <div class="cat-label">Skills</div>
+    <h3>Conocimiento ejecutable</h3>
+    <p>Un SKILL.md por cada paso del FMI. Encapsulan el "cómo hacer" de cada fase: generar diagramas, crear tests, destilar contratos. Son reutilizables entre proyectos y publicables en el marketplace de Cursor.</p>
+    <div class="pattern-list">
+      <span class="pattern-tag">fmi-sequence-diagrams</span>
+      <span class="pattern-tag">fmi-integration-tests</span>
+      <span class="pattern-tag">fmi-system-knowledge</span>
+      <span class="pattern-tag">fmi-semantic-distillation</span>
+      <span class="pattern-tag">fmi-architecture-design</span>
+      <span class="pattern-tag">fmi-tdd-strategy</span>
+      <span class="pattern-tag">fmi-implementation</span>
+    </div>
+  </div>
+  <div class="cat-card" style="--c-color: var(--green);">
+    <div class="cat-icon">🤖</div>
+    <div class="cat-label">Subagents</div>
+    <h3>Ejecución en paralelo</h3>
+    <p>Cursor 2.4 permite lanzar subagents con contexto aislado. El orquestador delega análisis de backend y frontend simultáneamente. Cada subagent solo ve su capa, evitando contaminación de contexto.</p>
+    <div class="pattern-list">
+      <span class="pattern-tag">fmi-orchestrator</span>
+      <span class="pattern-tag">fmi-backend-analyst</span>
+      <span class="pattern-tag">fmi-frontend-analyst</span>
+    </div>
+  </div>
+  <div class="cat-card" style="--c-color: var(--purple);">
+    <div class="cat-icon">⚡</div>
+    <div class="cat-label">Commands &amp; Rules</div>
+    <h3>Control del pipeline</h3>
+    <p>Commands para arrancar, reanudar y verificar el pipeline. Rules always-on que actúan como guardias permanentes contra la traducción sintáctica y la saturación de contexto.</p>
+    <div class="pattern-list">
+      <span class="pattern-tag">/fmi-start</span>
+      <span class="pattern-tag">/fmi-resume</span>
+      <span class="pattern-tag">/fmi-checkpoint</span>
+      <span class="pattern-tag">/fmi-status</span>
+      <span class="pattern-tag">no-syntax-translation</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- 02 — TABS PRINCIPALES                                   -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-num">02 — Componentes detallados</div>
+<h2 class="section-title">Arquitectura completa del pipeline</h2>
+<p class="section-intro">Cada pestaña contiene la especificación completa de un tipo de componente con código, estructura y ejemplos listos para usar en Cursor/VSCode.</p>
+
+<div class="tabs-outer">
+  <div class="tab-bar" id="mainTabs">
+    <button class="tab-btn active" data-tab="arquitectura">📐 Arquitectura</button>
+    <button class="tab-btn" data-tab="skills">🧠 Skills</button>
+    <button class="tab-btn" data-tab="agents">🤖 Agents</button>
+    <button class="tab-btn" data-tab="commands">⚡ Commands &amp; Rules</button>
+    <button class="tab-btn" data-tab="paralelismo">🔀 Paralelismo</button>
+    <button class="tab-btn" data-tab="practica">🎯 Guía Práctica</button>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB: ARQUITECTURA                        -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="tab-content active" id="tab-arquitectura">
+
+    <!-- Estructura de carpetas -->
+    <div class="pattern-card open">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-config">Estructura</span>
+        <div class="pattern-info">
+          <h4>Estructura de carpetas del proyecto</h4>
+          <p>Cómo organizar skills, agents, commands y artefactos generados en un proyecto de migración FMI.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="key-insight">
+          <strong>💡 Principio clave</strong>
+          <p>Cada fase del FMI produce artefactos explícitos con inputs y outputs bien definidos. Esto permite encapsular cada fase como un skill independiente y ejecutar backend y frontend en paralelo con subagents aislados.</p>
+        </div>
+        <div class="code-tabs">
+          <button class="code-tab-btn active" onclick="switchCode(this, 'estructura')">Árbol completo</button>
+        </div>
+        <pre class="code-block active" data-group="estructura"><span class="cm">proyecto-migracion/</span>
+├── <span class="cls">AGENTS.md</span>                          <span class="cm">← Orquestador FMI principal</span>
+├── <span class="fn">.cursor/</span>
+│   ├── <span class="fn">agents/</span>
+│   │   ├── <span class="cls">fmi-orchestrator.md</span>        <span class="cm">← Agente custom principal</span>
+│   │   ├── <span class="cls">fmi-backend-analyst.md</span>     <span class="cm">← Subagent backend</span>
+│   │   └── <span class="cls">fmi-frontend-analyst.md</span>    <span class="cm">← Subagent frontend</span>
+│   ├── <span class="fn">skills/</span>
+│   │   ├── <span class="fn">fmi-sequence-diagrams/</span>
+│   │   │   └── SKILL.md               <span class="cm">← Generar diagramas de secuencia</span>
+│   │   ├── <span class="fn">fmi-integration-tests/</span>
+│   │   │   └── SKILL.md               <span class="cm">← Generar tests desde diagramas</span>
+│   │   ├── <span class="fn">fmi-system-knowledge/</span>
+│   │   │   └── SKILL.md               <span class="cm">← Generar SYSTEM_KNOWLEDGE.md</span>
+│   │   ├── <span class="fn">fmi-semantic-distillation/</span>
+│   │   │   └── SKILL.md               <span class="cm">← Contratos de intención</span>
+│   │   ├── <span class="fn">fmi-architecture-design/</span>
+│   │   │   └── SKILL.md               <span class="cm">← Arquitectura destino</span>
+│   │   ├── <span class="fn">fmi-tdd-strategy/</span>
+│   │   │   └── SKILL.md               <span class="cm">← Tests unitarios + porting</span>
+│   │   └── <span class="fn">fmi-implementation/</span>
+│   │       └── SKILL.md               <span class="cm">← Implementación Green</span>
+│   ├── <span class="fn">commands/</span>
+│   │   ├── fmi-start.md               <span class="cm">← /fmi-start</span>
+│   │   ├── fmi-resume.md              <span class="cm">← /fmi-resume</span>
+│   │   ├── fmi-checkpoint.md          <span class="cm">← /fmi-checkpoint</span>
+│   │   └── fmi-status.md              <span class="cm">← /fmi-status</span>
+│   └── <span class="fn">rules/</span>
+│       ├── fmi-conventions.mdc        <span class="cm">← Reglas always-on</span>
+│       └── fmi-no-syntax-translation.mdc  <span class="cm">← Guardia anti-traducción</span>
+├── <span class="fn">fmi/</span>                               <span class="cm">← Artefactos generados</span>
+│   ├── <span class="cls">SYSTEM_KNOWLEDGE.md</span>
+│   ├── <span class="fn">diagramas_secuencia/</span>
+│   │   ├── sistema/
+│   │   ├── backend/
+│   │   └── frontend/
+│   ├── <span class="fn">tests_integracion/</span>
+│   │   ├── sistema/
+│   │   ├── backend/
+│   │   └── frontend/
+│   ├── contratos_intencion.md
+│   ├── arquitectura.md
+│   └── <span class="dc">pipeline_state.json</span>            <span class="cm">← Estado para reanudación</span>
+└── <span class="fn">legacy/</span>                            <span class="cm">← Código fuente origen</span></pre>
+      </div>
+    </div>
+
+    <!-- AGENTS.md Orquestador -->
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-agent">AGENTS.md</span>
+        <div class="pattern-info">
+          <h4>AGENTS.md — El orquestador principal</h4>
+          <p>Fichero raíz que cualquier herramienta (Cursor, Claude Code, Codex, Gemini) lee primero. Coordina el pipeline y delega a skills.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="tip-box">
+          <strong>✅ Compatibilidad multi-herramienta</strong>
+          <p>AGENTS.md es un estándar abierto soportado nativamente por Cursor, Codex, Gemini CLI, y mediante symlink por Claude Code (<code>echo 'See @AGENTS.md' > CLAUDE.md</code>).</p>
+        </div>
+        <div class="code-tabs">
+          <button class="code-tab-btn active" onclick="switchCode(this, 'agentsmd')">AGENTS.md</button>
+        </div>
+        <pre class="code-block active" data-group="agentsmd"><span class="cm"># FMI — Framework de Migración de Intención</span>
+
+<span class="cm">## Configuración</span>
+<span class="kw">SISTEMA</span>:     {{nombre}}
+<span class="kw">ORIGEN</span>:      ./legacy/src
+<span class="kw">DESTINO</span>:     ./migrado/src
+<span class="kw">LENGUAJE_A</span>:  {{origen}}
+<span class="kw">LENGUAJE_B</span>:  {{destino}}
+
+<span class="cm">## Principio Operativo</span>
+La fuente de verdad NO es el código sino los artefactos semánticos:
+diagramas de secuencia, tests de integración y SYSTEM_KNOWLEDGE.md.
+<span class="dc">Nunca traduzcas código directamente de un lenguaje a otro.</span>
+Siempre genera código desde los Contratos de Intención.
+
+<span class="cm">## Pipeline de Ejecución</span>
+Ejecutar las fases en orden. En cada checkpoint <span class="cls">⚠️</span>, detenerse
+y mostrar resumen al desarrollador.
+
+<span class="cm">### Fase 1: Adquisición de Conocimiento</span>
+- Invocar skill <span class="str">`fmi-sequence-diagrams`</span>
+- <span class="cls">PARALELIZAR</span>: backend y frontend simultáneamente
+- Invocar skill <span class="str">`fmi-integration-tests`</span>
+- Invocar skill <span class="str">`fmi-system-knowledge`</span>
+- <span class="cls">⚠️ CHECKPOINT</span>: validación humana
+
+<span class="cm">### Fase 2: Destilación Semántica</span>
+- Invocar skill <span class="str">`fmi-semantic-distillation`</span>
+- Input: diagramas + SYSTEM_KNOWLEDGE.md (<span class="dc">NUNCA</span> código fuente)
+- <span class="cls">⚠️ CHECKPOINT</span>: validación de contratos
+
+<span class="cm">### Fases 3-5: Diseño, TDD e Implementación</span>
+- Invocar skills correspondientes en secuencia
+- <span class="dc">A partir de aquí NO cargar código origen en contexto</span>
+- <span class="cls">⚠️ CHECKPOINT</span> antes de Fase 5
+
+<span class="cm">## Regla de Contexto</span>
+A partir de la Fase 3, el agente <span class="dc">NO</span> debe leer ficheros de ./legacy/.
+Todo el conocimiento necesario está en fmi/SYSTEM_KNOWLEDGE.md
+y fmi/contratos_intencion.md.</pre>
+      </div>
+    </div>
+
+    <!-- Pipeline visual -->
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-fase">Pipeline</span>
+        <div class="pattern-info">
+          <h4>Flujo completo del pipeline FMI</h4>
+          <p>Las 7 fases con sus artefactos de entrada/salida y los checkpoints de validación humana.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="diagram-box">
+          <pre>
+SISTEMA EXISTENTE (con o sin tests previos)
+              │
+  ┌───────────┼───────────┐
+  │           │           │       <strong>← PARALELO</strong>
+  ▼           ▼           ▼
+[Backend]  [Sistema]  [Frontend]   Fase 1: Adquisición
+diagramas  diagramas  diagramas    Skills: fmi-sequence-diagrams
+  tests      tests      tests            fmi-integration-tests
+  │           │           │              fmi-system-knowledge
+  └───────────┼───────────┘
+              │
+     SYSTEM_KNOWLEDGE.md
+              │
+     <strong>⚠️ CHECKPOINT 1</strong>: validación con negocio
+              │
+     Fase 2: Destilación Semántica
+     Skill: fmi-semantic-distillation
+     → contratos_intencion.md
+              │
+     <strong>⚠️ CHECKPOINT 2</strong>: validación de contratos
+              │
+  ┌───────────┴───────────┐
+  │                       │       <strong>← SESIONES PARALELAS</strong>
+  ▼                       ▼
+Sesión A: Backend    Sesión B: Frontend
+├ Fase 3: arq.      ├ Fase 3: arq.
+├ Fase 4: tests      ├ Fase 4: tests
+└ Fase 5: impl.      └ Fase 5: impl.
+  │                       │
+  └───────────┬───────────┘
+              │
+     <strong>⚠️ CHECKPOINT 3</strong>: suite completa
+              │
+     Tests nivel sistema (E2E)
+     contra ambas implementaciones
+              │
+     Fase 6: Infraestructura
+     Fase 7: Observabilidad
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compatibilidad -->
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-config">Compat.</span>
+        <div class="pattern-info">
+          <h4>Compatibilidad multi-herramienta</h4>
+          <p>Qué soporta cada IDE/herramienta y cómo mantener un único AGENTS.md sincronizado.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <table class="info-table">
+          <thead>
+            <tr>
+              <th>Herramienta</th>
+              <th>AGENTS.md</th>
+              <th>Skills</th>
+              <th>Subagents paralelos</th>
+              <th>Recomendación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Cursor</strong></td>
+              <td>Nativo + <code>.cursor/agents/</code></td>
+              <td><code>.cursor/skills/</code></td>
+              <td>Sí (v2.4+)</td>
+              <td style="color:var(--green);font-weight:600;">Herramienta principal</td>
+            </tr>
+            <tr>
+              <td><strong>Claude Code</strong></td>
+              <td>Via <code>CLAUDE.md</code> → symlink</td>
+              <td><code>.claude/skills/</code></td>
+              <td>Agent Teams + Subagents</td>
+              <td>Alternativa terminal</td>
+            </tr>
+            <tr>
+              <td><strong>Codex (OpenAI)</strong></td>
+              <td>Nativo</td>
+              <td>Via AGENTS.md</td>
+              <td>Limitado</td>
+              <td>Tareas puntuales</td>
+            </tr>
+            <tr>
+              <td><strong>Gemini CLI</strong></td>
+              <td>Via config</td>
+              <td>Via AGENTS.md</td>
+              <td>No</td>
+              <td>Consultas rápidas</td>
+            </tr>
+            <tr>
+              <td><strong>VSCode + Copilot</strong></td>
+              <td>Plan Mode</td>
+              <td><code>.github/copilot/</code></td>
+              <td>No nativo</td>
+              <td>Fase 3 y 5 (diseño)</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="body-text">
+          <strong>Symlink universal:</strong> mantener un único <code>AGENTS.md</code> como fuente de verdad y crear symlinks para las herramientas que no lo lean nativamente.
+        </div>
+        <div class="code-tabs">
+          <button class="code-tab-btn active" onclick="switchCode(this, 'symlinks')">Setup symlinks</button>
+        </div>
+        <pre class="code-block active" data-group="symlinks"><span class="cm"># Claude Code necesita su propio fichero</span>
+<span class="kw">echo</span> <span class="str">'See @AGENTS.md'</span> > CLAUDE.md
+
+<span class="cm"># Para skills globales (todas las herramientas)</span>
+<span class="kw">mkdir</span> -p ~/.agents
+<span class="kw">ln</span> -sfn ~/.agents/AGENTS.md ~/.claude/CLAUDE.md
+<span class="kw">ln</span> -sfn ~/.agents/AGENTS.md ~/.codex/AGENTS.md</pre>
+      </div>
+    </div>
+
+  </div><!-- /tab-arquitectura -->
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB: SKILLS                              -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-skills">
+
+    <div class="subtab-bar">
+      <button class="subtab-btn active" data-subtab="sk-diagramas">Diagramas</button>
+      <button class="subtab-btn" data-subtab="sk-tests">Tests Integración</button>
+      <button class="subtab-btn" data-subtab="sk-knowledge">System Knowledge</button>
+      <button class="subtab-btn" data-subtab="sk-distillation">Destilación</button>
+      <button class="subtab-btn" data-subtab="sk-architecture">Arquitectura</button>
+      <button class="subtab-btn" data-subtab="sk-tdd">TDD Strategy</button>
+      <button class="subtab-btn" data-subtab="sk-implementation">Implementación</button>
+    </div>
+
+    <!-- SKILL: DIAGRAMAS -->
+    <div class="subtab-content active" id="subtab-sk-diagramas">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-skill">Skill</span>
+          <div class="pattern-info">
+            <h4>fmi-sequence-diagrams</h4>
+            <p>Genera diagramas de secuencia Mermaid a partir de código fuente siguiendo el protocolo FMI. Un punto de entrada = un diagrama mínimo.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="when-use">
+            <strong>Cuándo se activa</strong>
+            <p>Fase 1 del pipeline. Es el primer skill que se ejecuta. Los subagents de backend y frontend lo invocan en paralelo, cada uno sobre su parte del código.</p>
+          </div>
+          <div class="key-insight">
+            <strong>💡 Por qué el diagrama es anterior al test</strong>
+            <p>Un test generado directamente desde el código hereda el acoplamiento a la implementación. Un test generado desde el diagrama captura la intención funcional independientemente de cómo esté implementada. Esta distinción hace los tests portables a cualquier implementación futura.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'skill-diag')">SKILL.md completo</button>
+          </div>
+          <pre class="code-block active" data-group="skill-diag"><span class="cm">---</span>
+<span class="kw">name</span>: fmi-sequence-diagrams
+<span class="kw">description</span>: Genera diagramas de secuencia Mermaid a partir de código
+  fuente siguiendo el protocolo FMI.
+<span class="kw">version</span>: 1.0.0
+<span class="cm">---</span>
+
+<span class="cm"># Skill: Generación de Diagramas de Secuencia FMI</span>
+
+<span class="cls">## Procedimiento</span>
+
+<span class="dc">### Paso 1: Identificar Puntos de Entrada</span>
+Buscar en el código:
+- Endpoints HTTP (anotaciones @GET, @POST, decoradores de ruta)
+- Métodos públicos de servicios
+- Event listeners y handlers
+- Tareas programadas (cron jobs)
+
+<span class="dc">### Paso 2: Trazar Flujos</span>
+Para cada punto de entrada:
+1. Seguir la cadena de llamadas completa
+2. Documentar las interacciones entre componentes
+3. Registrar los datos que fluyen entre ellos
+4. Identificar flujos alternativos (errores, validaciones)
+
+<span class="dc">### Paso 3: Generar Mermaid</span>
+Formato obligatorio por diagrama:
+
+```mermaid
+sequenceDiagram
+    participant Actor
+    participant API
+    participant Service
+    participant Repository
+    participant DB
+
+    Actor->>API: POST /recurso {datos}
+    API->>Service: crearRecurso(datos)
+    Service->>Service: validar(datos)
+    <span class="kw">alt</span> datos válidos
+        Service->>Repository: guardar(entidad)
+        Repository->>DB: INSERT
+        DB-->>Repository: OK
+        Service-->>API: 201 Created
+    <span class="kw">else</span> datos inválidos
+        Service-->>API: ValidationError
+        API-->>Actor: 400 Bad Request {errores}
+    <span class="kw">end</span>
+```
+
+<span class="dc">### Paso 4: Nombrado</span>
+- Nivel sistema:  <span class="str">sistema_[flujo]_[resultado].mermaid</span>
+- Nivel backend:  <span class="str">backend_[componente]_[accion].mermaid</span>
+- Nivel frontend: <span class="str">frontend_[componente]_[estado].mermaid</span>
+
+<span class="dc">### Paso 5: Verificación</span>
+- Cada bifurcación IF/SWITCH del código → en algún diagrama
+- Cada flujo alternativo tiene su bloque alt/else
+- No omitir flujos de error
+
+<span class="cm">## Output</span>
+Ficheros .mermaid en <span class="str">{{ruta_artefactos}}/diagramas_secuencia/</span></pre>
+        </div>
+      </div>
+    </div><!-- /subtab-sk-diagramas -->
+
+    <!-- SKILL: TESTS INTEGRACIÓN -->
+    <div class="subtab-content" id="subtab-sk-tests">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-skill">Skill</span>
+          <div class="pattern-info">
+            <h4>fmi-integration-tests</h4>
+            <p>Genera tests de integración ejecutables a partir de los diagramas de secuencia Mermaid. Un diagrama = exactamente un test. Nunca genera tests desde el código fuente.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="warning-box">
+            <strong>⛔ Restricción fundamental</strong>
+            <p>La fuente de cada test es un diagrama de secuencia, NUNCA el código. Un diagrama produce exactamente un test. El test es caja negra, portable y determinista.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'skill-test')">SKILL.md completo</button>
+          </div>
+          <pre class="code-block active" data-group="skill-test"><span class="cm">---</span>
+<span class="kw">name</span>: fmi-integration-tests
+<span class="kw">description</span>: Genera tests de integración ejecutables a partir
+  de diagramas Mermaid. Un diagrama = un test.
+<span class="kw">version</span>: 1.0.0
+<span class="cm">---</span>
+
+<span class="cm"># Skill: Generación de Tests de Integración FMI</span>
+
+<span class="cls">## Principio</span>
+NUNCA generar tests directamente del código fuente.
+La fuente es siempre el diagrama de secuencia.
+
+<span class="dc">### Paso 1: Leer Diagrama</span>
+Parsear cada .mermaid e identificar:
+- Participante que inicia (actor)
+- Punto de entrada (endpoint/método)
+- Input (datos enviados)
+- Interacciones esperadas
+- Output final esperado
+- Flujos alternativos (bloques alt/else)
+
+<span class="dc">### Paso 2: Generar Test</span>
+Cada diagrama se convierte en un test:
+
+<span class="cm"># Ejemplo Python — adaptar al LENGUAJE_A</span>
+<span class="kw">class</span> <span class="cls">TestLoginExitoso</span>:
+    <span class="str">"""
+    Fuente: diagramas_secuencia/backend/backend_auth_login.mermaid
+    Contrato: El sistema autentica usuario válido y retorna token
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">test_flujo_principal</span>(self):
+        <span class="cm"># GIVEN: precondiciones del diagrama</span>
+        <span class="cm"># WHEN: activar el punto de entrada</span>
+        <span class="cm"># THEN: verificar output final observable</span>
+
+    <span class="kw">def</span> <span class="fn">test_credenciales_invalidas</span>(self):
+        <span class="cm"># Un test por cada bloque alt/else</span>
+
+<span class="dc">### Paso 3: Propiedades obligatorias</span>
+- <span class="cls">Caja negra</span>: no referencia clases internas
+- <span class="cls">Portable</span>: lógica idéntica en cualquier lenguaje
+- <span class="cls">Determinista</span>: mismo input → mismo output
+- <span class="cls">Independiente</span>: sin dependencias entre tests
+
+<span class="cm">## Output</span>
+Ficheros en <span class="str">{{ruta_tests}}/integracion/{sistema,backend,frontend}/</span></pre>
+        </div>
+      </div>
+    </div><!-- /subtab-sk-tests -->
+
+    <!-- SKILL: SYSTEM KNOWLEDGE -->
+    <div class="subtab-content" id="subtab-sk-knowledge">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-skill">Skill</span>
+          <div class="pattern-info">
+            <h4>fmi-system-knowledge</h4>
+            <p>Sintetiza todo el conocimiento del sistema en un SYSTEM_KNOWLEDGE.md con 9 secciones obligatorias. Es el artefacto más diferencial del FMI.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="key-insight">
+            <strong>💡 Por qué es transformador</strong>
+            <p>Con el SYSTEM_KNOWLEDGE.md, los diagramas y los tests disponibles, cualquier agente LLM adquiere conocimiento completo del sistema en el inicio de la primera sesión. El onboarding cognitivo colapsa de semanas a minutos.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'skill-sk')">9 secciones obligatorias</button>
+          </div>
+          <pre class="code-block active" data-group="skill-sk"><span class="cm">## 1. Propósito del Sistema</span>
+Qué problema de negocio resuelve, para quién y en qué contexto.
+
+<span class="cm">## 2. Invariantes de Negocio</span>
+Reglas que <span class="dc">nunca pueden romperse</span>. Cada invariante debe ser
+verificable por al menos un test de integración.
+
+<span class="cm">## 3. Mapa de Flujos Funcionales</span>
+Referencia a cada diagrama de secuencia con descripción
+de su propósito y precondiciones.
+
+<span class="cm">## 4. Contratos Implícitos</span>
+Asunciones no documentadas: encoding, zonas horarias,
+precisión numérica, orden de colecciones, transacciones.
+
+<span class="cm">## 5. Dependencias Externas</span>
+Inventario de librerías, SDKs, APIs y servicios de terceros.
+Función + impacto de su fallo.
+
+<span class="cm">## 6. Decisiones de Arquitectura</span>
+Qué se eligió, alternativas descartadas y por qué.
+Incluye decisiones que son deuda técnica.
+
+<span class="cm">## 7. Deuda Técnica Documentada</span>
+Qué existe que no debería existir. Distinguir entre
+deuda a <span class="cls">preservar</span> y deuda a <span class="dc">eliminar</span>.
+
+<span class="cm">## 8. Guía de Extensión</span>
+Cómo añadir funcionalidad sin romper contratos.
+Dónde vive cada tipo de lógica.
+
+<span class="cm">## 9. Guía de Migración</span>
+Qué información basta para reconstruir el sistema
+en otro lenguaje: refs a diagramas, tests y contratos.</pre>
+        </div>
+      </div>
+    </div><!-- /subtab-sk-knowledge -->
+
+    <!-- SKILL: DESTILACIÓN -->
+    <div class="subtab-content" id="subtab-sk-distillation">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-skill">Skill</span>
+          <div class="pattern-info">
+            <h4>fmi-semantic-distillation</h4>
+            <p>Extrae Contratos de Intención purificando la lógica de negocio de deuda técnica, bugs y limitaciones del lenguaje origen. Fase 2 del FMI.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="warning-box">
+            <strong>⛔ Fuentes permitidas</strong>
+            <p>Input: diagramas de secuencia + SYSTEM_KNOWLEDGE.md. NUNCA el código fuente del sistema origen. La destilación opera sobre los artefactos semánticos, no sobre la implementación.</p>
+          </div>
+          <p class="body-text">Cada diagrama de secuencia se convierte en uno o más <strong>Contratos de Intención</strong> con la siguiente estructura:</p>
+          <table class="info-table">
+            <thead>
+              <tr><th>Campo</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Regla</strong></td><td>Nombre semántico de la regla de negocio</td></tr>
+              <tr><td><strong>Flujo origen</strong></td><td>Referencia al diagrama de secuencia</td></tr>
+              <tr><td><strong>Contexto</strong></td><td>Cuándo y por qué se aplica</td></tr>
+              <tr><td><strong>Comportamiento</strong></td><td>Input → Output sin referencia a implementación</td></tr>
+              <tr><td><strong>Invariante</strong></td><td>Referencia al SYSTEM_KNOWLEDGE si aplica</td></tr>
+              <tr><td><strong>Validaciones</strong></td><td>Requisitos OWASP de seguridad y saneamiento</td></tr>
+              <tr><td><strong>Dependencia resuelta</strong></td><td>Equivalente funcional en contexto destino</td></tr>
+              <tr><td><strong>Deuda técnica</strong></td><td>Qué comportamiento NO debe replicarse y por qué</td></tr>
+            </tbody>
+          </table>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <span class="flow-num">1</span>
+              <p><strong>Abstracción:</strong> Para cada diagrama, extraer qué regla de negocio implementa, cuándo se activa y qué produce.</p>
+            </div>
+            <div class="flow-step">
+              <span class="flow-num">2</span>
+              <p><strong>Purificación:</strong> Clasificar cada comportamiento como PRESERVAR (lógica legítima), ELIMINAR (workarounds/bugs) o MEJORAR (inyectar OWASP).</p>
+            </div>
+            <div class="flow-step">
+              <span class="flow-num">3</span>
+              <p><strong>Resolución de dependencias:</strong> Mapear cada lib/SDK del origen a su equivalente funcional en el destino.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /subtab-sk-distillation -->
+
+    <!-- SKILL: ARQUITECTURA -->
+    <div class="subtab-content" id="subtab-sk-architecture">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-skill">Skill</span>
+          <div class="pattern-info">
+            <h4>fmi-architecture-design</h4>
+            <p>Diseña la arquitectura Clean Architecture idiomática del lenguaje destino. Esta fase habilita los tests unitarios de la Fase 4.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="key-insight">
+            <strong>💡 Integración con Copilot Plan Mode</strong>
+            <p>Esta fase es ideal para usar Plan Mode de Copilot: le das los contratos de intención y te propone la estructura antes de crear ficheros. Plan Mode piensa antes de generar código.</p>
+          </div>
+          <p class="body-text">El skill genera tres segregaciones de capas adaptadas idiomáticamente al lenguaje destino:</p>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <span class="flow-num">D</span>
+              <p><strong>Dominio:</strong> Entidades y reglas puras. Cada Contrato de Intención se implementa aquí. Sin dependencias externas.</p>
+            </div>
+            <div class="flow-step">
+              <span class="flow-num">A</span>
+              <p><strong>Aplicación:</strong> Casos de uso que orquestan el dominio. Cada flujo de los diagramas de secuencia se implementa aquí.</p>
+            </div>
+            <div class="flow-step">
+              <span class="flow-num">I</span>
+              <p><strong>Infraestructura:</strong> Adaptadores hacia BD, APIs, frameworks y servicios externos. Interfaces definidas por el dominio.</p>
+            </div>
+          </div>
+          <p class="body-text"><strong>Output:</strong> <code>arquitectura.md</code> + <code>convenciones.md</code> + <code>estructura_carpetas/</code> + actualización del <code>SYSTEM_KNOWLEDGE.md</code></p>
+        </div>
+      </div>
+    </div><!-- /subtab-sk-architecture -->
+
+    <!-- SKILL: TDD -->
+    <div class="subtab-content" id="subtab-sk-tdd">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-skill">Skill</span>
+          <div class="pattern-info">
+            <h4>fmi-tdd-strategy</h4>
+            <p>Completa la suite de tests portando los tests de integración al lenguaje destino y creando tests unitarios en Red derivados de la arquitectura.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <p class="body-text">Este skill combina dos fuentes de tests con naturalezas distintas:</p>
+          <table class="info-table">
+            <thead><tr><th>Tipo</th><th>Fuente</th><th>Portabilidad</th><th>Propósito</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Integración (portados)</strong></td><td>Diagramas Fase 1</td><td>Idéntica lógica en cualquier lenguaje</td><td>Paridad funcional</td></tr>
+              <tr><td><strong>Unitarios (nuevos)</strong></td><td>Arquitectura Fase 3</td><td>Específicos del lenguaje destino</td><td>Verificar lógica interna</td></tr>
+              <tr><td><strong>Contrato adaptadores</strong></td><td>Inventario dependencias</td><td>Específicos del destino</td><td>Equivalencia de infra</td></tr>
+              <tr><td><strong>Seguridad</strong></td><td>Requisitos OWASP Fase 2</td><td>Adaptados al stack</td><td>Validaciones de seguridad</td></tr>
+            </tbody>
+          </table>
+          <div class="warning-box">
+            <strong>⚠️ Señal de problema</strong>
+            <p>Si un test de integración no puede portarse directamente, indica una ambigüedad en el Contrato de Intención que debe resolverse en la Fase 2 <strong>antes de continuar</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- /subtab-sk-tdd -->
+
+    <!-- SKILL: IMPLEMENTACIÓN -->
+    <div class="subtab-content" id="subtab-sk-implementation">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-skill">Skill</span>
+          <div class="pattern-info">
+            <h4>fmi-implementation</h4>
+            <p>Codifica la lógica de negocio en Green phase hasta que todos los tests pasen. Aplica Clean Code + SOLID idiomáticos del lenguaje destino.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="flow-steps">
+            <div class="flow-step">
+              <span class="flow-num">1</span>
+              <p><strong>Green phase:</strong> Implementar código mínimo para que cada test unitario pase. Sin lógica sin test.</p>
+            </div>
+            <div class="flow-step">
+              <span class="flow-num">2</span>
+              <p><strong>Paridad:</strong> Ejecutar tests de integración portados. Un fallo = divergencia semántica → revisar Contrato en Fase 2, no parchear código.</p>
+            </div>
+            <div class="flow-step">
+              <span class="flow-num">3</span>
+              <p><strong>Clean Code:</strong> Nombres que expresan intención, funciones con responsabilidad única, sin efectos secundarios, DRY.</p>
+            </div>
+            <div class="flow-step">
+              <span class="flow-num">4</span>
+              <p><strong>SOLID:</strong> S (Responsabilidad Única), O (Abierto/Cerrado), L (Liskov), I (Segregación Interfaces), D (Inversión Dependencias).</p>
+            </div>
+            <div class="flow-step">
+              <span class="flow-num">5</span>
+              <p><strong>Refactor:</strong> Con todos los tests en verde, eliminar duplicación y mejorar legibilidad sin cambiar comportamiento.</p>
+            </div>
+          </div>
+          <div class="tip-box">
+            <strong>✅ Criterio de parada</strong>
+            <p>100% de tests unitarios, de integración y de nivel sistema en estado Green. El SYSTEM_KNOWLEDGE.md actualizado con decisiones de implementación.</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- /subtab-sk-implementation -->
+
+  </div><!-- /tab-skills -->
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB: AGENTS                              -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-agents">
+
+    <div class="subtab-bar">
+      <button class="subtab-btn active" data-subtab="ag-orchestrator">Orchestrator</button>
+      <button class="subtab-btn" data-subtab="ag-backend">Backend Analyst</button>
+      <button class="subtab-btn" data-subtab="ag-frontend">Frontend Analyst</button>
+    </div>
+
+    <!-- AGENT: ORCHESTRATOR -->
+    <div class="subtab-content active" id="subtab-ag-orchestrator">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-agent">Agent</span>
+          <div class="pattern-info">
+            <h4>fmi-orchestrator.md</h4>
+            <p>Agente principal que coordina el pipeline. Lanza subagents en paralelo, gestiona checkpoints y persiste el estado del pipeline entre sesiones.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="key-insight">
+            <strong>💡 Subagents en Cursor 2.4</strong>
+            <p>Los subagents son agentes independientes con contexto aislado. El orquestador los lanza en paralelo, cada uno analiza su capa, y cuando terminan el orquestador sintetiza los resultados.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'agent-orch')">fmi-orchestrator.md</button>
+          </div>
+          <pre class="code-block active" data-group="agent-orch"><span class="cm">---</span>
+<span class="kw">description</span>: <span class="str">"Orquesta el pipeline FMI completo coordinando
+  subagents de backend y frontend en paralelo"</span>
+<span class="kw">model</span>: claude-sonnet-4-20250514
+<span class="kw">tools</span>: [<span class="str">"code_search"</span>, <span class="str">"read_file"</span>, <span class="str">"write_file"</span>,
+        <span class="str">"terminal"</span>, <span class="str">"spawn_subagent"</span>]
+<span class="cm">---</span>
+
+<span class="cm"># FMI Orchestrator</span>
+
+Coordinas el pipeline FMI. Tu trabajo es:
+
+<span class="cls">## Fase 1: Adquisición (PARALELO)</span>
+1. Lanzar <span class="fn">fmi-backend-analyst</span> y <span class="fn">fmi-frontend-analyst</span>
+   <span class="dc">EN PARALELO</span>
+2. Esperar a que ambos completen sus diagramas y tests
+3. Generar los diagramas de <span class="cls">nivel sistema</span>
+   (cruzan front y back)
+4. Sintetizar <span class="cls">SYSTEM_KNOWLEDGE.md</span> con ambos outputs
+5. <span class="dc">⚠️ DETENER</span> y mostrar resumen al desarrollador
+
+<span class="cls">## Fase 2: Destilación</span>
+6. Invocar skill <span class="str">`fmi-semantic-distillation`</span>
+7. Input: diagramas + SYSTEM_KNOWLEDGE.md
+8. <span class="dc">⚠️ DETENER</span> y mostrar contratos para validación
+
+<span class="cls">## Fases 3-5: Diseño → Implementación</span>
+9. <span class="dc">NO cargar código de ./legacy/ en contexto</span>
+10. Invocar skills en secuencia: architecture → tdd → implementation
+11. Persistir estado en <span class="str">fmi/pipeline_state.json</span>
+
+<span class="cls">## Gestión de Estado</span>
+- Actualizar pipeline_state.json tras cada fase
+- En cada checkpoint: mostrar artefactos generados
+- Si el contexto se satura: sugerir nueva sesión</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT: BACKEND -->
+    <div class="subtab-content" id="subtab-ag-backend">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-agent">Subagent</span>
+          <div class="pattern-info">
+            <h4>fmi-backend-analyst.md</h4>
+            <p>Subagent especializado en ingeniería inversa de backends. Analiza SOLO el código backend y genera diagramas + tests de su capa.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'agent-back')">fmi-backend-analyst.md</button>
+          </div>
+          <pre class="code-block active" data-group="agent-back"><span class="cm">---</span>
+<span class="kw">description</span>: <span class="str">"Analiza el backend del sistema legacy y genera
+  diagramas de secuencia y tests de integración"</span>
+<span class="kw">model</span>: claude-sonnet-4-20250514
+<span class="kw">tools</span>: [<span class="str">"code_search"</span>, <span class="str">"read_file"</span>, <span class="str">"write_file"</span>, <span class="str">"terminal"</span>]
+<span class="cm">---</span>
+
+<span class="cm"># FMI Backend Analyst</span>
+
+Eres un especialista en ingeniería inversa de backends.
+
+<span class="cls">## Tu Misión</span>
+Analizar <span class="dc">SOLO</span> el código backend en <span class="str">{{ruta_origen}}/backend/</span>
+
+<span class="cls">## Generar</span>
+1. Diagramas de secuencia en
+   <span class="str">fmi/diagramas_secuencia/backend/</span>
+2. Tests de integración en
+   <span class="str">fmi/tests_integracion/backend/</span>
+
+<span class="cls">## Restricciones</span>
+- <span class="dc">No analices código frontend</span>
+- Cada endpoint = un diagrama mínimo
+- Cada diagrama = exactamente un test
+- Los tests son caja negra y agnósticos al lenguaje
+- Formato: archivos .mermaid para diagramas
+- Incluir flujos de error y validación
+
+<span class="cls">## Foco del Análisis</span>
+- Endpoints HTTP y sus handlers
+- Lógica de servicios y validaciones
+- Interacciones con base de datos
+- Llamadas a APIs externas
+- Gestión de transacciones
+- Manejo de errores y excepciones</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT: FRONTEND -->
+    <div class="subtab-content" id="subtab-ag-frontend">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-agent">Subagent</span>
+          <div class="pattern-info">
+            <h4>fmi-frontend-analyst.md</h4>
+            <p>Subagent especializado en ingeniería inversa de frontends. Analiza componentes, estados, llamadas a API y flujos de UI.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'agent-front')">fmi-frontend-analyst.md</button>
+          </div>
+          <pre class="code-block active" data-group="agent-front"><span class="cm">---</span>
+<span class="kw">description</span>: <span class="str">"Analiza el frontend del sistema legacy y genera
+  diagramas de secuencia y tests de integración"</span>
+<span class="kw">model</span>: claude-sonnet-4-20250514
+<span class="kw">tools</span>: [<span class="str">"code_search"</span>, <span class="str">"read_file"</span>, <span class="str">"write_file"</span>, <span class="str">"terminal"</span>]
+<span class="cm">---</span>
+
+<span class="cm"># FMI Frontend Analyst</span>
+
+Eres un especialista en ingeniería inversa de frontends.
+
+<span class="cls">## Tu Misión</span>
+Analizar <span class="dc">SOLO</span> el código frontend en <span class="str">{{ruta_origen}}/frontend/</span>
+
+<span class="cls">## Generar</span>
+1. Diagramas de secuencia en
+   <span class="str">fmi/diagramas_secuencia/frontend/</span>
+2. Tests de integración en
+   <span class="str">fmi/tests_integracion/frontend/</span>
+
+<span class="cls">## Restricciones</span>
+- <span class="dc">No analices código backend</span>
+- Cada componente/vista con lógica = un diagrama
+- Cada diagrama = exactamente un test
+- Tests son caja negra y portables
+- Formato: archivos .mermaid
+
+<span class="cls">## Foco del Análisis</span>
+- Componentes y su ciclo de vida
+- Gestión de estado (stores, context, signals)
+- Llamadas a API y manejo de respuestas
+- Validaciones de formulario
+- Navegación y routing
+- Manejo de errores en UI
+- Flujos condicionales de renderizado</pre>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-agents -->
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB: COMMANDS & RULES                    -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-commands">
+
+    <div class="subtab-bar">
+      <button class="subtab-btn active" data-subtab="cmd-commands">Commands</button>
+      <button class="subtab-btn" data-subtab="cmd-rules">Rules</button>
+      <button class="subtab-btn" data-subtab="cmd-state">Estado del Pipeline</button>
+    </div>
+
+    <!-- COMMANDS -->
+    <div class="subtab-content active" id="subtab-cmd-commands">
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-command">Command</span>
+          <div class="pattern-info">
+            <h4>/fmi-start</h4>
+            <p>Arranca el pipeline FMI completo. Verifica configuración, crea carpetas de artefactos y lanza la Fase 1 con subagents en paralelo.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'cmd-start')">fmi-start.md</button>
+          </div>
+          <pre class="code-block active" data-group="cmd-start"><span class="cm">---</span>
+<span class="kw">description</span>: <span class="str">"Inicia el pipeline FMI completo"</span>
+<span class="cm">---</span>
+
+Lee el fichero AGENTS.md de la raíz del proyecto.
+Verifica que la <span class="cls">CONFIGURACIÓN DE RUTAS</span> está completa.
+Verifica que <span class="str">{{ruta_origen}}</span> existe y contiene código.
+Crea las carpetas de artefactos si no existen:
+  - <span class="str">fmi/diagramas_secuencia/{sistema,backend,frontend}/</span>
+  - <span class="str">fmi/tests_integracion/{sistema,backend,frontend}/</span>
+
+Lanza la <span class="cls">Fase 1</span> usando los skills:
+  - fmi-sequence-diagrams
+  - fmi-integration-tests
+  - fmi-system-knowledge
+
+<span class="dc">Paraleliza</span> el análisis de backend y frontend
+usando subagents fmi-backend-analyst y fmi-frontend-analyst.
+
+Detente en el <span class="cls">⚠️ checkpoint</span> y muestra resumen
+de artefactos generados con conteo.</pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-command">Command</span>
+          <div class="pattern-info">
+            <h4>/fmi-resume</h4>
+            <p>Reanuda el pipeline desde una fase específica. Lee el estado persistido y carga solo el contexto necesario para la fase actual.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'cmd-resume')">fmi-resume.md</button>
+          </div>
+          <pre class="code-block active" data-group="cmd-resume"><span class="cm">---</span>
+<span class="kw">description</span>: <span class="str">"Reanuda el pipeline FMI desde una fase"</span>
+<span class="cm">---</span>
+
+Lee <span class="str">fmi/pipeline_state.json</span> para estado actual.
+Lee <span class="str">fmi/SYSTEM_KNOWLEDGE.md</span> para cargar contexto.
+
+<span class="dc">Si la fase es >= 3:</span>
+  <span class="dc">NO</span> cargues código de <span class="str">{{ruta_origen}}</span>.
+  Solo lee: SYSTEM_KNOWLEDGE.md + contratos_intencion.md
+
+Continúa desde la fase indicada usando los skills
+correspondientes. Detente en cada <span class="cls">⚠️ checkpoint</span>.
+
+<span class="cm"># Instrucción de reanudación para Cursor:</span>
+<span class="str">"Eres el agente FMI. Lee agents.md y
+fmi/SYSTEM_KNOWLEDGE.md. Los artefactos de fases
+anteriores están en fmi/. Continúa desde Fase N."</span></pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-command">Command</span>
+          <div class="pattern-info">
+            <h4>/fmi-status</h4>
+            <p>Muestra el estado actual del pipeline: fase en curso, artefactos generados, checkpoints aprobados y sesión actual.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'cmd-status')">fmi-status.md</button>
+          </div>
+          <pre class="code-block active" data-group="cmd-status"><span class="cm">---</span>
+<span class="kw">description</span>: <span class="str">"Muestra estado del pipeline FMI"</span>
+<span class="cm">---</span>
+
+Lee <span class="str">fmi/pipeline_state.json</span> y muestra:
+
+<span class="cls">📊 Estado del Pipeline FMI</span>
+━━━━━━━━━━━━━━━━━━━━━━━━
+Sistema:      {{nombre}}
+Fase actual:  N de 7
+Sesión:       M
+
+<span class="cls">📁 Artefactos generados:</span>
+  Diagramas sistema:    12 ✅
+  Diagramas backend:    28 ✅
+  Diagramas frontend:   15 ✅
+  Tests sistema:        12 ✅
+  Tests backend:        28 ✅
+  Tests frontend:       15 ✅
+  SYSTEM_KNOWLEDGE:     ✅
+  Contratos intención:  ⏳ en progreso
+
+<span class="cls">✓ Checkpoints aprobados:</span>
+  Fase 1 → 2:  ✅ (2026-03-11)
+  Fase 2 → 3:  ⏳ pendiente</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- RULES -->
+    <div class="subtab-content" id="subtab-cmd-rules">
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-rule">Rule</span>
+          <div class="pattern-info">
+            <h4>fmi-no-syntax-translation.mdc</h4>
+            <p>Guardia always-on que impide la traducción sintáctica directa entre lenguajes. La regla más importante del FMI.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="warning-box">
+            <strong>⛔ Esta es la regla más crítica del FMI</strong>
+            <p>Sin esta guardia, los agentes tienden a copiar la estructura y patrones del código origen en lugar de generar código idiomático desde los Contratos de Intención. El resultado sería código con "acento" del lenguaje original.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'rule-nosyntax')">fmi-no-syntax-translation.mdc</button>
+          </div>
+          <pre class="code-block active" data-group="rule-nosyntax"><span class="cm">---</span>
+<span class="kw">description</span>: <span class="str">"Impide traducción sintáctica directa"</span>
+<span class="kw">alwaysApply</span>: <span class="dc">true</span>
+<span class="cm">---</span>
+
+<span class="cls">PROHIBIDO</span> traducir código directamente de un
+lenguaje a otro.
+
+Todo código nuevo debe generarse desde los
+<span class="cls">Contratos de Intención</span> (<span class="str">fmi/contratos_intencion.md</span>),
+<span class="dc">NUNCA</span> desde el código fuente origen.
+
+Si detectas que estás:
+- Copiando estructura del código origen
+- Usando nombres de variables del origen
+- Replicando patrones del lenguaje origen
+→ <span class="dc">DETENTE</span> y vuelve a los contratos.
+
+El código destino debe ser <span class="cls">idiomático</span> del
+lenguaje destino, no una traducción literal
+con "acento" del lenguaje origen.</pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-rule">Rule</span>
+          <div class="pattern-info">
+            <h4>fmi-conventions.mdc</h4>
+            <p>Reglas generales del FMI que se aplican en toda sesión: jerarquía de prioridad, principio de pirámide invertida y gestión de contexto.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'rule-conv')">fmi-conventions.mdc</button>
+          </div>
+          <pre class="code-block active" data-group="rule-conv"><span class="cm">---</span>
+<span class="kw">description</span>: <span class="str">"Convenciones del Framework FMI"</span>
+<span class="kw">alwaysApply</span>: <span class="dc">true</span>
+<span class="cm">---</span>
+
+<span class="cls">## Jerarquía de Prioridad</span>
+1. Conocimiento verificable (artefactos &gt; código)
+2. Verificación ejecutable (nada existe sin test)
+3. Seguridad (OWASP no es opcional)
+4. Arquitectura idiomática (patrones nativos)
+5. Clean Code + SOLID
+
+<span class="cls">## Invariantes</span>
+- Diagramas antes que tests
+- Tests integración son agnósticos al lenguaje
+- Tests unitarios son consecuencia de la arquitectura
+- SYSTEM_KNOWLEDGE.md se actualiza en cada fase
+- Un fallo en test integración = revisar Fase 2
+
+<span class="cls">## Gestión de Contexto</span>
+- Fases 1-2: código origen necesario
+- Fases 3+: <span class="dc">SOLO</span> SYSTEM_KNOWLEDGE + contratos
+- Si el agente referencia clases del origen en
+  Fase 5 → saturación de contexto → nueva sesión</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIPELINE STATE -->
+    <div class="subtab-content" id="subtab-cmd-state">
+      <div class="pattern-card open">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-config">State</span>
+          <div class="pattern-info">
+            <h4>pipeline_state.json</h4>
+            <p>Fichero de estado que permite reanudar el pipeline entre sesiones sin re-analizar lo ya hecho. Se actualiza automáticamente tras cada fase.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'state-json')">pipeline_state.json</button>
+          </div>
+          <pre class="code-block active" data-group="state-json">{
+  <span class="str">"sistema"</span>: <span class="str">"portal-clientes-legacy"</span>,
+  <span class="str">"fase_actual"</span>: <span class="cls">2</span>,
+  <span class="str">"fase_completada"</span>: <span class="cls">1</span>,
+  <span class="str">"timestamp"</span>: <span class="str">"2026-03-12T10:30:00Z"</span>,
+  <span class="str">"artefactos_generados"</span>: {
+    <span class="str">"diagramas_sistema"</span>: <span class="cls">12</span>,
+    <span class="str">"diagramas_backend"</span>: <span class="cls">28</span>,
+    <span class="str">"diagramas_frontend"</span>: <span class="cls">15</span>,
+    <span class="str">"tests_sistema"</span>: <span class="cls">12</span>,
+    <span class="str">"tests_backend"</span>: <span class="cls">28</span>,
+    <span class="str">"tests_frontend"</span>: <span class="cls">15</span>,
+    <span class="str">"system_knowledge"</span>: <span class="dc">true</span>,
+    <span class="str">"contratos_intencion"</span>: <span class="dc">false</span>
+  },
+  <span class="str">"checkpoints"</span>: {
+    <span class="str">"fase_1"</span>: {
+      <span class="str">"aprobado"</span>: <span class="dc">true</span>,
+      <span class="str">"fecha"</span>: <span class="str">"2026-03-11T16:00:00Z"</span>,
+      <span class="str">"notas"</span>: <span class="str">"Validado con negocio. Falta flujo cancelación."</span>
+    }
+  },
+  <span class="str">"sesion"</span>: <span class="cls">1</span>,
+  <span class="str">"contexto_cargado"</span>: [<span class="str">"legacy/src/backend"</span>, <span class="str">"legacy/src/frontend"</span>]
+}</pre>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-commands -->
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB: PARALELISMO                         -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-paralelismo">
+
+    <div class="pattern-card open">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-parallel">Nivel 1</span>
+        <div class="pattern-info">
+          <h4>Subagents de Cursor — Fase 1</h4>
+          <p>El orquestador lanza backend-analyst y frontend-analyst simultáneamente. Cada uno genera diagramas y tests de su capa con contexto aislado.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="diagram-box">
+          <pre>
+                      ┌─ fmi-backend-analyst ──────────────┐
+                      │  • Analiza endpoints, servicios, BD │
+                      │  • Genera diagramas backend         │
+                      │  • Genera tests backend             │
+  fmi-orchestrator ──┤                                      ├──► Síntesis
+                      │  • Analiza componentes, estado, UI  │    • Diagramas sistema
+                      │  • Genera diagramas frontend        │    • SYSTEM_KNOWLEDGE.md
+                      │  • Genera tests frontend            │    • pipeline_state.json
+                      └─ fmi-frontend-analyst ──────────────┘
+          </pre>
+        </div>
+        <div class="key-insight">
+          <strong>💡 Contexto aislado = calidad superior</strong>
+          <p>Cada subagent solo ve el código de su capa. Esto evita que el análisis del backend contamine el del frontend (y viceversa), y maximiza la ventana de contexto disponible para cada análisis.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-parallel">Nivel 2</span>
+        <div class="pattern-info">
+          <h4>Sesiones independientes — Fases 3 a 5</h4>
+          <p>Una vez destilados los contratos, backend y frontend se migran en sesiones de Cursor totalmente independientes y paralelas.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <p class="body-text">Tras el checkpoint de la Fase 2, los contratos de intención son compartidos pero las implementaciones son independientes. Se pueden abrir <strong>dos sesiones de Cursor</strong> (o dos instancias de Claude Code) en paralelo:</p>
+        <div class="diagram-box">
+          <pre>
+  ┌─────────────────────────────────┐    ┌─────────────────────────────────┐
+  │  <strong>Sesión A: Backend</strong>              │    │  <strong>Sesión B: Frontend</strong>             │
+  │                                 │    │                                 │
+  │  Input:                         │    │  Input:                         │
+  │   • SYSTEM_KNOWLEDGE.md         │    │   • SYSTEM_KNOWLEDGE.md         │
+  │   • contratos_intencion.md      │    │   • contratos_intencion.md      │
+  │   • diagramas backend           │    │   • diagramas frontend          │
+  │                                 │    │                                 │
+  │  Fase 3: Arquitectura backend   │    │  Fase 3: Arquitectura frontend  │
+  │  Fase 4: Tests unitarios        │    │  Fase 4: Tests unitarios        │
+  │  Fase 5: Implementación         │    │  Fase 5: Implementación         │
+  │                                 │    │                                 │
+  │  <strong>NO carga código legacy</strong>        │    │  <strong>NO carga código legacy</strong>        │
+  └─────────────────────────────────┘    └─────────────────────────────────┘
+                    │                                      │
+                    └──────────────┬───────────────────────┘
+                                   │
+                      Tests nivel sistema (E2E)
+                      contra ambas implementaciones
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-parallel">Nivel 3</span>
+        <div class="pattern-info">
+          <h4>Módulos dentro de cada capa</h4>
+          <p>Si el backend tiene múltiples módulos (auth, pagos, notificaciones), cada uno puede migrarse como un pipeline FMI independiente en paralelo.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <p class="body-text">Este nivel es útil para sistemas grandes con módulos claramente delimitados. Cada módulo mantiene su propio subconjunto de contratos y diagramas, y los <strong>tests de nivel sistema se ejecutan al final contra el conjunto ensamblado</strong>.</p>
+        <div class="warning-box">
+          <strong>⚠️ Precaución</strong>
+          <p>Este nivel requiere que los módulos tengan interfaces bien definidas entre sí. Si hay acoplamiento fuerte entre módulos, es mejor migrarlos secuencialmente para evitar divergencias en los contratos de las interfaces compartidas.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-parallel">Copilot</span>
+        <div class="pattern-info">
+          <h4>Integración con Plan Mode de Copilot</h4>
+          <p>El modo Plan de Copilot encaja naturalmente en la Fase 3 (diseño arquitectónico) y la Fase 5 (implementación modular).</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="flow-steps">
+          <div class="flow-step">
+            <span class="flow-num">3</span>
+            <p><strong>Fase 3 — Diseño de Arquitectura:</strong> Plan Mode piensa antes de generar código. Le das los contratos de intención y propone la estructura de carpetas, interfaces entre capas y convenciones. Genera un plan revisable antes de crear ficheros.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">5</span>
+            <p><strong>Fase 5 — Implementación:</strong> Para cada módulo, Plan Mode propone qué ficheros va a crear/modificar antes de hacerlo. Te da el checkpoint natural del FMI integrado en el flujo del IDE.</p>
+          </div>
+        </div>
+        <div class="tip-box">
+          <strong>✅ Combinación recomendada</strong>
+          <p>Usar <strong>Cursor + subagents</strong> para las fases de análisis paralelo (1-2) y <strong>Copilot Plan Mode</strong> para las fases de diseño e implementación (3-5) donde la revisión humana del plan antes de la ejecución es más valiosa.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-paralelismo -->
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB: GUÍA PRÁCTICA                       -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-practica">
+
+    <div class="pattern-card open">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-fase">Paso 1</span>
+        <div class="pattern-info">
+          <h4>Empieza por los skills, no por los agents</h4>
+          <p>Los skills son más fáciles de probar y refinar. Crea primero el skill de diagramas y valídalo contra un módulo pequeño.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="flow-steps">
+          <div class="flow-step">
+            <span class="flow-num">1</span>
+            <p>Crea <code>.cursor/skills/fmi-sequence-diagrams/SKILL.md</code> con el contenido de la pestaña Skills.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">2</span>
+            <p>Elige un módulo pequeño y representativo del sistema legacy (ni el más simple ni el más complejo).</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">3</span>
+            <p>Pide al agente que genere los diagramas <strong>solo para ese módulo</strong>. Revisa la calidad y ajusta las instrucciones del skill.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">4</span>
+            <p>Cuando los diagramas sean buenos, crea <code>fmi-integration-tests</code> y valida que los tests generados <strong>pasan contra el sistema original</strong>.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">5</span>
+            <p>Solo cuando la cadena diagrama → test funcione bien, añade los subagents para paralelizar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-fase">Paso 2</span>
+        <div class="pattern-info">
+          <h4>Módulo piloto antes de escalar</h4>
+          <p>Ejecuta el pipeline completo (Fases 1 a 5) manualmente sobre un módulo representativo antes de automatizar todo.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <p class="body-text">El módulo piloto te dará feedback sobre qué instrucciones del skill necesitan más detalle, dónde el agente se desvía, y cuánto contexto consume cada fase. Con esa información podrás calibrar la partición entre sesiones del pipeline completo.</p>
+        <div class="tip-box">
+          <strong>✅ Criterio de selección del módulo piloto</strong>
+          <p>Elige un módulo que tenga: al menos 3 endpoints, interacciones con base de datos, alguna validación de negocio no trivial, y al menos un flujo de error. Esto te dará cobertura representativa sin ser tan grande que sature el contexto.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-fase">Paso 3</span>
+        <div class="pattern-info">
+          <h4>Invierte en el SYSTEM_KNOWLEDGE.md</h4>
+          <p>Es el artefacto que salva las sesiones. Si un agente se pierde o el contexto se satura, siempre puedes arrancar desde este fichero.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <p class="body-text">Valida la calidad del <code>SYSTEM_KNOWLEDGE.md</code> en el primer checkpoint con el mayor rigor posible. Es más barato corregir errores en la Fase 1 que descubrirlos cuando los tests de integración fallan en la Fase 5.</p>
+        <div class="warning-box">
+          <strong>⚠️ Señales de un SYSTEM_KNOWLEDGE de baja calidad</strong>
+          <p>Invariantes de negocio genéricas sin tests que las validen, sección de "contratos implícitos" vacía o superficial, dependencias externas sin descripción de impacto de fallo, y ausencia de deuda técnica documentada (todos los sistemas legacy tienen deuda).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-fase">Paso 4</span>
+        <div class="pattern-info">
+          <h4>Usa modelos distintos por fase</h4>
+          <p>Cada fase del FMI requiere habilidades distintas del LLM. Ajustar el modelo por fase mejora la calidad y reduce costes.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <table class="info-table">
+          <thead>
+            <tr><th>Fase</th><th>Habilidad necesaria</th><th>Modelo recomendado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Fase 1</strong> — Análisis</td><td>Comprensión de código, ingeniería inversa</td><td>Claude Sonnet / Gemini 2.5 Pro</td></tr>
+            <tr><td><strong>Fase 2</strong> — Destilación</td><td>Razonamiento abstracto, pensamiento conceptual</td><td>Claude Opus</td></tr>
+            <tr><td><strong>Fase 3</strong> — Arquitectura</td><td>Diseño de sistemas, patrones idiomáticos</td><td>Claude Opus / o3</td></tr>
+            <tr><td><strong>Fase 4</strong> — TDD</td><td>Generación de tests, precisión</td><td>Claude Sonnet</td></tr>
+            <tr><td><strong>Fase 5</strong> — Implementación</td><td>Generación de código idiomático</td><td>Claude Sonnet / Gemini 2.5 Pro</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-fase">Paso 5</span>
+        <div class="pattern-info">
+          <h4>Versionado y gestión de sesiones</h4>
+          <p>Commitea los artefactos FMI en git. Son la documentación viva del sistema y el mecanismo de rollback entre fases.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="flow-steps">
+          <div class="flow-step">
+            <span class="flow-num">1</span>
+            <p><strong>Un commit por fase:</strong> Al completar cada fase, commitea todos los artefactos generados con un mensaje descriptivo: <code>fmi: fase 1 completa — 55 diagramas, 55 tests, SYSTEM_KNOWLEDGE</code></p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">2</span>
+            <p><strong>Branches por implementación:</strong> Si migras a dos lenguajes destino (como en tu caso de estudio), cada implementación va en su branch. Los artefactos de Fases 1-2 son compartidos en main.</p>
+          </div>
+          <div class="flow-step">
+            <span class="flow-num">3</span>
+            <p><strong>Gestión de sesiones:</strong> El pipeline se divide naturalmente en 2-3 sesiones. Sesión 1: Fases 1-2 (requiere código origen). Sesión 2: Fases 3-5 (solo artefactos). Sesión 3 opcional: Fases 6-7.</p>
+          </div>
+        </div>
+        <div class="key-insight">
+          <strong>💡 Regla crítica de contexto</strong>
+          <p>A partir de la Fase 3, el agente NO debe cargar el código fuente origen. Todo el conocimiento está en los artefactos. Cargar el código origen desperdicia contexto y puede hacer que el agente genere código destino con "acento" del lenguaje origen.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-practica -->
+
+</div><!-- /tabs-outer -->
+
+</div><!-- /container -->
+
+<footer>
+  FMI — Framework de Migración de Intención · Skills &amp; Agents · Marzo 2026
+</footer>
+
+<script>
+// Main tabs
+document.querySelectorAll('.tab-bar .tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const parent = btn.closest('.tabs-outer');
+    parent.querySelectorAll('.tab-bar .tab-btn').forEach(b => b.classList.remove('active'));
+    parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Sub-tabs
+document.querySelectorAll('.subtab-bar .subtab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const bar = btn.closest('.subtab-bar');
+    const container = btn.closest('.tab-content');
+    bar.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
+    container.querySelectorAll('.subtab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('subtab-' + btn.dataset.subtab).classList.add('active');
+  });
+});
+
+// Toggle pattern cards
+function togglePattern(header) {
+  header.closest('.pattern-card').classList.toggle('open');
+}
+
+// Code language tabs
+function switchCode(btn, group) {
+  const body = btn.closest('.pattern-body');
+  const btns = btn.parentElement.querySelectorAll('.code-tab-btn');
+  const blocks = body.querySelectorAll('.code-block[data-group="' + group + '"]');
+  const idx = Array.from(btns).indexOf(btn);
+  btns.forEach(b => b.classList.remove('active'));
+  blocks.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (blocks[idx]) blocks[idx].classList.add('active');
+}
+</script>
+</body>
+</html>

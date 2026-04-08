@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDSS · Arquitectura Distribuida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root {
+  --bg:       #f5f6f8;
+  --bg2:      #ffffff;
+  --bg3:      #eef0f4;
+  --border:   #dde1e9;
+  --border2:  #c8cdd8;
+  --text:     #1e2333;
+  --muted:    #7a8099;
+  --accent:   #2563eb;
+  --green:    #16a34a;
+  --yellow:   #b45309;
+  --red:      #dc2626;
+  --purple:   #7c3aed;
+  --orange:   #ea580c;
+  --teal:     #0d9488;
+  --mono:     'JetBrains Mono', monospace;
+  --ui:       'Syne', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--mono); background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+/* TOPBAR */
+.topbar { height: 42px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; gap: 12px; flex-shrink: 0; }
+.dots { display: flex; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; }
+.topbar-title { font-family: var(--ui); font-size: 13px; font-weight: 600; color: var(--muted); margin-left: 8px; }
+.topbar-title b { color: var(--text); }
+.pill { font-size: 10px; font-family: var(--ui); font-weight: 700; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.8px; text-transform: uppercase; }
+.p-java   { background: #ede9fe; color: var(--purple); border: 1px solid #c4b5fd; }
+.p-redis  { background: #fee2e2; color: var(--red);    border: 1px solid #fca5a5; }
+.p-docker { background: #dbeafe; color: var(--accent); border: 1px solid #93c5fd; }
+
+/* LAYOUT */
+.workspace { display: flex; flex: 1; overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar { width: 230px; min-width: 230px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-head { padding: 12px 16px 10px; font-family: var(--ui); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+.sb-tree { flex: 1; overflow-y: auto; padding: 6px 0; }
+.sb-group { font-size: 9px; font-weight: 700; font-family: var(--ui); letter-spacing: 1.2px; text-transform: uppercase; color: var(--border2); padding: 10px 16px 4px; }
+.sb-item { display: flex; align-items: center; gap: 8px; padding: 6px 14px; cursor: pointer; border-left: 2px solid transparent; font-size: 12px; color: var(--muted); transition: all 0.12s; white-space: nowrap; overflow: hidden; }
+.sb-item:hover { background: var(--bg3); color: var(--text); }
+.sb-item.active { background: #eff6ff; color: var(--accent); border-left-color: var(--accent); }
+.sb-item .ico { font-size: 13px; flex-shrink: 0; }
+.sb-item .nm  { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.sb-tag { font-size: 9px; font-family: var(--ui); font-weight: 700; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; }
+.t-core  { background: #dbeafe; color: var(--accent); }
+.t-model { background: #fef3c7; color: var(--yellow); }
+.t-infra { background: #dcfce7; color: var(--green); }
+.t-doc   { background: #ede9fe; color: var(--purple); }
+
+/* MAIN */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.tabbar { height: 38px; background: var(--bg3); border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; padding: 0 8px; gap: 1px; overflow-x: auto; flex-shrink: 0; }
+.tabbar::-webkit-scrollbar { height: 3px; }
+.etab { display: flex; align-items: center; gap: 6px; padding: 0 14px; height: 32px; cursor: pointer; border-radius: 6px 6px 0 0; font-size: 11px; color: var(--muted); background: transparent; border: none; white-space: nowrap; transition: all 0.12s; border-top: 2px solid transparent; font-family: var(--mono); }
+.etab:hover { color: var(--text); background: #e8eaf0; }
+.etab.active { color: var(--text); background: var(--bg2); border-top-color: var(--accent); }
+.content-area { flex: 1; overflow: hidden; position: relative; }
+.panel { display: none; height: 100%; overflow: auto; }
+.panel.active { display: block; }
+
+/* CODE PANEL */
+.code-panel { height: 100%; overflow: auto; position: relative; }
+.code-panel pre { margin: 0; padding: 24px !important; min-height: 100%; background: #fafbfc !important; border-radius: 0 !important; }
+.code-panel pre code { font-family: var(--mono); font-size: 12.5px; line-height: 1.7; background: #fafbfc !important; }
+.copy-btn { position: sticky; top: 12px; float: right; margin: 12px 12px 0 0; background: var(--bg2); border: 1px solid var(--border2); color: var(--muted); font-size: 10px; font-family: var(--ui); font-weight: 600; padding: 4px 10px; border-radius: 5px; cursor: pointer; transition: all 0.15s; letter-spacing: 0.5px; z-index: 10; }
+.copy-btn:hover { color: var(--text); border-color: var(--accent); }
+.copy-btn.ok { color: var(--green); border-color: var(--green); }
+
+/* STATUS BAR */
+.statusbar { height: 24px; background: var(--accent); border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; gap: 16px; flex-shrink: 0; }
+.st { font-size: 10px; color: #fff; font-family: var(--ui); opacity: 0.9; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg3); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ═══════════ README ═══════════ */
+.readme { padding: 32px 40px 48px; max-width: 980px; }
+.readme-title { font-family: var(--ui); font-size: 26px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-bottom: 4px; }
+.readme-title span { color: var(--accent); }
+.readme-sub { font-size: 12px; color: var(--muted); margin-bottom: 36px; }
+.section-label { font-family: var(--ui); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin: 36px 0 14px; display: flex; align-items: center; gap: 10px; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* DIAGRAMA FLUJO PRINCIPAL */
+.flow-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 28px 24px; position: relative; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.flow-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--purple)); }
+.flow-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0; justify-content: center; row-gap: 20px; }
+.fnode { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.fbox { border-radius: 8px; padding: 10px 16px; font-size: 11px; font-weight: 500; text-align: center; line-height: 1.4; min-width: 108px; border: 1px solid; }
+.fbox small { display: block; font-size: 9px; color: var(--muted); margin-top: 2px; }
+.flabel { font-size: 9px; font-family: var(--ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); }
+.farr { font-size: 14px; color: var(--border2); padding: 0 4px; align-self: center; margin-top: -10px; }
+.n-user   { background: #f0f4ff; border-color: #c7d2fe; color: #3730a3; }
+.n-lb     { background: #f0fdf4; border-color: #bbf7d0; color: var(--green); }
+.n-filter { background: #faf5ff; border-color: #e9d5ff; color: var(--purple); }
+.n-l1     { background: #fff7ed; border-color: #fed7aa; color: var(--orange); box-shadow: 0 0 8px rgba(234,88,12,0.08); }
+.n-srv    { background: #f0fdfa; border-color: #99f6e4; color: var(--teal); }
+.n-resp   { background: #eff6ff; border-color: #bfdbfe; color: var(--accent); }
+.n-l2     { background: #fef2f2; border-color: #fecaca; color: var(--red); }
+.flow-note { margin-top: 14px; font-size: 10px; color: var(--muted); text-align: center; font-family: var(--ui); }
+.flow-note b { color: var(--accent); }
+
+/* HIT / MISS */
+.split { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 24px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.split-div { background: var(--border); }
+.split-h { font-family: var(--ui); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+.b-hit  { background: #dcfce7; color: var(--green); border: 1px solid #bbf7d0; }
+.b-miss { background: #fee2e2; color: var(--red); border: 1px solid #fecaca; }
+.steps { display: flex; flex-direction: column; gap: 5px; }
+.step { display: flex; align-items: center; gap: 8px; }
+.step-n { width: 18px; height: 18px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border2); font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; color: var(--muted); flex-shrink: 0; }
+.step-b { flex: 1; border-radius: 6px; padding: 6px 10px; font-size: 11px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); }
+.s-green { border-color: #bbf7d0; background: #f0fdf4; color: var(--green); }
+.s-red   { border-color: #fecaca; background: #fef2f2; color: var(--red); }
+.s-blue  { border-color: #bfdbfe; background: #eff6ff; color: var(--accent); }
+.step-arr { color: var(--border2); font-size: 10px; padding-left: 26px; }
+
+/* CAPAS */
+.layers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.lcard { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.lcard:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(37,99,235,0.08); }
+.lcard-icon { font-size: 22px; margin-bottom: 8px; }
+.lcard-title { font-family: var(--ui); font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.lcard-sub { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.lcard-body { font-size: 10px; color: var(--muted); line-height: 1.7; }
+.lcard-body b { color: var(--text); font-weight: 600; }
+.ltag { display: inline-block; background: var(--bg3); border: 1px solid var(--border2); border-radius: 3px; padding: 0 5px; font-size: 9px; margin: 1px; color: var(--accent); }
+
+/* DECISIONES */
+.decisions { display: flex; flex-direction: column; gap: 10px; }
+.dbox { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; display: grid; grid-template-columns: 36px 1fr; gap: 14px; align-items: start; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.dnum { width: 32px; height: 32px; border-radius: 8px; background: #eff6ff; border: 1px solid #bfdbfe; display: flex; align-items: center; justify-content: center; font-family: var(--ui); font-size: 14px; font-weight: 800; color: var(--accent); }
+.dbox h4 { font-family: var(--ui); font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.dbox p { font-size: 11px; color: var(--muted); line-height: 1.6; }
+.dbox p b { color: var(--accent); }
+
+/* TIMELINE */
+.timeline { position: relative; padding-left: 20px; }
+.timeline::before { content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--border); }
+.tl { position: relative; padding: 0 0 14px 18px; font-size: 11px; }
+.tl:last-child { padding-bottom: 0; }
+.tl::before { content: ''; position: absolute; left: -5px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--border2); border: 1px solid var(--border2); }
+.tl.on::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px #dbeafe; }
+.tl-lbl { font-family: var(--ui); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); }
+.tl-txt { color: var(--text); margin-top: 2px; }
+.tl-txt code { font-size: 10px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 3px; padding: 0 4px; color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="dots">
+    <div class="dot" style="background:#f38ba8"></div>
+    <div class="dot" style="background:#f9e2af"></div>
+    <div class="dot" style="background:#a6e3a1"></div>
+  </div>
+  <span class="topbar-title"><b>MDSS</b> · Modular-to-Distributed State Synchronization</span>
+  <span class="pill p-java">Java 11</span>
+  <span class="pill p-redis">Redis</span>
+  <span class="pill p-docker">Docker</span>
+</div>
+
+<div class="workspace">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-head">⬡ Explorador</div>
+    <div class="sb-tree">
+
+      <div class="sb-group">Documentación</div>
+      <div class="sb-item active" onclick="show('readme',this)">
+        <span class="ico">📐</span><span class="nm">README — Diagrama</span>
+        <span class="sb-tag t-doc">vista</span>
+      </div>
+
+      <div class="sb-group">Modelo</div>
+      <div class="sb-item" onclick="show('usersession',this)">
+        <span class="ico">☕</span><span class="nm">UserSession.java</span>
+        <span class="sb-tag t-model">model</span>
+      </div>
+
+      <div class="sb-group">Núcleo MDSS</div>
+      <div class="sb-item" onclick="show('statemanager',this)">
+        <span class="ico">☕</span><span class="nm">SessionStateManager.java</span>
+        <span class="sb-tag t-core">core</span>
+      </div>
+      <div class="sb-item" onclick="show('filter',this)">
+        <span class="ico">☕</span><span class="nm">MdssSessionFilter.java</span>
+        <span class="sb-tag t-core">core</span>
+      </div>
+
+      <div class="sb-group">Aplicación</div>
+      <div class="sb-item" onclick="show('servlet',this)">
+        <span class="ico">☕</span><span class="nm">PerfilServlet.java</span>
+      </div>
+      <div class="sb-item" onclick="show('listener',this)">
+        <span class="ico">☕</span><span class="nm">AppLifecycleListener.java</span>
+      </div>
+
+      <div class="sb-group">Configuración</div>
+      <div class="sb-item" onclick="show('pom',this)">
+        <span class="ico">📦</span><span class="nm">pom.xml</span>
+        <span class="sb-tag t-doc">maven</span>
+      </div>
+      <div class="sb-item" onclick="show('dockerfile',this)">
+        <span class="ico">🐳</span><span class="nm">Dockerfile</span>
+        <span class="sb-tag t-infra">build</span>
+      </div>
+      <div class="sb-item" onclick="show('docker',this)">
+        <span class="ico">🐳</span><span class="nm">docker-compose.yml</span>
+        <span class="sb-tag t-infra">infra</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="tabbar" id="tabbar">
+      <button class="etab active" id="etab-readme" onclick="show('readme',null)">📐 README</button>
+    </div>
+
+    <div class="content-area">
+
+      <!-- README DIAGRAMA -->
+      <div class="panel active" id="panel-readme">
+        <div class="readme">
+
+          <div class="readme-title">MDSS · <span>Arquitectura</span></div>
+          <div class="readme-sub">Modular-to-Distributed State Synchronization · L1 Caffeine + L2 Redis · Escritura síncrona post-respuesta</div>
+
+          <!-- FLUJO PRINCIPAL -->
+          <div class="section-label">Flujo de una petición</div>
+          <div class="flow-card">
+            <div class="flow-row">
+              <div class="fnode">
+                <div class="fbox n-user">👤 Cliente<small>navegador</small></div>
+                <div class="flabel">origen</div>
+              </div>
+              <div class="farr">→</div>
+              <div class="fnode">
+                <div class="fbox n-lb">⚖️ Nginx<small>round-robin</small></div>
+                <div class="flabel">balanceador</div>
+              </div>
+              <div class="farr">→</div>
+              <div class="fnode">
+                <div class="fbox n-filter">🔍 MdssFilter<small>intercepta</small></div>
+                <div class="flabel">filter</div>
+              </div>
+              <div class="farr">→</div>
+              <div class="fnode">
+                <div class="fbox n-l1">⚡ L1 Caffeine<small>RAM local · ~0ms</small></div>
+                <div class="flabel">caché local</div>
+              </div>
+              <div class="farr">→</div>
+              <div class="fnode">
+                <div class="fbox n-srv">⚙️ Servlet<small>lógica negocio</small></div>
+                <div class="flabel">proceso</div>
+              </div>
+              <div class="farr">→</div>
+              <div class="fnode">
+                <div class="fbox n-resp">✅ Respuesta HTTP<small>cliente recibe</small></div>
+                <div class="flabel">entrega</div>
+              </div>
+              <div class="farr">→</div>
+              <div class="fnode">
+                <div class="fbox n-l2">🗄️ Redis SET<small>síncrono · ~1ms</small></div>
+                <div class="flabel">persistencia</div>
+              </div>
+            </div>
+            <div class="flow-note">La escritura en Redis ocurre <b>después</b> de que el cliente recibe la respuesta · latencia percibida = RAM local</div>
+          </div>
+
+          <!-- HIT / MISS -->
+          <div class="section-label">L1 Hit vs L1 Miss (failover)</div>
+          <div class="split">
+            <div>
+              <div class="split-h" style="color:var(--green)"><span class="badge b-hit">HIT</span> Caso normal · 95%+ peticiones</div>
+              <div class="steps">
+                <div class="step"><div class="step-n">1</div><div class="step-b s-blue">Filter obtiene SessionID de la cookie</div></div>
+                <div class="step-arr">↓</div>
+                <div class="step"><div class="step-n">2</div><div class="step-b s-green">⚡ L1 Caffeine → HIT (0ms)</div></div>
+                <div class="step-arr">↓</div>
+                <div class="step"><div class="step-n">3</div><div class="step-b">Servlet procesa sobre RAM local</div></div>
+                <div class="step-arr">↓</div>
+                <div class="step"><div class="step-n">4</div><div class="step-b s-blue">✅ Respuesta HTTP al cliente</div></div>
+                <div class="step-arr">↓</div>
+                <div class="step"><div class="step-n">5</div><div class="step-b">L1 update + Redis SET (~1ms)</div></div>
+              </div>
+            </div>
+            <div class="split-div"></div>
+            <div>
+              <div class="split-h" style="color:var(--orange)"><span class="badge b-miss">MISS</span> Failover · nodo reiniciado</div>
+              <div class="steps">
+                <div class="step"><div class="step-n">1</div><div class="step-b s-blue">Filter obtiene SessionID de la cookie</div></div>
+                <div class="step-arr">↓</div>
+                <div class="step"><div class="step-n">2</div><div class="step-b s-red">⚡ L1 Caffeine → MISS (nodo frío)</div></div>
+                <div class="step-arr">↓</div>
+                <div class="step"><div class="step-n">3</div><div class="step-b s-red">🗄️ Redis GET → rehidrata L1</div></div>
+                <div class="step-arr">↓</div>
+                <div class="step"><div class="step-n">4</div><div class="step-b">Servlet procesa (sesión recuperada)</div></div>
+                <div class="step-arr">↓</div>
+                <div class="step"><div class="step-n">5</div><div class="step-b s-blue">✅ Respuesta HTTP al cliente</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CAPAS -->
+          <div class="section-label">Las tres capas</div>
+          <div class="layers">
+            <div class="lcard">
+              <div class="lcard-icon">⚡</div>
+              <div class="lcard-title">L1 · Caffeine</div>
+              <div class="lcard-sub">Caché RAM local por nodo</div>
+              <div class="lcard-body">Latencia <b>~0ms</b>. Máx <b>5.000 sesiones</b>.<br>TTL <b>30 min</b>, evicción LRU automática.<br>Métricas de hit/miss integradas.<br><br><span class="ltag">LRU eviction</span><span class="ltag">TTL local</span><span class="ltag">Caffeine</span></div>
+            </div>
+            <div class="lcard">
+              <div class="lcard-icon">🗄️</div>
+              <div class="lcard-title">L2 · Redis</div>
+              <div class="lcard-sub">Estado compartido entre nodos</div>
+              <div class="lcard-body">Latencia <b>~1-2ms</b>. Escrito <b>post-respuesta</b>.<br>TTL via <b>SETEX</b> = 30 min.<br>Resiliencia: nodos se rehidratan.<br><br><span class="ltag">SETEX</span><span class="ltag">JSON</span><span class="ltag">JedisPool</span></div>
+            </div>
+            <div class="lcard">
+              <div class="lcard-icon">🔍</div>
+              <div class="lcard-title">Filter · Orquestador</div>
+              <div class="lcard-sub">Transparente al Servlet</div>
+              <div class="lcard-body">Intercepta <b>antes</b> y <b>después</b>.<br>Servlet solo hace <b>getAttribute</b>.<br>Código legado sin cambios estructurales.<br><br><span class="ltag">@WebFilter</span><span class="ltag">chain.doFilter</span><span class="ltag">post-commit</span></div>
+            </div>
+          </div>
+
+          <!-- DECISIONES -->
+          <div class="section-label">Decisiones de diseño</div>
+          <div class="decisions">
+            <div class="dbox">
+              <div class="dnum">1</div>
+              <div><h4>Escritura síncrona post-respuesta</h4><p>La escritura en Redis ocurre <b>después</b> de que el cliente tiene sus bytes. El hilo sigue vivo pero el usuario ya recibió su respuesta. Los ~1-2ms de Redis no afectan latencia percibida. Sin threads extra, sin colas, sin complejidad.</p></div>
+            </div>
+            <div class="dbox">
+              <div class="dnum">2</div>
+              <div><h4>Caffeine en lugar de ConcurrentHashMap crudo</h4><p>Un mapa estático sin evicción crece indefinidamente hasta OutOfMemoryError. Caffeine añade límite LRU y TTL local con una línea de configuración, además de métricas de hit/miss listas para Prometheus.</p></div>
+            </div>
+            <div class="dbox">
+              <div class="dnum">3</div>
+              <div><h4>Degradación elegante si Redis falla</h4><p>Si Redis no responde, la aplicación <b>sigue funcionando</b> con L1. El estado no se pierde en ese nodo, solo si el propio nodo reinicia. El try/catch captura el error, lo loggea, y no rompe el flujo del usuario.</p></div>
+            </div>
+            <div class="dbox">
+              <div class="dnum">4</div>
+              <div><h4>Transparencia total para el código de negocio</h4><p>El Servlet solo hace <b>getAttribute("userSession")</b> y <b>setAttribute</b>. No conoce Redis, Caffeine ni la arquitectura distribuida. Código legado migra con cambios mínimos.</p></div>
+            </div>
+          </div>
+
+          <!-- TIMELINE -->
+          <div class="section-label">Ciclo exacto en el Filter</div>
+          <div class="flow-card">
+            <div class="timeline">
+              <div class="tl on"><div class="tl-lbl">t=0 · Request</div><div class="tl-txt">Filter intercepta. Obtiene <code>sessionId</code> de la cookie HTTP.</div></div>
+              <div class="tl on"><div class="tl-lbl">t=0.01ms · L1 Check</div><div class="tl-txt"><code>l1Cache.getIfPresent(sessionId)</code> → HIT devuelve objeto en RAM local.</div></div>
+              <div class="tl"><div class="tl-lbl">t=1-2ms · L2 Fallback (solo MISS)</div><div class="tl-txt"><code>jedis.get("session:" + id)</code> → deserializa JSON → rehidrata L1.</div></div>
+              <div class="tl on"><div class="tl-lbl">t=Xms · Lógica de negocio</div><div class="tl-txt">Servlet ejecuta. Lee y escribe en <code>request.getAttribute("userSession")</code>.</div></div>
+              <div class="tl on"><div class="tl-lbl" style="color:var(--green);font-weight:800">t=Xms · ✅ CLIENTE RECIBE RESPUESTA</div><div class="tl-txt"><code>chain.doFilter()</code> completa. HTTP response commiteado. Usuario tiene sus datos.</div></div>
+              <div class="tl on"><div class="tl-lbl">t=X+1ms · Redis SET</div><div class="tl-txt"><code>jedis.setex("session:" + id, 1800, json)</code> · Escritura síncrona, sin impacto percibido.</div></div>
+              <div class="tl"><div class="tl-lbl">t=X+1ms · Hilo liberado</div><div class="tl-txt">El thread vuelve al pool de Tomcat. Ciclo completo.</div></div>
+            </div>
+          </div>
+
+          <div style="height:40px"></div>
+        </div>
+      </div>
+
+      <!-- USERSESSION -->
+      <div class="panel" id="panel-usersession">
+        <div class="code-panel">
+          <button class="copy-btn" onclick="cp('code-usersession',this)">⎘ copiar</button>
+          <pre><code class="language-java" id="code-usersession">package com.ejemplo.mdss.model;
+
+import java.io.Serializable;
+import java.time.Instant;
+
+/**
+ * Objeto de sesión del usuario.
+ * Es lo que viaja entre L1 (Caffeine) y L2 (Redis).
+ *
+ * Mantenlo plano y serializable: sin referencias circulares,
+ * sin objetos pesados. Todo lo que necesite el servlet para
+ * procesar la petición sin tocar base de datos.
+ */
+public class UserSession implements Serializable {
+
+    private String userId;
+    private String username;
+    private String rol;
+    private String ultimaPagina;
+    private Instant ultimoAcceso;
+
+    public UserSession() {}
+
+    public UserSession(String userId, String username, String rol) {
+        this.userId       = userId;
+        this.username     = username;
+        this.rol          = rol;
+        this.ultimoAcceso = Instant.now();
+    }
+
+    public String getUserId()              { return userId; }
+    public void   setUserId(String v)      { this.userId = v; }
+    public String getUsername()            { return username; }
+    public void   setUsername(String v)    { this.username = v; }
+    public String getRol()                 { return rol; }
+    public void   setRol(String v)         { this.rol = v; }
+    public String getUltimaPagina()        { return ultimaPagina; }
+    public void   setUltimaPagina(String v){ this.ultimaPagina = v; }
+    public Instant getUltimoAcceso()       { return ultimoAcceso; }
+    public void    setUltimoAcceso(Instant v){ this.ultimoAcceso = v; }
+
+    public void actualizarAcceso() { this.ultimoAcceso = Instant.now(); }
+
+    @Override
+    public String toString() {
+        return "UserSession{userId='" + userId + "', username='" + username
+                + "', rol='" + rol + "', ultimoAcceso=" + ultimoAcceso + "}";
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- STATEMANAGER -->
+      <div class="panel" id="panel-statemanager">
+        <div class="code-panel">
+          <button class="copy-btn" onclick="cp('code-statemanager',this)">⎘ copiar</button>
+          <pre><code class="language-java" id="code-statemanager">package com.ejemplo.mdss.cache;
+
+import com.ejemplo.mdss.model.UserSession;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * NÚCLEO DE LA ARQUITECTURA MDSS
+ * ================================
+ * Gestiona el estado de sesión en dos capas:
+ *
+ *   L1 → Caffeine (RAM local, ~0ms, max 5000 sesiones, TTL 30 min)
+ *   L2 → Redis    (RAM compartida, ~1-2ms, TTL 30 min)
+ *
+ * Flujo de LECTURA:
+ *   L1 HIT  → devuelve directo desde RAM local
+ *   L1 MISS → busca en Redis → rehidrata L1 → devuelve
+ *
+ * Flujo de ESCRITURA (post-respuesta HTTP):
+ *   1. Actualiza L1
+ *   2. Persiste en Redis de forma síncrona
+ *      (el cliente ya recibió la respuesta, no afecta latencia percibida)
+ */
+public class SessionStateManager {
+
+    private static final Logger LOG = Logger.getLogger(SessionStateManager.class.getName());
+    private static final int    TTL_SEGUNDOS = 30 * 60;
+    private static final String REDIS_PREFIX = "session:";
+
+    private final Cache&lt;String, UserSession&gt; l1Cache;
+    private final JedisPool jedisPool;
+    private final ObjectMapper objectMapper;
+
+    public SessionStateManager(String redisHost, int redisPort) {
+        this.l1Cache = Caffeine.newBuilder()
+                .maximumSize(5_000)
+                .expireAfterWrite(TTL_SEGUNDOS, TimeUnit.SECONDS)
+                .recordStats()
+                .build();
+
+        JedisPoolConfig cfg = new JedisPoolConfig();
+        cfg.setMaxTotal(20);
+        cfg.setMaxIdle(5);
+        cfg.setTestOnBorrow(true);
+        this.jedisPool = new JedisPool(cfg, redisHost, redisPort, 2000);
+
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
+
+        LOG.info("SessionStateManager iniciado → Redis: " + redisHost + ":" + redisPort);
+    }
+
+    // ── LECTURA: L1 → L2 → null ─────────────────────────────────────────────
+
+    public UserSession obtenerSesion(String sessionId) {
+        UserSession sesion = l1Cache.getIfPresent(sessionId);
+        if (sesion != null) {
+            LOG.fine("L1 HIT → " + sessionId);
+            return sesion;
+        }
+
+        LOG.fine("L1 MISS → Redis: " + sessionId);
+        sesion = obtenerDesdeRedis(sessionId);
+        if (sesion != null) {
+            l1Cache.put(sessionId, sesion);
+        }
+        return sesion;
+    }
+
+    // ── ESCRITURA: L1 + L2 (llamar DESPUÉS de enviar la respuesta HTTP) ──────
+
+    /**
+     * IMPORTANTE: llamar DESPUÉS de chain.doFilter().
+     * El cliente ya recibió su respuesta HTTP.
+     * La escritura en Redis (~1-2ms) no afecta latencia percibida.
+     */
+    public void persistirSesion(String sessionId, UserSession sesion) {
+        sesion.actualizarAcceso();
+        l1Cache.put(sessionId, sesion);
+        persistirEnRedis(sessionId, sesion);
+    }
+
+    public void eliminarSesion(String sessionId) {
+        l1Cache.invalidate(sessionId);
+        eliminarDeRedis(sessionId);
+    }
+
+    // ── OPERACIONES REDIS ────────────────────────────────────────────────────
+
+    private UserSession obtenerDesdeRedis(String sessionId) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            String json = jedis.get(REDIS_PREFIX + sessionId);
+            if (json == null) return null;
+            return objectMapper.readValue(json, UserSession.class);
+        } catch (Exception e) {
+            // Degradación elegante: sin Redis seguimos con L1
+            LOG.log(Level.WARNING, "Error leyendo Redis: " + sessionId, e);
+            return null;
+        }
+    }
+
+    private void persistirEnRedis(String sessionId, UserSession sesion) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            String json = objectMapper.writeValueAsString(sesion);
+            jedis.setex(REDIS_PREFIX + sessionId, TTL_SEGUNDOS, json);
+        } catch (Exception e) {
+            // Sesión en L1 pero en riesgo si el nodo muere
+            LOG.log(Level.SEVERE, "Error escribiendo Redis: " + sessionId, e);
+        }
+    }
+
+    private void eliminarDeRedis(String sessionId) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.del(REDIS_PREFIX + sessionId);
+        } catch (Exception e) {
+            LOG.log(Level.WARNING, "Error eliminando Redis: " + sessionId, e);
+        }
+    }
+
+    public String obtenerEstadisticasL1() { return l1Cache.stats().toString(); }
+    public void cerrar() { jedisPool.close(); }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- FILTER -->
+      <div class="panel" id="panel-filter">
+        <div class="code-panel">
+          <button class="copy-btn" onclick="cp('code-filter',this)">⎘ copiar</button>
+          <pre><code class="language-java" id="code-filter">package com.ejemplo.mdss.filter;
+
+import com.ejemplo.mdss.cache.SessionStateManager;
+import com.ejemplo.mdss.model.UserSession;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.IOException;
+import java.util.logging.Logger;
+
+/**
+ * FILTER MDSS — El orquestador de la arquitectura
+ * ================================================
+ * Intercepta TODAS las peticiones HTTP y ejecuta el ciclo:
+ *
+ *   PRE   → carga sesión desde L1 o L2 → inyecta en request
+ *   CHAIN → el Servlet ejecuta lógica de negocio
+ *   POST  → response ya commiteado → escritura síncrona en Redis
+ *
+ * El Servlet solo necesita:
+ *   leer:    request.getAttribute("userSession")
+ *   escribir: request.setAttribute("userSession", sesionModificada)
+ *
+ * Transparencia total: el código de negocio no sabe nada de Redis.
+ */
+@WebFilter("/*")
+public class MdssSessionFilter implements Filter {
+
+    private static final Logger LOG =
+            Logger.getLogger(MdssSessionFilter.class.getName());
+
+    private SessionStateManager stateManager;
+
+    @Override
+    public void init(FilterConfig cfg) {
+        this.stateManager = (SessionStateManager)
+                cfg.getServletContext().getAttribute("stateManager");
+        LOG.info("MdssSessionFilter inicializado.");
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                         FilterChain chain) throws IOException, ServletException {
+
+        HttpServletRequest req = (HttpServletRequest) request;
+
+        // PASO 1: Identificar sesión
+        String sessionId = req.getSession(true).getId();
+
+        // PASO 2: Cargar estado L1 → L2
+        UserSession sesion = stateManager.obtenerSesion(sessionId);
+        if (sesion == null) {
+            sesion = new UserSession(sessionId, "anonimo", "GUEST");
+        }
+
+        // Inyectar en request
+        req.setAttribute("userSession",    sesion);
+        req.setAttribute("mdssSessionId",  sessionId);
+
+        // PASO 3: Delegar al Servlet
+        // ↓ EL CLIENTE RECIBE SU RESPUESTA AQUÍ DENTRO
+        chain.doFilter(request, response);
+        // ↑ A partir de aquí el usuario ya tiene sus bytes
+
+        // PASO 4: POST-RESPUESTA → persistir en L1 + Redis
+        // Escritura síncrona ~1-2ms que el cliente NO percibe.
+        UserSession sesionFinal = (UserSession) req.getAttribute("userSession");
+        if (sesionFinal != null) {
+            stateManager.persistirSesion(sessionId, sesionFinal);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        LOG.info("MdssSessionFilter destruido.");
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- SERVLET -->
+      <div class="panel" id="panel-servlet">
+        <div class="code-panel">
+          <button class="copy-btn" onclick="cp('code-servlet',this)">⎘ copiar</button>
+          <pre><code class="language-java" id="code-servlet">package com.ejemplo.mdss.servlet;
+
+import com.ejemplo.mdss.model.UserSession;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+/**
+ * SERVLET DE EJEMPLO — Lógica de negocio pura
+ * =============================================
+ * Este servlet NO sabe nada de Redis, Caffeine ni del patrón MDSS.
+ * Solo lee y escribe en request.getAttribute("userSession").
+ *
+ * CLAVE DE LA ARQUITECTURA: el código legado migra con cambios mínimos.
+ *
+ *   ANTES:   session.getAttribute("userId")
+ *   DESPUÉS: ((UserSession) req.getAttribute("userSession")).getUserId()
+ */
+@WebServlet("/perfil")
+public class PerfilServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
+
+        // Leer sesión (cargada por el Filter desde L1 o L2)
+        UserSession sesion = (UserSession) req.getAttribute("userSession");
+
+        // ── Lógica de negocio ───────────────────────────────────────────
+        sesion.setUltimaPagina("/perfil");
+        // ───────────────────────────────────────────────────────────────
+
+        // Devolver sesión modificada → el Filter la persistirá POST-respuesta
+        req.setAttribute("userSession", sesion);
+
+        resp.setContentType("application/json;charset=UTF-8");
+        PrintWriter out = resp.getWriter();
+        out.println("{");
+        out.println("  \"userId\":       \"" + sesion.getUserId()       + "\",");
+        out.println("  \"username\":     \"" + sesion.getUsername()     + "\",");
+        out.println("  \"rol\":          \"" + sesion.getRol()          + "\",");
+        out.println("  \"ultimaPagina\": \"" + sesion.getUltimaPagina() + "\",");
+        out.println("  \"ultimoAcceso\": \"" + sesion.getUltimoAcceso() + "\"");
+        out.println("}");
+
+        // A partir de aquí el Filter escribe en Redis.
+        // Este servlet no se entera, ni necesita enterarse.
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
+
+        UserSession sesion  = (UserSession) req.getAttribute("userSession");
+        String      nuevoRol = req.getParameter("rol");
+
+        if (nuevoRol != null &amp;&amp; !nuevoRol.isBlank()) {
+            sesion.setRol(nuevoRol);
+        }
+
+        req.setAttribute("userSession", sesion);
+        resp.setContentType("application/json;charset=UTF-8");
+        resp.getWriter().println(
+            "{\"resultado\": \"ok\", \"nuevoRol\": \"" + sesion.getRol() + "\"}");
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- LISTENER -->
+      <div class="panel" id="panel-listener">
+        <div class="code-panel">
+          <button class="copy-btn" onclick="cp('code-listener',this)">⎘ copiar</button>
+          <pre><code class="language-java" id="code-listener">package com.ejemplo.mdss.listener;
+
+import com.ejemplo.mdss.cache.SessionStateManager;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
+
+import java.util.logging.Logger;
+
+/**
+ * LIFECYCLE LISTENER
+ * ==================
+ * Gestiona el ciclo de vida del SessionStateManager:
+ *
+ *   Arranque → crea el manager → registra en ServletContext
+ *   Parada   → cierra el pool de Redis limpiamente
+ *
+ * Configuración por variables de entorno (sin recompilar el WAR):
+ *   REDIS_HOST  → defecto "localhost"
+ *   REDIS_PORT  → defecto 6379
+ */
+@WebListener
+public class AppLifecycleListener implements ServletContextListener {
+
+    private static final Logger LOG =
+            Logger.getLogger(AppLifecycleListener.class.getName());
+
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        String redisHost = System.getenv().getOrDefault("REDIS_HOST", "localhost");
+        int    redisPort = Integer.parseInt(
+                           System.getenv().getOrDefault("REDIS_PORT", "6379"));
+
+        LOG.info("Iniciando SessionStateManager → " + redisHost + ":" + redisPort);
+
+        SessionStateManager manager = new SessionStateManager(redisHost, redisPort);
+
+        // Registrar en contexto para que el Filter lo recupere
+        sce.getServletContext().setAttribute("stateManager", manager);
+
+        LOG.info("Aplicación lista. Arquitectura MDSS activa.");
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        SessionStateManager manager = (SessionStateManager)
+                sce.getServletContext().getAttribute("stateManager");
+
+        if (manager != null) {
+            manager.cerrar();
+            LOG.info("SessionStateManager cerrado limpiamente.");
+        }
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- POM -->
+      <div class="panel" id="panel-pom">
+        <div class="code-panel">
+          <button class="copy-btn" onclick="cp('code-pom',this)">⎘ copiar</button>
+          <pre><code class="language-xml" id="code-pom">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.ejemplo&lt;/groupId&gt;
+    &lt;artifactId&gt;mdss-servlet&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;war&lt;/packaging&gt;
+
+    &lt;properties&gt;
+        &lt;maven.compiler.source&gt;11&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;11&lt;/maven.compiler.target&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+
+        &lt;!-- Servlet API (provided: Tomcat lo aporta) --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;jakarta.servlet&lt;/groupId&gt;
+            &lt;artifactId&gt;jakarta.servlet-api&lt;/artifactId&gt;
+            &lt;version&gt;5.0.0&lt;/version&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Redis cliente --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;redis.clients&lt;/groupId&gt;
+            &lt;artifactId&gt;jedis&lt;/artifactId&gt;
+            &lt;version&gt;5.1.0&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- L1 Cache con evicción LRU + TTL + métricas --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.github.ben-manes.caffeine&lt;/groupId&gt;
+            &lt;artifactId&gt;caffeine&lt;/artifactId&gt;
+            &lt;version&gt;3.1.8&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Serialización JSON para Redis --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+            &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+            &lt;version&gt;2.16.1&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.fasterxml.jackson.datatype&lt;/groupId&gt;
+            &lt;artifactId&gt;jackson-datatype-jsr310&lt;/artifactId&gt;
+            &lt;version&gt;2.16.1&lt;/version&gt;
+        &lt;/dependency&gt;
+
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;finalName&gt;mdss-servlet&lt;/finalName&gt;
+    &lt;/build&gt;
+&lt;/project&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- DOCKERFILE -->
+      <div class="panel" id="panel-dockerfile">
+        <div class="code-panel">
+          <button class="copy-btn" onclick="cp('code-dockerfile',this)">⎘ copiar</button>
+          <pre><code class="language-dockerfile" id="code-dockerfile"># ============================================================
+# STAGE 1: Compilación con Maven
+# ============================================================
+# Compila el código fuente y genera el WAR.
+# Esta etapa NO llega a la imagen final, solo el artefacto.
+# ============================================================
+FROM maven:3.9-eclipse-temurin-17-alpine AS build
+
+WORKDIR /app
+
+# Copiar pom.xml primero para aprovechar la caché de capas Docker.
+# Si el pom.xml no cambia, Maven no re-descarga dependencias en
+# cada build, solo recompila el código fuente.
+COPY pom.xml .
+RUN mvn dependency:go-offline -q
+
+# Copiar código fuente y compilar
+COPY src ./src
+RUN mvn clean package -DskipTests -q
+
+# ============================================================
+# STAGE 2: Imagen final — Tomcat Alpine
+# ============================================================
+# Solo contiene la JRE, Tomcat y el WAR.
+# Sin Maven, sin código fuente, sin dependencias de build.
+# Imagen resultante: ~120MB vs ~400MB sin multi-stage.
+# ============================================================
+FROM tomcat:10-jre17-temurin-alpine
+
+# Eliminar aplicaciones de ejemplo que trae Tomcat por defecto
+RUN rm -rf /usr/local/tomcat/webapps/* \
+           /usr/local/tomcat/webapps.dist
+
+# Copiar el WAR compilado en la etapa anterior
+# ROOT.war → la app responde en / en lugar de /tu-app
+COPY --from=build /app/target/mdss-servlet.war \
+                  /usr/local/tomcat/webapps/ROOT.war
+
+# JVM tuning:
+#   -Xms64m  → heap inicial bajo (contenedor ligero)
+#   -Xmx256m → heap máximo (ajustar según carga real)
+#   -server  → modo servidor: JIT más agresivo
+#   -XX:+UseContainerSupport → detecta límites de memoria del contenedor Docker
+ENV CATALINA_OPTS="-Xms64m -Xmx256m -server -XX:+UseContainerSupport"
+
+EXPOSE 8080
+
+# Healthcheck interno: verifica que Tomcat responde
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
+  CMD wget -qO- http://localhost:8080/ || exit 1</code></pre>
+        </div>
+      </div>
+
+      <!-- DOCKER -->
+      <div class="panel" id="panel-docker">
+        <div class="code-panel">
+          <button class="copy-btn" onclick="cp('code-docker',this)">⎘ copiar</button>
+          <pre><code class="language-yaml" id="code-docker">version: '3.8'
+
+# ============================================================
+# ENTORNO DE DESARROLLO — Arquitectura MDSS
+# ============================================================
+# Levanta:
+#   - Redis      → L2 Cache compartido entre nodos
+#   - app-nodo1  → Tomcat Alpine con el WAR (Stage 2 del Dockerfile)
+#   - app-nodo2  → Mismo WAR, segundo contenedor
+#   - nginx      → Balanceador round-robin
+#
+# Uso:
+#   docker-compose up --build        ← compila y levanta todo
+#   docker-compose up --build -d     ← en background
+#   docker-compose logs -f app-nodo1 ← ver logs de un nodo
+#
+# Probar failover:
+#   curl -c cookies.txt http://localhost/perfil
+#   docker stop mdss-nodo1
+#   curl -b cookies.txt http://localhost/perfil  ← misma sesión, otro nodo
+# ============================================================
+
+services:
+
+  # ── L2 CACHE ─────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: mdss-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── NODO 1: Tomcat Alpine + WAR ──────────────────────────
+  app-nodo1:
+    build:
+      context: .
+      dockerfile: Dockerfile     # multi-stage: Maven compila → Tomcat ejecuta
+    container_name: mdss-nodo1
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # ── NODO 2: mismo Dockerfile, otro contenedor ────────────
+  app-nodo2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mdss-nodo2
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # ── BALANCEADOR ──────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: mdss-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      app-nodo1:
+        condition: service_healthy
+      app-nodo2:
+        condition: service_healthy</code></pre>
+        </div>
+      </div>
+
+    </div><!-- content-area -->
+
+    <div class="statusbar">
+      <div class="st">⬡ MDSS</div>
+      <div class="st">☕ Java 11</div>
+      <div class="st">🗄️ Redis L2</div>
+      <div class="st">⚡ Caffeine L1</div>
+      <div class="st" style="margin-left:auto">5 clases · 3 configs</div>
+    </div>
+  </div>
+</div>
+
+<script>
+hljs.highlightAll();
+
+const FILES = {
+  readme:       '📐 README',
+  usersession:  '☕ UserSession.java',
+  statemanager: '☕ SessionStateManager.java',
+  filter:       '☕ MdssSessionFilter.java',
+  servlet:      '☕ PerfilServlet.java',
+  listener:     '☕ AppLifecycleListener.java',
+  pom:          '📦 pom.xml',
+  dockerfile:   '🐳 Dockerfile',
+  docker:       '🐳 docker-compose.yml',
+};
+
+const openTabs = new Set(['readme']);
+
+function show(id, sidebarEl) {
+  // sidebar
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  if (sidebarEl) {
+    sidebarEl.classList.add('active');
+  } else {
+    document.querySelectorAll('.sb-item').forEach(i => {
+      if (i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + id + "'"))
+        i.classList.add('active');
+    });
+  }
+
+  // abrir tab si no existe
+  if (!openTabs.has(id)) {
+    openTabs.add(id);
+    const btn = document.createElement('button');
+    btn.className = 'etab';
+    btn.id = 'etab-' + id;
+    btn.textContent = FILES[id];
+    btn.onclick = () => show(id, null);
+    document.getElementById('tabbar').appendChild(btn);
+  }
+
+  // activar tab
+  document.querySelectorAll('.etab').forEach(t => t.classList.remove('active'));
+  document.getElementById('etab-' + id).classList.add('active');
+
+  // mostrar panel
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+}
+
+function cp(codeId, btn) {
+  const el = document.getElementById(codeId);
+  if (!el) return;
+  navigator.clipboard.writeText(el.innerText).then(() => {
+    btn.textContent = '✓ copiado';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = '⎘ copiar'; btn.classList.remove('ok'); }, 1800);
+  });
+}
+</script>
+</body>
+</html>

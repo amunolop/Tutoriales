@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angular — Guía Completa · Arquitectura y Versiones</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--surface2:#f0f4ff;--border:#dde3f0;--ng:#dd0031;--ng-bg:#fff0f3;--ng-border:#fca5b8;--blue:#0070c9;--blue-bg:#f0f7ff;--blue-border:#b8d8f8;--green:#15803d;--green-bg:#f0fdf4;--green-border:#86efac;--red:#dc2626;--red-bg:#fff5f5;--yellow:#92400e;--yellow-bg:#fffbeb;--purple:#7c3aed;--purple-bg:#f5f3ff;--purple-border:#c4b5fd;--teal:#0f766e;--teal-bg:#f0fdfa;--teal-border:#99f6e4;--text:#1e2a3a;--muted:#64748b;--dim:#475569;--code:#f8fafc;--code-b:#e2e8f0;--sh:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.05);--sh2:0 1px 2px rgba(0,0,0,.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+.wrap{max-width:1140px;margin:0 auto;padding:40px 24px 60px}
+header{text-align:center;margin-bottom:40px}
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ng);background:var(--ng-bg);border:1px solid var(--ng-border);padding:4px 14px;border-radius:20px;margin-bottom:18px}
+h1{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:10px}
+h1 .a1{color:var(--ng)} h1 .a2{color:var(--muted);font-weight:400;font-size:.55em;display:block;margin-top:6px;letter-spacing:0}
+.sub{font-size:14px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:36px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 16px;text-align:center;box-shadow:var(--sh2);transition:box-shadow .2s,transform .2s}
+.stat:hover{box-shadow:var(--sh);transform:translateY(-1px)}
+.sv{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;display:block;margin-bottom:4px}
+.sl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:500}
+.tabs{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.tab-list{display:flex;border-bottom:1px solid var(--border);background:var(--bg);overflow-x:auto;scrollbar-width:none;padding:0 8px;gap:2px}
+.tab-list::-webkit-scrollbar{display:none}
+.tab-btn{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;padding:14px 16px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .18s;position:relative;top:1px;border-radius:6px 6px 0 0}
+.tab-btn:hover{color:var(--dim);background:rgba(0,0,0,.03)}
+.tab-btn.active{color:var(--ng);border-bottom-color:var(--ng);background:var(--surface)}
+.tab-btn.tb2.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-btn.tg2.active{color:var(--green);border-bottom-color:var(--green)}
+.tab-btn.tp2.active{color:var(--purple);border-bottom-color:var(--purple)}
+.tab-btn.tt2.active{color:var(--teal);border-bottom-color:var(--teal)}
+.panel{display:none;padding:28px}
+.panel.active{display:block}
+
+/* Diagram */
+.diagram-wrap{display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:28px}
+.diagram-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center}
+.d-box{border-radius:10px;padding:14px 20px;font-size:13px;font-weight:600;text-align:center;border:2px solid;min-width:110px;box-shadow:var(--sh2)}
+.d-ng{background:var(--ng-bg);border-color:var(--ng-border);color:var(--ng)}
+.d-blue{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue)}
+.d-green{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.d-purple{background:var(--purple-bg);border-color:var(--purple-border);color:var(--purple)}
+.d-teal{background:var(--teal-bg);border-color:var(--teal-border);color:var(--teal)}
+.d-yellow{background:var(--yellow-bg);border-color:#fcd34d;color:var(--yellow)}
+.d-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:2px}
+.d-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px}
+.d-arrow{font-size:20px;color:var(--border);user-select:none}
+.d-arrow-down{font-size:16px;color:var(--muted);margin:8px 0;user-select:none;text-align:center}
+.d-cluster{border:2px dashed var(--ng-border);border-radius:14px;padding:20px 24px;background:rgba(221,0,49,.02);margin:12px 0}
+.d-cluster-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--ng);margin-bottom:14px;text-align:center}
+.d-inner-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.d-mini{border-radius:6px;padding:6px 12px;font-size:11px;font-weight:600;border:1.5px solid}
+
+/* Tables */
+.ch{display:grid;grid-template-columns:180px 1fr;background:var(--surface2);border:1px solid var(--border);border-radius:10px 10px 0 0;overflow:hidden}
+.ch>div{padding:13px 18px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.cl{color:var(--muted)} .ck{color:var(--ng);border-left:3px solid var(--ng);background:var(--ng-bg)}
+.cb2{border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;overflow:hidden}
+.cr{display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid var(--border);transition:background .15s}
+.cr:last-child{border-bottom:none} .cr:hover{background:#f9fbff}
+.cr>div{padding:16px 18px;font-size:13.5px;line-height:1.6}
+.rl{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600;background:var(--bg);display:flex;align-items:flex-start;padding-top:18px;border-right:1px solid var(--border)}
+.rv{border-left:3px solid var(--border)}
+
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin:2px 2px 2px 0}
+.tr{background:var(--red-bg);color:var(--red);border:1px solid #fca5a5}
+.tg{background:var(--green-bg);color:var(--green);border:1px solid #86efac}
+.ty{background:var(--yellow-bg);color:var(--yellow);border:1px solid #fcd34d}
+.tb{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.to{background:var(--ng-bg);color:var(--ng);border:1px solid var(--ng-border)}
+.tp{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border)}
+.tt{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border)}
+
+/* Code */
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.ct{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cst{color:var(--ng)} .cst .dot{background:var(--ng)} .csp{color:var(--blue)} .csp .dot{background:var(--blue)} .csg{color:var(--green)} .csg .dot{background:var(--green)} .csv{color:var(--purple)} .csv .dot{background:var(--purple)}
+pre{background:var(--code);border:1px solid var(--code-b);border-radius:8px;padding:18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.75;position:relative}
+pre::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:8px 8px 0 0}
+.ps::before{background:linear-gradient(90deg,var(--ng),transparent 70%)}
+.pp::before{background:linear-gradient(90deg,var(--blue),transparent 70%)}
+.pg::before{background:linear-gradient(90deg,var(--green),transparent 70%)}
+.pv::before{background:linear-gradient(90deg,var(--purple),transparent 70%)}
+.pt::before{background:linear-gradient(90deg,var(--teal),transparent 70%)}
+.kw{color:#7c3aed;font-weight:600} .cls{color:#1d4ed8} .ann{color:#15803d;font-weight:600} .str{color:#b45309} .cmt{color:#94a3b8;font-style:italic} .fn{color:#0369a1} .tp2{color:#0f766e} .pl{color:#334155}
+
+/* Info boxes */
+.intro{border-radius:10px;padding:16px 20px;margin-bottom:24px;font-size:14px;line-height:1.7;border:1px solid}
+.in{background:var(--ng-bg);border-color:var(--ng-border);color:#7a0020} .in strong{color:var(--ng)}
+.ib{background:var(--blue-bg);border-color:var(--blue-border);color:#003d7a} .ib strong{color:var(--blue)}
+.ig{background:var(--green-bg);border-color:var(--green-border);color:#14532d} .ig strong{color:var(--green)}
+.ip{background:var(--purple-bg);border-color:var(--purple-border);color:#4c1d95} .ip strong{color:var(--purple)}
+.it{background:var(--teal-bg);border-color:var(--teal-border);color:#134e4a} .it strong{color:var(--teal)}
+
+/* Cards */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.card{border-radius:10px;border:1px solid;overflow:hidden;box-shadow:var(--sh2);transition:box-shadow .2s,transform .2s}
+.card:hover{box-shadow:var(--sh);transform:translateY(-2px)}
+.nc{border-color:var(--ng-border)} .bc{border-color:var(--blue-border)} .gc{border-color:var(--green-border)} .pc{border-color:var(--purple-border)} .tc{border-color:var(--teal-border)} .yc{border-color:#fcd34d}
+.ch2{padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.nc .ch2{background:var(--ng-bg);color:var(--ng);border-bottom:1px solid var(--ng-border)}
+.bc .ch2{background:var(--blue-bg);color:var(--blue);border-bottom:1px solid var(--blue-border)}
+.gc .ch2{background:var(--green-bg);color:var(--green);border-bottom:1px solid var(--green-border)}
+.pc .ch2{background:var(--purple-bg);color:var(--purple);border-bottom:1px solid var(--purple-border)}
+.tc .ch2{background:var(--teal-bg);color:var(--teal);border-bottom:1px solid var(--teal-border)}
+.yc .ch2{background:var(--yellow-bg);color:var(--yellow);border-bottom:1px solid #fcd34d}
+.cb3{background:var(--surface);padding:14px 16px}
+.ti{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--dim);line-height:1.5}
+.ti:last-child{border-bottom:none}
+.ix{color:var(--ng);font-size:14px;flex-shrink:0;margin-top:1px}
+.ia{color:var(--green);font-size:14px;flex-shrink:0;margin-top:1px}
+.ib2{color:var(--blue);font-size:14px;flex-shrink:0;margin-top:1px}
+.ip2{color:var(--purple);font-size:14px;flex-shrink:0;margin-top:1px}
+.it2{color:var(--teal);font-size:14px;flex-shrink:0;margin-top:1px}
+
+/* Summary grid */
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.sum-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;box-shadow:var(--sh2);position:relative;overflow:hidden}
+.sum-item::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sum-item.si-n::before{background:var(--ng)} .sum-item.si-b::before{background:var(--blue)} .sum-item.si-g::before{background:var(--green)} .sum-item.si-p::before{background:var(--purple)} .sum-item.si-t::before{background:var(--teal)} .sum-item.si-y::before{background:#f59e0b}
+.sum-icon{font-size:24px;margin-bottom:8px}
+.sum-title{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;color:var(--dim)}
+.sum-desc{font-size:13px;color:var(--muted);line-height:1.55}
+
+.section-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+.section-title span{color:var(--ng)}
+
+/* Version timeline */
+.timeline{position:relative;padding-left:36px;margin:20px 0}
+.timeline::before{content:'';position:absolute;left:14px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--ng),var(--blue),var(--green),var(--purple),var(--teal))}
+.tl-item{position:relative;margin-bottom:20px}
+.tl-dot{position:absolute;left:-28px;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 2px var(--ng)}
+.tl-item:nth-child(2) .tl-dot{box-shadow:0 0 0 2px var(--blue)}
+.tl-item:nth-child(3) .tl-dot{box-shadow:0 0 0 2px var(--green)}
+.tl-item:nth-child(4) .tl-dot{box-shadow:0 0 0 2px var(--purple)}
+.tl-item:nth-child(5) .tl-dot{box-shadow:0 0 0 2px var(--teal)}
+.tl-ver{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;margin-bottom:4px}
+.tl-date{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px}
+.tl-desc{font-size:13px;color:var(--dim);line-height:1.5}
+
+/* Conclusion */
+.vc2{background:linear-gradient(135deg,var(--ng-bg),var(--blue-bg));border:1px solid var(--ng-border);border-radius:10px;padding:22px 24px;text-align:center}
+.vc2 h3{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;font-family:'JetBrains Mono',monospace}
+.vc2 p{font-size:14px;color:var(--dim);line-height:1.75;max-width:700px;margin:0 auto}
+
+/* Version comparison mega-table */
+.vtable{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:16px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.vtable thead th{background:var(--surface2);padding:12px 14px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);text-align:left;white-space:nowrap;position:sticky;top:0}
+.vtable thead th:first-child{color:var(--dim)}
+.vtable tbody td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--dim)}
+.vtable tbody tr:last-child td{border-bottom:none}
+.vtable tbody tr:hover{background:#f9fbff}
+.vtable tbody td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--muted);background:var(--bg);border-right:1px solid var(--border);white-space:nowrap}
+.vtable-wrap{overflow-x:auto;border-radius:10px;box-shadow:var(--sh2)}
+
+/* Version feature highlight */
+.vf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+.vf-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:var(--sh2);position:relative;overflow:hidden}
+.vf-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.vf-box.vn::before{background:var(--ng)} .vf-box.vb::before{background:var(--blue)} .vf-box.vg::before{background:var(--green)} .vf-box.vp::before{background:var(--purple)} .vf-box.vt::before{background:var(--teal)} .vf-box.vy::before{background:#f59e0b}
+.vf-title{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+.vf-box.vn .vf-title{color:var(--ng)} .vf-box.vb .vf-title{color:var(--blue)} .vf-box.vg .vf-title{color:var(--green)} .vf-box.vp .vf-title{color:var(--purple)} .vf-box.vt .vf-title{color:var(--teal)} .vf-box.vy .vf-title{color:var(--yellow)}
+.vf-item{display:flex;gap:8px;font-size:13px;color:var(--dim);margin-bottom:6px;line-height:1.5}
+
+@media(max-width:768px){.cg,.vf-grid{grid-template-columns:1fr}.ch,.cr{grid-template-columns:1fr}.rl{display:none}.stats{grid-template-columns:repeat(2,1fr)}.tgrid{grid-template-columns:1fr}.sum-grid{grid-template-columns:1fr}.diagram-row{flex-direction:column}.d-arrow{transform:rotate(90deg)}.d-inner-row{flex-direction:column;align-items:center}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="badge">// Frontend Framework</div>
+  <h1><span class="a1">Angular</span><span class="a2">Arquitectura, componentes y evolución de versiones (v12 → v19)</span></h1>
+  <p class="sub">TypeScript · Component-based · Reactive · Enterprise-ready</p>
+</header>
+
+<div class="stats">
+  <div class="stat"><span class="sv" style="color:var(--ng)">Google</span><span class="sl">Desarrollado por</span></div>
+  <div class="stat"><span class="sv" style="color:var(--blue)">TypeScript</span><span class="sl">Lenguaje base</span></div>
+  <div class="stat"><span class="sv" style="color:var(--green)">SPA + SSR</span><span class="sl">Tipo de app</span></div>
+  <div class="stat"><span class="sv" style="color:var(--purple)">v19</span><span class="sl">Última versión</span></div>
+</div>
+
+<div class="tabs">
+  <div class="tab-list">
+    <button class="tab-btn active" onclick="sw(this,'p1')">Diagrama y Resumen</button>
+    <button class="tab-btn tb2" onclick="sw(this,'p2')">Componentes</button>
+    <button class="tab-btn tp2" onclick="sw(this,'p3')">Ciclo de vida</button>
+    <button class="tab-btn tg2" onclick="sw(this,'p4')">Comparativa versiones</button>
+    <button class="tab-btn" onclick="sw(this,'p5')">v12 · v13 · v14</button>
+    <button class="tab-btn tb2" onclick="sw(this,'p6')">v15 · v16</button>
+    <button class="tab-btn tp2" onclick="sw(this,'p7')">v17 · v18</button>
+    <button class="tab-btn tt2" onclick="sw(this,'p8')">v19 · Futuro</button>
+  </div>
+
+  <!-- P1 DIAGRAMA Y RESUMEN -->
+  <div id="p1" class="panel active">
+    <div class="intro in">
+      <strong>Angular</strong> es un framework de desarrollo frontend mantenido por Google. Está basado en TypeScript y sigue una arquitectura de componentes con inyección de dependencias, routing declarativo y un sistema reactivo que ha evolucionado enormemente desde la versión 12 hasta la actual v19.
+    </div>
+
+    <!-- DIAGRAMA ARQUITECTURA -->
+    <div class="section-title"><span>▸</span> Arquitectura de una aplicación Angular</div>
+    <div class="diagram-wrap">
+      <div class="diagram-row" style="margin-bottom:8px">
+        <div class="d-box d-yellow">
+          <div class="d-label">Navegador</div>
+          Usuario
+        </div>
+      </div>
+      <div class="d-arrow-down">▼</div>
+      <div class="d-cluster">
+        <div class="d-cluster-label">Angular Application</div>
+
+        <div class="diagram-row">
+          <div class="d-box d-ng" style="min-width:160px">
+            <div class="d-label">Router</div>
+            AppRoutingModule
+            <div class="d-inner-row">
+              <span class="d-mini" style="background:var(--ng-bg);border-color:var(--ng-border);color:var(--ng)">/home</span>
+              <span class="d-mini" style="background:var(--ng-bg);border-color:var(--ng-border);color:var(--ng)">/users</span>
+              <span class="d-mini" style="background:var(--ng-bg);border-color:var(--ng-border);color:var(--ng)">/admin</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-arrow-down">▼</div>
+
+        <div class="diagram-row">
+          <div class="d-box d-blue" style="min-width:140px">
+            <div class="d-label">Component</div>
+            HomeComponent
+            <div class="d-sub">.ts + .html + .css</div>
+          </div>
+          <div class="d-box d-blue" style="min-width:140px">
+            <div class="d-label">Component</div>
+            UserListComponent
+            <div class="d-sub">.ts + .html + .css</div>
+          </div>
+          <div class="d-box d-blue" style="min-width:140px">
+            <div class="d-label">Component</div>
+            AdminComponent
+            <div class="d-sub">.ts + .html + .css</div>
+          </div>
+        </div>
+
+        <div class="d-arrow-down">▼ inyecta</div>
+
+        <div class="diagram-row">
+          <div class="d-box d-green" style="min-width:130px">
+            <div class="d-label">Service</div>
+            UserService
+            <div class="d-sub">@Injectable()</div>
+          </div>
+          <div class="d-box d-green" style="min-width:130px">
+            <div class="d-label">Service</div>
+            AuthService
+            <div class="d-sub">@Injectable()</div>
+          </div>
+          <div class="d-box d-purple" style="min-width:130px">
+            <div class="d-label">Guard</div>
+            AuthGuard
+            <div class="d-sub">canActivate</div>
+          </div>
+        </div>
+
+        <div class="d-arrow-down">▼ HTTP</div>
+
+        <div class="diagram-row">
+          <div class="d-box d-teal" style="min-width:200px">
+            <div class="d-label">HttpClient</div>
+            API REST / Backend
+            <div class="d-sub">Observables (RxJS)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-arrow-down">▼ renderiza</div>
+      <div class="diagram-row">
+        <div class="d-box d-yellow">
+          <div class="d-label">Output</div>
+          DOM del navegador
+        </div>
+      </div>
+    </div>
+
+    <!-- RESUMEN COMPONENTES -->
+    <div class="section-title"><span>▸</span> Piezas fundamentales</div>
+    <div class="sum-grid">
+      <div class="sum-item si-n">
+        <div class="sum-icon">🧩</div>
+        <div class="sum-title">Component</div>
+        <div class="sum-desc">Bloque básico de UI. Combina template HTML, estilos CSS y lógica TypeScript. Cada vista es un componente.</div>
+      </div>
+      <div class="sum-item si-b">
+        <div class="sum-icon">📦</div>
+        <div class="sum-title">Module / Standalone</div>
+        <div class="sum-desc">Antes: NgModules agrupaban componentes. Ahora: standalone components sin módulos. Más simple y tree-shakeable.</div>
+      </div>
+      <div class="sum-item si-g">
+        <div class="sum-icon">⚙️</div>
+        <div class="sum-title">Service</div>
+        <div class="sum-desc">Lógica de negocio y acceso a datos. Se inyectan vía DI. Reutilizables y testeables de forma aislada.</div>
+      </div>
+      <div class="sum-item si-p">
+        <div class="sum-icon">🔀</div>
+        <div class="sum-title">Router</div>
+        <div class="sum-desc">Navegación entre vistas SPA. Lazy loading de rutas, guards de acceso, resolvers de datos y nested routes.</div>
+      </div>
+      <div class="sum-item si-t">
+        <div class="sum-icon">📡</div>
+        <div class="sum-title">RxJS / Signals</div>
+        <div class="sum-desc">Reactividad. RxJS con Observables para streams async. Signals (v16+) para reactividad granular sin suscripciones.</div>
+      </div>
+      <div class="sum-item si-y">
+        <div class="sum-icon">🔧</div>
+        <div class="sum-title">Angular CLI</div>
+        <div class="sum-desc">Herramienta de línea de comandos. Crea proyectos, genera componentes, compila, testea y despliega.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P2 COMPONENTES EN DETALLE -->
+  <div id="p2" class="panel">
+    <div class="intro ib">
+      Los <strong>componentes</strong> son la unidad fundamental de Angular. Todo lo que ve el usuario es un componente, y los componentes se componen entre sí formando un árbol.
+    </div>
+
+    <div class="cg">
+      <div>
+        <div class="ct cst"><span class="dot"></span>Componente clásico (NgModule)</div>
+        <pre class="ps"><span class="cmt">// user-list.component.ts</span>
+<span class="ann">@Component</span><span class="pl">({</span>
+  <span class="pl">selector: </span><span class="str">'app-user-list'</span><span class="pl">,</span>
+  <span class="pl">templateUrl: </span><span class="str">'./user-list.component.html'</span><span class="pl">,</span>
+  <span class="pl">styleUrls: [</span><span class="str">'./user-list.component.css'</span><span class="pl">]</span>
+<span class="pl">})</span>
+<span class="kw">export class</span> <span class="cls">UserListComponent</span>
+    <span class="kw">implements</span> <span class="tp2">OnInit</span> <span class="pl">{</span>
+
+  <span class="pl">users: </span><span class="tp2">User</span><span class="pl">[] = [];</span>
+
+  <span class="kw">constructor</span><span class="pl">(</span>
+    <span class="kw">private</span> <span class="pl">userService: </span><span class="cls">UserService</span>
+  <span class="pl">) {}</span>
+
+  <span class="fn">ngOnInit</span><span class="pl">(): </span><span class="tp2">void</span> <span class="pl">{</span>
+    <span class="kw">this</span><span class="pl">.userService.getAll()</span>
+      <span class="pl">.subscribe(u => </span><span class="kw">this</span><span class="pl">.users = u);</span>
+  <span class="pl">}</span>
+<span class="pl">}</span>
+
+<span class="cmt">// Requiere declarar en un NgModule</span>
+<span class="ann">@NgModule</span><span class="pl">({</span>
+  <span class="pl">declarations: [</span><span class="cls">UserListComponent</span><span class="pl">],</span>
+  <span class="pl">imports: [</span><span class="cls">CommonModule</span><span class="pl">]</span>
+<span class="pl">})</span></pre>
+      </div>
+      <div>
+        <div class="ct csg"><span class="dot"></span>Standalone Component (v15+)</div>
+        <pre class="pg"><span class="cmt">// user-list.component.ts</span>
+<span class="ann">@Component</span><span class="pl">({</span>
+  <span class="pl">selector: </span><span class="str">'app-user-list'</span><span class="pl">,</span>
+  <span class="ann">standalone: true</span><span class="pl">,</span>
+  <span class="pl">imports: [</span><span class="cls">CommonModule</span><span class="pl">],</span>
+  <span class="pl">template: </span><span class="str">`
+    &lt;h2&gt;Usuarios&lt;/h2&gt;
+    @for (user of users(); track user.id) {
+      &lt;div&gt;{{ user.name }}&lt;/div&gt;
+    }
+  `</span>
+<span class="pl">})</span>
+<span class="kw">export class</span> <span class="cls">UserListComponent</span> <span class="pl">{</span>
+  <span class="kw">private</span> <span class="pl">userService = </span><span class="fn">inject</span><span class="pl">(</span><span class="cls">UserService</span><span class="pl">);</span>
+
+  <span class="cmt">// Signal: reactividad granular</span>
+  <span class="pl">users = </span><span class="fn">signal</span><span class="pl">&lt;</span><span class="tp2">User</span><span class="pl">[]&gt;([]);</span>
+
+  <span class="kw">constructor</span><span class="pl">() {</span>
+    <span class="kw">this</span><span class="pl">.userService.getAll()</span>
+      <span class="pl">.subscribe(u => </span><span class="kw">this</span><span class="pl">.users.set(u));</span>
+  <span class="pl">}</span>
+<span class="pl">}</span>
+<span class="cmt">// ¡Sin NgModule! Se importa directamente</span></pre>
+      </div>
+    </div>
+
+    <div style="margin-top:24px">
+      <div class="section-title"><span>▸</span> Piezas de un componente</div>
+      <div class="tgrid">
+        <div class="card nc">
+          <div class="ch2">Template (HTML)</div>
+          <div class="cb3">
+            <div class="ti"><span class="ix">▸</span><div>Interpolación: <code>{{ variable }}</code> para mostrar datos</div></div>
+            <div class="ti"><span class="ix">▸</span><div>Property binding: <code>[src]="imageUrl"</code></div></div>
+            <div class="ti"><span class="ix">▸</span><div>Event binding: <code>(click)="onClick()"</code></div></div>
+            <div class="ti"><span class="ix">▸</span><div>Two-way: <code>[(ngModel)]="name"</code></div></div>
+            <div class="ti"><span class="ix">▸</span><div>Control flow nuevo (v17+): <code>@if</code>, <code>@for</code>, <code>@switch</code></div></div>
+          </div>
+        </div>
+        <div class="card bc">
+          <div class="ch2">Directivas</div>
+          <div class="cb3">
+            <div class="ti"><span class="ib2">▸</span><div><strong>Estructurales</strong>: <code>*ngIf</code>, <code>*ngFor</code>, <code>*ngSwitch</code> — modifican el DOM</div></div>
+            <div class="ti"><span class="ib2">▸</span><div><strong>De atributo</strong>: <code>ngClass</code>, <code>ngStyle</code> — modifican apariencia</div></div>
+            <div class="ti"><span class="ib2">▸</span><div><strong>Custom</strong>: crea tus propias directivas reutilizables</div></div>
+            <div class="ti"><span class="ib2">▸</span><div>En v17+ se recomienda el nuevo <strong>built-in control flow</strong> sobre *ngIf/*ngFor</div></div>
+          </div>
+        </div>
+        <div class="card gc">
+          <div class="ch2">Pipes</div>
+          <div class="cb3">
+            <div class="ti"><span class="ia">▸</span><div>Transforman datos en el template: <code>{{ date | date:'short' }}</code></div></div>
+            <div class="ti"><span class="ia">▸</span><div>Built-in: <code>date</code>, <code>currency</code>, <code>uppercase</code>, <code>async</code>, <code>json</code></div></div>
+            <div class="ti"><span class="ia">▸</span><div>Custom pipes con <code>@Pipe({ name: 'myPipe' })</code></div></div>
+            <div class="ti"><span class="ia">▸</span><div><code>async</code> pipe se suscribe/desuscribe automáticamente a Observables</div></div>
+          </div>
+        </div>
+        <div class="card pc">
+          <div class="ch2">Servicios e Inyección</div>
+          <div class="cb3">
+            <div class="ti"><span class="ip2">▸</span><div><code>@Injectable({ providedIn: 'root' })</code> — singleton automático</div></div>
+            <div class="ti"><span class="ip2">▸</span><div>DI jerárquica: providers a nivel de componente, módulo o root</div></div>
+            <div class="ti"><span class="ip2">▸</span><div><code>inject()</code> function (v14+) — alternativa al constructor injection</div></div>
+            <div class="ti"><span class="ip2">▸</span><div>Patrón Repository: servicios encapsulan llamadas HTTP</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 CICLO DE VIDA -->
+  <div id="p3" class="panel">
+    <div class="intro ip">
+      Cada componente Angular pasa por un <strong>ciclo de vida</strong> controlado. Estos hooks permiten ejecutar lógica en momentos precisos: creación, cambios, destrucción.
+    </div>
+
+    <div class="ch"><div class="cl">Hook</div><div class="ck">¿Cuándo se ejecuta?</div></div>
+    <div class="cb2">
+      <div class="cr"><div class="rl">ngOnChanges</div><div class="rv">Cuando un <code>@Input()</code> cambia de valor. Recibe un <code>SimpleChanges</code> con el valor anterior y actual. Se ejecuta <strong>antes</strong> de ngOnInit. <span class="tag tp">Inputs</span></div></div>
+      <div class="cr"><div class="rl">ngOnInit</div><div class="rv">Una sola vez tras la primera ejecución de ngOnChanges. Ideal para <strong>cargar datos</strong>, suscribirse a observables y lógica de inicialización. <span class="tag tg">★ Más usado</span></div></div>
+      <div class="cr"><div class="rl">ngDoCheck</div><div class="rv">En cada ciclo de detección de cambios. Permite lógica personalizada de detección. Úsalo con cuidado: se ejecuta <strong>muy frecuentemente</strong>. <span class="tag ty">Precaución</span></div></div>
+      <div class="cr"><div class="rl">ngAfterContentInit</div><div class="rv">Una vez, tras proyectar contenido externo (<code>&lt;ng-content&gt;</code>) en el componente. <span class="tag tb">Content projection</span></div></div>
+      <div class="cr"><div class="rl">ngAfterContentChecked</div><div class="rv">Tras cada verificación del contenido proyectado. <span class="tag tb">Content projection</span></div></div>
+      <div class="cr"><div class="rl">ngAfterViewInit</div><div class="rv">Una vez, cuando la vista del componente y sus hijos están inicializados. Ideal para acceder a <code>@ViewChild</code>. <span class="tag tg">DOM ready</span></div></div>
+      <div class="cr"><div class="rl">ngAfterViewChecked</div><div class="rv">Tras cada verificación de la vista. Se ejecuta frecuentemente. <span class="tag ty">Precaución</span></div></div>
+      <div class="cr"><div class="rl">ngOnDestroy</div><div class="rv">Justo antes de destruir el componente. <strong>Desuscribirse</strong> de observables, limpiar timers, liberar recursos. <span class="tag tr">★ Crítico</span></div></div>
+    </div>
+
+    <div style="margin-top:24px">
+      <div class="section-title"><span>▸</span> Ejemplo de ciclo de vida</div>
+      <pre class="pv"><span class="ann">@Component</span><span class="pl">({ selector: </span><span class="str">'app-user-detail'</span><span class="pl">, ... })</span>
+<span class="kw">export class</span> <span class="cls">UserDetailComponent</span>
+    <span class="kw">implements</span> <span class="tp2">OnInit</span><span class="pl">, </span><span class="tp2">OnDestroy</span> <span class="pl">{</span>
+
+  <span class="ann">@Input()</span> <span class="pl">userId!: </span><span class="tp2">string</span><span class="pl">;</span>
+  <span class="kw">private</span> <span class="pl">destroy$ = </span><span class="kw">new</span> <span class="cls">Subject</span><span class="pl">&lt;</span><span class="tp2">void</span><span class="pl">&gt;();</span>
+  <span class="pl">user: </span><span class="tp2">User</span> <span class="pl">| </span><span class="kw">null</span> <span class="pl">= </span><span class="kw">null</span><span class="pl">;</span>
+
+  <span class="kw">constructor</span><span class="pl">(</span><span class="kw">private</span> <span class="pl">userService: </span><span class="cls">UserService</span><span class="pl">) {}</span>
+
+  <span class="fn">ngOnInit</span><span class="pl">(): </span><span class="tp2">void</span> <span class="pl">{</span>
+    <span class="cmt">// Cargar datos al inicializar</span>
+    <span class="kw">this</span><span class="pl">.userService.getById(</span><span class="kw">this</span><span class="pl">.userId)</span>
+      <span class="pl">.pipe(</span><span class="fn">takeUntil</span><span class="pl">(</span><span class="kw">this</span><span class="pl">.destroy$))</span>
+      <span class="pl">.subscribe(u => </span><span class="kw">this</span><span class="pl">.user = u);</span>
+  <span class="pl">}</span>
+
+  <span class="fn">ngOnDestroy</span><span class="pl">(): </span><span class="tp2">void</span> <span class="pl">{</span>
+    <span class="cmt">// Limpiar suscripciones para evitar memory leaks</span>
+    <span class="kw">this</span><span class="pl">.destroy$.next();</span>
+    <span class="kw">this</span><span class="pl">.destroy$.complete();</span>
+  <span class="pl">}</span>
+<span class="pl">}</span></pre>
+    </div>
+
+    <div style="margin-top:24px">
+      <div class="section-title"><span>▸</span> Change Detection</div>
+      <div class="cg">
+        <div>
+          <div class="card nc">
+            <div class="ch2">Default Strategy</div>
+            <div class="cb3">
+              <div class="ti"><span class="ix">▸</span><div>Angular revisa <strong>todo el árbol</strong> de componentes en cada evento</div></div>
+              <div class="ti"><span class="ix">▸</span><div>Cualquier click, timer, HTTP response dispara una revisión completa</div></div>
+              <div class="ti"><span class="ix">▸</span><div>Simple pero costoso en apps grandes con muchos componentes</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card gc">
+            <div class="ch2">OnPush Strategy</div>
+            <div class="cb3">
+              <div class="ti"><span class="ia">▸</span><div>Solo re-renderiza si cambian las <strong>referencias</strong> de @Input</div></div>
+              <div class="ti"><span class="ia">▸</span><div>Requiere inmutabilidad y uso de <code>async</code> pipe u <code>Observables</code></div></div>
+              <div class="ti"><span class="ia">▸</span><div>Mucho más eficiente — <strong>recomendado</strong> en producción <span class="tag tg">Recomendado</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P4 COMPARATIVA VERSIONES -->
+  <div id="p4" class="panel">
+    <div class="intro in">
+      Angular sigue un ciclo de <strong>release cada 6 meses</strong>. Cada versión mayor trae mejoras significativas. Esta tabla resume las novedades clave desde la v12 hasta la v19.
+    </div>
+
+    <div class="vtable-wrap">
+      <table class="vtable">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th style="color:var(--ng)">v12</th>
+            <th style="color:var(--ng)">v13</th>
+            <th style="color:var(--blue)">v14</th>
+            <th style="color:var(--blue)">v15</th>
+            <th style="color:var(--green)">v16</th>
+            <th style="color:var(--purple)">v17</th>
+            <th style="color:var(--purple)">v18</th>
+            <th style="color:var(--teal)">v19</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Fecha release</td>
+            <td>May 2021</td>
+            <td>Nov 2021</td>
+            <td>Jun 2022</td>
+            <td>Nov 2022</td>
+            <td>May 2023</td>
+            <td>Nov 2023</td>
+            <td>May 2024</td>
+            <td>Nov 2024</td>
+          </tr>
+          <tr>
+            <td>Standalone</td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag ty">Preview</span></td>
+            <td><span class="tag tg">Estable</span></td>
+            <td><span class="tag tg">Default</span></td>
+            <td><span class="tag tg">Default</span></td>
+            <td><span class="tag tg">Default</span></td>
+            <td><span class="tag tg">Default</span></td>
+          </tr>
+          <tr>
+            <td>Signals</td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag ty">Preview</span></td>
+            <td><span class="tag tg">Estable</span></td>
+            <td><span class="tag tg">Maduro</span></td>
+            <td><span class="tag tg">★ Completo</span></td>
+          </tr>
+          <tr>
+            <td>Control Flow</td>
+            <td>*ngIf/*ngFor</td>
+            <td>*ngIf/*ngFor</td>
+            <td>*ngIf/*ngFor</td>
+            <td>*ngIf/*ngFor</td>
+            <td>*ngIf/*ngFor</td>
+            <td><span class="tag tg">@if @for</span></td>
+            <td><span class="tag tg">@if @for</span></td>
+            <td><span class="tag tg">@if @for</span></td>
+          </tr>
+          <tr>
+            <td>Deferrable Views</td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag ty">Preview</span></td>
+            <td><span class="tag tg">Estable</span></td>
+            <td><span class="tag tg">Estable</span></td>
+          </tr>
+          <tr>
+            <td>SSR / Hydration</td>
+            <td>Universal básico</td>
+            <td>Universal básico</td>
+            <td>Universal básico</td>
+            <td>Universal básico</td>
+            <td><span class="tag ty">Non-destructive</span></td>
+            <td><span class="tag tg">Estable</span></td>
+            <td><span class="tag tg">Parcial</span></td>
+            <td><span class="tag tg">Incremental</span></td>
+          </tr>
+          <tr>
+            <td>Build System</td>
+            <td>Webpack</td>
+            <td>Webpack</td>
+            <td>Webpack</td>
+            <td>Webpack</td>
+            <td><span class="tag ty">esbuild preview</span></td>
+            <td><span class="tag tg">esbuild default</span></td>
+            <td><span class="tag tg">esbuild</span></td>
+            <td><span class="tag tg">esbuild</span></td>
+          </tr>
+          <tr>
+            <td>inject() function</td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tg">Sí</span></td>
+            <td><span class="tag tg">Sí</span></td>
+            <td><span class="tag tg">Sí</span></td>
+            <td><span class="tag tg">Sí</span></td>
+            <td><span class="tag tg">Sí</span></td>
+            <td><span class="tag tg">Sí</span></td>
+          </tr>
+          <tr>
+            <td>Typed Forms</td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tg">Sí</span></td>
+            <td><span class="tag tg">Sí</span></td>
+            <td><span class="tag tg">Sí</span></td>
+            <td><span class="tag tg">Sí</span></td>
+            <td><span class="tag tg">Sí</span></td>
+            <td><span class="tag tg">Sí</span></td>
+          </tr>
+          <tr>
+            <td>Signal inputs</td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag ty">Preview</span></td>
+            <td><span class="tag tg">Estable</span></td>
+            <td><span class="tag tg">Estable</span></td>
+          </tr>
+          <tr>
+            <td>Zoneless</td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag tr">No</span></td>
+            <td><span class="tag ty">Experimental</span></td>
+            <td><span class="tag ty">Preview</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- P5 V12 V13 V14 -->
+  <div id="p5" class="panel">
+    <div class="section-title"><span>▸</span> Angular 12 — Mayo 2021</div>
+    <div class="intro in">
+      Angular 12 marcó la transición hacia <strong>Ivy como motor por defecto</strong> y eliminó el soporte para el antiguo View Engine. El paso hacia un Angular más moderno y eficiente.
+    </div>
+    <div class="vf-grid">
+      <div class="vf-box vn">
+        <div class="vf-title">Novedades clave</div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> View Engine deprecado — Ivy es el único motor de renderizado</div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> Nullish coalescing (<code>??</code>) en templates</div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> Soporte para Webpack 5 por defecto</div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> Strict mode activado por defecto en <code>ng new</code></div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> Migración de TSLint a ESLint</div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> Sass migrado de <code>node-sass</code> a <code>sass</code> (Dart Sass)</div>
+      </div>
+      <div class="vf-box vn">
+        <div class="vf-title">Código ejemplo v12</div>
+        <pre class="ps" style="margin:0;font-size:11.5px"><span class="cmt">// Template con ?? (nullish coalescing)</span>
+<span class="pl">&lt;p&gt;{{ user.name ?? </span><span class="str">'Anónimo'</span><span class="pl"> }}&lt;/p&gt;</span>
+
+<span class="cmt">// Inline styles con Sass</span>
+<span class="ann">@Component</span><span class="pl">({</span>
+  <span class="pl">styles: [</span><span class="str">`
+    :host { display: block; }
+    .card { @include elevation(2); }
+  `</span><span class="pl">]</span>
+<span class="pl">})</span></pre>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:32px"><span>▸</span> Angular 13 — Noviembre 2021</div>
+    <div class="intro in">
+      Angular 13 eliminó por completo View Engine y mejoró el rendimiento del compilador Ivy. Se simplificó la creación de componentes dinámicos.
+    </div>
+    <div class="vf-grid">
+      <div class="vf-box vn">
+        <div class="vf-title">Novedades clave</div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> View Engine <strong>eliminado</strong> completamente</div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> Componentes dinámicos sin <code>ComponentFactoryResolver</code></div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> IE11 eliminado — permite APIs modernas del navegador</div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> Mejoras en <code>TestBed</code>: teardown automático de módulos</div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> Angular CLI usando persistent build cache</div>
+        <div class="vf-item"><span style="color:var(--ng)">▸</span> RxJS 7 por defecto</div>
+      </div>
+      <div class="vf-box vn">
+        <div class="vf-title">Componentes dinámicos simplificados</div>
+        <pre class="ps" style="margin:0;font-size:11.5px"><span class="cmt">// Antes (v12): necesitabas factory</span>
+<span class="kw">const</span> <span class="pl">factory = </span><span class="kw">this</span><span class="pl">.resolver</span>
+  <span class="pl">.resolveComponentFactory(</span><span class="cls">MyComp</span><span class="pl">);</span>
+<span class="pl">container.createComponent(factory);</span>
+
+<span class="cmt">// v13: directo con la clase</span>
+<span class="pl">container.createComponent(</span><span class="cls">MyComp</span><span class="pl">);</span>
+<span class="cmt">// ¡Mucho más simple!</span></pre>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:32px"><span>▸</span> Angular 14 — Junio 2022</div>
+    <div class="intro ib">
+      Angular 14 fue un release <strong>transformador</strong>: introdujo standalone components (preview), typed reactive forms y la función <code>inject()</code>. El inicio de la Angular moderna.
+    </div>
+    <div class="vf-grid">
+      <div class="vf-box vb">
+        <div class="vf-title">Novedades clave</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> <strong>Standalone components</strong> (developer preview) — sin NgModule</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> <strong>Typed Reactive Forms</strong> — FormControl tipado con TypeScript</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> Función <code>inject()</code> — inyección sin constructor</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> Page title strategy configurable en el Router</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> <code>ng completion</code> — autocompletado en terminal</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> Diagnósticos extendidos del compilador</div>
+      </div>
+      <div class="vf-box vb">
+        <div class="vf-title">Typed Forms (game changer)</div>
+        <pre class="pp" style="margin:0;font-size:11.5px"><span class="cmt">// v13: FormControl era any</span>
+<span class="kw">const</span> <span class="pl">name = </span><span class="kw">new</span> <span class="cls">FormControl</span><span class="pl">(</span><span class="str">'Ana'</span><span class="pl">);</span>
+<span class="pl">name.value;</span> <span class="cmt">// any 😬</span>
+
+<span class="cmt">// v14: FormControl tipado</span>
+<span class="kw">const</span> <span class="pl">name = </span><span class="kw">new</span> <span class="cls">FormControl</span><span class="pl">&lt;</span><span class="tp2">string</span><span class="pl">&gt;(</span><span class="str">'Ana'</span><span class="pl">);</span>
+<span class="pl">name.value;</span> <span class="cmt">// string ✅</span>
+
+<span class="cmt">// inject() sin constructor</span>
+<span class="kw">export class</span> <span class="cls">MyComp</span> <span class="pl">{</span>
+  <span class="pl">http = </span><span class="fn">inject</span><span class="pl">(</span><span class="cls">HttpClient</span><span class="pl">);</span>
+  <span class="pl">route = </span><span class="fn">inject</span><span class="pl">(</span><span class="cls">ActivatedRoute</span><span class="pl">);</span>
+<span class="pl">}</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- P6 V15 V16 -->
+  <div id="p6" class="panel">
+    <div class="section-title"><span>▸</span> Angular 15 — Noviembre 2022</div>
+    <div class="intro ib">
+      Angular 15 estabilizó los <strong>standalone components</strong> y los convirtió en la forma recomendada de construir aplicaciones. Adiós definitivo a NgModule como requisito.
+    </div>
+    <div class="vf-grid">
+      <div class="vf-box vb">
+        <div class="vf-title">Novedades clave</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> <strong>Standalone APIs estables</strong>: components, directives, pipes</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> Router y HttpClient funcionan sin módulos</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> Functional guards y resolvers: funciones en vez de clases</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> Directive composition API: combinar directivas</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> Image directive <code>NgOptimizedImage</code> estable</div>
+        <div class="vf-item"><span style="color:var(--blue)">▸</span> Mejoras en stack traces de errores</div>
+      </div>
+      <div class="vf-box vb">
+        <div class="vf-title">App 100% Standalone</div>
+        <pre class="pp" style="margin:0;font-size:11.5px"><span class="cmt">// main.ts — Sin AppModule</span>
+<span class="fn">bootstrapApplication</span><span class="pl">(</span><span class="cls">AppComponent</span><span class="pl">, {</span>
+  <span class="pl">providers: [</span>
+    <span class="fn">provideRouter</span><span class="pl">(routes),</span>
+    <span class="fn">provideHttpClient</span><span class="pl">(),</span>
+    <span class="fn">provideAnimations</span><span class="pl">()</span>
+  <span class="pl">]</span>
+<span class="pl">});</span>
+
+<span class="cmt">// Functional guard (sin clase)</span>
+<span class="kw">export const</span> <span class="fn">authGuard</span><span class="pl">: </span><span class="tp2">CanActivateFn</span> <span class="pl">=</span>
+  <span class="pl">(route, state) => {</span>
+    <span class="kw">return</span> <span class="fn">inject</span><span class="pl">(</span><span class="cls">AuthService</span><span class="pl">).isLoggedIn();</span>
+  <span class="pl">};</span></pre>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:32px"><span>▸</span> Angular 16 — Mayo 2023</div>
+    <div class="intro ig">
+      Angular 16 introdujo <strong>Signals</strong> (developer preview), el cambio más grande en el modelo de reactividad de Angular desde su creación. También trajo SSR mejorado y esbuild experimental.
+    </div>
+    <div class="vf-grid">
+      <div class="vf-box vg">
+        <div class="vf-title">Novedades clave</div>
+        <div class="vf-item"><span style="color:var(--green)">▸</span> <strong>Signals</strong> (developer preview) — reactividad granular sin Zone.js</div>
+        <div class="vf-item"><span style="color:var(--green)">▸</span> <code>signal()</code>, <code>computed()</code>, <code>effect()</code> — primitivas reactivas</div>
+        <div class="vf-item"><span style="color:var(--green)">▸</span> RxJS interop: <code>toSignal()</code> y <code>toObservable()</code></div>
+        <div class="vf-item"><span style="color:var(--green)">▸</span> Server-Side Rendering con non-destructive hydration</div>
+        <div class="vf-item"><span style="color:var(--green)">▸</span> esbuild dev server (experimental) — builds ultrarrápidos</div>
+        <div class="vf-item"><span style="color:var(--green)">▸</span> Required inputs con <code>@Input({ required: true })</code></div>
+      </div>
+      <div class="vf-box vg">
+        <div class="vf-title">Signals — El gran cambio</div>
+        <pre class="pg" style="margin:0;font-size:11.5px"><span class="kw">import</span> <span class="pl">{ signal, computed, effect }</span>
+  <span class="kw">from</span> <span class="str">'@angular/core'</span><span class="pl">;</span>
+
+<span class="kw">export class</span> <span class="cls">CartComponent</span> <span class="pl">{</span>
+  <span class="cmt">// Signal: valor reactivo</span>
+  <span class="pl">count = </span><span class="fn">signal</span><span class="pl">(0);</span>
+  <span class="pl">price = </span><span class="fn">signal</span><span class="pl">(29.99);</span>
+
+  <span class="cmt">// Computed: derivado automáticamente</span>
+  <span class="pl">total = </span><span class="fn">computed</span><span class="pl">(() =></span>
+    <span class="kw">this</span><span class="pl">.count() * </span><span class="kw">this</span><span class="pl">.price()</span>
+  <span class="pl">);</span>
+
+  <span class="cmt">// Effect: side-effect reactivo</span>
+  <span class="pl">log = </span><span class="fn">effect</span><span class="pl">(() =></span>
+    <span class="pl">console.log(</span><span class="str">`Total: ${</span><span class="kw">this</span><span class="pl">.total()}</span><span class="str">`</span><span class="pl">)</span>
+  <span class="pl">);</span>
+
+  <span class="fn">add</span><span class="pl">() {</span>
+    <span class="kw">this</span><span class="pl">.count.</span><span class="fn">update</span><span class="pl">(c => c + 1);</span>
+  <span class="pl">}</span>
+<span class="pl">}</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- P7 V17 V18 -->
+  <div id="p7" class="panel">
+    <div class="section-title"><span>▸</span> Angular 17 — Noviembre 2023</div>
+    <div class="intro ip">
+      Angular 17 fue el release más grande en años. Nuevo <strong>branding</strong>, nueva web, nuevo <strong>built-in control flow</strong> (<code>@if</code>, <code>@for</code>), <strong>deferrable views</strong> y esbuild como default. Angular renació.
+    </div>
+    <div class="vf-grid">
+      <div class="vf-box vp">
+        <div class="vf-title">Novedades clave</div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> <strong>Nuevo built-in control flow</strong>: <code>@if</code>, <code>@for</code>, <code>@switch</code>, <code>@empty</code></div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> <strong>Deferrable views</strong>: <code>@defer</code> con lazy loading declarativo</div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> Signals estabilizados: <code>signal()</code>, <code>computed()</code>, <code>effect()</code></div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> esbuild + Vite como build system por defecto</div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> SSR hydration estable y habilitada por defecto</div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> Nuevo logo, nueva web angular.dev, nuevo branding</div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> Hasta <strong>87% más rápido</strong> en builds con esbuild</div>
+      </div>
+      <div class="vf-box vp">
+        <div class="vf-title">Nuevo control flow + @defer</div>
+        <pre class="pv" style="margin:0;font-size:11.5px"><span class="cmt">&lt;!-- Nuevo @if (reemplaza *ngIf) --&gt;</span>
+<span class="pl">@if (user()) {</span>
+  <span class="pl">&lt;h2&gt;{{ user().name }}&lt;/h2&gt;</span>
+<span class="pl">} @else {</span>
+  <span class="pl">&lt;p&gt;Cargando...&lt;/p&gt;</span>
+<span class="pl">}</span>
+
+<span class="cmt">&lt;!-- @for con track obligatorio --&gt;</span>
+<span class="pl">@for (item of items(); track item.id) {</span>
+  <span class="pl">&lt;app-card [data]="item" /&gt;</span>
+<span class="pl">} @empty {</span>
+  <span class="pl">&lt;p&gt;No hay resultados&lt;/p&gt;</span>
+<span class="pl">}</span>
+
+<span class="cmt">&lt;!-- @defer: lazy loading declarativo --&gt;</span>
+<span class="pl">@defer (on viewport) {</span>
+  <span class="pl">&lt;app-heavy-chart /&gt;</span>
+<span class="pl">} @loading {</span>
+  <span class="pl">&lt;div&gt;Cargando gráfico...&lt;/div&gt;</span>
+<span class="pl">} @placeholder {</span>
+  <span class="pl">&lt;div&gt;Scroll para ver&lt;/div&gt;</span>
+<span class="pl">}</span></pre>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:32px"><span>▸</span> Angular 18 — Mayo 2024</div>
+    <div class="intro ip">
+      Angular 18 continuó madurando Signals con <strong>signal-based inputs, outputs y queries</strong>. Introdujo <strong>zoneless change detection</strong> experimental y mejoras en SSR.
+    </div>
+    <div class="vf-grid">
+      <div class="vf-box vp">
+        <div class="vf-title">Novedades clave</div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> <strong>Zoneless change detection</strong> (experimental): sin Zone.js</div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> <strong>Signal inputs</strong> estables: <code>input()</code>, <code>input.required()</code></div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> <strong>Signal queries</strong>: <code>viewChild()</code>, <code>contentChildren()</code></div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> <strong>output()</code></strong> function para emitir eventos</div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> <code>@let</code> para variables locales en templates</div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> Fallback content para <code>&lt;ng-content&gt;</code></div>
+        <div class="vf-item"><span style="color:var(--purple)">▸</span> Material 3 como theme por defecto en Angular Material</div>
+      </div>
+      <div class="vf-box vp">
+        <div class="vf-title">Signal inputs & outputs</div>
+        <pre class="pv" style="margin:0;font-size:11.5px"><span class="cmt">// v18: Signal-based inputs y outputs</span>
+<span class="ann">@Component</span><span class="pl">({ ... })</span>
+<span class="kw">export class</span> <span class="cls">UserCard</span> <span class="pl">{</span>
+  <span class="cmt">// Signal input (reemplaza @Input)</span>
+  <span class="pl">name = </span><span class="fn">input.required</span><span class="pl">&lt;</span><span class="tp2">string</span><span class="pl">&gt;();</span>
+  <span class="pl">age = </span><span class="fn">input</span><span class="pl">(18);</span> <span class="cmt">// con default</span>
+
+  <span class="cmt">// Output function (reemplaza @Output)</span>
+  <span class="pl">selected = </span><span class="fn">output</span><span class="pl">&lt;</span><span class="tp2">string</span><span class="pl">&gt;();</span>
+
+  <span class="cmt">// Signal query (reemplaza @ViewChild)</span>
+  <span class="pl">avatar = </span><span class="fn">viewChild</span><span class="pl">&lt;</span><span class="tp2">ElementRef</span><span class="pl">&gt;(</span><span class="str">'avatar'</span><span class="pl">);</span>
+
+  <span class="cmt">// Computed derivado de inputs</span>
+  <span class="pl">greeting = </span><span class="fn">computed</span><span class="pl">(() =></span>
+    <span class="str">`Hola ${</span><span class="kw">this</span><span class="pl">.name()}, ${</span><span class="kw">this</span><span class="pl">.age()} años</span><span class="str">`</span>
+  <span class="pl">);</span>
+
+  <span class="fn">onClick</span><span class="pl">() {</span>
+    <span class="kw">this</span><span class="pl">.selected.emit(</span><span class="kw">this</span><span class="pl">.name());</span>
+  <span class="pl">}</span>
+<span class="pl">}</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- P8 V19 Y FUTURO -->
+  <div id="p8" class="panel">
+    <div class="section-title"><span>▸</span> Angular 19 — Noviembre 2024</div>
+    <div class="intro it">
+      Angular 19 consolida la era de los Signals con <strong>inputs, outputs y queries estables</strong>, avanza hacia un Angular <strong>sin Zone.js</strong> y mejora drásticamente el SSR con <strong>incremental hydration</strong>.
+    </div>
+    <div class="vf-grid">
+      <div class="vf-box vt">
+        <div class="vf-title">Novedades clave</div>
+        <div class="vf-item"><span style="color:var(--teal)">▸</span> <strong>Standalone es el default</strong> total: <code>ng new</code> ya no genera módulos</div>
+        <div class="vf-item"><span style="color:var(--teal)">▸</span> <strong>Incremental hydration</strong>: solo hidrata los componentes visibles</div>
+        <div class="vf-item"><span style="color:var(--teal)">▸</span> <strong>Route-level render mode</strong>: SSR, SSG o CSR por ruta</div>
+        <div class="vf-item"><span style="color:var(--teal)">▸</span> <strong>linkedSignal()</strong>: signals derivados con write-back</div>
+        <div class="vf-item"><span style="color:var(--teal)">▸</span> <strong>resource()</strong>: primitiva para datos async reactivos</div>
+        <div class="vf-item"><span style="color:var(--teal)">▸</span> Zoneless change detection en developer preview</div>
+        <div class="vf-item"><span style="color:var(--teal)">▸</span> <code>@let</code> estable en templates</div>
+        <div class="vf-item"><span style="color:var(--teal)">▸</span> Mejoras en HMR (Hot Module Replacement) para estilos</div>
+      </div>
+      <div class="vf-box vt">
+        <div class="vf-title">resource() y linkedSignal()</div>
+        <pre class="pt" style="margin:0;font-size:11.5px"><span class="cmt">// resource(): datos async reactivos</span>
+<span class="kw">export class</span> <span class="cls">UserPage</span> <span class="pl">{</span>
+  <span class="pl">userId = </span><span class="fn">input.required</span><span class="pl">&lt;</span><span class="tp2">string</span><span class="pl">&gt;();</span>
+
+  <span class="cmt">// Se re-ejecuta cuando userId cambia</span>
+  <span class="pl">user = </span><span class="fn">resource</span><span class="pl">({</span>
+    <span class="pl">request: () => </span><span class="kw">this</span><span class="pl">.userId(),</span>
+    <span class="pl">loader: </span><span class="kw">async</span> <span class="pl">({ request: id }) => {</span>
+      <span class="kw">const</span> <span class="pl">res = </span><span class="kw">await</span>
+        <span class="fn">fetch</span><span class="pl">(</span><span class="str">`/api/users/${id}`</span><span class="pl">);</span>
+      <span class="kw">return</span> <span class="pl">res.json();</span>
+    <span class="pl">}</span>
+  <span class="pl">});</span>
+<span class="pl">}</span>
+
+<span class="cmt">// linkedSignal(): writable derived</span>
+<span class="pl">options = </span><span class="fn">signal</span><span class="pl">([</span><span class="str">'A'</span><span class="pl">,</span><span class="str">'B'</span><span class="pl">,</span><span class="str">'C'</span><span class="pl">]);</span>
+<span class="pl">selected = </span><span class="fn">linkedSignal</span><span class="pl">(() =></span>
+  <span class="kw">this</span><span class="pl">.options()[0]</span>
+<span class="pl">);</span>
+<span class="cmt">// selected se resetea si options cambia</span>
+<span class="cmt">// pero se puede escribir manualmente</span></pre>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:32px"><span>▸</span> Evolución de Angular: Resumen visual</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--ng)"></div>
+        <div class="tl-ver" style="color:var(--ng)">v12 → v13</div>
+        <div class="tl-date">2021</div>
+        <div class="tl-desc">Eliminación de View Engine e IE11. Ivy como único motor. Webpack 5. Simplificación de APIs legacy.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--blue)"></div>
+        <div class="tl-ver" style="color:var(--blue)">v14 → v15</div>
+        <div class="tl-date">2022</div>
+        <div class="tl-desc">Standalone components, typed forms, inject(). La revolución: apps sin NgModule. Functional guards y resolvers.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--green)"></div>
+        <div class="tl-ver" style="color:var(--green)">v16</div>
+        <div class="tl-date">Mayo 2023</div>
+        <div class="tl-desc">Signals llegan (preview). Reactividad granular sin Zone.js. Non-destructive hydration. esbuild experimental.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--purple)"></div>
+        <div class="tl-ver" style="color:var(--purple)">v17 → v18</div>
+        <div class="tl-date">2023-2024</div>
+        <div class="tl-desc">Renacimiento: nuevo branding, @if/@for, @defer, esbuild default. Signal inputs/outputs/queries. Zoneless experimental. Material 3.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--teal)"></div>
+        <div class="tl-ver" style="color:var(--teal)">v19</div>
+        <div class="tl-date">Nov 2024</div>
+        <div class="tl-desc">Incremental hydration, resource(), linkedSignal(), route-level render mode. El camino hacia zoneless y plena reactividad con Signals.</div>
+      </div>
+    </div>
+
+    <div class="vc2" style="margin-top:24px">
+      <h3>Conclusión</h3>
+      <p>Angular ha evolucionado radicalmente desde la v12. La eliminación de NgModules obligatorios, la llegada de <strong style="color:var(--ng)">Signals</strong>, el nuevo control flow <code>@if/@for</code>, y el camino hacia <strong>zoneless</strong> han transformado la experiencia de desarrollo. Si vienes de versiones antiguas, el Angular actual es un framework mucho más <strong>simple, rápido y expresivo</strong>. La recomendación: adopta standalone + signals + nuevo control flow y disfruta del Angular moderno.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+function sw(btn, id) {
+  var tabs = document.querySelectorAll('.tab-btn');
+  var panels = document.querySelectorAll('.panel');
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  panels.forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servlets vs Spring Boot</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--surface2:#f0f4ff;--border:#dde3f0;--servlet:#e05a1e;--servlet-bg:#fff4f0;--servlet-border:#fad0bc;--spring:#0070c9;--spring-bg:#f0f7ff;--spring-border:#b8d8f8;--green:#15803d;--green-bg:#f0fdf4;--red:#dc2626;--red-bg:#fff5f5;--yellow:#92400e;--yellow-bg:#fffbeb;--text:#1e2a3a;--muted:#64748b;--dim:#475569;--code:#f8fafc;--code-b:#e2e8f0;--sh:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.05);--sh2:0 1px 2px rgba(0,0,0,.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:40px 24px 60px}
+header{text-align:center;margin-bottom:40px}
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--spring);background:var(--spring-bg);border:1px solid var(--spring-border);padding:4px 14px;border-radius:20px;margin-bottom:18px}
+h1{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:10px}
+h1 .s1{color:var(--servlet)} h1 .vs{color:var(--muted);font-weight:400;margin:0 14px;font-size:.75em} h1 .s2{color:var(--spring)}
+.sub{font-size:14px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:36px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 16px;text-align:center;box-shadow:var(--sh2);transition:box-shadow .2s,transform .2s}
+.stat:hover{box-shadow:var(--sh);transform:translateY(-1px)}
+.sv{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;display:block;margin-bottom:4px}
+.sl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:500}
+.tabs{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.tab-list{display:flex;border-bottom:1px solid var(--border);background:var(--bg);overflow-x:auto;scrollbar-width:none;padding:0 8px;gap:2px}
+.tab-list::-webkit-scrollbar{display:none}
+.tab-btn{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;padding:14px 18px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .18s;position:relative;top:1px;border-radius:6px 6px 0 0}
+.tab-btn:hover{color:var(--dim);background:rgba(0,0,0,.03)}
+.tab-btn.active{color:var(--spring);border-bottom-color:var(--spring);background:var(--surface)}
+.tab-btn.tm.active{color:var(--servlet);border-bottom-color:var(--servlet)}
+.panel{display:none;padding:28px}
+.panel.active{display:block}
+.ch{display:grid;grid-template-columns:190px 1fr 1fr;background:var(--surface2);border:1px solid var(--border);border-radius:10px 10px 0 0;overflow:hidden}
+.ch>div{padding:13px 18px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.cl{color:var(--muted)} .cs{color:var(--servlet);border-left:3px solid var(--servlet);background:var(--servlet-bg)} .cb{color:var(--spring);border-left:3px solid var(--spring);background:var(--spring-bg)}
+.cb2{border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;overflow:hidden}
+.cr{display:grid;grid-template-columns:190px 1fr 1fr;border-bottom:1px solid var(--border);transition:background .15s}
+.cr:last-child{border-bottom:none} .cr:hover{background:#f9fbff}
+.cr>div{padding:16px 18px;font-size:13.5px;line-height:1.6}
+.rl{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600;background:var(--bg);display:flex;align-items:flex-start;padding-top:18px;border-right:1px solid var(--border)}
+.rs{border-left:3px solid var(--servlet-border);background:#fffaf8} .rp{border-left:3px solid var(--spring-border);background:#f8fbff}
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin:2px 2px 2px 0}
+.tr{background:var(--red-bg);color:var(--red);border:1px solid #fca5a5}
+.tg{background:var(--green-bg);color:var(--green);border:1px solid #86efac}
+.ty{background:var(--yellow-bg);color:var(--yellow);border:1px solid #fcd34d}
+.tb{background:var(--spring-bg);color:var(--spring);border:1px solid var(--spring-border)}
+.to{background:var(--servlet-bg);color:var(--servlet);border:1px solid var(--servlet-border)}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.ct{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cst{color:var(--servlet)} .cst .dot{background:var(--servlet)} .csp{color:var(--spring)} .csp .dot{background:var(--spring)}
+pre{background:var(--code);border:1px solid var(--code-b);border-radius:8px;padding:18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.75;position:relative}
+pre::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:8px 8px 0 0}
+.ps::before{background:linear-gradient(90deg,var(--servlet),transparent 70%)}
+.pp::before{background:linear-gradient(90deg,var(--spring),transparent 70%)}
+.kw{color:#7c3aed;font-weight:600} .cls{color:#1d4ed8} .ann{color:#15803d;font-weight:600} .str{color:#b45309} .cmt{color:#94a3b8;font-style:italic} .fn{color:#0369a1} .tp{color:#0f766e} .pl{color:#334155}
+.intro{border-radius:10px;padding:16px 20px;margin-bottom:24px;font-size:14px;line-height:1.7;border:1px solid}
+.mi{background:var(--servlet-bg);border-color:var(--servlet-border);color:#7a2600} .mi strong{color:var(--servlet)}
+.ai{background:var(--spring-bg);border-color:var(--spring-border);color:#003d7a} .ai strong{color:var(--spring)}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.card{border-radius:10px;border:1px solid;overflow:hidden;box-shadow:var(--sh2);transition:box-shadow .2s,transform .2s}
+.card:hover{box-shadow:var(--sh);transform:translateY(-2px)}
+.mc{border-color:var(--servlet-border)} .ac{border-color:var(--spring-border)}
+.ch2{padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.mc .ch2{background:var(--servlet-bg);color:var(--servlet);border-bottom:1px solid var(--servlet-border)}
+.ac .ch2{background:var(--spring-bg);color:var(--spring);border-bottom:1px solid var(--spring-border)}
+.cb3{background:var(--surface);padding:14px 16px}
+.ti{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--dim);line-height:1.5}
+.ti:last-child{border-bottom:none}
+.ix{color:var(--servlet);font-size:14px;flex-shrink:0;margin-top:1px}
+.ia{color:var(--green);font-size:14px;flex-shrink:0;margin-top:1px}
+.tc{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--code);border:1px solid var(--code-b);border-radius:4px;padding:2px 7px;color:var(--dim);display:inline-block;margin-top:3px}
+.wg{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.wc{border-radius:10px;padding:20px;border:1px solid;box-shadow:var(--sh2)}
+.ws{background:var(--servlet-bg);border-color:var(--servlet-border)} .wp{background:var(--spring-bg);border-color:var(--spring-border)}
+.wc h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px}
+.ws h3{color:var(--servlet)} .wp h3{color:var(--spring)}
+.wi{display:flex;gap:10px;margin-bottom:11px;font-size:13.5px;color:var(--dim);line-height:1.55}
+.ics{color:var(--servlet);flex-shrink:0} .icp{color:var(--spring);flex-shrink:0}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.vc{background:var(--surface);border-radius:10px;padding:20px;border:1px solid var(--border);box-shadow:var(--sh2);position:relative;overflow:hidden}
+.vc::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px}
+.vs2::before{background:var(--servlet)} .vp::before{background:var(--spring)}
+.vt{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:14px;font-family:'JetBrains Mono',monospace}
+.vs2 .vt{color:var(--servlet)} .vp .vt{color:var(--spring)}
+.pi{display:flex;gap:9px;font-size:13px;color:var(--dim);margin-bottom:8px;line-height:1.5}
+.pro{color:var(--green)} .con{color:var(--red)}
+.vc2{background:linear-gradient(135deg,var(--spring-bg),var(--green-bg));border:1px solid var(--spring-border);border-radius:10px;padding:22px 24px;text-align:center}
+.vc2 h3{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;font-family:'JetBrains Mono',monospace}
+.vc2 p{font-size:14px;color:var(--dim);line-height:1.75;max-width:640px;margin:0 auto}
+@media(max-width:720px){.cg,.wg,.vg{grid-template-columns:1fr}.ch,.cr{grid-template-columns:1fr 1fr}.rl{display:none}.stats{grid-template-columns:repeat(2,1fr)}.tgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="badge">// Java Web Development</div>
+  <h1><span class="s1">Servlets</span><span class="vs">vs</span><span class="s2">Spring Boot</span></h1>
+  <p class="sub">Comparativa técnica &middot; Gesti&oacute;n de usuarios</p>
+</header>
+<div class="stats">
+  <div class="stat"><span class="sv" style="color:var(--servlet)">~40</span><span class="sl">L&iacute;neas Servlet</span></div>
+  <div class="stat"><span class="sv" style="color:var(--spring)">~15</span><span class="sl">L&iacute;neas Spring Boot</span></div>
+  <div class="stat"><span class="sv" style="color:var(--servlet)">Manual</span><span class="sl">Config Servlet</span></div>
+  <div class="stat"><span class="sv" style="color:var(--green)">Auto</span><span class="sl">Config Spring</span></div>
+</div>
+<div class="tabs">
+  <div class="tab-list">
+    <button class="tab-btn active" onclick="sw(this,'p1')">Comparativa</button>
+    <button class="tab-btn" onclick="sw(this,'p2')">GET /users</button>
+    <button class="tab-btn" onclick="sw(this,'p3')">GET /users/{id}</button>
+    <button class="tab-btn" onclick="sw(this,'p4')">POST /users</button>
+    <button class="tab-btn tm" onclick="sw(this,'p5')">Manual</button>
+    <button class="tab-btn" onclick="sw(this,'p6')">Auto</button>
+    <button class="tab-btn" onclick="sw(this,'p7')">Cuando usar</button>
+    <button class="tab-btn" onclick="sw(this,'p8')">Veredicto</button>
+  </div>
+
+  <!-- P1 COMPARATIVA -->
+  <div id="p1" class="panel active">
+    <div class="ch"><div class="cl">Aspecto</div><div class="cs">Servlet</div><div class="cb">Spring Boot</div></div>
+    <div class="cb2">
+      <div class="cr"><div class="rl">Configuraci&oacute;n</div><div class="rs">Requiere <code>web.xml</code> o anotaciones manuales. Servidor externo (Tomcat, Jetty) obligatorio.</div><div class="rp">Servidor embebido incluido. Solo un <code>main()</code>. Autoconfigura casi todo. <span class="tag tg">Zero Config</span></div></div>
+      <div class="cr"><div class="rl">Enrutamiento</div><div class="rs">Mapeo manual de URLs. Un servlet por recurso o l&oacute;gica if/else para distinguir rutas.</div><div class="rp"><code>@GetMapping</code>, <code>@PostMapping</code>&hellip; Un controller para todos los endpoints. <span class="tag tb">@RestController</span></div></div>
+      <div class="cr"><div class="rl">JSON</div><div class="rs">Manual con Jackson/Gson. Hay que serializar y deserializar en cada m&eacute;todo. <span class="tag to">Boilerplate</span></div><div class="rp">Autom&aacute;tico. Spring convierte objetos Java &harr; JSON sin c&oacute;digo extra. <span class="tag tg">Auto</span></div></div>
+      <div class="cr"><div class="rl">HTTP Status</div><div class="rs"><code>response.setStatus(200)</code> o constantes num&eacute;ricas. Verboso y propenso a errores.</div><div class="rp"><code>ResponseEntity.ok()</code>, <code>.notFound()</code>&hellip; Sem&aacute;ntico y expresivo. <span class="tag tb">ResponseEntity&lt;T&gt;</span></div></div>
+      <div class="cr"><div class="rl">Par&aacute;metros URL</div><div class="rs"><code>request.getParameter("id")</code>. Siempre String. Conversi&oacute;n y validaci&oacute;n manual.</div><div class="rp"><code>@PathVariable Long id</code>. Tipado, validado y casteado autom&aacute;ticamente. <span class="tag tg">Type-safe</span></div></div>
+      <div class="cr"><div class="rl">Inyecci&oacute;n dep.</div><div class="rs">No existe nativamente. Instanciaci&oacute;n manual con <code>new</code>. Alto acoplamiento.</div><div class="rp">IoC container completo. <code>@Autowired</code>, <code>@Service</code>, <code>@Repository</code>&hellip; <span class="tag tg">DI nativa</span></div></div>
+      <div class="cr"><div class="rl">Testing</div><div class="rs">Dif&iacute;cil. Mocks complejos de HttpServletRequest/Response. Mucho setup.</div><div class="rp"><code>@SpringBootTest</code>, <code>MockMvc</code>. Ecosistema de testing completo. <span class="tag tg">MockMvc</span></div></div>
+      <div class="cr"><div class="rl">Curva aprendizaje</div><div class="rs"><span class="tag tg">Baja</span> para empezar. C&oacute;digo expl&iacute;cito = educativo. Ideal para entender HTTP.</div><div class="rp"><span class="tag ty">Media</span> inicial por la magia. Luego mucho m&aacute;s productivo en proyectos reales.</div></div>
+      <div class="cr"><div class="rl">Uso real</div><div class="rs"><span class="tag to">Legacy</span> Proyectos viejos, formaci&oacute;n acad&eacute;mica.</div><div class="rp"><span class="tag tg">Est&aacute;ndar</span> industria. Microservicios, APIs REST, enterprise. <span class="tag tb">Producci&oacute;n</span></div></div>
+    </div>
+  </div>
+
+  <!-- P2 GET /users -->
+  <div id="p2" class="panel">
+    <div class="cg">
+      <div>
+        <div class="ct cst"><span class="dot"></span>Servlet &mdash; GET /api/users</div>
+        <pre class="ps"><span class="ann">@WebServlet</span><span class="pl">(</span><span class="str">"/api/users"</span><span class="pl">)</span>
+<span class="kw">public class</span> <span class="cls">UserServlet</span> <span class="kw">extends</span> <span class="cls">HttpServlet</span> <span class="pl">{</span>
+  <span class="kw">private</span> <span class="cls">ObjectMapper</span> <span class="pl">mapper = </span><span class="kw">new</span> <span class="cls">ObjectMapper</span><span class="pl">();</span>
+  <span class="kw">private</span> <span class="cls">List</span><span class="pl">&lt;</span><span class="tp">User</span><span class="pl">&gt; users = </span><span class="kw">new</span> <span class="cls">ArrayList</span><span class="pl">&lt;&gt;();</span>
+
+  <span class="ann">@Override</span>
+  <span class="kw">protected void</span> <span class="fn">doGet</span><span class="pl">(</span><span class="cls">HttpServletRequest</span> <span class="pl">req,</span>
+                          <span class="cls">HttpServletResponse</span> <span class="pl">res)</span>
+      <span class="kw">throws</span> <span class="cls">IOException</span> <span class="pl">{</span>
+    <span class="cmt">// 1. Content-Type manual</span>
+    <span class="pl">res.setContentType(</span><span class="str">"application/json"</span><span class="pl">);</span>
+    <span class="cmt">// 2. Status code numerico</span>
+    <span class="pl">res.setStatus(</span><span class="cls">HttpServletResponse</span><span class="pl">.SC_OK);</span>
+    <span class="cmt">// 3. Serializar manualmente</span>
+    <span class="tp">String</span> <span class="pl">json = mapper.writeValueAsString(users);</span>
+    <span class="pl">res.getWriter().write(json);</span>
+  <span class="pl">}</span>
+<span class="pl">}</span></pre>
+      </div>
+      <div>
+        <div class="ct csp"><span class="dot"></span>Spring Boot &mdash; GET /api/users</div>
+        <pre class="pp"><span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span><span class="pl">(</span><span class="str">"/api/users"</span><span class="pl">)</span>
+<span class="kw">public class</span> <span class="cls">UserController</span> <span class="pl">{</span>
+  <span class="kw">private final</span> <span class="cls">List</span><span class="pl">&lt;</span><span class="tp">User</span><span class="pl">&gt; users = </span><span class="kw">new</span> <span class="cls">ArrayList</span><span class="pl">&lt;&gt;();</span>
+
+  <span class="ann">@PostConstruct</span>
+  <span class="kw">public void</span> <span class="fn">init</span><span class="pl">() {</span>
+    <span class="pl">users.add(</span><span class="kw">new</span> <span class="cls">User</span><span class="pl">(1L, </span><span class="str">"Juan"</span><span class="pl">, </span><span class="str">"juan@example.com"</span><span class="pl">));</span>
+    <span class="pl">users.add(</span><span class="kw">new</span> <span class="cls">User</span><span class="pl">(2L, </span><span class="str">"Maria"</span><span class="pl">, </span><span class="str">"maria@example.com"</span><span class="pl">));</span>
+  <span class="pl">}</span>
+
+  <span class="ann">@GetMapping</span>
+  <span class="kw">public</span> <span class="cls">ResponseEntity</span><span class="pl">&lt;</span><span class="cls">List</span><span class="pl">&lt;</span><span class="tp">User</span><span class="pl">&gt;&gt;</span> <span class="fn">getAllUsers</span><span class="pl">() {</span>
+    <span class="kw">return</span> <span class="cls">ResponseEntity</span><span class="pl">.ok(users);</span>
+  <span class="pl">}</span>
+<span class="pl">}</span>
+<span class="cmt">// Content-Type automatico  ok
+// Status 200 implicito     ok
+// JSON serializado solo    ok</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 GET /users/{id} -->
+  <div id="p3" class="panel">
+    <div class="cg">
+      <div>
+        <div class="ct cst"><span class="dot"></span>Servlet &mdash; GET /api/users/{id}</div>
+        <pre class="ps"><span class="ann">@Override</span>
+<span class="kw">protected void</span> <span class="fn">doGet</span><span class="pl">(</span><span class="cls">HttpServletRequest</span> <span class="pl">req,</span>
+                        <span class="cls">HttpServletResponse</span> <span class="pl">res)</span>
+    <span class="kw">throws</span> <span class="cls">IOException</span> <span class="pl">{</span>
+  <span class="tp">String</span> <span class="pl">pathInfo = req.getPathInfo();</span>
+  <span class="pl">res.setContentType(</span><span class="str">"application/json"</span><span class="pl">);</span>
+  <span class="kw">if</span> <span class="pl">(pathInfo == </span><span class="kw">null</span> <span class="pl">|| pathInfo.equals(</span><span class="str">"/"</span><span class="pl">)) {</span>
+    <span class="pl">res.setStatus(200);</span>
+    <span class="pl">res.getWriter().write(mapper.writeValueAsString(users));</span>
+  <span class="pl">} </span><span class="kw">else</span> <span class="pl">{</span>
+    <span class="tp">Long</span> <span class="pl">id = Long.parseLong(pathInfo.substring(1));</span>
+    <span class="pl">users.stream()</span>
+      <span class="pl">.filter(u -&gt; u.getId().equals(id))</span>
+      <span class="pl">.findFirst()</span>
+      <span class="pl">.ifPresentOrElse(</span>
+        <span class="pl">u -&gt; {</span>
+          <span class="kw">try</span> <span class="pl">{</span>
+            <span class="pl">res.setStatus(200);</span>
+            <span class="pl">res.getWriter().write(mapper.writeValueAsString(u));</span>
+          <span class="pl">} </span><span class="kw">catch</span> <span class="pl">(IOException e) {</span>
+            <span class="kw">throw new</span> <span class="cls">RuntimeException</span><span class="pl">(e);</span>
+          <span class="pl">}</span>
+        <span class="pl">},</span>
+        <span class="pl">() -&gt; res.setStatus(404)</span>
+      <span class="pl">);</span>
+  <span class="pl">}</span>
+<span class="pl">}</span></pre>
+      </div>
+      <div>
+        <div class="ct csp"><span class="dot"></span>Spring Boot &mdash; GET /api/users/{id}</div>
+        <pre class="pp"><span class="ann">@GetMapping</span><span class="pl">(</span><span class="str">"/{id}"</span><span class="pl">)</span>
+<span class="kw">public</span> <span class="cls">ResponseEntity</span><span class="pl">&lt;?&gt;</span>
+    <span class="fn">getUserById</span><span class="pl">(</span><span class="ann">@PathVariable</span> <span class="tp">Long</span> <span class="pl">id) {</span>
+  <span class="kw">return</span> <span class="pl">users.stream()</span>
+    <span class="pl">.filter(u -&gt; u.getId().equals(id))</span>
+    <span class="pl">.findFirst()</span>
+    <span class="pl">.map(</span><span class="cls">ResponseEntity</span><span class="pl">::ok)</span>
+    <span class="pl">.orElseGet(() -&gt;</span>
+      <span class="cls">ResponseEntity</span>
+        <span class="pl">.status(</span><span class="cls">HttpStatus</span><span class="pl">.NOT_FOUND)</span>
+        <span class="pl">.build()</span>
+    <span class="pl">);</span>
+<span class="pl">}</span>
+<span class="cmt">// @PathVariable castea Long solo   ok
+// 200 / 404 semanticos              ok
+// Sin try/catch de IOException      ok</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- P4 POST /users -->
+  <div id="p4" class="panel">
+    <div class="cg">
+      <div>
+        <div class="ct cst"><span class="dot"></span>Servlet &mdash; POST /api/users</div>
+        <pre class="ps"><span class="ann">@Override</span>
+<span class="kw">protected void</span> <span class="fn">doPost</span><span class="pl">(</span><span class="cls">HttpServletRequest</span> <span class="pl">req,</span>
+                         <span class="cls">HttpServletResponse</span> <span class="pl">res)</span>
+    <span class="kw">throws</span> <span class="cls">IOException</span> <span class="pl">{</span>
+  <span class="cmt">// 1. Leer body linea a linea</span>
+  <span class="cls">StringBuilder</span> <span class="pl">sb = </span><span class="kw">new</span> <span class="cls">StringBuilder</span><span class="pl">();</span>
+  <span class="tp">String</span> <span class="pl">line;</span>
+  <span class="cls">BufferedReader</span> <span class="pl">reader = req.getReader();</span>
+  <span class="kw">while</span> <span class="pl">((line = reader.readLine()) != </span><span class="kw">null</span><span class="pl">) {</span>
+    <span class="pl">sb.append(line);</span>
+  <span class="pl">}</span>
+  <span class="cmt">// 2. Deserializar JSON manualmente</span>
+  <span class="tp">User</span> <span class="pl">newUser = mapper.readValue(sb.toString(), User.class);</span>
+  <span class="cmt">// 3. Asignar ID manualmente</span>
+  <span class="pl">newUser.setId((</span><span class="kw">long</span><span class="pl">) (users.size() + 1));</span>
+  <span class="pl">users.add(newUser);</span>
+  <span class="cmt">// 4. Respuesta manual</span>
+  <span class="pl">res.setContentType(</span><span class="str">"application/json"</span><span class="pl">);</span>
+  <span class="pl">res.setStatus(</span><span class="cls">HttpServletResponse</span><span class="pl">.SC_CREATED);</span>
+  <span class="pl">res.getWriter().write(mapper.writeValueAsString(newUser));</span>
+<span class="pl">}</span></pre>
+      </div>
+      <div>
+        <div class="ct csp"><span class="dot"></span>Spring Boot &mdash; POST /api/users</div>
+        <pre class="pp"><span class="ann">@PostMapping</span>
+<span class="kw">public</span> <span class="cls">ResponseEntity</span><span class="pl">&lt;</span><span class="tp">User</span><span class="pl">&gt;</span>
+    <span class="fn">createUser</span><span class="pl">(</span><span class="ann">@RequestBody</span> <span class="tp">User</span> <span class="pl">newUser) {</span>
+  <span class="cmt">// Spring deserializa el JSON automaticamente</span>
+  <span class="pl">newUser.setId((</span><span class="kw">long</span><span class="pl">) (users.size() + 1));</span>
+  <span class="pl">users.add(newUser);</span>
+  <span class="kw">return</span> <span class="cls">ResponseEntity</span>
+    <span class="pl">.status(</span><span class="cls">HttpStatus</span><span class="pl">.CREATED)</span>
+    <span class="pl">.body(newUser);</span>
+<span class="pl">}</span>
+<span class="cmt">// @RequestBody deserializa solo     ok
+// Sin BufferedReader + while loop    ok
+// Status 201 CREATED semantico      ok</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- P5 MANUAL -->
+  <div id="p5" class="panel">
+    <div class="intro mi">
+      <strong>Todo lo que debes hacer a mano con Servlets</strong> que Spring Boot resuelve automaticamente. Cada punto es codigo extra que tienes que escribir, mantener y en el que puedes cometer errores.
+    </div>
+    <div class="tgrid">
+      <div class="card mc">
+        <div class="ch2">Gestion de JSON</div>
+        <div class="cb3">
+          <div class="ti"><span class="ix">x</span><div>Instanciar ObjectMapper en cada servlet<br><span class="tc">ObjectMapper mapper = new ObjectMapper();</span></div></div>
+          <div class="ti"><span class="ix">x</span><div>Serializar objetos a JSON en cada respuesta<br><span class="tc">mapper.writeValueAsString(obj)</span></div></div>
+          <div class="ti"><span class="ix">x</span><div>Leer el body linea a linea con BufferedReader para deserializarlo</div></div>
+          <div class="ti"><span class="ix">x</span><div>Llamar a mapper.readValue() para convertir JSON a objeto Java</div></div>
+        </div>
+      </div>
+      <div class="card mc">
+        <div class="ch2">Headers HTTP</div>
+        <div class="cb3">
+          <div class="ti"><span class="ix">x</span><div>Fijar el Content-Type en cada metodo<br><span class="tc">res.setContentType("application/json")</span></div></div>
+          <div class="ti"><span class="ix">x</span><div>Fijar el charset si hay caracteres especiales<br><span class="tc">res.setCharacterEncoding("UTF-8")</span></div></div>
+          <div class="ti"><span class="ix">x</span><div>Anadir cabeceras CORS manualmente si el cliente es un frontend separado</div></div>
+        </div>
+      </div>
+      <div class="card mc">
+        <div class="ch2">Enrutamiento y parametros</div>
+        <div class="cb3">
+          <div class="ti"><span class="ix">x</span><div>Extraer el ID del path con getPathInfo().substring(1)</div></div>
+          <div class="ti"><span class="ix">x</span><div>Parsear String a Long/Integer manualmente<br><span class="tc">Long.parseLong(pathInfo.substring(1))</span></div></div>
+          <div class="ti"><span class="ix">x</span><div>Distinguir rutas con if/else dentro del mismo metodo</div></div>
+        </div>
+      </div>
+      <div class="card mc">
+        <div class="ch2">Status codes y errores</div>
+        <div class="cb3">
+          <div class="ti"><span class="ix">x</span><div>Asignar status codes con constantes largas<br><span class="tc">res.setStatus(HttpServletResponse.SC_CREATED)</span></div></div>
+          <div class="ti"><span class="ix">x</span><div>Escribir el body de error manualmente</div></div>
+          <div class="ti"><span class="ix">x</span><div>Envolver la escritura en try/catch IOException aunque solo quieras devolver JSON</div></div>
+        </div>
+      </div>
+      <div class="card mc">
+        <div class="ch2">Infraestructura</div>
+        <div class="cb3">
+          <div class="ti"><span class="ix">x</span><div>Instalar y configurar Tomcat o Jetty externamente</div></div>
+          <div class="ti"><span class="ix">x</span><div>Definir el mapeo URL en web.xml o con @WebServlet por cada clase</div></div>
+          <div class="ti"><span class="ix">x</span><div>Gestionar el ciclo de vida (init, destroy) manualmente</div></div>
+        </div>
+      </div>
+      <div class="card mc">
+        <div class="ch2">Dependencias entre clases</div>
+        <div class="cb3">
+          <div class="ti"><span class="ix">x</span><div>Instanciar servicios con new dentro del servlet (alto acoplamiento)</div></div>
+          <div class="ti"><span class="ix">x</span><div>Sin inyeccion de dependencias nativa</div></div>
+          <div class="ti"><span class="ix">x</span><div>Sin soporte de @Transactional ni integracion directa con JPA/Hibernate</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P6 AUTO -->
+  <div id="p6" class="panel">
+    <div class="intro ai">
+      <strong>Todo lo que Spring Boot hace por ti automaticamente</strong> sin una sola linea de configuracion extra. Cada punto es codigo que no tienes que escribir: menos bugs, menos mantenimiento, mas tiempo para la logica de negocio.
+    </div>
+    <div class="tgrid">
+      <div class="card ac">
+        <div class="ch2">Serializacion JSON</div>
+        <div class="cb3">
+          <div class="ti"><span class="ia">ok</span><div>Convierte automaticamente cualquier objeto Java devuelto por un @RestController a JSON</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Lee el cuerpo de la peticion y lo deserializa al tipo indicado en @RequestBody</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Jackson configurado y disponible por defecto. Sin instanciar ObjectMapper manualmente.</div></div>
+        </div>
+      </div>
+      <div class="card ac">
+        <div class="ch2">Headers y Content-Type</div>
+        <div class="cb3">
+          <div class="ti"><span class="ia">ok</span><div>Establece Content-Type: application/json automaticamente en cada respuesta REST</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Charset UTF-8 configurado de forma predeterminada</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Negociacion de contenido: si el cliente pide XML, Spring puede responder en XML sin cambiar el controller</div></div>
+        </div>
+      </div>
+      <div class="card ac">
+        <div class="ch2">Enrutamiento y parametros</div>
+        <div class="cb3">
+          <div class="ti"><span class="ia">ok</span><div>@PathVariable extrae y castea el valor del path al tipo Java correcto automaticamente</div></div>
+          <div class="ti"><span class="ia">ok</span><div>@RequestParam lee query params y los convierte al tipo esperado</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Cada metodo HTTP tiene su propia anotacion (@GetMapping, @PostMapping...), sin if/else</div></div>
+        </div>
+      </div>
+      <div class="card ac">
+        <div class="ch2">Validacion de datos</div>
+        <div class="cb3">
+          <div class="ti"><span class="ia">ok</span><div>Con @Valid y anotaciones como @NotNull, @Email valida el body automaticamente</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Si la validacion falla, devuelve automaticamente 400 Bad Request con el detalle del error</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Sin escribir ni una linea de logica de validacion manual en el controller</div></div>
+        </div>
+      </div>
+      <div class="card ac">
+        <div class="ch2">Infraestructura y servidor</div>
+        <div class="cb3">
+          <div class="ti"><span class="ia">ok</span><div>Servidor Tomcat embebido: arranca con java -jar, sin instalar nada externo</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Puerto y propiedades configurables desde application.properties</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Spring Actuator para health checks, metricas y monitoreo en produccion</div></div>
+        </div>
+      </div>
+      <div class="card ac">
+        <div class="ch2">Inyeccion de dependencias</div>
+        <div class="cb3">
+          <div class="ti"><span class="ia">ok</span><div>IoC container gestiona el ciclo de vida de todos los beans (@Service, @Repository...)</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Inyeccion por constructor sin new. Bajo acoplamiento garantizado.</div></div>
+          <div class="ti"><span class="ia">ok</span><div>Integracion directa con JPA/Hibernate: solo define un @Repository y Spring gestiona las transacciones</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P7 CUANDO USAR -->
+  <div id="p7" class="panel">
+    <div class="wg">
+      <div class="wc ws">
+        <h3>Usa Servlets cuando...</h3>
+        <div class="wi"><span class="ics">&#9658;</span><span>Estas aprendiendo los fundamentos de HTTP y quieres ver que ocurre bajo el capo.</span></div>
+        <div class="wi"><span class="ics">&#9658;</span><span>Trabajas en una aplicacion legacy que ya usa Servlets y la migracion no esta justificada.</span></div>
+        <div class="wi"><span class="ics">&#9658;</span><span>Necesitas control absoluto y minima abstraccion sobre la request/response.</span></div>
+        <div class="wi"><span class="ics">&#9658;</span><span>El entorno tiene restricciones que impiden usar frameworks adicionales.</span></div>
+        <div class="wi"><span class="ics">&#9658;</span><span>Es un proyecto academico donde el objetivo es entender HTTP desde cero.</span></div>
+      </div>
+      <div class="wc wp">
+        <h3>Usa Spring Boot cuando...</h3>
+        <div class="wi"><span class="icp">&#9658;</span><span>Construyes una API REST para produccion: es el estandar de facto en la industria Java.</span></div>
+        <div class="wi"><span class="icp">&#9658;</span><span>Tu equipo necesita ser productivo rapidamente y el tiempo de desarrollo importa.</span></div>
+        <div class="wi"><span class="icp">&#9658;</span><span>Necesitas integracion con BD, seguridad, testing, metricas u otros servicios.</span></div>
+        <div class="wi"><span class="icp">&#9658;</span><span>El proyecto es un microservicio que se desplegara en contenedores (Docker/Kubernetes).</span></div>
+        <div class="wi"><span class="icp">&#9658;</span><span>Quieres codigo limpio, mantenible y que cualquier desarrollador Java pueda entender.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P8 VEREDICTO -->
+  <div id="p8" class="panel">
+    <div class="vg">
+      <div class="vc vs2">
+        <div class="vt">Servlet</div>
+        <div class="pi"><span class="pro">+</span><span>Control total sobre HTTP</span></div>
+        <div class="pi"><span class="pro">+</span><span>Sin magia, todo es explicito</span></div>
+        <div class="pi"><span class="pro">+</span><span>Ideal para entender los fundamentos</span></div>
+        <div class="pi"><span class="pro">+</span><span>Dependencias minimas</span></div>
+        <div class="pi"><span class="con">-</span><span>Codigo verboso y repetitivo</span></div>
+        <div class="pi"><span class="con">-</span><span>JSON manual y propenso a errores</span></div>
+        <div class="pi"><span class="con">-</span><span>Sin inyeccion de dependencias</span></div>
+        <div class="pi"><span class="con">-</span><span>Testing complejo con mocks pesados</span></div>
+        <div class="pi"><span class="con">-</span><span>Raramente usado en proyectos nuevos</span></div>
+      </div>
+      <div class="vc vp">
+        <div class="vt">Spring Boot</div>
+        <div class="pi"><span class="pro">+</span><span>Codigo limpio y expresivo</span></div>
+        <div class="pi"><span class="pro">+</span><span>Serializacion JSON automatica</span></div>
+        <div class="pi"><span class="pro">+</span><span>Inyeccion de dependencias nativa</span></div>
+        <div class="pi"><span class="pro">+</span><span>Ecosistema enorme (Security, Data, Cloud...)</span></div>
+        <div class="pi"><span class="pro">+</span><span>Testing con MockMvc integrado</span></div>
+        <div class="pi"><span class="pro">+</span><span>Estandar absoluto en la industria</span></div>
+        <div class="pi"><span class="con">-</span><span>Curva inicial por la autoconfiguracion</span></div>
+        <div class="pi"><span class="con">-</span><span>Mayor consumo de memoria en arranque</span></div>
+        <div class="pi"><span class="con">-</span><span>Excesivo para proyectos muy pequenos</span></div>
+      </div>
+    </div>
+    <div class="vc2">
+      <h3>Conclusion</h3>
+      <p>Los Servlets son valiosos para <strong style="color:var(--servlet)">entender los cimientos</strong> del desarrollo web en Java, pero <strong>Spring Boot es la eleccion correcta para cualquier proyecto real</strong>. La reduccion de boilerplate, la gestion automatica de JSON y HTTP, junto al ecosistema maduro, hacen que el ratio esfuerzo/resultado sea incomparable. Si ya dominas Servlets, la transicion a Spring Boot te resultara natural, y descubriras todo lo que hacian a mano que simplemente desaparece.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+<script>
+function sw(btn, id) {
+  var bs = document.getElementsByClassName('tab-btn');
+  var ps = document.getElementsByClassName('panel');
+  for(var i=0;i<bs.length;i++) bs[i].classList.remove('active');
+  for(var i=0;i<ps.length;i++) ps[i].classList.remove('active');
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA — Guía de conceptos · LLM, Agentes, RAG, Embeddings, Local</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f6fb;--surface:#fff;--surface2:#f0f4ff;--border:#dde3f0;
+  --purple:#7c3aed;--purple-bg:#f5f3ff;--purple-border:#c4b5fd;
+  --blue:#0070c9;--blue-bg:#f0f7ff;--blue-border:#b8d8f8;
+  --green:#15803d;--green-bg:#f0fdf4;--green-border:#86efac;
+  --teal:#0f766e;--teal-bg:#f0fdfa;--teal-border:#99f6e4;
+  --orange:#c2410c;--orange-bg:#fff7ed;--orange-border:#fed7aa;
+  --yellow:#92400e;--yellow-bg:#fffbeb;
+  --red:#dc2626;--red-bg:#fff5f5;
+  --rose:#be185d;--rose-bg:#fff1f7;--rose-border:#fbcfe8;
+  --indigo:#4338ca;--indigo-bg:#eef2ff;--indigo-border:#c7d2fe;
+  --slate:#334155;--slate-bg:#f8fafc;--slate-border:#cbd5e1;
+  --text:#1e2a3a;--muted:#64748b;--dim:#475569;
+  --code:#f8fafc;--code-b:#e2e8f0;
+  --sh:0 2px 8px rgba(0,0,0,.08),0 8px 24px rgba(0,0,0,.05);
+  --sh2:0 1px 2px rgba(0,0,0,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+.wrap{max-width:1160px;margin:0 auto;padding:40px 24px 80px}
+
+/* ── HEADER ── */
+header{text-align:center;margin-bottom:36px}
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--purple);background:var(--purple-bg);border:1px solid var(--purple-border);padding:4px 14px;border-radius:20px;margin-bottom:16px}
+h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:8px}
+h1 .a1{color:var(--purple)}
+h1 .a2{color:var(--muted);font-weight:400;font-size:.52em;display:block;margin-top:6px;letter-spacing:0}
+.sub{font-size:13.5px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+/* ── STATS GRID ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 12px;text-align:center;box-shadow:var(--sh2);transition:box-shadow .2s,transform .2s}
+.stat:hover{box-shadow:var(--sh);transform:translateY(-1px)}
+.sv{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;display:block;margin-bottom:3px}
+.sl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+
+/* ── TABS ── */
+.tabs{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);overflow:hidden;margin-top:20px}
+.tab-list{display:flex;border-bottom:1px solid var(--border);background:var(--bg);overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;padding:0 6px;gap:1px;flex-wrap:wrap}
+.tab-list::-webkit-scrollbar{height:3px}
+.tab-list::-webkit-scrollbar-track{background:transparent}
+.tab-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.tab-btn{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:13px 14px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s;position:relative;top:1px;border-radius:6px 6px 0 0}
+.tab-btn:hover{color:var(--dim);background:rgba(0,0,0,.03)}
+.tab-btn.active{background:var(--surface)}
+.tab-btn.c-pu.active{color:var(--purple);border-bottom-color:var(--purple)}
+.tab-btn.c-bl.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-btn.c-ye.active{color:var(--yellow);border-bottom-color:var(--yellow)}
+.tab-btn.c-te.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab-btn.c-gr.active{color:var(--green);border-bottom-color:var(--green)}
+.tab-btn.c-ro.active{color:var(--rose);border-bottom-color:var(--rose)}
+.tab-btn.c-in.active{color:var(--indigo);border-bottom-color:var(--indigo)}
+.tab-btn.c-or.active{color:var(--orange);border-bottom-color:var(--orange)}
+.tab-btn.c-sl.active{color:var(--slate);border-bottom-color:var(--slate)}
+.tab-btn.c-re.active{color:var(--red);border-bottom-color:var(--red)}
+.tab-sep{width:1px;background:var(--border);margin:8px 4px;flex-shrink:0;align-self:stretch}
+.panel{display:none;padding:28px}
+.panel.active{display:block}
+.section-title{font-size:15px;font-weight:700;color:var(--text);margin:22px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+.section-title .sc{color:var(--purple)}
+
+/* ── TAGS ── */
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin:2px 2px 2px 0}
+.tg{background:var(--green-bg);color:var(--green);border:1px solid #86efac}
+.tr{background:var(--red-bg);color:var(--red);border:1px solid #fca5a5}
+.ty{background:var(--yellow-bg);color:var(--yellow);border:1px solid #fcd34d}
+.tb{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.tp{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border)}
+.tt{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border)}
+.to{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)}
+.ti{background:var(--indigo-bg);color:var(--indigo);border:1px solid var(--indigo-border)}
+
+/* ── INFO BOXES ── */
+.intro{border-radius:10px;padding:16px 20px;margin-bottom:22px;font-size:13.5px;line-height:1.72;border:1px solid}
+.intro strong{font-weight:700}
+.i-pu{background:var(--purple-bg);border-color:var(--purple-border);color:#3b0764} .i-pu strong{color:var(--purple)}
+.i-bl{background:var(--blue-bg);border-color:var(--blue-border);color:#003d7a} .i-bl strong{color:var(--blue)}
+.i-gr{background:var(--green-bg);border-color:var(--green-border);color:#14532d} .i-gr strong{color:var(--green)}
+.i-te{background:var(--teal-bg);border-color:var(--teal-border);color:#134e4a} .i-te strong{color:var(--teal)}
+.i-ye{background:var(--yellow-bg);border-color:#fcd34d;color:#78350f} .i-ye strong{color:var(--yellow)}
+.i-ro{background:var(--rose-bg);border-color:var(--rose-border);color:#831843} .i-ro strong{color:var(--rose)}
+.i-in{background:var(--indigo-bg);border-color:var(--indigo-border);color:#312e81} .i-in strong{color:var(--indigo)}
+.i-or{background:var(--orange-bg);border-color:var(--orange-border);color:#7c2d12} .i-or strong{color:var(--orange)}
+.i-sl{background:var(--slate-bg);border-color:var(--slate-border);color:#1e293b} .i-sl strong{color:var(--slate)}
+
+/* ── KEY DIFFERENCE BOX ── */
+.key-diff{border-radius:12px;border:2px solid;padding:20px 24px;margin:20px 0;position:relative;overflow:hidden}
+.key-diff::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.kd-pu{border-color:var(--purple-border);background:linear-gradient(135deg,var(--purple-bg),#fff)}
+.kd-pu::before{background:var(--purple)}
+.kd-te{border-color:var(--teal-border);background:linear-gradient(135deg,var(--teal-bg),#fff)}
+.kd-te::before{background:var(--teal)}
+.kd-gr{border-color:var(--green-border);background:linear-gradient(135deg,var(--green-bg),#fff)}
+.kd-gr::before{background:var(--green)}
+.kd-sl{border-color:var(--slate-border);background:linear-gradient(135deg,var(--slate-bg),#fff)}
+.kd-sl::before{background:var(--slate)}
+.kd-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
+.kd-pu .kd-title{color:var(--purple)}
+.kd-te .kd-title{color:var(--teal)}
+.kd-gr .kd-title{color:var(--green)}
+.kd-sl .kd-title{color:var(--slate)}
+.kd-body{font-size:13.5px;color:var(--dim);line-height:1.7}
+.kd-body strong{color:var(--text)}
+
+/* ── ANALOGY BOX ── */
+.analogy{background:linear-gradient(135deg,var(--purple-bg),var(--blue-bg));border:1px solid var(--purple-border);border-radius:10px;padding:20px 22px;margin:18px 0}
+.analogy h3{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+.analogy p{font-size:13.5px;color:var(--dim);line-height:1.72}
+.analogy strong{color:var(--purple)}
+
+/* ── DIAGRAMS ── */
+.diagram-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:24px}
+.diagram-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.d-box{border-radius:10px;padding:13px 18px;font-size:12.5px;font-weight:600;text-align:center;border:2px solid;min-width:100px;box-shadow:var(--sh2)}
+.d-pu{background:var(--purple-bg);border-color:var(--purple-border);color:var(--purple)}
+.d-bl{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue)}
+.d-gr{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.d-te{background:var(--teal-bg);border-color:var(--teal-border);color:var(--teal)}
+.d-ye{background:var(--yellow-bg);border-color:#fcd34d;color:var(--yellow)}
+.d-or{background:var(--orange-bg);border-color:var(--orange-border);color:var(--orange)}
+.d-ro{background:var(--rose-bg);border-color:var(--rose-border);color:var(--rose)}
+.d-in{background:var(--indigo-bg);border-color:var(--indigo-border);color:var(--indigo)}
+.d-sl{background:var(--slate-bg);border-color:var(--slate-border);color:var(--slate)}
+.d-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:2px}
+.d-sub{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:3px}
+.d-arr{font-size:18px;color:var(--border);user-select:none}
+.d-arr-down{font-size:14px;color:var(--muted);margin:6px 0;user-select:none;text-align:center}
+.d-cluster{border:2px dashed var(--purple-border);border-radius:14px;padding:18px 22px;background:rgba(124,58,237,.02);margin:10px 0;width:100%;max-width:780px}
+.d-cluster-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--purple);margin-bottom:12px;text-align:center}
+.d-inner{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.d-mini{border-radius:5px;padding:5px 10px;font-size:11px;font-weight:600;border:1.5px solid}
+
+/* ── CODE ── */
+.cg2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.cg1{display:grid;grid-template-columns:1fr;gap:18px}
+.ct{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+pre{background:var(--code);border:1px solid var(--code-b);border-radius:8px;padding:16px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.75;position:relative}
+pre::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:8px 8px 0 0}
+.pr-pu::before{background:linear-gradient(90deg,var(--purple),transparent 70%)}
+.pr-bl::before{background:linear-gradient(90deg,var(--blue),transparent 70%)}
+.pr-gr::before{background:linear-gradient(90deg,var(--green),transparent 70%)}
+.pr-te::before{background:linear-gradient(90deg,var(--teal),transparent 70%)}
+.pr-or::before{background:linear-gradient(90deg,var(--orange),transparent 70%)}
+.pr-ro::before{background:linear-gradient(90deg,var(--rose),transparent 70%)}
+.pr-in::before{background:linear-gradient(90deg,var(--indigo),transparent 70%)}
+.pr-sl::before{background:linear-gradient(90deg,var(--slate),transparent 70%)}
+.kw{color:#7c3aed;font-weight:600}.cls{color:#1d4ed8}.str{color:#b45309}.cmt{color:#94a3b8;font-style:italic}.fn{color:#0369a1}.tp2{color:#0f766e}.pl{color:#334155}.hl{color:#c2410c;font-weight:600}
+
+/* ── DATA TABLE ── */
+.ch{display:grid;grid-template-columns:160px 1fr;background:var(--surface2);border:1px solid var(--border);border-radius:10px 10px 0 0;overflow:hidden}
+.ch>div{padding:11px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.cl{color:var(--muted)}
+.ck{color:var(--purple);border-left:3px solid var(--purple);background:var(--purple-bg)}
+.cb2{border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;overflow:hidden}
+.cr{display:grid;grid-template-columns:160px 1fr;border-bottom:1px solid var(--border);transition:background .15s}
+.cr:last-child{border-bottom:none}
+.cr:hover{background:#f9fbff}
+.cr>div{padding:13px 16px;font-size:13px;line-height:1.6}
+.rl{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);font-weight:600;background:var(--bg);display:flex;align-items:flex-start;padding-top:16px;border-right:1px solid var(--border)}
+.rv{border-left:3px solid var(--border)}
+
+/* ── CARDS ── */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{border-radius:10px;border:1px solid;overflow:hidden;box-shadow:var(--sh2);transition:box-shadow .2s,transform .2s}
+.card:hover{box-shadow:var(--sh);transform:translateY(-2px)}
+.card .ch2{padding:11px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.card .cb3{background:var(--surface);padding:13px 14px}
+.c-card-pu{border-color:var(--purple-border)} .c-card-pu .ch2{background:var(--purple-bg);color:var(--purple);border-bottom:1px solid var(--purple-border)}
+.c-card-bl{border-color:var(--blue-border)} .c-card-bl .ch2{background:var(--blue-bg);color:var(--blue);border-bottom:1px solid var(--blue-border)}
+.c-card-gr{border-color:var(--green-border)} .c-card-gr .ch2{background:var(--green-bg);color:var(--green);border-bottom:1px solid var(--green-border)}
+.c-card-te{border-color:var(--teal-border)} .c-card-te .ch2{background:var(--teal-bg);color:var(--teal);border-bottom:1px solid var(--teal-border)}
+.c-card-or{border-color:var(--orange-border)} .c-card-or .ch2{background:var(--orange-bg);color:var(--orange);border-bottom:1px solid var(--orange-border)}
+.c-card-sl{border-color:var(--slate-border)} .c-card-sl .ch2{background:var(--slate-bg);color:var(--slate);border-bottom:1px solid var(--slate-border)}
+.c-card-ro{border-color:var(--rose-border)} .c-card-ro .ch2{background:var(--rose-bg);color:var(--rose);border-bottom:1px solid var(--rose-border)}
+.c-card-in{border-color:var(--indigo-border)} .c-card-in .ch2{background:var(--indigo-bg);color:var(--indigo);border-bottom:1px solid var(--indigo-border)}
+.cti{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--dim);line-height:1.5}
+.cti:last-child{border-bottom:none}
+.ci{font-size:13px;flex-shrink:0;margin-top:1px}
+
+/* ── SUMMARY GRID ── */
+.sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.sum-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:var(--sh2);position:relative;overflow:hidden}
+.sum-item::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.si-pu::before{background:var(--purple)} .si-bl::before{background:var(--blue)} .si-gr::before{background:var(--green)} .si-te::before{background:var(--teal)} .si-ye::before{background:#f59e0b} .si-or::before{background:var(--orange)} .si-ro::before{background:var(--rose)} .si-in::before{background:var(--indigo)} .si-sl::before{background:var(--slate)}
+.sum-icon{font-size:22px;margin-bottom:7px}
+.sum-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;color:var(--dim)}
+.sum-desc{font-size:12.5px;color:var(--muted);line-height:1.55}
+
+/* ── CHAT SIMULATION ── */
+.chat-ui{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--sh);margin:16px 0}
+.chat-header{background:var(--surface2);padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--dim);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace}
+.chat-dot{width:8px;height:8px;border-radius:50%}
+.chat-body{padding:14px;display:flex;flex-direction:column;gap:9px}
+.msg{max-width:75%;padding:9px 13px;border-radius:10px;font-size:12.5px;line-height:1.55}
+.msg-user{background:var(--purple);color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
+.msg-bot{background:var(--surface2);color:var(--text);align-self:flex-start;border:1px solid var(--border);border-bottom-left-radius:3px}
+.msg-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.msg-label.ul{color:rgba(255,255,255,.65)}
+.msg-label.bl{color:var(--muted)}
+.chat-footer{padding:9px 14px;background:var(--bg);border-top:1px solid var(--border);display:flex;gap:7px;flex-wrap:wrap}
+.chat-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--dim);font-weight:500}
+.chat-pill.ok{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.chat-pill.no{background:var(--red-bg);border-color:#fca5a5;color:var(--red)}
+
+/* ── VS COMPARISON ── */
+.vs-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin:20px 0;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--sh2)}
+.vs-col{padding:18px 20px}
+.vs-col.left{background:var(--purple-bg);border-right:none}
+.vs-col.right{background:var(--teal-bg)}
+.vs-divider{display:flex;align-items:center;justify-content:center;background:var(--surface);padding:0 14px;border-left:1px solid var(--border);border-right:1px solid var(--border);font-weight:800;font-size:13px;color:var(--muted)}
+.vs-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.vs-col.left .vs-title{color:var(--purple)}
+.vs-col.right .vs-title{color:var(--teal)}
+.vs-item{font-size:12.5px;color:var(--dim);margin-bottom:7px;display:flex;gap:7px;line-height:1.5}
+.vs-item::before{flex-shrink:0;margin-top:1px}
+.vs-col.left .vs-item::before{content:'💬';font-size:12px}
+.vs-col.right .vs-item::before{content:'⚙️';font-size:12px}
+
+/* ── AGENT STEPS ── */
+.agent-steps{display:flex;flex-direction:column;gap:7px;margin:16px 0}
+.a-step{display:flex;gap:11px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 13px;box-shadow:var(--sh2)}
+.a-step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:'JetBrains Mono',monospace;border:2px solid}
+.a-step-title{font-size:12.5px;font-weight:700;margin-bottom:2px}
+.a-step-desc{font-size:12px;color:var(--muted)}
+.a-step-tool{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:2px 7px;border-radius:4px;margin-top:4px;background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border)}
+
+/* ── PIPELINE ── */
+.pipeline{display:flex;align-items:stretch;gap:0;margin:14px 0;overflow-x:auto;padding:2px 0}
+.pip-step{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 14px;min-width:120px;flex-shrink:0;box-shadow:var(--sh2);position:relative}
+.pip-step::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:8px 8px 0 0}
+.pp-sl::before{background:var(--muted)} .pp-bl::before{background:var(--blue)} .pp-ro::before{background:var(--rose)} .pp-gr::before{background:var(--green)} .pp-pu::before{background:var(--purple)} .pp-te::before{background:var(--teal)} .pp-in::before{background:var(--indigo)} .pp-or::before{background:var(--orange)}
+.pip-icon{font-size:17px;margin-bottom:5px}
+.pip-name{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.pp-sl .pip-name{color:var(--muted)} .pp-bl .pip-name{color:var(--blue)} .pp-ro .pip-name{color:var(--rose)} .pp-gr .pip-name{color:var(--green)} .pp-pu .pip-name{color:var(--purple)} .pp-te .pip-name{color:var(--teal)} .pp-in .pip-name{color:var(--indigo)} .pp-or .pip-name{color:var(--orange)}
+.pip-desc{font-size:11px;color:var(--dim);line-height:1.45}
+.pip-arr{font-size:18px;color:var(--border);flex-shrink:0;align-self:center;margin:0 3px;user-select:none}
+
+/* ── VECTOR VIZ ── */
+.vec-vis{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin:14px 0;box-shadow:var(--sh2)}
+.vec-row{display:flex;align-items:center;gap:9px;margin-bottom:9px;flex-wrap:wrap}
+.vec-label{font-size:11.5px;font-weight:700;color:var(--dim);min-width:90px;font-family:'JetBrains Mono',monospace}
+.vec-bar-wrap{flex:1;display:flex;gap:3px;align-items:flex-end;height:34px;min-width:120px}
+.vec-bar{border-radius:2px 2px 0 0;min-width:11px}
+.vec-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);white-space:nowrap}
+.vec-space{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;height:210px;margin:14px 0;box-shadow:var(--sh2)}
+.vec-point{position:absolute;border-radius:50%;transform:translate(-50%,-50%);cursor:default;transition:transform .2s}
+.vec-point:hover{transform:translate(-50%,-50%) scale(1.7)}
+.vec-plabel{position:absolute;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;white-space:nowrap;pointer-events:none}
+
+/* ── DB CARDS ── */
+.db-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:14px}
+.db-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:var(--sh2);position:relative;overflow:hidden}
+.db-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.db-bl::before{background:var(--blue)} .db-gr::before{background:var(--green)} .db-te::before{background:var(--teal)} .db-pu::before{background:var(--purple)} .db-or::before{background:var(--orange)} .db-sl::before{background:var(--slate)}
+.db-name{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;margin-bottom:3px}
+.db-bl .db-name{color:var(--blue)} .db-gr .db-name{color:var(--green)} .db-te .db-name{color:var(--teal)} .db-pu .db-name{color:var(--purple)} .db-or .db-name{color:var(--orange)} .db-sl .db-name{color:var(--slate)}
+.db-type{font-size:9.5px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.7px}
+.db-desc{font-size:12px;color:var(--dim);line-height:1.5}
+
+/* ── RAG ── */
+.context-box{background:var(--indigo-bg);border:1px solid var(--indigo-border);border-radius:8px;padding:12px 14px;font-size:11.5px;color:#312e81;line-height:1.6;margin:7px 0;font-family:'JetBrains Mono',monospace}
+.context-box .ctx-label{font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--indigo);font-weight:700;margin-bottom:5px}
+.rag-hl{background:rgba(190,24,93,.12);border-bottom:2px solid var(--rose);padding:0 2px;border-radius:2px;font-weight:600;color:var(--rose)}
+
+/* ── VTABLE ── */
+.vtable-wrap{overflow-x:auto;border-radius:10px;box-shadow:var(--sh2)}
+.vtable{width:100%;border-collapse:collapse;font-size:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.vtable thead th{background:var(--surface2);padding:11px 13px;font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);text-align:left;white-space:nowrap}
+.vtable tbody td{padding:11px 13px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--dim)}
+.vtable tbody tr:last-child td{border-bottom:none}
+.vtable tbody tr:hover{background:#f9fbff}
+.vtable tbody td:first-child{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:var(--muted);background:var(--bg);border-right:1px solid var(--border);white-space:nowrap}
+
+/* ── EVOLUTION ── */
+.evo{display:flex;align-items:center;gap:0;margin:18px 0;overflow-x:auto;padding:2px 0;flex-wrap:nowrap}
+.evo-box{border-radius:8px;padding:9px 13px;font-size:11.5px;font-weight:700;text-align:center;border:2px solid;min-width:86px;flex-shrink:0}
+.evo-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-top:3px;text-align:center}
+.evo-arr{font-size:20px;color:var(--border);margin:0 3px;user-select:none;flex-shrink:0}
+
+/* ── LOCAL SECTION ── */
+.local-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin:16px 0}
+.local-card{background:var(--surface);border:1px solid var(--slate-border);border-radius:10px;overflow:hidden;box-shadow:var(--sh2)}
+.local-card .lc-head{padding:11px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;background:var(--slate-bg);color:var(--slate);border-bottom:1px solid var(--slate-border)}
+.local-card .lc-body{padding:13px 14px}
+.model-pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--dim);margin:3px}
+.model-pill .mpv{font-size:9px;color:var(--muted);margin-left:2px}
+.privacy-bar{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin:14px 0;font-size:13px;color:var(--green)}
+.privacy-bar strong{color:var(--green)}
+
+/* ── MEMORY TYPES ── */
+.mem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:14px 0}
+.mem-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--sh2)}
+.mem-head{padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.mem-body{background:var(--surface);padding:12px 14px;font-size:12.5px;color:var(--dim);line-height:1.55}
+.mem-pu .mem-head{background:var(--purple-bg);color:var(--purple);border-bottom:1px solid var(--purple-border)}
+.mem-bl .mem-head{background:var(--blue-bg);color:var(--blue);border-bottom:1px solid var(--blue-border)}
+.mem-gr .mem-head{background:var(--green-bg);color:var(--green);border-bottom:1px solid var(--green-border)}
+.mem-te .mem-head{background:var(--teal-bg);color:var(--teal);border-bottom:1px solid var(--teal-border)}
+
+/* ── PROMPT BLOCKS ── */
+.prompt-block{background:var(--code);border:1px solid var(--code-b);border-radius:8px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;margin:8px 0;position:relative}
+.prompt-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.pb-sys .prompt-label{color:var(--purple)}
+.pb-few .prompt-label{color:var(--blue)}
+.pb-cot .prompt-label{color:var(--green)}
+.pb-sys{border-left:3px solid var(--purple)}
+.pb-few{border-left:3px solid var(--blue)}
+.pb-cot{border-left:3px solid var(--green)}
+.ph{color:#7c3aed;font-weight:600}
+.pstr{color:#b45309}
+.pcmt{color:#94a3b8;font-style:italic}
+
+/* ── TOOL DEFINITION ── */
+.tool-def{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin:8px 0;overflow:hidden;box-shadow:var(--sh2)}
+.tool-def-head{padding:9px 14px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.tool-def-body{padding:12px 14px;font-size:12px;color:var(--dim);line-height:1.6}
+
+/* ── FRAMEWORK CARDS ── */
+.fw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:14px 0}
+.fw-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--sh2);transition:box-shadow .2s,transform .2s}
+.fw-card:hover{box-shadow:var(--sh);transform:translateY(-2px)}
+.fw-head{padding:12px 14px;font-size:13px;font-weight:700;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px}
+.fw-body{padding:13px 14px}
+.fw-desc{font-size:12.5px;color:var(--dim);line-height:1.55;margin-bottom:10px}
+.fw-when{font-size:11.5px;color:var(--muted);font-style:italic}
+.fw-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+
+/* ── FINE-TUNE ── */
+.ft-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.ft-col{border-radius:10px;border:2px solid;padding:16px 18px}
+.ft-rag{border-color:var(--green-border);background:var(--green-bg)}
+.ft-ft{border-color:var(--purple-border);background:var(--purple-bg)}
+.ft-title{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.ft-rag .ft-title{color:var(--green)}
+.ft-ft .ft-title{color:var(--purple)}
+.ft-item{font-size:12.5px;color:var(--dim);margin-bottom:6px;padding-left:14px;position:relative;line-height:1.5}
+.ft-item::before{content:'→';position:absolute;left:0;color:var(--muted);font-size:11px}
+
+/* ── LANGGRAPH ── */
+.lg-node{border-radius:8px;padding:10px 14px;font-size:12px;font-weight:600;text-align:center;border:2px solid;box-shadow:var(--sh2);min-width:100px}
+.lg-edge{font-size:12px;color:var(--muted);margin:0 4px;user-select:none;font-family:'JetBrains Mono',monospace}
+.lg-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.lg-cond{font-size:10px;color:var(--orange);font-family:'JetBrains Mono',monospace;font-weight:600}
+
+@media(max-width:768px){
+  .ft-compare{grid-template-columns:1fr}
+  .cg2,.sum-grid,.vs-grid{grid-template-columns:1fr}
+  .ch,.cr{grid-template-columns:1fr}
+  .rl{display:none}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .tgrid{grid-template-columns:1fr}
+  .diagram-row{flex-direction:column}
+  .d-arr{transform:rotate(90deg)}
+  .pipeline{flex-direction:column}
+  .pip-arr{transform:rotate(90deg)}
+  .vs-divider{padding:10px;writing-mode:horizontal-tb}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="badge">// Inteligencia Artificial · Guía completa</div>
+  <h1><span class="a1">IA: Conceptos Clave</span>
+  <span class="a2">Bot · Chatbot · LLM · Agente · Embeddings · BBDD Vectorial · RAG · IA Local · Agentes locales · Fine-tuning</span></h1>
+  <p class="sub">Para quien ve muchos videos de IA y quiere entender qué hay realmente detrás</p>
+</header>
+
+<div class="stats">
+  <div class="stat"><span class="sv">🤖</span><span class="sl">Bot</span></div>
+  <div class="stat"><span class="sv">💬</span><span class="sl">Chatbot</span></div>
+  <div class="stat"><span class="sv" style="color:var(--blue)">🧠</span><span class="sl">LLM</span></div>
+  <div class="stat"><span class="sv" style="color:var(--purple)">✨</span><span class="sl">Chat IA</span></div>
+</div>
+<div class="stats">
+  <div class="stat"><span class="sv" style="color:var(--teal)">⚙️</span><span class="sl">Agente</span></div>
+  <div class="stat"><span class="sv" style="color:var(--rose)">📐</span><span class="sl">Embedding</span></div>
+  <div class="stat"><span class="sv" style="color:var(--indigo)">🗄️</span><span class="sl">BBDD Vectorial</span></div>
+  <div class="stat"><span class="sv" style="color:var(--green)">🔍</span><span class="sl">RAG</span></div>
+</div>
+
+<div class="tabs">
+  <div class="tab-list">
+    <button class="tab-btn c-pu active"  onclick="sw(this,'p1')">🗺 Resumen</button>
+    <span class="tab-sep"></span>
+    <button class="tab-btn c-bl"         onclick="sw(this,'p2')">🤖 Bot</button>
+    <button class="tab-btn c-ye"         onclick="sw(this,'p3')">💬 Chatbot clásico</button>
+    <button class="tab-btn c-pu"         onclick="sw(this,'p4')">🧠 LLM</button>
+    <button class="tab-btn c-pu"         onclick="sw(this,'p5')">✨ Chatbot con IA</button>
+    <button class="tab-btn c-te"         onclick="sw(this,'p6')">⚙️ Agente IA</button>
+    <span class="tab-sep"></span>
+    <button class="tab-btn c-ro"         onclick="sw(this,'p8')">📐 Embeddings</button>
+    <button class="tab-btn c-in"         onclick="sw(this,'p9')">🗄️ BBDD Vectorial</button>
+    <button class="tab-btn c-gr"         onclick="sw(this,'p10')">🔍 RAG</button>
+    <span class="tab-sep"></span>
+    <button class="tab-btn c-sl"         onclick="sw(this,'p11')">🏠 IA Local</button>
+    <button class="tab-btn c-pu"         onclick="sw(this,'p12')">💬 Chatbot local</button>
+    <button class="tab-btn c-te"         onclick="sw(this,'p13')">🔧 Construir agentes</button>
+    <button class="tab-btn c-gr"         onclick="sw(this,'p14')">🎓 Fine-tuning</button>
+    <span class="tab-sep"></span>
+    <button class="tab-btn c-or"         onclick="sw(this,'p7')">📊 Comparativa</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P1 · RESUMEN Y MAPA
+  ══════════════════════════════════════════════ -->
+  <div id="p1" class="panel active">
+    <div class="intro i-pu">
+      <strong>El problema del hype:</strong> en YouTube y LinkedIn todo se llama "IA", "agente", "chatbot" o "LLM" de forma intercambiable. Esta guía pone orden. Cada término tiene un significado preciso — entenderlos te dará un filtro crítico para todo lo que consumas sobre IA.
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Mapa de menor a mayor complejidad</div>
+    <div class="diagram-wrap">
+      <div class="diagram-row">
+        <div class="d-box d-ye"><div class="d-label">Origen</div>👤 Usuario / Mundo real</div>
+      </div>
+      <div class="d-arr-down">▼ necesita automatizar algo</div>
+      <div class="diagram-row">
+        <div class="d-box d-sl" style="min-width:120px"><div class="d-label">Nivel 1</div>🤖 Bot<div class="d-sub">reglas fijas · sin IA</div></div>
+        <div class="d-arr">→</div>
+        <div class="d-box d-ye" style="min-width:120px"><div class="d-label">Nivel 2</div>💬 Chatbot clásico<div class="d-sub">árbol de decisión</div></div>
+        <div class="d-arr">→</div>
+        <div class="d-box d-bl" style="min-width:120px"><div class="d-label">Nivel 3 · base</div>🧠 LLM<div class="d-sub">el motor de IA</div></div>
+      </div>
+      <div class="d-arr-down">▼ construido sobre LLM</div>
+      <div class="d-cluster">
+        <div class="d-cluster-label">Capa de aplicación</div>
+        <div class="diagram-row">
+          <div class="d-box d-pu" style="min-width:150px"><div class="d-label">Nivel 4</div>✨ Chatbot con IA<div class="d-sub">LLM + interfaz + memoria</div></div>
+          <div class="d-arr">→ + autonomía →</div>
+          <div class="d-box d-te" style="min-width:150px"><div class="d-label">Nivel 5</div>⚙️ Agente IA<div class="d-sub">LLM + herramientas + bucle</div></div>
+        </div>
+        <div class="d-inner" style="margin-top:14px">
+          <span class="d-mini" style="background:var(--teal-bg);border-color:var(--teal-border);color:var(--teal)">🔍 Buscar web</span>
+          <span class="d-mini" style="background:var(--teal-bg);border-color:var(--teal-border);color:var(--teal)">💻 Ejecutar código</span>
+          <span class="d-mini" style="background:var(--teal-bg);border-color:var(--teal-border);color:var(--teal)">📧 Enviar emails</span>
+          <span class="d-mini" style="background:var(--teal-bg);border-color:var(--teal-border);color:var(--teal)">🗄️ Bases de datos</span>
+          <span class="d-mini" style="background:var(--teal-bg);border-color:var(--teal-border);color:var(--teal)">📁 Leer archivos</span>
+        </div>
+      </div>
+      <div class="d-arr-down">▼ para que el LLM tenga conocimiento externo</div>
+      <div class="d-cluster" style="border-color:var(--green-border);background:rgba(21,128,61,.02)">
+        <div class="d-cluster-label" style="color:var(--green)">Stack de memoria semántica</div>
+        <div class="diagram-row">
+          <div class="d-box d-ro"><div class="d-label">Paso 1</div>📐 Embedding<div class="d-sub">texto → vector</div></div>
+          <div class="d-arr">→</div>
+          <div class="d-box d-in"><div class="d-label">Paso 2</div>🗄️ BBDD Vectorial<div class="d-sub">almacena vectores</div></div>
+          <div class="d-arr">→</div>
+          <div class="d-box d-gr"><div class="d-label">Técnica completa</div>🔍 RAG<div class="d-sub">recupera + augmenta</div></div>
+        </div>
+      </div>
+      <div class="d-arr-down">▼ todo puede ejecutarse sin internet</div>
+      <div class="d-box d-sl"><div class="d-label">Modo privado</div>🏠 IA Local<div class="d-sub">Ollama · Chroma · LLM local</div></div>
+    </div>
+
+    <div class="analogy">
+      <h3>🧩 La analogía definitiva</h3>
+      <p>El <strong>LLM</strong> es el cerebro. El <strong>chatbot clásico</strong> era un contestador automático con menús pregrabados. El <strong>chatbot con IA</strong> es ese cerebro conversando contigo. El <strong>agente</strong> es ese cerebro con manos y autonomía para actuar en el mundo. Los <strong>embeddings</strong> son el traductor que convierte texto en matemáticas. La <strong>BBDD vectorial</strong> es la memoria a largo plazo. Y <strong>RAG</strong> es el sistema que une todo para que el LLM "sepa" cosas que no aprendió en su entrenamiento.</p>
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Los 8 conceptos de un vistazo</div>
+    <div class="sum-grid">
+      <div class="sum-item si-sl"><div class="sum-icon">🤖</div><div class="sum-title">Bot</div><div class="sum-desc">Programa que automatiza tareas con reglas fijas. Sin IA necesariamente.</div></div>
+      <div class="sum-item si-ye"><div class="sum-icon">💬</div><div class="sum-title">Chatbot clásico</div><div class="sum-desc">Bot conversacional con árbol de respuestas predefinidas. Sin comprensión real.</div></div>
+      <div class="sum-item si-bl"><div class="sum-icon">🧠</div><div class="sum-title">LLM</div><div class="sum-desc">El modelo de IA en sí. El motor. No es la aplicación, es lo que la hace inteligente.</div></div>
+      <div class="sum-item si-pu"><div class="sum-icon">✨</div><div class="sum-title">Chatbot con IA</div><div class="sum-desc">LLM + interfaz de chat. <strong>Tú diriges</strong>: preguntas, él responde. Sin autonomía.</div></div>
+      <div class="sum-item si-te"><div class="sum-icon">⚙️</div><div class="sum-title">Agente IA</div><div class="sum-desc">LLM con herramientas y autonomía. <strong>Él decide los pasos</strong> para lograr un objetivo.</div></div>
+      <div class="sum-item si-ro"><div class="sum-icon">📐</div><div class="sum-title">Embedding</div><div class="sum-desc">Representación numérica (vector) del significado de un texto. Base de la búsqueda semántica.</div></div>
+      <div class="sum-item si-in"><div class="sum-icon">🗄️</div><div class="sum-title">BBDD Vectorial</div><div class="sum-desc">BBDD especializada en almacenar vectores y buscar por similitud semántica ultra-rápido.</div></div>
+      <div class="sum-item si-gr"><div class="sum-icon">🔍</div><div class="sum-title">RAG</div><div class="sum-desc">Técnica que recupera tus documentos relevantes y se los da al LLM como contexto.</div></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P2 · BOT
+  ══════════════════════════════════════════════ -->
+  <div id="p2" class="panel">
+    <div class="intro i-bl">
+      <strong>Bot</strong> viene de "robot". Es el término más genérico: cualquier programa que automatiza tareas repetitivas. <em>No necesita inteligencia artificial</em>. La mayoría de bots son scripts que siguen instrucciones 100% fijas.
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Propiedades clave</div>
+    <div class="ch"><div class="ck">Propiedad</div><div class="cl">Descripción</div></div>
+    <div class="cb2">
+      <div class="cr"><div class="rl">¿Usa IA?</div><div class="rv"><span class="tag tr">No necesariamente</span> La mayoría son scripts sin IA. Siguen reglas predefinidas al 100%.</div></div>
+      <div class="cr"><div class="rl">Cómo funciona</div><div class="rv">El programador define exactamente qué hacer ante cada situación. Si A → hacer X. Si B → hacer Y. Sin excepciones ni improvisación.</div></div>
+      <div class="cr"><div class="rl">Ejemplos</div><div class="rv">Bot de Discord que da bienvenidas. Selenium que rellena formularios. Bot de scraping web. Bot de trading por precio. Bot de Twitter que retuitea hashtags.</div></div>
+      <div class="cr"><div class="rl">Limitación clave</div><div class="rv">No comprende contexto. No improvisa. Si algo no estaba en el script → falla o ignora la situación.</div></div>
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Código: así piensa un bot</div>
+    <div class="cg2">
+      <div>
+        <div class="ct" style="color:var(--blue)"><span class="dot" style="background:var(--blue)"></span>Bot de trading — reglas fijas</div>
+        <pre class="pr-bl"><span class="cmt"># Sin IA — lógica 100% determinista</span>
+<span class="kw">def</span> <span class="fn">bot_trading</span><span class="pl">(precio_actual):</span>
+  <span class="cmt"># Regla fija inmutable</span>
+  <span class="kw">if</span> <span class="pl">precio_actual &lt; </span><span class="hl">45000</span><span class="pl">:</span>
+    <span class="kw">return</span> <span class="fn">comprar</span><span class="pl">(cantidad=</span><span class="hl">0.1</span><span class="pl">)</span>
+  <span class="kw">elif</span> <span class="pl">precio_actual > </span><span class="hl">55000</span><span class="pl">:</span>
+    <span class="kw">return</span> <span class="fn">vender</span><span class="pl">(cantidad=</span><span class="hl">0.1</span><span class="pl">)</span>
+  <span class="kw">else</span><span class="pl">:</span>
+    <span class="kw">return</span> <span class="fn">esperar</span><span class="pl">()</span>
+<span class="cmt"># No aprende, no se adapta, nunca cambia</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--blue)"><span class="dot" style="background:var(--blue)"></span>Bot Selenium — automatiza clicks</div>
+        <pre class="pr-bl"><span class="kw">from</span> <span class="cls">selenium</span> <span class="kw">import</span> <span class="pl">webdriver</span>
+
+<span class="pl">driver = webdriver.</span><span class="fn">Chrome</span><span class="pl">()</span>
+<span class="pl">driver.</span><span class="fn">get</span><span class="pl">(</span><span class="str">"https://sitio.com/form"</span><span class="pl">)</span>
+
+<span class="cmt"># Siempre hace exactamente esto</span>
+<span class="fn">campo</span><span class="pl">(</span><span class="str">"nombre"</span><span class="pl">).</span><span class="fn">escribir</span><span class="pl">(</span><span class="str">"Juan"</span><span class="pl">)</span>
+<span class="fn">campo</span><span class="pl">(</span><span class="str">"email"</span><span class="pl">).</span><span class="fn">escribir</span><span class="pl">(</span><span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c7adb2a6a987aaa6aeabe9a4a8aa">[email&#160;protected]</a>"</span><span class="pl">)</span>
+<span class="fn">boton</span><span class="pl">(</span><span class="str">"Enviar"</span><span class="pl">).</span><span class="fn">click</span><span class="pl">()</span>
+<span class="cmt"># No "entiende" el formulario</span>
+<span class="cmt"># Solo sabe dónde hacer click</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P3 · CHATBOT CLÁSICO
+  ══════════════════════════════════════════════ -->
+  <div id="p3" class="panel">
+    <div class="intro i-ye">
+      <strong>Chatbot clásico:</strong> un bot especializado en simular conversación. Antes de la IA generativa, todos los chatbots funcionaban con árboles de decisión y palabras clave. Los del banco y la telco que tanto odiabas. No entendían lenguaje — solo buscaban palabras concretas en tu mensaje.
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Simulación real de un chatbot clásico</div>
+    <div class="chat-ui">
+      <div class="chat-header">
+        <div class="chat-dot" style="background:#ef4444"></div>
+        <div class="chat-dot" style="background:#f59e0b"></div>
+        <div class="chat-dot" style="background:#22c55e"></div>
+        💬 AtencionBot v1.0 — árbol de decisión
+      </div>
+      <div class="chat-body">
+        <div class="msg msg-bot"><div class="msg-label bl">bot</div>Hola, soy tu asistente. Elige opción: (1) Facturación &nbsp;(2) Soporte técnico &nbsp;(3) Cancelar servicio</div>
+        <div class="msg msg-user"><div class="msg-label ul">tú</div>Quiero hablar con una persona real</div>
+        <div class="msg msg-bot"><div class="msg-label bl">bot</div>No he entendido tu respuesta. Por favor elige: (1) Facturación &nbsp;(2) Soporte técnico &nbsp;(3) Cancelar</div>
+        <div class="msg msg-user"><div class="msg-label ul">tú</div>¿cuánto cuesta el plan pro?</div>
+        <div class="msg msg-bot"><div class="msg-label bl">bot</div>No he entendido. ¿Tu consulta es sobre precios? Escribe "precios" para continuar.</div>
+      </div>
+      <div class="chat-footer">
+        <span class="chat-pill no">❌ Sin comprensión del lenguaje</span>
+        <span class="chat-pill no">❌ No detectó "precio" en "cuánto cuesta"</span>
+        <span class="chat-pill no">❌ Bucle infinito ante lo inesperado</span>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Cómo funciona por dentro</div>
+    <div class="cg1">
+      <div>
+        <div class="ct" style="color:var(--yellow)"><span class="dot" style="background:var(--yellow)"></span>Motor — if/else + palabras clave</div>
+        <pre class="pr-or"><span class="kw">def</span> <span class="fn">chatbot_responder</span><span class="pl">(msg):</span>
+  <span class="pl">msg = msg.</span><span class="fn">lower</span><span class="pl">()</span>
+
+  <span class="kw">if</span>   <span class="str">"hola"</span>     <span class="kw">in</span> <span class="pl">msg: </span><span class="kw">return</span> <span class="str">"¡Hola! ¿En qué te ayudo?"</span>
+  <span class="kw">elif</span> <span class="str">"precio"</span>   <span class="kw">in</span> <span class="pl">msg: </span><span class="kw">return</span> <span class="str">"Nuestros precios en /precios"</span>
+  <span class="kw">elif</span> <span class="str">"cancelar"</span> <span class="kw">in</span> <span class="pl">msg: </span><span class="kw">return</span> <span class="str">"Llama al 900-XXX-XXX"</span>
+  <span class="kw">else</span><span class="pl">:              </span><span class="kw">return</span> <span class="str">"No he entendido. ¿Puedes reformular?"</span>
+
+<span class="cmt"># ❌ "¿cuánto cuesta?" → no detecta "precio"</span>
+<span class="cmt"># ❌ "quiero darme de baja" → no detecta "cancelar"</span>
+<span class="cmt"># Resultado: siempre "No he entendido"</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P4 · LLM
+  ══════════════════════════════════════════════ -->
+  <div id="p4" class="panel">
+    <div class="intro i-bl">
+      <strong>LLM (Large Language Model)</strong> es el salto tecnológico que lo cambió todo. No es una aplicación — es el modelo de IA en sí. Una red neuronal de miles de millones de parámetros que aprendió a comprender y generar lenguaje de forma extraordinariamente sofisticada. Es el <em>motor</em>, no el coche.
+    </div>
+
+    <div class="key-diff kd-pu">
+      <div class="kd-title">⚠️ Confusión muy común</div>
+      <div class="kd-body">Cuando dices "voy a usar ChatGPT" <strong>no estás usando solo un LLM</strong>. Estás usando una aplicación completa construida <em>sobre</em> un LLM (GPT-4o). El LLM por sí solo no tiene interfaz, no tiene memoria, no tiene acceso a internet, no tiene historial. Es solo el cerebro. GPT-4o, Claude, Gemini, Llama 3 → son LLMs. ChatGPT, Claude.ai, Gemini.app → son <em>aplicaciones</em> que envuelven esos LLMs.</div>
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> ¿Qué es y qué NO es un LLM?</div>
+    <div class="ch"><div class="ck">Aspecto</div><div class="cl">Explicación</div></div>
+    <div class="cb2">
+      <div class="cr"><div class="rl">Qué es</div><div class="rv">Red neuronal (arquitectura Transformer) con miles de millones de parámetros, entrenada para predecir el siguiente token dado un texto de entrada.</div></div>
+      <div class="cr"><div class="rl">Cómo aprende</div><div class="rv">Pre-entrenamiento masivo con texto de internet, libros, código. Luego fine-tuning y RLHF para alinear con instrucciones humanas. <span class="tag tp">Pre-entrenamiento</span><span class="tag tt">Fine-tuning</span><span class="tag tg">RLHF</span></div></div>
+      <div class="cr"><div class="rl">Modelos</div><div class="rv"><span class="tag tp">GPT-4o</span><span class="tag tb">Claude 3.5/3.7</span><span class="tag tg">Gemini 1.5</span><span class="tag tt">Llama 3</span><span class="tag ty">Mistral</span><span class="tag ti">DeepSeek</span><span class="tag to">Phi-3</span></div></div>
+      <div class="cr"><div class="rl">Lo que NO tiene solo</div><div class="rv"><span class="tag tr">Sin interfaz</span><span class="tag tr">Sin memoria persistente</span><span class="tag tr">Sin acceso a internet</span><span class="tag tr">Sin historial de chat</span> — todo eso lo añade la aplicación encima.</div></div>
+      <div class="cr"><div class="rl">Analogía</div><div class="rv">Es el <strong>motor de un coche</strong>. No es el coche completo. Sin carrocería, volante e interfaz no te lleva a ningún sitio, pero sin el motor no hay nada.</div></div>
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Cómo funciona: predicción de tokens</div>
+    <div class="cg2">
+      <div>
+        <div class="ct" style="color:var(--blue)"><span class="dot" style="background:var(--blue)"></span>Lo que ve el LLM</div>
+        <pre class="pr-bl"><span class="cmt">// El LLM predice el siguiente token</span>
+<span class="str">Input:</span>  <span class="pl">"La capital de Francia es"</span>
+
+<span class="cmt">// Calcula probabilidades de cada posible token</span>
+<span class="pl">P(</span><span class="str">"París"</span><span class="pl">)       = </span><span class="hl">0.9847</span>
+<span class="pl">P(</span><span class="str">"Lyon"</span><span class="pl">)        = </span><span class="fn">0.0089</span>
+<span class="pl">P(</span><span class="str">"Berlín"</span><span class="pl">)      = </span><span class="fn">0.0031</span>
+<span class="pl">P(</span><span class="str">"una ciudad"</span><span class="pl">) = </span><span class="fn">0.0021</span>
+
+<span class="str">Output:</span> <span class="pl">"París"</span>
+<span class="cmt">// Repite el proceso para cada token siguiente</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--blue)"><span class="dot" style="background:var(--blue)"></span>Llamar a un LLM via API (puro)</div>
+        <pre class="pr-bl"><span class="cmt">// Así accedes al LLM "solo", sin app encima</span>
+<span class="kw">const</span> <span class="pl">res = </span><span class="kw">await</span> <span class="fn">anthropic</span><span class="pl">.messages.</span><span class="fn">create</span><span class="pl">({</span>
+  <span class="pl">model: </span><span class="str">"claude-sonnet-4-6"</span><span class="pl">,</span>
+  <span class="pl">messages: [{</span>
+    <span class="pl">role: </span><span class="str">"user"</span><span class="pl">,</span>
+    <span class="pl">content: </span><span class="str">"¿Qué es la fotosíntesis?"</span>
+  <span class="pl">}]</span>
+<span class="pl">});</span>
+<span class="cmt">// Sin historial, sin herramientas, sin memoria</span>
+<span class="cmt">// Cada llamada empieza desde cero</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P5 · CHATBOT CON IA
+  ══════════════════════════════════════════════ -->
+  <div id="p5" class="panel">
+    <div class="intro i-pu">
+      <strong>Chatbot con IA:</strong> un LLM envuelto en una interfaz de conversación con memoria de sesión, instrucciones de sistema y (a veces) herramientas básicas. ChatGPT, Claude.ai, Gemini son ejemplos. <em>Ojo:</em> estas mismas herramientas pueden actuar también como agentes — el modo depende de cómo las uses, no de la herramienta en sí.
+    </div>
+
+    <div class="key-diff kd-pu">
+      <div class="kd-title">🔑 La distinción que más confunde</div>
+      <div class="kd-body">
+        <strong>ChatGPT y Claude son chatbots con IA cuando tú los conduces:</strong> preguntas, ellos responden, tú decides qué pregunta hacer a continuación. Cada turno eres tú quien da la instrucción.<br><br>
+        <strong>ChatGPT y Claude son agentes cuando les das un objetivo y los dejas actuar solos:</strong> ellos deciden qué pasos dar, qué herramientas usar, cuándo han terminado. Tú solo defines el objetivo final.
+        <br><br>La diferencia no es la herramienta — es el <em>grado de autonomía</em> que le das.
+      </div>
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Modo chatbot vs modo agente con la misma herramienta</div>
+    <div class="vs-grid">
+      <div class="vs-col left">
+        <div class="vs-title">✨ Modo Chatbot — tú conduces</div>
+        <div class="vs-item">Le preguntas: "¿Cómo analizo ventas en Python?"</div>
+        <div class="vs-item">Te explica cómo hacerlo</div>
+        <div class="vs-item">Le das el CSV manualmente</div>
+        <div class="vs-item">Le pides que escriba el código</div>
+        <div class="vs-item">Copias el código y lo ejecutas tú</div>
+        <div class="vs-item">Ves el resultado y decides qué más preguntar</div>
+        <div style="margin-top:12px;font-size:12px;color:var(--purple);font-weight:600">→ Tú tomas cada decisión. El LLM solo responde.</div>
+      </div>
+      <div class="vs-divider">VS</div>
+      <div class="vs-col right">
+        <div class="vs-title">⚙️ Modo Agente — él decide</div>
+        <div class="vs-item">Le dices: "Analiza las ventas de esta semana y envía el resumen al equipo"</div>
+        <div class="vs-item">Accede solo a la BBDD de ventas</div>
+        <div class="vs-item">Escribe y ejecuta el código de análisis</div>
+        <div class="vs-item">Genera el informe en texto</div>
+        <div class="vs-item">Envía el email automáticamente</div>
+        <div class="vs-item">Te notifica que ha terminado</div>
+        <div style="margin-top:12px;font-size:12px;color:var(--teal);font-weight:600">→ Él decide todos los pasos. Tú solo diste el objetivo.</div>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Cómo funciona un chatbot con IA por dentro</div>
+    <div class="cg2">
+      <div>
+        <div class="ct" style="color:var(--purple)"><span class="dot" style="background:var(--purple)"></span>El system prompt (lo que no ves)</div>
+        <pre class="pr-pu"><span class="cmt">// Esto define la "personalidad" e instrucciones</span>
+<span class="pl">system_prompt = </span><span class="str">`Eres el asistente de AcmeCorp.
+- Responde siempre en español.
+- Sé conciso y amable.
+- Solo habla de nuestros productos.
+- Nunca menciones a la competencia.`</span>
+
+<span class="cmt">// El historial se acumula en la sesión</span>
+<span class="pl">messages = [</span>
+  <span class="pl">{ role: </span><span class="str">"user"</span><span class="pl">,      content: </span><span class="str">"Hola"</span>         <span class="pl">},</span>
+  <span class="pl">{ role: </span><span class="str">"assistant"</span><span class="pl">, content: </span><span class="str">"¡Hola!..."</span>    <span class="pl">},</span>
+  <span class="pl">{ role: </span><span class="str">"user"</span><span class="pl">,      content: mensaje_nuevo <span class="pl">},</span>
+<span class="pl">]</span>
+<span class="cmt">// El LLM ve TODO esto cada vez → "recuerda"</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--purple)"><span class="dot" style="background:var(--purple)"></span>Simulación de comprensión real</div>
+        <div class="chat-ui" style="margin:0">
+          <div class="chat-header" style="font-size:10.5px">
+            <div class="chat-dot" style="background:#22c55e"></div>
+            ✨ Chatbot IA — comprende lenguaje natural
+          </div>
+          <div class="chat-body" style="padding:10px;gap:7px">
+            <div class="msg msg-user" style="font-size:11.5px"><div class="msg-label ul">tú</div>Oye, ¿cuánto vale lo del plan ese que me dijiste?</div>
+            <div class="msg msg-bot" style="font-size:11.5px"><div class="msg-label bl">IA</div>El Plan Pro que mencioné cuesta 29€/mes, con las integraciones avanzadas incluidas.</div>
+            <div class="msg msg-user" style="font-size:11.5px"><div class="msg-label ul">tú</div>ok y en plan corto, qué diferencia hay con el business</div>
+            <div class="msg msg-bot" style="font-size:11.5px"><div class="msg-label bl">IA</div>Business añade usuarios ilimitados y soporte 24h. Si eres solo tú, Pro es suficiente.</div>
+          </div>
+          <div class="chat-footer" style="padding:7px 10px">
+            <span class="chat-pill ok">✅ Recuerda "Plan Pro" del turno anterior</span>
+            <span class="chat-pill ok">✅ Entiende "en plan corto" como "brevemente"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:22px"><span class="sc">▸</span> Herramientas que son chatbot, agente, o ambas</div>
+    <div class="tgrid">
+      <div class="card c-card-pu">
+        <div class="ch2">✨ Siempre chatbot (por diseño)</div>
+        <div class="cb3">
+          <div class="cti"><span class="ci" style="color:var(--purple)">→</span>Claude.ai en conversación normal</div>
+          <div class="cti"><span class="ci" style="color:var(--purple)">→</span>ChatGPT respondiendo preguntas</div>
+          <div class="cti"><span class="ci" style="color:var(--purple)">→</span>Gemini explicando conceptos</div>
+          <div style="padding:8px 0 0;font-size:11.5px;color:var(--muted)">Tú haces la pregunta, él responde, tú decides qué hacer con esa respuesta.</div>
+        </div>
+      </div>
+      <div class="card c-card-te">
+        <div class="ch2">⚙️ Siempre agente (por diseño)</div>
+        <div class="cb3">
+          <div class="cti"><span class="ci" style="color:var(--teal)">→</span>Cursor / Copilot en modo "edit whole codebase"</div>
+          <div class="cti"><span class="ci" style="color:var(--teal)">→</span>Devin (el agente de programación)</div>
+          <div class="cti"><span class="ci" style="color:var(--teal)">→</span>AutoGPT, BabyAGI</div>
+          <div style="padding:8px 0 0;font-size:11.5px;color:var(--muted)">Diseñados desde el inicio para el bucle: planificar → actuar → observar → repetir.</div>
+        </div>
+      </div>
+      <div class="card c-card-or">
+        <div class="ch2">🔀 Ambos según cómo los uses</div>
+        <div class="cb3">
+          <div class="cti"><span class="ci" style="color:var(--orange)">→</span>ChatGPT + Code Interpreter activado</div>
+          <div class="cti"><span class="ci" style="color:var(--orange)">→</span>Claude con Computer Use o proyectos</div>
+          <div class="cti"><span class="ci" style="color:var(--orange)">→</span>Gemini con extensiones conectadas</div>
+          <div style="padding:8px 0 0;font-size:11.5px;color:var(--muted)">Chatbot si tú guías cada paso. Agente si le das un objetivo y lo dejas actuar.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P6 · AGENTE IA
+  ══════════════════════════════════════════════ -->
+  <div id="p6" class="panel">
+    <div class="intro i-te">
+      <strong>Agente IA:</strong> un LLM con herramientas y un bucle de autonomía. La diferencia con el chatbot no es la herramienta que usas — es que el agente <em>decide por sí solo los pasos para lograr un objetivo</em>, puede ejecutar acciones reales (buscar, programar, enviar emails, consultar BBDD) y continúa hasta completar la tarea sin que tú intervengas en cada paso.
+    </div>
+
+    <div class="key-diff kd-te">
+      <div class="kd-title">🎯 La frase que lo resume todo</div>
+      <div class="kd-body"><strong>Un chatbot responde. Un agente actúa.</strong><br>
+      Al chatbot le preguntas y obtienes una respuesta. Al agente le das un objetivo y él decide qué herramientas usar, en qué orden, cuántas veces, hasta que la tarea esté hecha.</div>
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> El bucle de un agente: ReAct (Reason + Act)</div>
+    <div class="diagram-wrap">
+      <div class="d-cluster" style="border-color:var(--teal-border);background:rgba(15,118,110,.02)">
+        <div class="d-cluster-label" style="color:var(--teal)">Bucle autónomo del agente</div>
+        <div class="diagram-row">
+          <div class="d-box d-ye"><div class="d-label">Inicio</div>📋 Objetivo del usuario</div>
+          <div class="d-arr">→</div>
+          <div class="d-box d-bl"><div class="d-label">Razona</div>🧠 ¿Qué hago primero?</div>
+          <div class="d-arr">→</div>
+          <div class="d-box d-te"><div class="d-label">Actúa</div>🔧 Usa herramienta</div>
+        </div>
+        <div class="d-arr-down">↙ observa el resultado ↙</div>
+        <div class="diagram-row">
+          <div class="d-box d-gr"><div class="d-label">¿Listo?</div>✅ Entrega resultado</div>
+          <div class="d-arr">← No ←</div>
+          <div class="d-box d-pu"><div class="d-label">Observa</div>👁 Analiza output</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Ejemplo: "analiza las ventas y envía resumen al equipo"</div>
+    <div class="agent-steps">
+      <div class="a-step">
+        <div class="a-step-num" style="background:var(--teal-bg);color:var(--teal);border-color:var(--teal-border)">1</div>
+        <div>
+          <div class="a-step-title">🧠 Planificación — el LLM descompone la tarea</div>
+          <div class="a-step-desc">Decide autónomamente: necesito (1) los datos de ventas, (2) analizarlos, (3) generar texto resumen, (4) enviar email. Sin que tú le digas los pasos.</div>
+        </div>
+      </div>
+      <div class="a-step">
+        <div class="a-step-num" style="background:var(--blue-bg);color:var(--blue);border-color:var(--blue-border)">2</div>
+        <div>
+          <div class="a-step-title">🗄️ Consulta la base de datos</div>
+          <div class="a-step-desc">Decide usar la herramienta de BBDD. Formula la query. Obtiene los datos.</div>
+          <div class="a-step-tool">query_db("SELECT * FROM ventas WHERE fecha > NOW()-7")</div>
+        </div>
+      </div>
+      <div class="a-step">
+        <div class="a-step-num" style="background:var(--purple-bg);color:var(--purple);border-color:var(--purple-border)">3</div>
+        <div>
+          <div class="a-step-title">💻 Escribe y ejecuta código de análisis</div>
+          <div class="a-step-desc">Genera código Python con los datos obtenidos. Lo ejecuta. Lee el resultado. Si falla, corrige y reintenta.</div>
+          <div class="a-step-tool">run_code("import pandas as pd; df.groupby('producto').agg({'total':'sum'})...")</div>
+        </div>
+      </div>
+      <div class="a-step">
+        <div class="a-step-num" style="background:var(--green-bg);color:var(--green);border-color:var(--green-border)">4</div>
+        <div>
+          <div class="a-step-title">📝 Genera el resumen en lenguaje natural</div>
+          <div class="a-step-desc">El LLM convierte los números en texto comprensible, identifica tendencias y puntos clave.</div>
+        </div>
+      </div>
+      <div class="a-step">
+        <div class="a-step-num" style="background:var(--orange-bg);color:var(--orange);border-color:var(--orange-border)">5</div>
+        <div>
+          <div class="a-step-title">📧 Envía el email — tarea completada sin más intervención</div>
+          <div class="a-step-tool">send_email(to="<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5c392d29352c331c39312c2e392f3d723f3331">[email&#160;protected]</a>", subject="Resumen ventas semana", body=resumen)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="analogy" style="background:linear-gradient(135deg,var(--teal-bg),var(--green-bg));border-color:var(--teal-border)">
+      <h3 style="color:var(--teal)">⚠️ Hype vs realidad de los agentes</h3>
+      <p style="color:#134e4a">Los agentes son el mayor foco de inversión en IA, pero también los más propensos a fallar. Cada paso extra es una posibilidad de error encadenado. Hoy funcionan bien en tareas bien definidas con herramientas concretas. <strong>No todo lo que se vende como "agente" en redes es realmente autónomo</strong> — muchos son chatbots con buen marketing.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P8 · EMBEDDINGS
+  ══════════════════════════════════════════════ -->
+  <div id="p8" class="panel">
+    <div class="intro i-ro">
+      <strong>Embedding:</strong> la forma en que los LLMs convierten texto en números. Un embedding es un vector de cientos o miles de decimales que captura el <em>significado semántico</em> del texto. Es el puente entre el lenguaje humano y el cálculo matemático. Dos textos con significado similar → vectores similares (cercanos en el espacio).
+    </div>
+
+    <div class="section-title"><span style="color:var(--rose)">▸</span> Visualización: mismo significado → vectores similares</div>
+    <div class="vec-vis">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">Cada barra = una dimensión del vector (en la realidad son 768–3072 dimensiones)</div>
+      <div class="vec-row">
+        <div class="vec-label">"gato"</div>
+        <div class="vec-bar-wrap">
+          <div class="vec-bar" style="height:28px;background:var(--rose);opacity:.85"></div>
+          <div class="vec-bar" style="height:13px;background:var(--rose);opacity:.7"></div>
+          <div class="vec-bar" style="height:33px;background:var(--rose);opacity:.9"></div>
+          <div class="vec-bar" style="height:20px;background:var(--rose);opacity:.75"></div>
+          <div class="vec-bar" style="height:9px;background:var(--rose);opacity:.6"></div>
+          <div class="vec-bar" style="height:30px;background:var(--rose);opacity:.88"></div>
+          <div class="vec-bar" style="height:17px;background:var(--rose);opacity:.72"></div>
+          <div class="vec-bar" style="height:24px;background:var(--rose);opacity:.82"></div>
+          <div class="vec-bar" style="height:7px;background:var(--rose);opacity:.55"></div>
+          <div class="vec-bar" style="height:27px;background:var(--rose);opacity:.8"></div>
+          <div class="vec-bar" style="height:21px;background:var(--rose);opacity:.77"></div>
+          <div class="vec-bar" style="height:15px;background:var(--rose);opacity:.65"></div>
+        </div>
+        <div class="vec-num">[0.82, -0.14, 0.91, 0.43, -0.27, 0.77, 0.38, 0.61 ...]</div>
+      </div>
+      <div class="vec-row">
+        <div class="vec-label">"felino"</div>
+        <div class="vec-bar-wrap">
+          <div class="vec-bar" style="height:26px;background:var(--rose);opacity:.82"></div>
+          <div class="vec-bar" style="height:15px;background:var(--rose);opacity:.72"></div>
+          <div class="vec-bar" style="height:31px;background:var(--rose);opacity:.87"></div>
+          <div class="vec-bar" style="height:22px;background:var(--rose);opacity:.78"></div>
+          <div class="vec-bar" style="height:11px;background:var(--rose);opacity:.63"></div>
+          <div class="vec-bar" style="height:28px;background:var(--rose);opacity:.84"></div>
+          <div class="vec-bar" style="height:19px;background:var(--rose);opacity:.73"></div>
+          <div class="vec-bar" style="height:22px;background:var(--rose);opacity:.79"></div>
+          <div class="vec-bar" style="height:9px;background:var(--rose);opacity:.58"></div>
+          <div class="vec-bar" style="height:25px;background:var(--rose);opacity:.76"></div>
+          <div class="vec-bar" style="height:23px;background:var(--rose);opacity:.80"></div>
+          <div class="vec-bar" style="height:17px;background:var(--rose);opacity:.68"></div>
+        </div>
+        <div class="vec-num">[0.79, -0.11, 0.88, 0.47, -0.24, 0.74, 0.41, 0.59 ...]</div>
+      </div>
+      <div class="vec-row">
+        <div class="vec-label">"avión"</div>
+        <div class="vec-bar-wrap">
+          <div class="vec-bar" style="height:9px;background:var(--blue);opacity:.6"></div>
+          <div class="vec-bar" style="height:29px;background:var(--blue);opacity:.85"></div>
+          <div class="vec-bar" style="height:7px;background:var(--blue);opacity:.55"></div>
+          <div class="vec-bar" style="height:33px;background:var(--blue);opacity:.9"></div>
+          <div class="vec-bar" style="height:27px;background:var(--blue);opacity:.82"></div>
+          <div class="vec-bar" style="height:5px;background:var(--blue);opacity:.5"></div>
+          <div class="vec-bar" style="height:31px;background:var(--blue);opacity:.88"></div>
+          <div class="vec-bar" style="height:13px;background:var(--blue);opacity:.65"></div>
+          <div class="vec-bar" style="height:32px;background:var(--blue);opacity:.9"></div>
+          <div class="vec-bar" style="height:11px;background:var(--blue);opacity:.62"></div>
+          <div class="vec-bar" style="height:19px;background:var(--blue);opacity:.73"></div>
+          <div class="vec-bar" style="height:25px;background:var(--blue);opacity:.80"></div>
+        </div>
+        <div class="vec-num">[-0.12, 0.77, -0.09, 0.88, 0.71, 0.28, 0.83, 0.31 ...]</div>
+      </div>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:10px;display:flex;gap:16px;flex-wrap:wrap">
+        <span style="color:var(--rose);font-weight:600">✅ "gato" ↔ "felino": similitud ~0.94 (vectores casi iguales)</span>
+        <span style="color:var(--blue);font-weight:600">❌ "gato" ↔ "avión": similitud ~0.11 (vectores muy distintos)</span>
+      </div>
+    </div>
+
+    <div class="section-title"><span style="color:var(--rose)">▸</span> Espacio vectorial 2D: palabras similares están cerca</div>
+    <div class="cg2">
+      <div>
+        <div class="vec-space">
+          <div class="vec-point" style="left:20%;top:28%;background:var(--rose);width:11px;height:11px"></div>
+          <div class="vec-plabel" style="left:23%;top:24%;color:var(--rose)">gato</div>
+          <div class="vec-point" style="left:16%;top:37%;background:var(--rose);width:11px;height:11px"></div>
+          <div class="vec-plabel" style="left:19%;top:33%;color:var(--rose)">felino</div>
+          <div class="vec-point" style="left:26%;top:22%;background:var(--rose);width:11px;height:11px"></div>
+          <div class="vec-plabel" style="left:29%;top:18%;color:var(--rose)">perro</div>
+          <div class="vec-point" style="left:13%;top:44%;background:var(--rose);width:9px;height:9px"></div>
+          <div class="vec-plabel" style="left:15%;top:40%;color:var(--rose)">mascota</div>
+          <div class="vec-point" style="left:68%;top:63%;background:var(--blue);width:11px;height:11px"></div>
+          <div class="vec-plabel" style="left:71%;top:59%;color:var(--blue)">Python</div>
+          <div class="vec-point" style="left:74%;top:71%;background:var(--blue);width:11px;height:11px"></div>
+          <div class="vec-plabel" style="left:77%;top:67%;color:var(--blue)">código</div>
+          <div class="vec-point" style="left:63%;top:76%;background:var(--blue);width:9px;height:9px"></div>
+          <div class="vec-plabel" style="left:65%;top:72%;color:var(--blue)">software</div>
+          <div class="vec-point" style="left:53%;top:18%;background:var(--green);width:11px;height:11px"></div>
+          <div class="vec-plabel" style="left:56%;top:14%;color:var(--green)">pizza</div>
+          <div class="vec-point" style="left:61%;top:26%;background:var(--green);width:11px;height:11px"></div>
+          <div class="vec-plabel" style="left:64%;top:22%;color:var(--green)">pasta</div>
+          <div class="vec-point" style="left:47%;top:29%;background:var(--green);width:9px;height:9px"></div>
+          <div class="vec-plabel" style="left:49%;top:25%;color:var(--green)">cocina</div>
+          <div style="position:absolute;left:7%;top:10%;font-size:9px;color:var(--rose);font-family:'JetBrains Mono',monospace;font-weight:700;background:var(--rose-bg);padding:2px 6px;border-radius:4px;border:1px solid var(--rose-border)">ANIMALES</div>
+          <div style="position:absolute;left:57%;top:83%;font-size:9px;color:var(--blue);font-family:'JetBrains Mono',monospace;font-weight:700;background:var(--blue-bg);padding:2px 6px;border-radius:4px;border:1px solid var(--blue-border)">TECNOLOGÍA</div>
+          <div style="position:absolute;left:46%;top:8%;font-size:9px;color:var(--green);font-family:'JetBrains Mono',monospace;font-weight:700;background:var(--green-bg);padding:2px 6px;border-radius:4px;border:1px solid var(--green-border)">COMIDA</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">En realidad los vectores tienen 768–3072 dimensiones. Aquí se proyectan a 2D para visualizar: <strong>puntos cercanos = significados similares</strong>.</div>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--rose)"><span class="dot" style="background:var(--rose)"></span>Generar embeddings con Python</div>
+        <pre class="pr-ro"><span class="kw">from</span> <span class="cls">openai</span> <span class="kw">import</span> <span class="cls">OpenAI</span>
+<span class="kw">import</span> <span class="cls">numpy</span> <span class="kw">as</span> <span class="pl">np</span>
+
+<span class="pl">client = </span><span class="cls">OpenAI</span><span class="pl">()</span>
+
+<span class="kw">def</span> <span class="fn">get_embedding</span><span class="pl">(texto):</span>
+  <span class="pl">r = client.embeddings.</span><span class="fn">create</span><span class="pl">(</span>
+    <span class="pl">input=texto,</span>
+    <span class="pl">model=</span><span class="str">"text-embedding-3-small"</span>
+  <span class="pl">)</span>
+  <span class="kw">return</span> <span class="pl">r.data[</span><span class="str">0</span><span class="pl">].embedding  </span><span class="cmt"># 1536 números</span>
+
+<span class="cmt"># Similitud coseno entre dos textos</span>
+<span class="kw">def</span> <span class="fn">similitud</span><span class="pl">(t1, t2):</span>
+  <span class="pl">v1, v2 = </span><span class="fn">get_embedding</span><span class="pl">(t1), </span><span class="fn">get_embedding</span><span class="pl">(t2)</span>
+  <span class="kw">return</span> <span class="pl">np.</span><span class="fn">dot</span><span class="pl">(v1, v2) / (</span>
+    <span class="pl">np.</span><span class="fn">linalg</span><span class="pl">.</span><span class="fn">norm</span><span class="pl">(v1) * np.</span><span class="fn">linalg</span><span class="pl">.</span><span class="fn">norm</span><span class="pl">(v2)</span>
+  <span class="pl">)</span>
+
+<span class="fn">similitud</span><span class="pl">(</span><span class="str">"gato"</span><span class="pl">, </span><span class="str">"felino"</span><span class="pl">)</span>   <span class="cmt"># → 0.94 ✅</span>
+<span class="fn">similitud</span><span class="pl">(</span><span class="str">"gato"</span><span class="pl">, </span><span class="str">"avión"</span><span class="pl">)</span>    <span class="cmt"># → 0.11 ❌</span></pre>
+
+        <div class="ch" style="margin-top:14px"><div class="ck" style="color:var(--rose);border-color:var(--rose);background:var(--rose-bg)">Propiedad</div><div class="cl">Detalle</div></div>
+        <div class="cb2">
+          <div class="cr"><div class="rl">Dimensiones</div><div class="rv">384 (ligeros) hasta 3072 (OpenAI large). Más = más matices, más coste.</div></div>
+          <div class="cr"><div class="rl">Similitud</div><div class="rv"><strong>Coseno</strong>: ángulo entre vectores. De -1 a 1. Más cerca de 1 → más parecidos.</div></div>
+          <div class="cr"><div class="rl">Modelos cloud</div><div class="rv"><span class="tag tp">text-embedding-3-small</span><span class="tag tb">embed-english-v3</span></div></div>
+          <div class="cr"><div class="rl">Modelos local</div><div class="rv"><span class="tag tt">nomic-embed-text</span><span class="tag tg">all-MiniLM-L6</span><span class="tag ti">mxbai-embed</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P9 · BBDD VECTORIAL
+  ══════════════════════════════════════════════ -->
+  <div id="p9" class="panel">
+    <div class="intro i-in">
+      <strong>Base de datos vectorial:</strong> una BBDD especializada en almacenar embeddings y hacer búsquedas por <em>similitud semántica</em> a alta velocidad. En lugar de buscar por coincidencia exacta de palabras (SQL LIKE), busca por cercanía de significado en el espacio vectorial. Es el componente de almacenamiento que hace posible RAG.
+    </div>
+
+    <div class="section-title"><span style="color:var(--indigo)">▸</span> SQL tradicional vs BBDD vectorial</div>
+    <div class="cg2">
+      <div>
+        <div class="ct" style="color:var(--muted)"><span class="dot" style="background:var(--muted)"></span>SQL — búsqueda exacta</div>
+        <pre class="pr-sl"><span class="cmt">-- Busca la cadena exacta</span>
+<span class="kw">SELECT</span> <span class="pl">* </span><span class="kw">FROM</span> <span class="pl">docs</span>
+<span class="kw">WHERE</span> <span class="pl">texto </span><span class="kw">LIKE</span> <span class="str">'%machine learning%'</span><span class="pl">;</span>
+
+<span class="cmt">-- ❌ No encuentra: "aprendizaje automático"</span>
+<span class="cmt">-- ❌ No encuentra: "redes neuronales"</span>
+<span class="cmt">-- ❌ No entiende sinónimos ni contexto</span>
+<span class="cmt">-- Solo coincidencia exacta de caracteres</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--indigo)"><span class="dot" style="background:var(--indigo)"></span>Vectorial — búsqueda semántica</div>
+        <pre class="pr-in"><span class="kw">from</span> <span class="cls">chromadb</span> <span class="kw">import</span> <span class="cls">Client</span>
+
+<span class="pl">resultados = col.</span><span class="fn">query</span><span class="pl">(</span>
+  <span class="pl">query_texts=[</span><span class="str">"machine learning"</span><span class="pl">],</span>
+  <span class="pl">n_results=</span><span class="hl">3</span>
+<span class="pl">)</span>
+<span class="cmt"># ✅ Encuentra: "aprendizaje automático"</span>
+<span class="cmt"># ✅ Encuentra: "redes neuronales"</span>
+<span class="cmt"># ✅ Encuentra: "entrenamiento de modelos"</span>
+<span class="cmt"># Entiende significado, no palabras</span></pre>
+      </div>
+    </div>
+
+    <div class="section-title"><span style="color:var(--indigo)">▸</span> Las BBDD vectoriales más usadas</div>
+    <div class="db-grid">
+      <div class="db-card db-pu"><div class="db-name">🌲 Pinecone</div><div class="db-type">Cloud · Managed</div><div class="db-desc">La más popular en producción. Totalmente gestionada, escalable. Ideal para no gestionar infraestructura.</div></div>
+      <div class="db-card db-gr"><div class="db-name">🦜 Chroma</div><div class="db-type">Open Source · Local/Cloud</div><div class="db-desc">La favorita para aprender y prototipar. Muy fácil, corre en local, perfecta para empezar. <span class="tag tg">Recomendada para empezar</span></div></div>
+      <div class="db-card db-bl"><div class="db-name">🔵 Weaviate</div><div class="db-type">Open Source · Hybrid</div><div class="db-desc">Combina búsqueda vectorial + BM25 (texto clásico). Muy potente para búsqueda híbrida.</div></div>
+      <div class="db-card db-te"><div class="db-name">🐘 pgvector</div><div class="db-type">PostgreSQL extension</div><div class="db-desc">Si ya usas PostgreSQL, añade vectores sin cambiar de BBDD. <span class="tag tg">Ideal si ya tienes Postgres</span></div></div>
+      <div class="db-card db-or"><div class="db-name">⚡ Qdrant</div><div class="db-type">Open Source · Rust</div><div class="db-desc">Escrito en Rust, muy rápido. Excelente filtros sobre vectores. Equilibrio rendimiento/facilidad.</div></div>
+      <div class="db-card db-sl"><div class="db-name">🔷 Milvus</div><div class="db-type">Open Source · Enterprise</div><div class="db-desc">Para billones de vectores. Compleja de operar pero extremadamente escalable.</div></div>
+    </div>
+
+    <div class="section-title"><span style="color:var(--indigo)">▸</span> CRUD vectorial con Chroma</div>
+    <div class="cg1">
+      <div>
+        <div class="ct" style="color:var(--indigo)"><span class="dot" style="background:var(--indigo)"></span>Insertar, buscar y filtrar</div>
+        <pre class="pr-in"><span class="kw">import</span> <span class="cls">chromadb</span>
+
+<span class="pl">client = chromadb.</span><span class="fn">Client</span><span class="pl">()</span>
+<span class="pl">col = client.</span><span class="fn">create_collection</span><span class="pl">(</span><span class="str">"docs"</span><span class="pl">)</span>
+
+<span class="cmt"># INSERTAR (Chroma calcula el embedding automáticamente)</span>
+<span class="pl">col.</span><span class="fn">add</span><span class="pl">(</span>
+  <span class="pl">documents=[</span>
+    <span class="str">"Python es un lenguaje de programación"</span><span class="pl">,</span>
+    <span class="str">"El aprendizaje automático usa datos para entrenar modelos"</span><span class="pl">,</span>
+    <span class="str">"Los gatos son mascotas populares en todo el mundo"</span>
+  <span class="pl">],</span>
+  <span class="pl">metadatas=[</span>
+    <span class="pl">{</span><span class="str">"categoria"</span><span class="pl">: </span><span class="str">"tech"</span><span class="pl">},</span>
+    <span class="pl">{</span><span class="str">"categoria"</span><span class="pl">: </span><span class="str">"ia"</span><span class="pl">},</span>
+    <span class="pl">{</span><span class="str">"categoria"</span><span class="pl">: </span><span class="str">"animales"</span><span class="pl">}</span>
+  <span class="pl">],</span>
+  <span class="pl">ids=[</span><span class="str">"d1"</span><span class="pl">, </span><span class="str">"d2"</span><span class="pl">, </span><span class="str">"d3"</span><span class="pl">]</span>
+<span class="pl">)</span>
+
+<span class="cmt"># BUSCAR por similitud semántica</span>
+<span class="pl">r = col.</span><span class="fn">query</span><span class="pl">(</span>
+  <span class="pl">query_texts=[</span><span class="str">"inteligencia artificial con redes neuronales"</span><span class="pl">],</span>
+  <span class="pl">n_results=</span><span class="hl">2</span>
+<span class="pl">)</span>
+<span class="cmt"># ✅ Devuelve doc2 ("aprendizaje automático") y doc1 ("Python")</span>
+<span class="cmt"># ✅ Aunque la query no usa las mismas palabras</span>
+
+<span class="cmt"># BUSCAR con filtro de metadatos</span>
+<span class="pl">r = col.</span><span class="fn">query</span><span class="pl">(</span>
+  <span class="pl">query_texts=[</span><span class="str">"programación"</span><span class="pl">],</span>
+  <span class="pl">where={</span><span class="str">"categoria"</span><span class="pl">: </span><span class="str">"tech"</span><span class="pl">},  </span><span class="cmt"># solo documentos tech</span>
+  <span class="pl">n_results=</span><span class="hl">3</span>
+<span class="pl">)</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P10 · RAG
+  ══════════════════════════════════════════════ -->
+  <div id="p10" class="panel">
+    <div class="intro i-gr">
+      <strong>RAG (Retrieval-Augmented Generation):</strong> la técnica que permite al LLM responder con información que <em>no estaba en su entrenamiento</em>. Antes de generar la respuesta, recupera los fragmentos más relevantes de tu base de conocimiento y los añade al contexto. Es el corazón de "chatea con tus documentos".
+    </div>
+
+    <div class="section-title"><span style="color:var(--green)">▸</span> Pipeline completo — Fase 1: Indexación (offline)</div>
+    <div class="pipeline">
+      <div class="pip-step pp-sl"><div class="pip-icon">📄</div><div class="pip-name">Documentos</div><div class="pip-desc">PDFs, Word, web, FAQs, código...</div></div>
+      <div class="pip-arr">→</div>
+      <div class="pip-step pp-bl"><div class="pip-icon">✂️</div><div class="pip-name">Chunking</div><div class="pip-desc">Fragmentar en ~500 tokens con solapamiento</div></div>
+      <div class="pip-arr">→</div>
+      <div class="pip-step pp-ro"><div class="pip-icon">📐</div><div class="pip-name">Embedding</div><div class="pip-desc">Cada chunk → vector numérico</div></div>
+      <div class="pip-arr">→</div>
+      <div class="pip-step pp-in"><div class="pip-icon">🗄️</div><div class="pip-name">BBDD Vectorial</div><div class="pip-desc">Almacena vectores + texto + metadatos</div></div>
+    </div>
+
+    <div class="section-title"><span style="color:var(--green)">▸</span> Pipeline completo — Fase 2: Consulta (online)</div>
+    <div class="pipeline">
+      <div class="pip-step pp-sl"><div class="pip-icon">👤</div><div class="pip-name">Pregunta</div><div class="pip-desc">"¿Política de devoluciones?"</div></div>
+      <div class="pip-arr">→</div>
+      <div class="pip-step pp-ro"><div class="pip-icon">📐</div><div class="pip-name">Embed query</div><div class="pip-desc">Pregunta → vector</div></div>
+      <div class="pip-arr">→</div>
+      <div class="pip-step pp-in"><div class="pip-icon">🔎</div><div class="pip-name">Retrieval</div><div class="pip-desc">Top-K chunks más similares</div></div>
+      <div class="pip-arr">→</div>
+      <div class="pip-step pp-gr"><div class="pip-icon">🧠</div><div class="pip-name">Augment</div><div class="pip-desc">Chunks + pregunta → prompt enriquecido</div></div>
+      <div class="pip-arr">→</div>
+      <div class="pip-step pp-pu"><div class="pip-icon">✨</div><div class="pip-name">Generación</div><div class="pip-desc">LLM responde basado en el contexto</div></div>
+    </div>
+
+    <div class="section-title"><span style="color:var(--green)">▸</span> El prompt aumentado que recibe el LLM</div>
+    <div class="context-box"><div class="ctx-label">System prompt</div>Eres asistente de AcmeCorp. Responde SOLO con el contexto proporcionado. Si no está, dilo.</div>
+    <div class="context-box" style="background:var(--green-bg);border-color:var(--green-border);color:#14532d"><div class="ctx-label" style="color:var(--green)">Contexto recuperado — chunks más relevantes</div><span class="rag-hl">[Manual comercial, p.4]</span><br>"Las devoluciones se aceptan dentro de los 30 días. Producto sin usar y en embalaje original..."<br><br><span class="rag-hl">[FAQs web — devoluciones]</span><br>"Para iniciar una devolución contacta <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="eb98849b84999f8eab8e869b998e988ac5888486">[email&#160;protected]</a> con el número de pedido..."</div>
+    <div class="context-box" style="background:var(--purple-bg);border-color:var(--purple-border);color:#4c1d95"><div class="ctx-label" style="color:var(--purple)">Pregunta del usuario</div>¿Cuál es la política de devoluciones y cómo la inicio?</div>
+
+    <div class="section-title"><span style="color:var(--green)">▸</span> Implementación RAG en ~30 líneas con LangChain</div>
+    <div class="cg1"><div>
+      <div class="ct" style="color:var(--green)"><span class="dot" style="background:var(--green)"></span>RAG end-to-end</div>
+      <pre class="pr-gr"><span class="kw">from</span> <span class="cls">langchain.document_loaders</span> <span class="kw">import</span> <span class="cls">PyPDFLoader</span>
+<span class="kw">from</span> <span class="cls">langchain.text_splitter</span> <span class="kw">import</span> <span class="cls">RecursiveCharacterTextSplitter</span>
+<span class="kw">from</span> <span class="cls">langchain_openai</span> <span class="kw">import</span> <span class="cls">OpenAIEmbeddings</span><span class="pl">, </span><span class="cls">ChatOpenAI</span>
+<span class="kw">from</span> <span class="cls">langchain_community.vectorstores</span> <span class="kw">import</span> <span class="cls">Chroma</span>
+<span class="kw">from</span> <span class="cls">langchain.chains</span> <span class="kw">import</span> <span class="cls">RetrievalQA</span>
+
+<span class="cmt"># ── FASE 1: INDEXACIÓN ────────────────────────</span>
+<span class="pl">docs = </span><span class="cls">PyPDFLoader</span><span class="pl">(</span><span class="str">"manual.pdf"</span><span class="pl">).</span><span class="fn">load</span><span class="pl">()</span>
+
+<span class="pl">chunks = </span><span class="cls">RecursiveCharacterTextSplitter</span><span class="pl">(</span>
+  <span class="pl">chunk_size=</span><span class="hl">500</span><span class="pl">, chunk_overlap=</span><span class="hl">50</span>
+<span class="pl">).</span><span class="fn">split_documents</span><span class="pl">(docs)</span>
+
+<span class="pl">vectorstore = </span><span class="cls">Chroma</span><span class="pl">.</span><span class="fn">from_documents</span><span class="pl">(</span>
+  <span class="pl">documents=chunks,</span>
+  <span class="pl">embedding=</span><span class="cls">OpenAIEmbeddings</span><span class="pl">(),</span>
+  <span class="pl">persist_directory=</span><span class="str">"./chroma_db"</span>
+<span class="pl">)</span>
+
+<span class="cmt"># ── FASE 2: CONSULTA ──────────────────────────</span>
+<span class="pl">rag = </span><span class="cls">RetrievalQA</span><span class="pl">.</span><span class="fn">from_chain_type</span><span class="pl">(</span>
+  <span class="pl">llm=</span><span class="cls">ChatOpenAI</span><span class="pl">(model=</span><span class="str">"gpt-4o"</span><span class="pl">),</span>
+  <span class="pl">retriever=vectorstore.</span><span class="fn">as_retriever</span><span class="pl">(</span>
+    <span class="pl">search_kwargs={</span><span class="str">"k"</span><span class="pl">: </span><span class="hl">3</span><span class="pl">}  </span><span class="cmt"># top-3 chunks</span>
+  <span class="pl">)</span>
+<span class="pl">)</span>
+
+<span class="pl">r = rag.</span><span class="fn">invoke</span><span class="pl">(</span><span class="str">"¿Cuál es la política de devoluciones?"</span><span class="pl">)</span>
+<span class="cmt"># ✅ Responde con tu PDF, no con su entrenamiento</span></pre>
+    </div></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P11 · IA LOCAL
+  ══════════════════════════════════════════════ -->
+  <div id="p11" class="panel">
+    <div class="intro i-sl">
+      <strong>IA Local:</strong> ejecutar todo el stack de IA (LLM + embeddings + BBDD vectorial + RAG) en tu propia máquina, sin enviar datos a ningún servidor externo. Cero dependencia de APIs de pago, privacidad total, funciona sin internet. La contrapartida: necesitas hardware decente y los modelos locales son menos potentes que los cloud de última generación.
+    </div>
+
+    <div class="privacy-bar">
+      <span style="font-size:20px">🔒</span>
+      <span><strong>¿Por qué IA local?</strong> — Privacidad total (datos médicos, legales, financieros) · Sin coste por llamada API · Sin límites de rate · Funciona offline · Tú controlas el modelo</span>
+    </div>
+
+    <div class="section-title"><span style="color:var(--slate)">▸</span> Stack completo de IA 100% local</div>
+    <div class="diagram-wrap">
+      <div class="d-cluster" style="border-color:var(--slate-border);background:rgba(51,65,85,.02)">
+        <div class="d-cluster-label" style="color:var(--slate)">Tu máquina — sin internet necesario</div>
+        <div class="diagram-row">
+          <div class="d-box d-sl" style="min-width:130px"><div class="d-label">LLM Local</div>🦙 Ollama<div class="d-sub">Llama 3 · Mistral · Phi-3</div></div>
+          <div class="d-arr">+</div>
+          <div class="d-box d-sl" style="min-width:130px"><div class="d-label">Embeddings Local</div>📐 nomic-embed-text<div class="d-sub">via Ollama o sentence-transformers</div></div>
+          <div class="d-arr">+</div>
+          <div class="d-box d-sl" style="min-width:130px"><div class="d-label">BBDD Vectorial Local</div>🗄️ Chroma<div class="d-sub">en disco · SQLite</div></div>
+        </div>
+        <div class="d-arr-down">▼ combina en</div>
+        <div class="d-box d-sl" style="min-width:200px"><div class="d-label">RAG Local completo</div>🔍 LangChain + Ollama + Chroma<div class="d-sub">100% offline · privado · gratuito</div></div>
+      </div>
+    </div>
+
+    <!-- LLM LOCAL -->
+    <div class="section-title"><span style="color:var(--slate)">▸</span> 1 · LLMs Locales — Ollama</div>
+    <div class="intro i-sl" style="margin-bottom:14px">
+      <strong>Ollama</strong> es la herramienta más sencilla para ejecutar LLMs en local. Funciona como un servidor local al que puedes llamar igual que a la API de OpenAI, pero todo ocurre en tu máquina.
+    </div>
+    <div class="local-grid">
+      <div class="local-card">
+        <div class="lc-head">🦙 Llama 3.1 / 3.2</div>
+        <div class="lc-body">
+          <div class="model-pill">8B<span class="mpv">· 5GB RAM</span></div>
+          <div class="model-pill">70B<span class="mpv">· 40GB RAM</span></div>
+          <div style="font-size:12px;color:var(--dim);margin-top:8px">El más equilibrado. Muy buena calidad en tareas generales. El 8B es el más popular para uso doméstico.</div>
+        </div>
+      </div>
+      <div class="local-card">
+        <div class="lc-head">⚡ Mistral / Mixtral</div>
+        <div class="lc-body">
+          <div class="model-pill">7B<span class="mpv">· 4GB RAM</span></div>
+          <div class="model-pill">8x7B<span class="mpv">· 48GB RAM</span></div>
+          <div style="font-size:12px;color:var(--dim);margin-top:8px">Muy eficiente. Excelente relación tamaño/rendimiento. Bueno para código e instrucciones.</div>
+        </div>
+      </div>
+      <div class="local-card">
+        <div class="lc-head">🔬 Phi-3 / Phi-4 (Microsoft)</div>
+        <div class="lc-body">
+          <div class="model-pill">3.8B<span class="mpv">· 3GB RAM</span></div>
+          <div class="model-pill">14B<span class="mpv">· 9GB RAM</span></div>
+          <div style="font-size:12px;color:var(--dim);margin-top:8px">Pequeño pero sorprendentemente capaz. Ideal para hardware limitado (MacBook, portátil básico).</div>
+        </div>
+      </div>
+      <div class="local-card">
+        <div class="lc-head">🌐 Qwen 2.5 (Alibaba)</div>
+        <div class="lc-body">
+          <div class="model-pill">7B<span class="mpv">· 5GB RAM</span></div>
+          <div class="model-pill">72B<span class="mpv">· 45GB RAM</span></div>
+          <div style="font-size:12px;color:var(--dim);margin-top:8px">Muy potente, especialmente en código y tareas multilingüe. Alternativa seria a Llama.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cg2" style="margin-top:16px">
+      <div>
+        <div class="ct" style="color:var(--slate)"><span class="dot" style="background:var(--slate)"></span>Instalar y correr Ollama</div>
+        <pre class="pr-sl"><span class="cmt"># 1. Instalar Ollama (Mac/Linux/Windows)</span>
+<span class="cmt"># https://ollama.com → descargar e instalar</span>
+
+<span class="cmt"># 2. Descargar y ejecutar un modelo</span>
+$ ollama pull llama3.1
+$ ollama run llama3.1
+
+<span class="cmt"># O en modo servidor (API compatible OpenAI)</span>
+$ ollama serve
+<span class="cmt"># → disponible en http://localhost:11434</span>
+
+<span class="cmt"># 3. Modelos recomendados para empezar</span>
+$ ollama pull phi3          <span class="cmt"># 3.8B · ligero</span>
+$ ollama pull mistral       <span class="cmt"># 7B · equilibrado</span>
+$ ollama pull nomic-embed-text  <span class="cmt"># embeddings</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--slate)"><span class="dot" style="background:var(--slate)"></span>Llamar a Ollama desde Python</div>
+        <pre class="pr-sl"><span class="kw">from</span> <span class="cls">langchain_community.llms</span> <span class="kw">import</span> <span class="cls">Ollama</span>
+<span class="kw">from</span> <span class="cls">langchain_community.chat_models</span> <span class="kw">import</span> <span class="cls">ChatOllama</span>
+
+<span class="cmt"># Igual que ChatOpenAI pero local y gratis</span>
+<span class="pl">llm = </span><span class="cls">ChatOllama</span><span class="pl">(model=</span><span class="str">"llama3.1"</span><span class="pl">)</span>
+
+<span class="pl">respuesta = llm.</span><span class="fn">invoke</span><span class="pl">(</span><span class="str">"¿Qué es un embedding?"</span><span class="pl">)</span>
+<span class="fn">print</span><span class="pl">(respuesta.content)</span>
+
+<span class="cmt"># O directamente con requests (API OpenAI-compatible)</span>
+<span class="kw">import</span> <span class="cls">requests</span>
+<span class="pl">r = requests.</span><span class="fn">post</span><span class="pl">(</span>
+  <span class="str">"http://localhost:11434/api/chat"</span><span class="pl">,</span>
+  <span class="pl">json={</span><span class="str">"model"</span><span class="pl">: </span><span class="str">"llama3.1"</span><span class="pl">,</span>
+        <span class="str">"messages"</span><span class="pl">: [{</span><span class="str">"role"</span><span class="pl">:</span><span class="str">"user"</span><span class="pl">,</span><span class="str">"content"</span><span class="pl">:</span><span class="str">"Hola"</span><span class="pl">}]}</span>
+<span class="pl">)</span></pre>
+      </div>
+    </div>
+
+    <!-- EMBEDDINGS LOCAL -->
+    <div class="section-title" style="margin-top:24px"><span style="color:var(--slate)">▸</span> 2 · Embeddings Locales</div>
+    <div class="intro i-sl" style="margin-bottom:14px">
+      Generar embeddings en local evita enviar tus textos a APIs externas. Los modelos de embedding locales son mucho más ligeros que los LLMs — pueden correr en CPU sin problema.
+    </div>
+    <div class="cg2">
+      <div>
+        <div class="ct" style="color:var(--slate)"><span class="dot" style="background:var(--slate)"></span>Via Ollama (nomic-embed-text)</div>
+        <pre class="pr-sl"><span class="kw">from</span> <span class="cls">langchain_community.embeddings</span> <span class="kw">import</span> <span class="cls">OllamaEmbeddings</span>
+
+<span class="cmt"># Primero: ollama pull nomic-embed-text</span>
+<span class="pl">embeddings = </span><span class="cls">OllamaEmbeddings</span><span class="pl">(</span>
+  <span class="pl">model=</span><span class="str">"nomic-embed-text"</span>
+<span class="pl">)</span>
+
+<span class="pl">vector = embeddings.</span><span class="fn">embed_query</span><span class="pl">(</span><span class="str">"gato"</span><span class="pl">)</span>
+<span class="cmt"># → 768 números · 100% local · gratis</span>
+
+<span class="pl">docs_vectors = embeddings.</span><span class="fn">embed_documents</span><span class="pl">([</span>
+  <span class="str">"El gato duerme"</span><span class="pl">, </span><span class="str">"Python es genial"</span>
+<span class="pl">])</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--slate)"><span class="dot" style="background:var(--slate)"></span>Via sentence-transformers (sin Ollama)</div>
+        <pre class="pr-sl"><span class="kw">from</span> <span class="cls">sentence_transformers</span> <span class="kw">import</span> <span class="cls">SentenceTransformer</span>
+
+<span class="cmt"># Descarga el modelo solo la primera vez</span>
+<span class="pl">modelo = </span><span class="cls">SentenceTransformer</span><span class="pl">(</span>
+  <span class="str">'all-MiniLM-L6-v2'</span>  <span class="cmt"># 90MB · muy rápido</span>
+<span class="pl">)</span>
+
+<span class="pl">textos = [</span><span class="str">"gato"</span><span class="pl">, </span><span class="str">"felino"</span><span class="pl">, </span><span class="str">"avión"</span><span class="pl">]</span>
+<span class="pl">vectores = modelo.</span><span class="fn">encode</span><span class="pl">(textos)</span>
+
+<span class="cmt"># Modelos recomendados:</span>
+<span class="cmt"># all-MiniLM-L6-v2  → 384 dim · rapidísimo</span>
+<span class="cmt"># nomic-embed-text  → 768 dim · mejor calidad</span>
+<span class="cmt"># mxbai-embed-large → 1024 dim · el mejor local</span></pre>
+      </div>
+    </div>
+
+    <!-- BBDD VECTORIAL LOCAL -->
+    <div class="section-title" style="margin-top:24px"><span style="color:var(--slate)">▸</span> 3 · BBDD Vectorial Local</div>
+    <div class="intro i-sl" style="margin-bottom:14px">
+      Chroma en modo persistente es la opción más sencilla para BBDD vectorial local. Guarda todo en disco, sin servidor externo, sin coste.
+    </div>
+    <div class="cg2">
+      <div>
+        <div class="ct" style="color:var(--slate)"><span class="dot" style="background:var(--slate)"></span>Chroma persistente en disco</div>
+        <pre class="pr-sl"><span class="kw">import</span> <span class="cls">chromadb</span>
+
+<span class="cmt"># Modo persistente: guarda en disco</span>
+<span class="pl">client = chromadb.</span><span class="cls">PersistentClient</span><span class="pl">(</span>
+  <span class="pl">path=</span><span class="str">"./mi_bbdd_vectorial"</span>
+<span class="pl">)</span>
+
+<span class="pl">col = client.</span><span class="fn">get_or_create_collection</span><span class="pl">(</span><span class="str">"docs"</span><span class="pl">)</span>
+
+<span class="cmt"># Los datos persisten entre ejecuciones</span>
+<span class="cmt"># No necesitas reindexar cada vez</span>
+<span class="cmt"># Todo en local, cero APIs externas</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--slate)"><span class="dot" style="background:var(--slate)"></span>Alternativa: Qdrant en Docker</div>
+        <pre class="pr-sl"><span class="cmt"># Levantar Qdrant en local con Docker</span>
+$ docker run -p 6333:6333 qdrant/qdrant
+
+<span class="cmt"># Conectar desde Python</span>
+<span class="kw">from</span> <span class="cls">qdrant_client</span> <span class="kw">import</span> <span class="cls">QdrantClient</span>
+
+<span class="pl">client = </span><span class="cls">QdrantClient</span><span class="pl">(host=</span><span class="str">"localhost"</span><span class="pl">, port=</span><span class="hl">6333</span><span class="pl">)</span>
+
+<span class="cmt"># Interfaz web en http://localhost:6333/dashboard</span>
+<span class="cmt"># Ideal si quieres algo más robusto que Chroma</span></pre>
+      </div>
+    </div>
+
+    <!-- RAG LOCAL COMPLETO -->
+    <div class="section-title" style="margin-top:24px"><span style="color:var(--slate)">▸</span> 4 · RAG 100% Local — todo junto</div>
+    <div class="cg1"><div>
+      <div class="ct" style="color:var(--slate)"><span class="dot" style="background:var(--slate)"></span>RAG completo: Ollama + Chroma + LangChain — sin APIs externas</div>
+      <pre class="pr-sl"><span class="kw">from</span> <span class="cls">langchain_community.llms</span> <span class="kw">import</span> <span class="cls">Ollama</span>
+<span class="kw">from</span> <span class="cls">langchain_community.embeddings</span> <span class="kw">import</span> <span class="cls">OllamaEmbeddings</span>
+<span class="kw">from</span> <span class="cls">langchain_community.vectorstores</span> <span class="kw">import</span> <span class="cls">Chroma</span>
+<span class="kw">from</span> <span class="cls">langchain.chains</span> <span class="kw">import</span> <span class="cls">RetrievalQA</span>
+<span class="kw">from</span> <span class="cls">langchain.document_loaders</span> <span class="kw">import</span> <span class="cls">PyPDFLoader</span>
+<span class="kw">from</span> <span class="cls">langchain.text_splitter</span> <span class="kw">import</span> <span class="cls">RecursiveCharacterTextSplitter</span>
+
+<span class="cmt"># ── CONFIGURACIÓN (todo local) ────────────────</span>
+<span class="pl">llm        = </span><span class="cls">Ollama</span><span class="pl">(model=</span><span class="str">"llama3.1"</span><span class="pl">)         </span><span class="cmt"># LLM local</span>
+<span class="pl">embeddings = </span><span class="cls">OllamaEmbeddings</span><span class="pl">(model=</span><span class="str">"nomic-embed-text"</span><span class="pl">)  </span><span class="cmt"># embeddings local</span>
+
+<span class="cmt"># ── FASE 1: INDEXAR TUS DOCUMENTOS ───────────</span>
+<span class="pl">docs   = </span><span class="cls">PyPDFLoader</span><span class="pl">(</span><span class="str">"manual_privado.pdf"</span><span class="pl">).</span><span class="fn">load</span><span class="pl">()</span>
+<span class="pl">chunks = </span><span class="cls">RecursiveCharacterTextSplitter</span><span class="pl">(</span>
+  <span class="pl">chunk_size=</span><span class="hl">500</span><span class="pl">, chunk_overlap=</span><span class="hl">50</span>
+<span class="pl">).</span><span class="fn">split_documents</span><span class="pl">(docs)</span>
+
+<span class="cmt"># BBDD vectorial local en disco</span>
+<span class="pl">vectorstore = </span><span class="cls">Chroma</span><span class="pl">.</span><span class="fn">from_documents</span><span class="pl">(</span>
+  <span class="pl">documents=chunks,</span>
+  <span class="pl">embedding=embeddings,</span>
+  <span class="pl">persist_directory=</span><span class="str">"./chroma_local"</span>    <span class="cmt"># guardado en disco</span>
+<span class="pl">)</span>
+
+<span class="cmt"># ── FASE 2: PREGUNTAR ─────────────────────────</span>
+<span class="pl">rag = </span><span class="cls">RetrievalQA</span><span class="pl">.</span><span class="fn">from_chain_type</span><span class="pl">(</span>
+  <span class="pl">llm=llm,</span>
+  <span class="pl">retriever=vectorstore.</span><span class="fn">as_retriever</span><span class="pl">(search_kwargs={</span><span class="str">"k"</span><span class="pl">: </span><span class="hl">3</span><span class="pl">})</span>
+<span class="pl">)</span>
+
+<span class="pl">r = rag.</span><span class="fn">invoke</span><span class="pl">(</span><span class="str">"¿Cuál es el procedimiento de baja de un empleado?"</span><span class="pl">)</span>
+<span class="fn">print</span><span class="pl">(r[</span><span class="str">"result"</span><span class="pl">])</span>
+
+<span class="cmt"># 🔒 Ni una sola línea de tu PDF sale de tu máquina</span>
+<span class="cmt"># 💰 Coste de API: 0€</span>
+<span class="cmt"># 🌐 Funciona sin internet</span></pre>
+    </div></div>
+
+    <div class="section-title" style="margin-top:24px"><span style="color:var(--slate)">▸</span> Cloud vs Local: cuándo usar cada uno</div>
+    <div class="vtable-wrap">
+      <table class="vtable">
+        <thead>
+          <tr><th>Criterio</th><th>☁️ Cloud (OpenAI, Anthropic…)</th><th>🏠 Local (Ollama + Chroma…)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Calidad del modelo</td><td><span class="tag tg">Alta</span> GPT-4o, Claude 3.7 son muy superiores</td><td><span class="tag ty">Media</span> Llama 3.1 70B es bueno pero no iguala</td></tr>
+          <tr><td>Privacidad</td><td><span class="tag tr">Datos salen de tu máquina</span></td><td><span class="tag tg">Total — nada sale de tu máquina</span></td></tr>
+          <tr><td>Coste</td><td><span class="tag ty">Pago por uso (tokens)</span></td><td><span class="tag tg">Gratis una vez instalado</span></td></tr>
+          <tr><td>Velocidad setup</td><td><span class="tag tg">Inmediata — solo API key</span></td><td><span class="tag ty">Requiere descargar modelos (2–40 GB)</span></td></tr>
+          <tr><td>Hardware necesario</td><td><span class="tag tg">Ninguno</span></td><td><span class="tag ty">8–16GB RAM mínimo recomendado</span></td></tr>
+          <tr><td>Funciona offline</td><td><span class="tag tr">No</span></td><td><span class="tag tg">Sí — totalmente</span></td></tr>
+          <tr><td>Ideal para</td><td>Producción, prototipado rápido, máxima calidad</td><td>Datos sensibles, sin presupuesto, aprendizaje, offline</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P7 · COMPARATIVA
+  ══════════════════════════════════════════════ -->
+  <div id="p7" class="panel">
+    <div class="intro i-or">
+      <strong>Comparativa completa:</strong> todos los conceptos juntos para que puedas ver las diferencias de un vistazo y saber exactamente de qué hablan en los videos.
+    </div>
+
+    <div class="section-title"><span class="sc">▸</span> Bot · Chatbot · LLM · Chatbot IA · Agente</div>
+    <div class="vtable-wrap">
+      <table class="vtable">
+        <thead>
+          <tr><th>Criterio</th><th>🤖 Bot</th><th>💬 Chatbot clásico</th><th>🧠 LLM</th><th>✨ Chatbot IA</th><th>⚙️ Agente IA</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>¿Usa IA?</td><td><span class="tag tr">No</span></td><td><span class="tag tr">No/mínima</span></td><td><span class="tag tg">Es la IA</span></td><td><span class="tag tg">Sí</span></td><td><span class="tag tg">Sí</span></td></tr>
+          <tr><td>¿Conversa?</td><td><span class="tag tr">No</span></td><td><span class="tag ty">Limitado</span></td><td><span class="tag tb">Via API</span></td><td><span class="tag tg">Sí, naturalmente</span></td><td><span class="tag tg">Sí</span></td></tr>
+          <tr><td>¿Quién dirige?</td><td>El programador (reglas)</td><td>El árbol de decisión</td><td>—</td><td><strong>El humano</strong> en cada turno</td><td><strong>El LLM</strong> de forma autónoma</td></tr>
+          <tr><td>¿Actúa en el mundo?</td><td><span class="tag ty">Solo si programado</span></td><td><span class="tag tr">No</span></td><td><span class="tag tr">No</span></td><td><span class="tag ty">Herramientas básicas</span></td><td><span class="tag tg">Sí, multi-paso autónomo</span></td></tr>
+          <tr><td>¿Planifica tareas?</td><td><span class="tag tr">No</span></td><td><span class="tag tr">No</span></td><td><span class="tag ty">Puede razonar</span></td><td><span class="tag ty">En conversación</span></td><td><span class="tag tg">Sí, decide los pasos solo</span></td></tr>
+          <tr><td>Coste computacional</td><td><span class="tag tg">Muy bajo</span></td><td><span class="tag tg">Muy bajo</span></td><td><span class="tag ty">Medio</span></td><td><span class="tag ty">Medio-alto</span></td><td><span class="tag tr">Alto</span></td></tr>
+          <tr><td>Predictibilidad</td><td><span class="tag tg">100%</span></td><td><span class="tag tg">Alta</span></td><td><span class="tag ty">Media</span></td><td><span class="tag ty">Media</span></td><td><span class="tag tr">Baja-media</span></td></tr>
+          <tr><td>Ejemplos</td><td>Selenium, bots Discord, scraping</td><td>Chatbots telco/banca pre-2022</td><td>GPT-4o, Claude, Llama via API</td><td>ChatGPT chat, Claude.ai, Gemini</td><td>Cursor, Devin, Claude Computer Use</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title" style="margin-top:24px"><span class="sc">▸</span> Embeddings · BBDD Vectorial · RAG · IA Local</div>
+    <div class="vtable-wrap">
+      <table class="vtable">
+        <thead>
+          <tr><th>Concepto</th><th>¿Qué es?</th><th>¿Para qué sirve?</th><th>Cloud</th><th>Local</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>📐 Embedding</td><td>Vector numérico que representa el significado de un texto</td><td>Hacer textos matemáticamente comparables por significado</td><td>text-embedding-3, Cohere embed</td><td>nomic-embed-text, all-MiniLM</td></tr>
+          <tr><td>🗄️ BBDD Vectorial</td><td>BBDD especializada en guardar vectores y buscar por similitud</td><td>Memoria semántica: recuperar documentos relevantes en ms</td><td>Pinecone, Weaviate cloud</td><td>Chroma, Qdrant Docker, pgvector</td></tr>
+          <tr><td>🔍 RAG</td><td>Técnica que combina retrieval de docs + generación LLM</td><td>Dar al LLM acceso a tus docs sin reentrenarlo</td><td>OpenAI + Pinecone + LangChain</td><td>Ollama + Chroma + LangChain</td></tr>
+          <tr><td>🏠 IA Local</td><td>Stack completo de IA corriendo en tu máquina</td><td>Privacidad total, sin coste API, sin internet</td><td>—</td><td>Ollama, LM Studio, llama.cpp</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title" style="margin-top:24px"><span class="sc">▸</span> Evolución cronológica</div>
+    <div class="evo">
+      <div><div class="evo-box" style="background:var(--slate-bg);border-color:var(--slate-border);color:var(--slate)">🤖 Bots</div><div class="evo-label">1990s+</div></div>
+      <div class="evo-arr">→</div>
+      <div><div class="evo-box" style="background:var(--yellow-bg);border-color:#fcd34d;color:var(--yellow)">💬 Chatbots</div><div class="evo-label">2010s</div></div>
+      <div class="evo-arr">→</div>
+      <div><div class="evo-box" style="background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue)">🧠 LLMs</div><div class="evo-label">2017–2022</div></div>
+      <div class="evo-arr">→</div>
+      <div><div class="evo-box" style="background:var(--purple-bg);border-color:var(--purple-border);color:var(--purple)">✨ Chat IA</div><div class="evo-label">2022–2023</div></div>
+      <div class="evo-arr">→</div>
+      <div><div class="evo-box" style="background:var(--green-bg);border-color:var(--green-border);color:var(--green)">🔍 RAG</div><div class="evo-label">2023</div></div>
+      <div class="evo-arr">→</div>
+      <div><div class="evo-box" style="background:var(--teal-bg);border-color:var(--teal-border);color:var(--teal)">⚙️ Agentes</div><div class="evo-label">2024</div></div>
+      <div class="evo-arr">→</div>
+      <div><div class="evo-box" style="background:var(--slate-bg);border-color:var(--slate-border);color:var(--slate)">🏠 IA Local</div><div class="evo-label">2024–hoy</div></div>
+      <div class="evo-arr">→</div>
+      <div><div class="evo-box" style="background:var(--orange-bg);border-color:var(--orange-border);color:var(--orange)">🌐 Multi-agente</div><div class="evo-label">2025–futuro</div></div>
+    </div>
+
+    <div class="analogy" style="margin-top:18px">
+      <h3>💡 El filtro definitivo para consumir contenido de IA</h3>
+      <p>Cuando veas "agente IA" pregúntate: ¿toma decisiones autónomas en múltiples pasos o simplemente responde? Cuando veas "chatbot" pregúntate: ¿usa un LLM real o un árbol de decisión? Cuando vean "IA local" pregúntate: ¿corre en tu máquina o solo llama a una API desde ahí? <strong>La mayoría de lo que se vende como agente es un chatbot con buen prompt. La mayoría de lo que se vende como IA local sigue usando APIs cloud.</strong></p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P12 · CHATBOT LOCAL (Open WebUI + Memoria + Prompts)
+  ══════════════════════════════════════════════ -->
+  <div id="p12" class="panel">
+    <div class="intro i-pu">
+      <strong>Chatbot local:</strong> un LLM corriendo en tu máquina con interfaz de chat, memoria de conversación y personalidad definida por ti. Sin APIs externas, sin coste por mensaje, sin que tus datos salgan de tu entorno. En esta pestaña: cómo montar la UI, los tipos de memoria y cómo escribir buenos prompts de sistema.
+    </div>
+
+    <!-- OPEN WEBUI -->
+    <div class="section-title"><span class="sc">▸</span> 1 · Interfaz web local — Open WebUI</div>
+    <div class="intro i-sl" style="margin-bottom:14px">
+      <strong>Open WebUI</strong> es la forma más rápida de tener una interfaz tipo ChatGPT sobre tus modelos Ollama. Se instala en 2 comandos Docker y funciona al 100% offline. Incluye historial de conversaciones, gestión de modelos, RAG integrado y soporte multi-usuario.
+    </div>
+    <div class="cg2">
+      <div>
+        <div class="ct" style="color:var(--slate)"><span class="dot" style="background:var(--slate)"></span>Instalar Open WebUI con Docker</div>
+        <pre class="pr-sl"><span class="cmt"># Opción 1: Open WebUI + Ollama en el mismo contenedor</span>
+$ docker run -d \
+  -p 3000:8080 \
+  --add-host=host.docker.internal:host-gateway \
+  -v open-webui:/app/backend/data \
+  --name open-webui \
+  --restart always \
+  ghcr.io/open-webui/open-webui:ollama
+
+<span class="cmt"># Opción 2: Solo Open WebUI (si ya tienes Ollama)</span>
+$ docker run -d \
+  -p 3000:8080 \
+  -e OLLAMA_BASE_URL=http://host.docker.internal:11434 \
+  -v open-webui:/app/backend/data \
+  ghcr.io/open-webui/open-webui:main
+
+<span class="cmt"># → Abre http://localhost:3000</span>
+<span class="cmt"># → Interfaz idéntica a ChatGPT, 100% local</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--slate)"><span class="dot" style="background:var(--slate)"></span>Alternativas a Open WebUI</div>
+        <div class="db-grid" style="grid-template-columns:1fr;margin:0;gap:10px">
+          <div class="db-card db-pu"><div class="db-name">🖥 LM Studio</div><div class="db-type">Desktop app · Mac/Win/Linux</div><div class="db-desc">App de escritorio con interfaz gráfica. Muy fácil para empezar, descarga modelos con un click. Sin Docker.</div></div>
+          <div class="db-card db-bl"><div class="db-name">⚡ Msty</div><div class="db-type">Desktop app</div><div class="db-desc">Interfaz minimalista para chatear con modelos locales. Soporte multi-modelo en paralelo.</div></div>
+          <div class="db-card db-gr"><div class="db-name">🔧 Anything LLM</div><div class="db-type">Self-hosted · RAG incluido</div><div class="db-desc">Chatbot local con RAG integrado. Puedes subir tus documentos directamente desde la UI.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMORIA -->
+    <div class="section-title" style="margin-top:24px"><span class="sc">▸</span> 2 · Memoria conversacional — los 4 tipos</div>
+    <div class="intro i-pu" style="margin-bottom:14px">
+      Sin memoria, cada mensaje al LLM es como hablar con alguien que tiene amnesia total. Existen cuatro estrategias para darle "recuerdo" a tu chatbot, cada una con su trade-off entre coste de tokens y calidad del contexto.
+    </div>
+    <div class="mem-grid">
+      <div class="mem-card mem-pu">
+        <div class="mem-head">📋 Buffer Memory</div>
+        <div class="mem-body">
+          <strong>Qué hace:</strong> guarda todos los mensajes y los manda siempre al LLM.<br><br>
+          <strong>Ventaja:</strong> contexto perfecto, sin pérdida de información.<br>
+          <strong>Problema:</strong> los tokens crecen infinito → caro y lento en conversaciones largas.<br><br>
+          <span class="tag tp">Ideal para chats cortos</span>
+        </div>
+      </div>
+      <div class="mem-card mem-bl">
+        <div class="mem-head">✂️ Window Memory</div>
+        <div class="mem-body">
+          <strong>Qué hace:</strong> solo guarda los últimos N mensajes (ej. últimos 10).<br><br>
+          <strong>Ventaja:</strong> tokens controlados, coste estable.<br>
+          <strong>Problema:</strong> olvida lo que pasó antes de la ventana.<br><br>
+          <span class="tag tb">El más usado en producción</span>
+        </div>
+      </div>
+      <div class="mem-card mem-gr">
+        <div class="mem-head">📝 Summary Memory</div>
+        <div class="mem-body">
+          <strong>Qué hace:</strong> resume periódicamente el historial con el LLM y guarda solo el resumen.<br><br>
+          <strong>Ventaja:</strong> retiene lo importante en pocos tokens.<br>
+          <strong>Problema:</strong> puede perder detalles en el resumen.<br><br>
+          <span class="tag tg">Ideal para chats muy largos</span>
+        </div>
+      </div>
+      <div class="mem-card mem-te">
+        <div class="mem-head">🧩 Entity Memory</div>
+        <div class="mem-body">
+          <strong>Qué hace:</strong> extrae y actualiza entidades clave (personas, lugares, hechos) en un mapa estructurado.<br><br>
+          <strong>Ventaja:</strong> muy eficiente, recuerda hechos importantes.<br>
+          <strong>Problema:</strong> más complejo de implementar.<br><br>
+          <span class="tag tt">Ideal para asistentes personales</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cg2" style="margin-top:16px">
+      <div>
+        <div class="ct" style="color:var(--purple)"><span class="dot" style="background:var(--purple)"></span>Buffer + Window Memory con LangChain</div>
+        <pre class="pr-pu"><span class="kw">from</span> <span class="cls">langchain_community.chat_models</span> <span class="kw">import</span> <span class="cls">ChatOllama</span>
+<span class="kw">from</span> <span class="cls">langchain.memory</span> <span class="kw">import</span> <span class="cls">ConversationBufferWindowMemory</span>
+<span class="kw">from</span> <span class="cls">langchain.chains</span> <span class="kw">import</span> <span class="cls">ConversationChain</span>
+
+<span class="pl">llm = </span><span class="cls">ChatOllama</span><span class="pl">(model=</span><span class="str">"llama3.1"</span><span class="pl">)</span>
+
+<span class="cmt"># Window: recuerda los últimos 5 intercambios</span>
+<span class="pl">memoria = </span><span class="cls">ConversationBufferWindowMemory</span><span class="pl">(</span>
+  <span class="pl">k=</span><span class="hl">5</span><span class="pl">,  </span><span class="cmt"># número de intercambios a recordar</span>
+  <span class="pl">return_messages=</span><span class="kw">True</span>
+<span class="pl">)</span>
+
+<span class="pl">chat = </span><span class="cls">ConversationChain</span><span class="pl">(</span>
+  <span class="pl">llm=llm,</span>
+  <span class="pl">memory=memoria,</span>
+  <span class="pl">verbose=</span><span class="kw">False</span>
+<span class="pl">)</span>
+
+<span class="cmt"># Conversación con memoria</span>
+<span class="pl">chat.</span><span class="fn">predict</span><span class="pl">(input=</span><span class="str">"Me llamo Carlos"</span><span class="pl">)</span>
+<span class="pl">chat.</span><span class="fn">predict</span><span class="pl">(input=</span><span class="str">"¿Cómo me llamo?"</span><span class="pl">)</span>
+<span class="cmt"># → "Te llamas Carlos" ✅</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--purple)"><span class="dot" style="background:var(--purple)"></span>Summary Memory — para chats largos</div>
+        <pre class="pr-pu"><span class="kw">from</span> <span class="cls">langchain.memory</span> <span class="kw">import</span> <span class="cls">ConversationSummaryMemory</span>
+
+<span class="cmt"># Resume la conversación con el mismo LLM</span>
+<span class="pl">memoria = </span><span class="cls">ConversationSummaryMemory</span><span class="pl">(</span>
+  <span class="pl">llm=llm,  </span><span class="cmt"># usa el LLM para resumir</span>
+  <span class="pl">return_messages=</span><span class="kw">True</span>
+<span class="pl">)</span>
+
+<span class="pl">chat = </span><span class="cls">ConversationChain</span><span class="pl">(llm=llm, memory=memoria)</span>
+
+<span class="cmt"># Tras muchos mensajes, la memoria contiene</span>
+<span class="cmt"># un resumen comprimido, no todos los mensajes</span>
+<span class="cmt"># → tokens constantes independientemente del largo</span>
+
+<span class="cmt"># Ver el estado actual de la memoria</span>
+<span class="fn">print</span><span class="pl">(memoria.buffer)</span>
+<span class="cmt"># → "El usuario se llama Carlos, trabaja en...</span></pre>
+      </div>
+    </div>
+
+    <!-- PROMPT ENGINEERING -->
+    <div class="section-title" style="margin-top:24px"><span class="sc">▸</span> 3 · Prompt Engineering — las 3 técnicas esenciales</div>
+
+    <div style="font-size:13px;color:var(--dim);margin-bottom:16px;line-height:1.7">El prompt engineering es la habilidad más práctica y rentable del día a día con LLMs. No es magia — son patrones concretos para extraer el máximo rendimiento del modelo. Estas tres técnicas cubren el 90% de los casos reales.</div>
+
+    <div class="cg1">
+      <div>
+        <div class="prompt-block pb-sys">
+          <div class="prompt-label">🎭 Técnica 1 — System Prompt: define la personalidad y el contexto</div>
+          <span class="pcmt">"""</span><br>
+          <span class="ph">Eres un asistente de soporte técnico de AcmeCorp.</span><br><br>
+          <span class="pcmt"># Tu rol</span><br>
+          Ayudas a los clientes a resolver problemas con nuestro software.<br>
+          Solo respondes sobre temas técnicos de nuestros productos.<br><br>
+          <span class="pcmt"># Cómo respondes</span><br>
+          - Responde siempre en español, en tono profesional pero cercano.<br>
+          - Si no sabes algo, di "voy a consultarlo" y no inventes.<br>
+          - Máximo 3 pasos por respuesta. Si hay más, pregunta si seguir.<br>
+          - Usa formato markdown para código.<br><br>
+          <span class="pcmt"># Contexto de empresa</span><br>
+          Nuestro producto es SaaS B2B. Los clientes son equipos técnicos.<br>
+          <span class="pcmt">"""</span><br><br>
+          <span class="pcmt">→ Define: quién eres, cómo hablas, qué puedes/no puedes hacer, contexto.</span>
+        </div>
+      </div>
+      <div>
+        <div class="prompt-block pb-few">
+          <div class="prompt-label">📚 Técnica 2 — Few-Shot: enseña con ejemplos en el propio prompt</div>
+          <span class="ph">Clasifica el sentimiento del texto. Responde solo: POSITIVO, NEGATIVO o NEUTRO.</span><br><br>
+          <span class="pcmt">Ejemplos:</span><br>
+          Texto: <span class="pstr">"El producto es increíble, lo recomiendo"</span><br>
+          Sentimiento: <span class="ph">POSITIVO</span><br><br>
+          Texto: <span class="pstr">"Me llegó roto y el soporte no respondió"</span><br>
+          Sentimiento: <span class="ph">NEGATIVO</span><br><br>
+          Texto: <span class="pstr">"El pedido llegó el martes"</span><br>
+          Sentimiento: <span class="ph">NEUTRO</span><br><br>
+          Ahora clasifica:<br>
+          Texto: <span class="pstr">"Funciona bien aunque podría mejorar"</span><br>
+          Sentimiento:<br><br>
+          <span class="pcmt">→ Los ejemplos guían el formato y el criterio sin fine-tuning.</span>
+        </div>
+      </div>
+      <div>
+        <div class="prompt-block pb-cot">
+          <div class="prompt-label">🔗 Técnica 3 — Chain of Thought: obliga a razonar paso a paso</div>
+          <span class="ph">Analiza si esta campaña de marketing tiene sentido para nuestro producto. Piensa paso a paso:</span><br><br>
+          <span class="pcmt">1. Identifica el público objetivo de la campaña</span><br>
+          <span class="pcmt">2. Compáralo con nuestro público objetivo real</span><br>
+          <span class="pcmt">3. Evalúa el mensaje y su coherencia con nuestra propuesta de valor</span><br>
+          <span class="pcmt">4. Identifica riesgos o puntos débiles</span><br>
+          <span class="pcmt">5. Da una recomendación final con justificación</span><br><br>
+          Campaña: <span class="pstr">[descripción de la campaña]</span><br><br>
+          <span class="pcmt">→ Sin este prompt, el LLM da una respuesta superficial.</span><br>
+          <span class="pcmt">→ Con él, razona metódicamente y da análisis mucho más útiles.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P13 · CONSTRUIR AGENTES
+  ══════════════════════════════════════════════ -->
+  <div id="p13" class="panel">
+    <div class="intro i-te">
+      <strong>Construir agentes:</strong> de la teoría a la práctica. Para crear un agente real necesitas entender cómo el LLM llama a herramientas (tool use/function calling), cómo orquestar flujos complejos (LangGraph) y cuándo conviene que varios agentes colaboren (CrewAI). También verás la opción no-code con Flowise.
+    </div>
+
+    <!-- TOOL USE -->
+    <div class="section-title"><span class="sc">▸</span> 1 · Tool Use / Function Calling — cómo el LLM llama a herramientas</div>
+    <div class="intro i-te" style="margin-bottom:14px">
+      El mecanismo fundamental: le dices al LLM qué herramientas tiene disponibles (nombre, descripción, parámetros). Cuando necesita una, devuelve una llamada estructurada en vez de texto. Tu código ejecuta la herramienta y devuelve el resultado. El LLM decide cuándo y cómo usarla.
+    </div>
+
+    <div class="diagram-wrap" style="margin-bottom:16px">
+      <div class="d-cluster" style="border-color:var(--teal-border);background:rgba(15,118,110,.02)">
+        <div class="d-cluster-label" style="color:var(--teal)">Ciclo tool use</div>
+        <div class="lg-row">
+          <div class="lg-node d-te">👤 Prompt + herramientas disponibles</div>
+          <div class="lg-edge">→</div>
+          <div class="lg-node d-bl">🧠 LLM decide: ¿necesito una tool?</div>
+        </div>
+        <div class="lg-row">
+          <div class="lg-node d-gr">✅ Devuelve texto normal</div>
+          <div class="lg-edge" style="color:var(--orange)">← NO ←&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ SÍ →</div>
+          <div class="lg-node d-or">⚙️ Devuelve tool_call JSON</div>
+        </div>
+        <div class="lg-row">
+          <div></div>
+          <div></div>
+          <div class="lg-node d-pu" style="margin-left:auto">💻 Tu código ejecuta la función</div>
+        </div>
+        <div class="lg-row">
+          <div></div>
+          <div></div>
+          <div class="lg-node d-te" style="margin-left:auto">🔄 Resultado → de vuelta al LLM</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cg2">
+      <div>
+        <div class="ct" style="color:var(--teal)"><span class="dot" style="background:var(--teal)"></span>Definir herramientas con LangChain</div>
+        <pre class="pr-te"><span class="kw">from</span> <span class="cls">langchain.tools</span> <span class="kw">import</span> <span class="cls">tool</span>
+<span class="kw">from</span> <span class="cls">langchain_community.chat_models</span> <span class="kw">import</span> <span class="cls">ChatOllama</span>
+<span class="kw">from</span> <span class="cls">langchain.agents</span> <span class="kw">import</span> <span class="cls">AgentExecutor</span><span class="pl">, </span><span class="fn">create_tool_calling_agent</span>
+<span class="kw">from</span> <span class="cls">langchain_core.prompts</span> <span class="kw">import</span> <span class="cls">ChatPromptTemplate</span>
+
+<span class="cmt"># 1. Definir las herramientas disponibles</span>
+<span class="cls">@tool</span>
+<span class="kw">def</span> <span class="fn">buscar_precio</span><span class="pl">(producto: </span><span class="tp2">str</span><span class="pl">) -> </span><span class="tp2">str</span><span class="pl">:</span>
+  <span class="pstr">"""Busca el precio actual de un producto en la BBDD."""</span>
+  <span class="pl">precios = {</span><span class="str">"plan_pro"</span><span class="pl">: </span><span class="str">"29€/mes"</span><span class="pl">, </span><span class="str">"plan_basic"</span><span class="pl">: </span><span class="str">"9€/mes"</span><span class="pl">}</span>
+  <span class="kw">return</span> <span class="pl">precios.</span><span class="fn">get</span><span class="pl">(producto, </span><span class="str">"Producto no encontrado"</span><span class="pl">)</span>
+
+<span class="cls">@tool</span>
+<span class="kw">def</span> <span class="fn">crear_ticket</span><span class="pl">(asunto: </span><span class="tp2">str</span><span class="pl">, descripcion: </span><span class="tp2">str</span><span class="pl">) -> </span><span class="tp2">str</span><span class="pl">:</span>
+  <span class="pstr">"""Crea un ticket de soporte con asunto y descripción."""</span>
+  <span class="cmt"># aquí iría tu lógica real</span>
+  <span class="kw">return</span> <span class="pl">f</span><span class="str">"Ticket #{id(asunto)} creado correctamente"</span>
+
+<span class="cmt"># 2. Crear el agente con las herramientas</span>
+<span class="pl">llm   = </span><span class="cls">ChatOllama</span><span class="pl">(model=</span><span class="str">"llama3.1"</span><span class="pl">)</span>
+<span class="pl">tools = [buscar_precio, crear_ticket]</span>
+
+<span class="pl">prompt = </span><span class="cls">ChatPromptTemplate</span><span class="pl">.</span><span class="fn">from_messages</span><span class="pl">([</span>
+  <span class="pl">(</span><span class="str">"system"</span><span class="pl">, </span><span class="str">"Eres un asistente de soporte. Usa las herramientas disponibles."</span><span class="pl">),</span>
+  <span class="pl">(</span><span class="str">"human"</span><span class="pl">, </span><span class="str">"{input}"</span><span class="pl">),</span>
+  <span class="pl">(</span><span class="str">"placeholder"</span><span class="pl">, </span><span class="str">"{agent_scratchpad}"</span><span class="pl">)</span>
+<span class="pl">])</span>
+
+<span class="pl">agente   = </span><span class="fn">create_tool_calling_agent</span><span class="pl">(llm, tools, prompt)</span>
+<span class="pl">executor = </span><span class="cls">AgentExecutor</span><span class="pl">(agent=agente, tools=tools, verbose=</span><span class="kw">True</span><span class="pl">)</span>
+
+<span class="cmt"># 3. El agente decide solo qué herramienta usar</span>
+<span class="pl">executor.</span><span class="fn">invoke</span><span class="pl">({</span><span class="str">"input"</span><span class="pl">: </span><span class="str">"¿Cuánto cuesta plan_pro y crea un ticket si es mayor a 20€"</span><span class="pl">})</span>
+<span class="cmt"># → llama a buscar_precio("plan_pro") → 29€</span>
+<span class="cmt"># → llama a crear_ticket("Precio elevado", ...) ✅</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--teal)"><span class="dot" style="background:var(--teal)"></span>Herramientas built-in útiles</div>
+        <pre class="pr-te"><span class="kw">from</span> <span class="cls">langchain_community.tools</span> <span class="kw">import</span> <span class="cls">DuckDuckGoSearchRun</span>
+<span class="kw">from</span> <span class="cls">langchain_community.tools</span> <span class="kw">import</span> <span class="cls">WikipediaQueryRun</span>
+<span class="kw">from</span> <span class="cls">langchain_experimental.tools</span> <span class="kw">import</span> <span class="cls">PythonREPLTool</span>
+<span class="kw">from</span> <span class="cls">langchain.tools</span> <span class="kw">import</span> <span class="cls">ReadFileTool</span><span class="pl">, </span><span class="cls">WriteFileTool</span>
+
+<span class="cmt"># Búsqueda web (no necesita API key)</span>
+<span class="pl">buscar  = </span><span class="cls">DuckDuckGoSearchRun</span><span class="pl">()</span>
+
+<span class="cmt"># Ejecutar código Python real</span>
+<span class="pl">python  = </span><span class="cls">PythonREPLTool</span><span class="pl">()</span>
+
+<span class="cmt"># Leer/escribir archivos locales</span>
+<span class="pl">leer    = </span><span class="cls">ReadFileTool</span><span class="pl">()</span>
+<span class="pl">escribir = </span><span class="cls">WriteFileTool</span><span class="pl">()</span>
+
+<span class="cmt"># Todas estas tools se usan igual:</span>
+<span class="pl">tools = [buscar, python, leer, escribir]</span>
+<span class="pl">executor = </span><span class="cls">AgentExecutor</span><span class="pl">(agent=</span><span class="fn">create_tool_calling_agent</span><span class="pl">(</span>
+  <span class="pl">llm, tools, prompt), tools=tools</span>
+<span class="pl">)</span>
+
+<span class="cmt"># El agente puede ahora: buscar en internet,</span>
+<span class="cmt"># ejecutar Python, leer y escribir archivos</span>
+<span class="cmt"># — todo de forma autónoma</span></pre>
+        <div class="analogy" style="margin-top:12px;padding:12px 14px">
+          <h3>💡 Truco: la descripción de la tool importa mucho</h3>
+          <p style="font-size:12.5px">El LLM decide qué tool usar leyendo su <strong>docstring</strong>. Una descripción vaga = tool mal usada. Sé específico: "Busca el precio actual de un producto dado su ID exacto en nuestra BBDD" es mucho mejor que "busca precio".</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LANGGRAPH -->
+    <div class="section-title" style="margin-top:24px"><span class="sc">▸</span> 2 · LangGraph — agentes con flujos controlados</div>
+    <div class="intro i-te" style="margin-bottom:14px">
+      <strong>LangGraph</strong> es el estándar actual para agentes complejos. A diferencia del AgentExecutor (que es un bucle libre), LangGraph te permite definir un <em>grafo de estados</em>: qué nodos existen, cómo se conectan y qué condiciones determinan el camino. Más control, más predecible, más robusto en producción.
+    </div>
+
+    <div class="diagram-wrap" style="margin-bottom:12px">
+      <div class="d-cluster" style="border-color:var(--teal-border);max-width:680px">
+        <div class="d-cluster-label" style="color:var(--teal)">Grafo de un agente LangGraph</div>
+        <div class="lg-row">
+          <div class="lg-node d-ye">🚀 START</div>
+          <div class="lg-edge">→</div>
+          <div class="lg-node d-bl">🧠 Nodo: LLM razona</div>
+          <div class="lg-edge">→</div>
+          <div class="lg-node d-or" style="font-size:11px">🔀 ¿necesita tool?</div>
+        </div>
+        <div class="lg-row" style="justify-content:flex-end;margin-right:20px">
+          <div class="lg-cond">SÍ → ejecuta tool</div>
+          <div class="lg-edge">→</div>
+          <div class="lg-node d-te">🔧 Nodo: Tool</div>
+          <div class="lg-edge">→ vuelve a LLM</div>
+        </div>
+        <div class="lg-row" style="justify-content:flex-end;margin-right:20px">
+          <div class="lg-cond">NO → ha terminado</div>
+          <div class="lg-edge">→</div>
+          <div class="lg-node d-gr">✅ END</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cg1"><div>
+      <div class="ct" style="color:var(--teal)"><span class="dot" style="background:var(--teal)"></span>Agente básico con LangGraph</div>
+      <pre class="pr-te"><span class="kw">from</span> <span class="cls">langgraph.graph</span> <span class="kw">import</span> <span class="cls">StateGraph</span><span class="pl">, </span><span class="cls">END</span>
+<span class="kw">from</span> <span class="cls">langgraph.prebuilt</span> <span class="kw">import</span> <span class="cls">ToolNode</span>
+<span class="kw">from</span> <span class="cls">langchain_community.chat_models</span> <span class="kw">import</span> <span class="cls">ChatOllama</span>
+<span class="kw">from</span> <span class="cls">typing</span> <span class="kw">import</span> <span class="cls">TypedDict</span><span class="pl">, </span><span class="cls">Annotated</span>
+<span class="kw">import</span> <span class="cls">operator</span>
+
+<span class="cmt"># 1. Definir el estado del grafo</span>
+<span class="kw">class</span> <span class="cls">Estado</span><span class="pl">(</span><span class="cls">TypedDict</span><span class="pl">):</span>
+  <span class="pl">messages: </span><span class="cls">Annotated</span><span class="pl">[list, operator.add]</span>
+
+<span class="cmt"># 2. Nodo LLM</span>
+<span class="pl">llm   = </span><span class="cls">ChatOllama</span><span class="pl">(model=</span><span class="str">"llama3.1"</span><span class="pl">).bind_tools([buscar_precio, crear_ticket])</span>
+<span class="kw">def</span> <span class="fn">nodo_llm</span><span class="pl">(estado):</span>
+  <span class="kw">return</span> <span class="pl">{</span><span class="str">"messages"</span><span class="pl">: [llm.</span><span class="fn">invoke</span><span class="pl">(estado[</span><span class="str">"messages"</span><span class="pl">])]}</span>
+
+<span class="cmt"># 3. Condición de salida</span>
+<span class="kw">def</span> <span class="fn">hay_tool_call</span><span class="pl">(estado):</span>
+  <span class="pl">ultimo = estado[</span><span class="str">"messages"</span><span class="pl">][-</span><span class="hl">1</span><span class="pl">]</span>
+  <span class="kw">return</span> <span class="str">"tools"</span> <span class="kw">if</span> <span class="fn">getattr</span><span class="pl">(ultimo, </span><span class="str">"tool_calls"</span><span class="pl">, </span><span class="kw">None</span><span class="pl">) </span><span class="kw">else</span> <span class="cls">END</span>
+
+<span class="cmt"># 4. Construir el grafo</span>
+<span class="pl">grafo = </span><span class="cls">StateGraph</span><span class="pl">(</span><span class="cls">Estado</span><span class="pl">)</span>
+<span class="pl">grafo.</span><span class="fn">add_node</span><span class="pl">(</span><span class="str">"llm"</span><span class="pl">,   nodo_llm)</span>
+<span class="pl">grafo.</span><span class="fn">add_node</span><span class="pl">(</span><span class="str">"tools"</span><span class="pl">, </span><span class="cls">ToolNode</span><span class="pl">([buscar_precio, crear_ticket]))</span>
+<span class="pl">grafo.</span><span class="fn">set_entry_point</span><span class="pl">(</span><span class="str">"llm"</span><span class="pl">)</span>
+<span class="pl">grafo.</span><span class="fn">add_conditional_edges</span><span class="pl">(</span><span class="str">"llm"</span><span class="pl">, hay_tool_call)</span>
+<span class="pl">grafo.</span><span class="fn">add_edge</span><span class="pl">(</span><span class="str">"tools"</span><span class="pl">, </span><span class="str">"llm"</span><span class="pl">)  </span><span class="cmt"># tras la tool vuelve al LLM</span>
+
+<span class="pl">agente = grafo.</span><span class="fn">compile</span><span class="pl">()</span>
+<span class="pl">resultado = agente.</span><span class="fn">invoke</span><span class="pl">({</span><span class="str">"messages"</span><span class="pl">: [{</span><span class="str">"role"</span><span class="pl">:</span><span class="str">"user"</span><span class="pl">, </span><span class="str">"content"</span><span class="pl">:</span><span class="str">"precio plan_pro"</span><span class="pl">}]})</span></pre>
+    </div></div>
+
+    <!-- CREWAI -->
+    <div class="section-title" style="margin-top:24px"><span class="sc">▸</span> 3 · Frameworks para agentes — cuándo usar cada uno</div>
+    <div class="fw-grid">
+      <div class="fw-card" style="border-color:var(--teal-border)">
+        <div class="fw-head" style="background:var(--teal-bg);color:var(--teal)">
+          <span style="font-size:20px">🔗</span> LangChain AgentExecutor
+        </div>
+        <div class="fw-body">
+          <div class="fw-desc">Agente básico de bucle libre. El LLM decide qué tools usar en cada iteración sin restricciones de flujo. Simple de montar, difícil de controlar en casos complejos.</div>
+          <div class="fw-when">Ideal para: prototipos y agentes simples con 1-3 herramientas.</div>
+          <div class="fw-tags"><span class="tag tt">Local con Ollama</span><span class="tag tg">Fácil</span></div>
+        </div>
+      </div>
+      <div class="fw-card" style="border-color:var(--blue-border)">
+        <div class="fw-head" style="background:var(--blue-bg);color:var(--blue)">
+          <span style="font-size:20px">📊</span> LangGraph
+        </div>
+        <div class="fw-body">
+          <div class="fw-desc">Agentes como grafos de estados. Defines exactamente el flujo: qué nodo sigue a cuál y bajo qué condición. Mucho más predecible y robusto. El estándar actual en producción.</div>
+          <div class="fw-when">Ideal para: agentes en producción con flujos complejos y multi-paso.</div>
+          <div class="fw-tags"><span class="tag tb">Local con Ollama</span><span class="tag tg">Robusto</span><span class="tag tp">Estándar 2024/25</span></div>
+        </div>
+      </div>
+      <div class="fw-card" style="border-color:var(--orange-border)">
+        <div class="fw-head" style="background:var(--orange-bg);color:var(--orange)">
+          <span style="font-size:20px">👥</span> CrewAI
+        </div>
+        <div class="fw-body">
+          <div class="fw-desc">Framework para agentes multi-agente. Defines un "equipo" de agentes con roles (investigador, redactor, revisor) y CrewAI coordina quién hace qué. Muy bueno para pipelines complejos con división de tareas.</div>
+          <div class="fw-when">Ideal para: flujos donde varias "personas" especializadas colaboran.</div>
+          <div class="fw-tags"><span class="tag to">Local con Ollama</span><span class="tag tg">Multi-agente</span></div>
+        </div>
+      </div>
+      <div class="fw-card" style="border-color:var(--purple-border)">
+        <div class="fw-head" style="background:var(--purple-bg);color:var(--purple)">
+          <span style="font-size:20px">🤖</span> AutoGen (Microsoft)
+        </div>
+        <div class="fw-body">
+          <div class="fw-desc">Conversación entre agentes: un agente "asistente" y uno "ejecutor" se pasan mensajes hasta resolver el problema. Muy potente para código y debugging automático.</div>
+          <div class="fw-when">Ideal para: agentes que necesitan iterar mucho (escribir código, probar, corregir).</div>
+          <div class="fw-tags"><span class="tag tp">Local compatible</span><span class="tag tb">Microsoft</span></div>
+        </div>
+      </div>
+      <div class="fw-card" style="border-color:var(--green-border)">
+        <div class="fw-head" style="background:var(--green-bg);color:var(--green)">
+          <span style="font-size:20px">🌊</span> Flowise
+        </div>
+        <div class="fw-body">
+          <div class="fw-desc">Interfaz visual drag-and-drop para construir agentes y chatbots. Arrastra nodos (LLM, herramientas, memoria, BBDD vectorial) y los conectas visualmente. Sin programar. Se puede hospedar en local.</div>
+          <div class="fw-when">Ideal para: entender flujos visualmente, prototipado no-code, no programadores.</div>
+          <div class="fw-tags"><span class="tag tg">No-code</span><span class="tag tt">Self-hosted</span><span class="tag tg">Local Ollama</span></div>
+        </div>
+      </div>
+      <div class="fw-card" style="border-color:var(--rose-border)">
+        <div class="fw-head" style="background:var(--rose-bg);color:var(--rose)">
+          <span style="font-size:20px">🔀</span> n8n
+        </div>
+        <div class="fw-body">
+          <div class="fw-desc">Automatización de flujos de trabajo con nodos de IA. Conecta LLMs con Gmail, Slack, Notion, bases de datos, webhooks, etc. Self-hosted o cloud. El más potente para integraciones empresariales.</div>
+          <div class="fw-when">Ideal para: automatizar procesos de negocio que combinan IA con otras APIs.</div>
+          <div class="fw-tags"><span class="tag tr">Low-code</span><span class="tag tt">Self-hosted</span><span class="tag tg">Integraciones</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREWAI EJEMPLO -->
+    <div class="section-title" style="margin-top:24px"><span class="sc">▸</span> Ejemplo CrewAI: equipo de agentes para investigar y redactar</div>
+    <div class="cg2">
+      <div>
+        <div class="ct" style="color:var(--orange)"><span class="dot" style="background:var(--orange)"></span>Definir agentes y roles</div>
+        <pre class="pr-or"><span class="kw">from</span> <span class="cls">crewai</span> <span class="kw">import</span> <span class="cls">Agent</span><span class="pl">, </span><span class="cls">Task</span><span class="pl">, </span><span class="cls">Crew</span>
+<span class="kw">from</span> <span class="cls">langchain_community.chat_models</span> <span class="kw">import</span> <span class="cls">ChatOllama</span>
+<span class="kw">from</span> <span class="cls">langchain_community.tools</span> <span class="kw">import</span> <span class="cls">DuckDuckGoSearchRun</span>
+
+<span class="pl">llm    = </span><span class="cls">ChatOllama</span><span class="pl">(model=</span><span class="str">"llama3.1"</span><span class="pl">)</span>
+<span class="pl">buscar = </span><span class="cls">DuckDuckGoSearchRun</span><span class="pl">()</span>
+
+<span class="cmt"># Agente 1: investigador</span>
+<span class="pl">investigador = </span><span class="cls">Agent</span><span class="pl">(</span>
+  <span class="pl">role=</span><span class="str">"Investigador Senior"</span><span class="pl">,</span>
+  <span class="pl">goal=</span><span class="str">"Encontrar información actualizada y fiable sobre el tema"</span><span class="pl">,</span>
+  <span class="pl">backstory=</span><span class="str">"Experto en búsqueda y análisis de fuentes"</span><span class="pl">,</span>
+  <span class="pl">tools=[buscar],</span>
+  <span class="pl">llm=llm,</span>
+  <span class="pl">verbose=</span><span class="kw">True</span>
+<span class="pl">)</span>
+
+<span class="cmt"># Agente 2: redactor</span>
+<span class="pl">redactor = </span><span class="cls">Agent</span><span class="pl">(</span>
+  <span class="pl">role=</span><span class="str">"Redactor de Contenidos"</span><span class="pl">,</span>
+  <span class="pl">goal=</span><span class="str">"Escribir artículos claros y bien estructurados"</span><span class="pl">,</span>
+  <span class="pl">backstory=</span><span class="str">"Especialista en comunicación técnica"</span><span class="pl">,</span>
+  <span class="pl">llm=llm</span>
+<span class="pl">)</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--orange)"><span class="dot" style="background:var(--orange)"></span>Definir tareas y lanzar el equipo</div>
+        <pre class="pr-or"><span class="cmt"># Tarea 1: investigar</span>
+<span class="pl">tarea_invest = </span><span class="cls">Task</span><span class="pl">(</span>
+  <span class="pl">description=</span><span class="str">"Investiga los últimos avances en LLMs locales. Busca datos concretos, modelos recientes y casos de uso."</span><span class="pl">,</span>
+  <span class="pl">expected_output=</span><span class="str">"Lista de 5 puntos clave con fuentes"</span><span class="pl">,</span>
+  <span class="pl">agent=investigador</span>
+<span class="pl">)</span>
+
+<span class="cmt"># Tarea 2: redactar (usa el output de tarea 1)</span>
+<span class="pl">tarea_redact = </span><span class="cls">Task</span><span class="pl">(</span>
+  <span class="pl">description=</span><span class="str">"Con la investigación anterior, escribe un artículo de blog de 300 palabras sobre LLMs locales."</span><span class="pl">,</span>
+  <span class="pl">expected_output=</span><span class="str">"Artículo completo en markdown"</span><span class="pl">,</span>
+  <span class="pl">agent=redactor,</span>
+  <span class="pl">context=[tarea_invest]  </span><span class="cmt"># recibe el output del investigador</span>
+<span class="pl">)</span>
+
+<span class="cmt"># Lanzar el equipo</span>
+<span class="pl">equipo = </span><span class="cls">Crew</span><span class="pl">(</span>
+  <span class="pl">agents=[investigador, redactor],</span>
+  <span class="pl">tasks=[tarea_invest, tarea_redact],</span>
+  <span class="pl">verbose=</span><span class="hl">2</span>
+<span class="pl">)</span>
+<span class="pl">resultado = equipo.</span><span class="fn">kickoff</span><span class="pl">()</span>
+<span class="cmt"># → El investigador busca, el redactor escribe</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       P14 · FINE-TUNING
+  ══════════════════════════════════════════════ -->
+  <div id="p14" class="panel">
+    <div class="intro i-gr">
+      <strong>Fine-tuning:</strong> proceso de re-entrenar un LLM ya existente con tus propios datos para que aprenda un estilo, un dominio técnico o un comportamiento específico. A diferencia de RAG (que da conocimiento externo en cada llamada), el fine-tuning "hornea" ese conocimiento directamente en los pesos del modelo. Saber cuándo usar uno u otro es una de las decisiones más importantes en IA aplicada.
+    </div>
+
+    <!-- RAG vs FT -->
+    <div class="section-title"><span class="sc">▸</span> La pregunta clave: ¿RAG o Fine-tuning?</div>
+    <div class="ft-compare">
+      <div class="ft-col ft-rag">
+        <div class="ft-title">🔍 Usa RAG cuando...</div>
+        <div class="ft-item">Los datos cambian con frecuencia (FAQs, catálogos, normativas)</div>
+        <div class="ft-item">Necesitas transparencia: saber de qué fuente vino la respuesta</div>
+        <div class="ft-item">El presupuesto es limitado (no requiere GPU para entrenar)</div>
+        <div class="ft-item">Quieres resultados rápidos: de horas a días</div>
+        <div class="ft-item">El conocimiento es factual y está en documentos</div>
+        <div class="ft-item">Necesitas citar fuentes o mostrar el contexto recuperado</div>
+      </div>
+      <div class="ft-col ft-ft">
+        <div class="ft-title">🎓 Usa Fine-tuning cuando...</div>
+        <div class="ft-item">Quieres cambiar el <em>estilo o tono</em> del modelo (más formal, más técnico, con jerga propia)</div>
+        <div class="ft-item">Necesitas un formato de respuesta muy específico y consistente</div>
+        <div class="ft-item">El modelo base no entiende tu dominio especializado (medicina, derecho, código propietario)</div>
+        <div class="ft-item">Tienes muchos ejemplos pares (input → output ideal) etiquetados</div>
+        <div class="ft-item">La latencia es crítica y no puedes añadir contexto en cada llamada</div>
+        <div class="ft-item">Combinas con RAG: fine-tune para el estilo, RAG para el conocimiento</div>
+      </div>
+    </div>
+
+    <div class="key-diff kd-gr">
+      <div class="kd-title">🎯 La combinación ganadora</div>
+      <div class="kd-body"><strong>Fine-tuning + RAG juntos</strong> es la arquitectura más potente. Fine-tune para que el modelo hable con tu voz, con tu terminología y en tu formato. RAG para que tenga acceso a tu base de conocimiento actualizada. Son complementarios, no excluyentes.</div>
+    </div>
+
+    <div class="section-title" style="margin-top:22px"><span class="sc">▸</span> ¿Qué tipos de fine-tuning existen?</div>
+    <div class="ch"><div class="ck" style="color:var(--green);border-color:var(--green);background:var(--green-bg)">Técnica</div><div class="cl">Descripción y cuándo usarla</div></div>
+    <div class="cb2">
+      <div class="cr"><div class="rl">Full fine-tuning</div><div class="rv">Ajusta <strong>todos</strong> los pesos del modelo. Máxima calidad pero requiere hardware masivo (varias GPUs de 80GB) y muchos datos. Solo viable en cloud o empresa grande. <span class="tag tr">No recomendado para empezar</span></div></div>
+      <div class="cr"><div class="rl">LoRA / QLoRA</div><div class="rv"><strong>El método estándar hoy.</strong> Solo ajusta matrices pequeñas añadidas al modelo original. QLoRA lo hace además con cuantización 4-bit: puedes hacer fine-tuning de Llama 3.1 8B en una GPU de 16GB o incluso en Google Colab gratis. <span class="tag tg">Recomendado para empezar</span></div></div>
+      <div class="cr"><div class="rl">RLHF</div><div class="rv">Reinforcement Learning from Human Feedback. Los humanos puntúan respuestas y el modelo aprende a maximizar esa puntuación. Así se crean los modelos "chat" (ChatGPT, Claude). Muy complejo, para equipos especializados. <span class="tag ty">Solo para labs de IA</span></div></div>
+      <div class="cr"><div class="rl">Instruction tuning</div><div class="rv">Fine-tune con pares (instrucción → respuesta ideal). Convierte un modelo base en uno que sigue instrucciones. Es lo que hace que Llama-base se convierta en Llama-instruct. <span class="tag tb">El más común en práctica</span></div></div>
+    </div>
+
+    <div class="section-title" style="margin-top:22px"><span class="sc">▸</span> Fine-tuning local con QLoRA — la forma accesible</div>
+    <div class="cg2">
+      <div>
+        <div class="ct" style="color:var(--green)"><span class="dot" style="background:var(--green)"></span>Setup con Unsloth (el más rápido)</div>
+        <pre class="pr-gr"><span class="cmt"># Unsloth: fine-tuning 2x más rápido, 60% menos VRAM</span>
+<span class="cmt"># pip install "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git"</span>
+
+<span class="kw">from</span> <span class="cls">unsloth</span> <span class="kw">import</span> <span class="cls">FastLanguageModel</span>
+<span class="kw">import</span> <span class="cls">torch</span>
+
+<span class="cmt"># Cargar modelo base con cuantización 4-bit (QLoRA)</span>
+<span class="pl">model, tokenizer = </span><span class="cls">FastLanguageModel</span><span class="pl">.</span><span class="fn">from_pretrained</span><span class="pl">(</span>
+  <span class="pl">model_name=</span><span class="str">"unsloth/llama-3-8b-bnb-4bit"</span><span class="pl">,  </span><span class="cmt"># 5GB VRAM</span>
+  <span class="pl">max_seq_length=</span><span class="hl">2048</span><span class="pl">,</span>
+  <span class="pl">dtype=</span><span class="kw">None</span><span class="pl">,</span>
+  <span class="pl">load_in_4bit=</span><span class="kw">True</span><span class="pl">,</span>
+<span class="pl">)</span>
+
+<span class="cmt"># Añadir adaptadores LoRA (solo estos pesos se entrenan)</span>
+<span class="pl">model = </span><span class="cls">FastLanguageModel</span><span class="pl">.</span><span class="fn">get_peft_model</span><span class="pl">(</span>
+  <span class="pl">model,</span>
+  <span class="pl">r=</span><span class="hl">16</span><span class="pl">,              </span><span class="cmt"># rango LoRA (8-64)</span>
+  <span class="pl">target_modules=[</span><span class="str">"q_proj"</span><span class="pl">, </span><span class="str">"k_proj"</span><span class="pl">, </span><span class="str">"v_proj"</span><span class="pl">],</span>
+  <span class="pl">lora_alpha=</span><span class="hl">16</span><span class="pl">,</span>
+  <span class="pl">lora_dropout=</span><span class="hl">0</span><span class="pl">,</span>
+<span class="pl">)</span>
+<span class="cmt"># → Solo ~0.1% de los parámetros se entrenan</span>
+<span class="cmt"># → El modelo base queda intacto (guardado separado)</span></pre>
+      </div>
+      <div>
+        <div class="ct" style="color:var(--green)"><span class="dot" style="background:var(--green)"></span>Datos y entrenamiento</div>
+        <pre class="pr-gr"><span class="kw">from</span> <span class="cls">datasets</span> <span class="kw">import</span> <span class="cls">Dataset</span>
+<span class="kw">from</span> <span class="cls">trl</span> <span class="kw">import</span> <span class="cls">SFTTrainer</span>
+<span class="kw">from</span> <span class="cls">transformers</span> <span class="kw">import</span> <span class="cls">TrainingArguments</span>
+
+<span class="cmt"># Formato de datos: pares instrucción → respuesta</span>
+<span class="pl">datos = [</span>
+  <span class="pl">{</span><span class="str">"text"</span><span class="pl">: </span><span class="str">"""### Instrucción:
+Responde en el tono formal de AcmeCorp.
+¿Cuál es la política de devoluciones?
+
+### Respuesta:
+Estimado cliente, conforme a nuestra política
+comercial vigente, las devoluciones se aceptan
+dentro de un plazo máximo de 30 días naturales..."""</span><span class="pl">},</span>
+  <span class="cmt"># ... cientos o miles de ejemplos más</span>
+<span class="pl">]</span>
+
+<span class="pl">dataset = </span><span class="cls">Dataset</span><span class="pl">.</span><span class="fn">from_list</span><span class="pl">(datos)</span>
+
+<span class="cmt"># Entrenar</span>
+<span class="pl">trainer = </span><span class="cls">SFTTrainer</span><span class="pl">(</span>
+  <span class="pl">model=model,</span>
+  <span class="pl">tokenizer=tokenizer,</span>
+  <span class="pl">train_dataset=dataset,</span>
+  <span class="pl">dataset_text_field=</span><span class="str">"text"</span><span class="pl">,</span>
+  <span class="pl">args=</span><span class="cls">TrainingArguments</span><span class="pl">(</span>
+    <span class="pl">per_device_train_batch_size=</span><span class="hl">2</span><span class="pl">,</span>
+    <span class="pl">num_train_epochs=</span><span class="hl">3</span><span class="pl">,</span>
+    <span class="pl">output_dir=</span><span class="str">"./modelo_ft"</span><span class="pl">,</span>
+  <span class="pl">)</span>
+<span class="pl">)</span>
+<span class="pl">trainer.</span><span class="fn">train</span><span class="pl">()</span>
+<span class="cmt"># → Guarda adaptadores LoRA (~50MB)</span>
+<span class="cmt"># → Carga sobre el modelo base cuando quieras</span></pre>
+      </div>
+    </div>
+
+    <!-- HERRAMIENTAS FINE-TUNE -->
+    <div class="section-title" style="margin-top:22px"><span class="sc">▸</span> Herramientas para hacer fine-tuning</div>
+    <div class="fw-grid">
+      <div class="fw-card" style="border-color:var(--green-border)">
+        <div class="fw-head" style="background:var(--green-bg);color:var(--green)"><span style="font-size:20px">🦥</span> Unsloth</div>
+        <div class="fw-body">
+          <div class="fw-desc">La forma más accesible hoy. Fine-tuning 2x más rápido que HuggingFace con 60% menos de VRAM. Soporta Llama 3, Mistral, Phi, Qwen. Funciona en Google Colab gratis.</div>
+          <div class="fw-when">Empieza aquí. Tiene notebooks listos para usar.</div>
+          <div class="fw-tags"><span class="tag tg">Recomendado</span><span class="tag tb">Colab gratuito</span></div>
+        </div>
+      </div>
+      <div class="fw-card" style="border-color:var(--blue-border)">
+        <div class="fw-head" style="background:var(--blue-bg);color:var(--blue)"><span style="font-size:20px">🤗</span> HuggingFace PEFT + TRL</div>
+        <div class="fw-body">
+          <div class="fw-desc">La librería estándar. PEFT para LoRA, TRL para instruction tuning con SFTTrainer. Más control, más complejo. Unsloth usa estas librerías por debajo.</div>
+          <div class="fw-when">Cuando necesitas más personalización que Unsloth.</div>
+          <div class="fw-tags"><span class="tag tb">Estándar</span></div>
+        </div>
+      </div>
+      <div class="fw-card" style="border-color:var(--orange-border)">
+        <div class="fw-head" style="background:var(--orange-bg);color:var(--orange)"><span style="font-size:20px">🔥</span> Axolotl</div>
+        <div class="fw-body">
+          <div class="fw-desc">Fine-tuning configurable vía YAML. Solo defines un fichero de configuración y lanza el entrenamiento. Muy usado por la comunidad para fine-tuning serio.</div>
+          <div class="fw-when">Cuando quieres reproducibilidad y configuración declarativa.</div>
+          <div class="fw-tags"><span class="tag to">YAML-driven</span><span class="tag tg">Open source</span></div>
+        </div>
+      </div>
+      <div class="fw-card" style="border-color:var(--purple-border)">
+        <div class="fw-head" style="background:var(--purple-bg);color:var(--purple)"><span style="font-size:20px">☁️</span> OpenAI / Together AI</div>
+        <div class="fw-body">
+          <div class="fw-desc">Fine-tuning cloud con UI. Subes tus datos en formato JSONL y ellos entrenan. Sin configurar nada. OpenAI fine-tune de GPT-3.5/4o. Together AI para modelos open source.</div>
+          <div class="fw-when">Cuando no quieres gestionar infraestructura ni GPUs.</div>
+          <div class="fw-tags"><span class="tag tp">Cloud</span><span class="tag ty">Coste €€</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUÁNTOS DATOS -->
+    <div class="section-title" style="margin-top:22px"><span class="sc">▸</span> ¿Cuántos datos necesito para fine-tuning?</div>
+    <div class="vtable-wrap">
+      <table class="vtable">
+        <thead>
+          <tr><th>Objetivo</th><th>Ejemplos mínimos</th><th>Ejemplos recomendados</th><th>Nota</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Cambiar estilo/tono</td><td>~100–200</td><td>500–1000</td><td>El más barato de conseguir. Puedes generar ejemplos con GPT-4.</td></tr>
+          <tr><td>Formato de respuesta</td><td>~50–100</td><td>200–500</td><td>Si el formato es muy específico (JSON, tablas), con pocos ejemplos va bien.</td></tr>
+          <tr><td>Conocimiento de dominio</td><td>~500–1000</td><td>2000–5000+</td><td>Para que aprenda hechos nuevos. RAG suele ser mejor opción aquí.</td></tr>
+          <tr><td>Tarea de clasificación</td><td>~100 por clase</td><td>500+ por clase</td><td>Datos balanceados. Fácil de etiquetar.</td></tr>
+          <tr><td>Chatbot con personalidad</td><td>~200–500</td><td>1000–3000</td><td>Pares conversación completa (multi-turno), no solo respuestas sueltas.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="analogy" style="background:linear-gradient(135deg,var(--green-bg),var(--blue-bg));border-color:var(--green-border);margin-top:18px">
+      <h3>🗺 El mapa de decisión completo</h3>
+      <p>¿El modelo no sabe cosas que están en documentos? → <strong>RAG</strong>. ¿El modelo no habla con tu estilo? → <strong>Fine-tuning</strong>. ¿Necesitas que el modelo tome acciones autónomas? → <strong>Agente</strong>. ¿Quieres privacidad total y sin coste? → <strong>Todo lo anterior pero local</strong>. La mayoría de aplicaciones reales del mundo empresarial combinan los cuatro.</p>
+    </div>
+  </div>
+
+</div><!-- /tabs -->
+</div><!-- /wrap -->
+
+<script>
+function sw(btn, id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

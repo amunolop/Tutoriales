@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patrones de Diseño — Guía de Entrevista</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700;8..60,800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --surface2: #f0ede6;
+  --surface3: #e8e5dc;
+  --border: #d8d4ca;
+  --border-light: #e5e1d8;
+  --text: #1c1917;
+  --text-mid: #44403c;
+  --text-dim: #78716c;
+  --code-bg: #fafaf8;
+  --code-border: #e7e5e4;
+  --accent: #b45309;
+  --accent-light: #fef3c7;
+  --accent-bg: rgba(180,83,9,0.06);
+  --blue: #1d4ed8;
+  --blue-bg: rgba(29,78,216,0.06);
+  --green: #15803d;
+  --green-bg: rgba(21,128,61,0.06);
+  --purple: #7e22ce;
+  --purple-bg: rgba(126,34,206,0.06);
+  --rose: #be123c;
+  --rose-bg: rgba(190,18,60,0.06);
+  --teal: #0f766e;
+  --teal-bg: rgba(15,118,110,0.06);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+  --radius: 12px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══ HERO ═══ */
+.hero {
+  padding: 4.5rem 2rem 3.5rem;
+  text-align: center;
+  background: linear-gradient(180deg, #fffdf7 0%, var(--bg) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '{ }';
+  position: absolute;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 18rem;
+  font-weight: 600;
+  color: rgba(180,83,9,0.03);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1px solid rgba(180,83,9,0.15);
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  margin-bottom: 1.2rem;
+  position: relative;
+  font-weight: 500;
+}
+
+.hero h1 {
+  font-family: 'Source Serif 4', serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  position: relative;
+  margin-bottom: 0.8rem;
+}
+
+.hero h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.hero p {
+  font-size: 1.05rem;
+  color: var(--text-dim);
+  max-width: 520px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ═══ CONTAINER ═══ */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
+/* ═══ SECTION ═══ */
+.section-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.section-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: clamp(1.4rem, 2.8vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.6rem;
+}
+
+.section-intro {
+  color: var(--text-dim);
+  max-width: 620px;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+/* ═══ CATEGORY CARDS (overview) ═══ */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+
+.cat-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.6rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.cat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.cat-card::after {
+  content: '';
+  position: absolute; top:0; left:0; right:0; height: 3px;
+  background: var(--c-color, var(--accent));
+}
+
+.cat-card .cat-icon {
+  font-size: 1.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.cat-card .cat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--c-color, var(--accent));
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.cat-card h3 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.cat-card p {
+  color: var(--text-mid);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+}
+
+.pattern-list {
+  display: flex; flex-wrap: wrap; gap: 0.3rem;
+}
+
+.pattern-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  font-weight: 500;
+}
+
+/* ═══ TABS SYSTEM ═══ */
+.tabs-outer {
+  margin-bottom: 3.5rem;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.7rem 1.3rem;
+  border: none;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.tab-content {
+  display: none;
+  padding-top: 1.5rem;
+}
+
+.tab-content.active { display: block; }
+
+/* Sub-tabs */
+.subtab-bar {
+  display: flex;
+  gap: 0.2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.subtab-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.subtab-btn:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.subtab-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.subtab-content {
+  display: none;
+}
+
+.subtab-content.active { display: block; }
+
+/* ═══ PATTERN CARDS ═══ */
+.pattern-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.pattern-card:hover { box-shadow: var(--shadow-md); }
+
+.pattern-header {
+  padding: 1.3rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  user-select: none;
+}
+
+.pattern-header:hover { background: var(--surface2); }
+
+.pattern-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.badge-creational { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(29,78,216,0.15); }
+.badge-structural { background: var(--green-bg); color: var(--green); border: 1px solid rgba(21,128,61,0.15); }
+.badge-behavioral { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(126,34,206,0.15); }
+.badge-architectural { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(180,83,9,0.15); }
+.badge-frontend { background: var(--rose-bg); color: var(--rose); border: 1px solid rgba(190,18,60,0.15); }
+.badge-backend { background: var(--teal-bg); color: var(--teal); border: 1px solid rgba(15,118,110,0.15); }
+
+.pattern-info { flex: 1; }
+
+.pattern-info h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.pattern-info p {
+  font-size: 0.84rem;
+  color: var(--text-mid);
+  line-height: 1.55;
+}
+
+.pattern-toggle {
+  font-size: 1rem;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  transition: transform 0.25s;
+  margin-top: 0.15rem;
+}
+
+.pattern-card.open .pattern-toggle { transform: rotate(90deg); }
+
+.pattern-body {
+  display: none;
+  padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.pattern-card.open .pattern-body { display: block; }
+
+.when-use {
+  background: var(--accent-bg);
+  border: 1px solid rgba(180,83,9,0.12);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.when-use strong {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.when-use p {
+  font-size: 0.82rem;
+  color: var(--text-mid);
+  line-height: 1.55;
+}
+
+.interview-tip {
+  background: var(--blue-bg);
+  border: 1px solid rgba(29,78,216,0.12);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.interview-tip strong {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--blue);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.interview-tip p {
+  font-size: 0.82rem;
+  color: var(--text-mid);
+  line-height: 1.55;
+}
+
+/* ═══ CODE BLOCKS ═══ */
+.code-tabs {
+  display: flex;
+  gap: 0.2rem;
+  margin-bottom: 0;
+}
+
+.code-tab-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--code-border);
+  border-bottom: none;
+  background: var(--surface2);
+  color: var(--text-dim);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  transition: all 0.15s;
+}
+
+.code-tab-btn.active {
+  background: var(--code-bg);
+  color: var(--text);
+  border-color: var(--code-border);
+}
+
+.code-block {
+  display: none;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: 0 8px 8px 8px;
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  line-height: 1.7;
+  color: var(--text);
+  tab-size: 2;
+}
+
+.code-block.active { display: block; }
+
+.code-block .kw { color: var(--purple); font-weight: 600; }
+.code-block .fn { color: var(--blue); }
+.code-block .str { color: var(--green); }
+.code-block .cm { color: var(--text-dim); font-style: italic; }
+.code-block .cls { color: var(--accent); font-weight: 600; }
+.code-block .dc { color: var(--teal); }
+
+/* ═══ FOOTER ═══ */
+footer {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-dim);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .container { padding: 0 1rem 3rem; }
+  .hero { padding: 3rem 1rem 2.5rem; }
+  .cat-grid { grid-template-columns: 1fr; }
+  .tab-btn { font-size: 0.8rem; padding: 0.6rem 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-badge">Preparación de entrevista · 2026</div>
+  <h1>Patrones de <em>Diseño</em></h1>
+  <p>Referencia visual con ejemplos en JavaScript, Python y Java. Frontend, Backend y patrones universales.</p>
+</section>
+
+<div class="container">
+
+<!-- ═══ 01 — CATEGORÍAS ═══ -->
+<div class="section-num">01 — Categorías de patrones</div>
+<h2 class="section-title">Los tres tipos clásicos (GoF)</h2>
+<p class="section-intro">Los 23 patrones del Gang of Four se dividen en tres categorías. Entender esta división ya demuestra conocimiento en entrevista.</p>
+
+<div class="cat-grid">
+  <div class="cat-card" style="--c-color: var(--blue);">
+    <div class="cat-icon">🏗️</div>
+    <div class="cat-label">Creacionales</div>
+    <h3>Cómo se crean objetos</h3>
+    <p>Abstraen el proceso de instanciación. En vez de hacer <code>new</code> directamente, controlas cómo y cuándo se crean objetos.</p>
+    <div class="pattern-list">
+      <span class="pattern-tag">Singleton</span>
+      <span class="pattern-tag">Factory Method</span>
+      <span class="pattern-tag">Abstract Factory</span>
+      <span class="pattern-tag">Builder</span>
+      <span class="pattern-tag">Prototype</span>
+    </div>
+  </div>
+  <div class="cat-card" style="--c-color: var(--green);">
+    <div class="cat-icon">🧱</div>
+    <div class="cat-label">Estructurales</div>
+    <h3>Cómo se componen objetos</h3>
+    <p>Definen cómo clases y objetos se combinan para formar estructuras más grandes y flexibles sin romper la encapsulación.</p>
+    <div class="pattern-list">
+      <span class="pattern-tag">Adapter</span>
+      <span class="pattern-tag">Decorator</span>
+      <span class="pattern-tag">Facade</span>
+      <span class="pattern-tag">Proxy</span>
+      <span class="pattern-tag">Composite</span>
+      <span class="pattern-tag">Bridge</span>
+    </div>
+  </div>
+  <div class="cat-card" style="--c-color: var(--purple);">
+    <div class="cat-icon">🔄</div>
+    <div class="cat-label">Comportamiento</div>
+    <h3>Cómo se comunican objetos</h3>
+    <p>Definen cómo los objetos interactúan y distribuyen responsabilidades. Gestionan algoritmos y flujos de comunicación.</p>
+    <div class="pattern-list">
+      <span class="pattern-tag">Observer</span>
+      <span class="pattern-tag">Strategy</span>
+      <span class="pattern-tag">Command</span>
+      <span class="pattern-tag">Iterator</span>
+      <span class="pattern-tag">State</span>
+      <span class="pattern-tag">Mediator</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 02 — TABS PRINCIPALES ═══ -->
+<div class="section-num">02 — Patrones por contexto</div>
+<h2 class="section-title">Universales, Frontend y Backend</h2>
+<p class="section-intro">Selecciona el contexto y el lenguaje. Cada patrón incluye explicación, cuándo usarlo, tip de entrevista y código en JS, Python y Java.</p>
+
+<div class="tabs-outer">
+  <div class="tab-bar" id="mainTabs">
+    <button class="tab-btn active" data-tab="universal">🎯 Universales</button>
+    <button class="tab-btn" data-tab="frontend">🖥️ Frontend</button>
+    <button class="tab-btn" data-tab="backend">⚙️ Backend</button>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB: UNIVERSALES                        -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="tab-content active" id="tab-universal">
+
+    <!-- SINGLETON -->
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-creational">Creacional</span>
+        <div class="pattern-info">
+          <h4>Singleton</h4>
+          <p>Garantiza que una clase tenga una única instancia y proporciona un punto de acceso global a ella.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="when-use">
+          <strong>Cuándo usarlo</strong>
+          <p>Conexiones a base de datos, configuración de app, loggers, cachés, pools de conexiones. Cuando necesitas exactamente UNA instancia compartida.</p>
+        </div>
+        <div class="interview-tip">
+          <strong>💡 Tip de entrevista</strong>
+          <p>Menciona que en JS los módulos ya son singletons (se cachean al importar). En Java, habla de thread-safety y el double-checked locking. En Python, menciona el patrón con <code>__new__</code> o módulos.</p>
+        </div>
+        <div class="code-tabs">
+          <button class="code-tab-btn active" onclick="switchCode(this, 'singleton')">JavaScript</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'singleton')">Python</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'singleton')">Java</button>
+        </div>
+        <pre class="code-block active" data-group="singleton"><span class="cm">// JavaScript — Singleton con módulo ES</span>
+<span class="kw">class</span> <span class="cls">Database</span> {
+  <span class="kw">constructor</span>() {
+    <span class="kw">if</span> (<span class="cls">Database</span>.instance) <span class="kw">return</span> <span class="cls">Database</span>.instance;
+    <span class="kw">this</span>.connection = <span class="str">"db://localhost:5432"</span>;
+    <span class="cls">Database</span>.instance = <span class="kw">this</span>;
+  }
+}
+
+<span class="kw">const</span> db1 = <span class="kw">new</span> <span class="cls">Database</span>();
+<span class="kw">const</span> db2 = <span class="kw">new</span> <span class="cls">Database</span>();
+console.<span class="fn">log</span>(db1 === db2); <span class="cm">// true ✅</span></pre>
+        <pre class="code-block" data-group="singleton"><span class="cm"># Python — Singleton con __new__</span>
+<span class="kw">class</span> <span class="cls">Database</span>:
+    _instance = <span class="kw">None</span>
+
+    <span class="kw">def</span> <span class="fn">__new__</span>(cls):
+        <span class="kw">if</span> cls._instance <span class="kw">is None</span>:
+            cls._instance = <span class="fn">super</span>().__new__(cls)
+            cls._instance.connection = <span class="str">"db://localhost:5432"</span>
+        <span class="kw">return</span> cls._instance
+
+db1 = <span class="cls">Database</span>()
+db2 = <span class="cls">Database</span>()
+<span class="fn">print</span>(db1 <span class="kw">is</span> db2)  <span class="cm"># True ✅</span></pre>
+        <pre class="code-block" data-group="singleton"><span class="cm">// Java — Singleton thread-safe con enum</span>
+<span class="kw">public enum</span> <span class="cls">Database</span> {
+    INSTANCE;
+
+    <span class="kw">private</span> String connection = <span class="str">"db://localhost:5432"</span>;
+
+    <span class="kw">public</span> String <span class="fn">getConnection</span>() {
+        <span class="kw">return</span> connection;
+    }
+}
+<span class="cm">// Uso: Database.INSTANCE.getConnection()</span>
+<span class="cm">// El enum garantiza una sola instancia (thread-safe gratis)</span></pre>
+      </div>
+    </div>
+
+    <!-- FACTORY -->
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-creational">Creacional</span>
+        <div class="pattern-info">
+          <h4>Factory Method</h4>
+          <p>Define una interfaz para crear objetos, pero deja que las subclases decidan qué clase instanciar.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="when-use">
+          <strong>Cuándo usarlo</strong>
+          <p>Cuando no sabes de antemano qué tipo de objeto necesitas crear. Procesadores de pago, parsers de distintos formatos, creación de elementos UI según plataforma.</p>
+        </div>
+        <div class="interview-tip">
+          <strong>💡 Tip de entrevista</strong>
+          <p>La clave es que el código cliente no usa <code>new</code> directamente — delega la creación. Esto cumple el Open/Closed Principle (SOLID): puedes añadir nuevos tipos sin modificar código existente.</p>
+        </div>
+        <div class="code-tabs">
+          <button class="code-tab-btn active" onclick="switchCode(this, 'factory')">JavaScript</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'factory')">Python</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'factory')">Java</button>
+        </div>
+        <pre class="code-block active" data-group="factory"><span class="cm">// JavaScript — Factory de notificaciones</span>
+<span class="kw">class</span> <span class="cls">EmailNotification</span> {
+  <span class="fn">send</span>(msg) { console.<span class="fn">log</span>(<span class="str">`📧 Email: ${msg}`</span>); }
+}
+<span class="kw">class</span> <span class="cls">SMSNotification</span> {
+  <span class="fn">send</span>(msg) { console.<span class="fn">log</span>(<span class="str">`📱 SMS: ${msg}`</span>); }
+}
+<span class="kw">class</span> <span class="cls">PushNotification</span> {
+  <span class="fn">send</span>(msg) { console.<span class="fn">log</span>(<span class="str">`🔔 Push: ${msg}`</span>); }
+}
+
+<span class="kw">function</span> <span class="fn">createNotification</span>(type) {
+  <span class="kw">const</span> map = {
+    email: <span class="cls">EmailNotification</span>,
+    sms: <span class="cls">SMSNotification</span>,
+    push: <span class="cls">PushNotification</span>,
+  };
+  <span class="kw">return new</span> map[type]();
+}
+
+<span class="kw">const</span> notif = <span class="fn">createNotification</span>(<span class="str">"sms"</span>);
+notif.<span class="fn">send</span>(<span class="str">"Hola!"</span>); <span class="cm">// 📱 SMS: Hola!</span></pre>
+        <pre class="code-block" data-group="factory"><span class="cm"># Python — Factory de notificaciones</span>
+<span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">Notification</span>(ABC):
+    <span class="dc">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">send</span>(self, msg): ...
+
+<span class="kw">class</span> <span class="cls">EmailNotification</span>(<span class="cls">Notification</span>):
+    <span class="kw">def</span> <span class="fn">send</span>(self, msg): <span class="fn">print</span>(<span class="str">f"📧 Email: {msg}"</span>)
+
+<span class="kw">class</span> <span class="cls">SMSNotification</span>(<span class="cls">Notification</span>):
+    <span class="kw">def</span> <span class="fn">send</span>(self, msg): <span class="fn">print</span>(<span class="str">f"📱 SMS: {msg}"</span>)
+
+<span class="kw">def</span> <span class="fn">create_notification</span>(type_: str) -> <span class="cls">Notification</span>:
+    factories = {<span class="str">"email"</span>: <span class="cls">EmailNotification</span>, <span class="str">"sms"</span>: <span class="cls">SMSNotification</span>}
+    <span class="kw">return</span> factories[type_]()
+
+notif = <span class="fn">create_notification</span>(<span class="str">"sms"</span>)
+notif.<span class="fn">send</span>(<span class="str">"Hola!"</span>)  <span class="cm"># 📱 SMS: Hola!</span></pre>
+        <pre class="code-block" data-group="factory"><span class="cm">// Java — Factory de notificaciones</span>
+<span class="kw">interface</span> <span class="cls">Notification</span> {
+    <span class="kw">void</span> <span class="fn">send</span>(String msg);
+}
+
+<span class="kw">class</span> <span class="cls">EmailNotification</span> <span class="kw">implements</span> <span class="cls">Notification</span> {
+    <span class="kw">public void</span> <span class="fn">send</span>(String msg) {
+        System.out.<span class="fn">println</span>(<span class="str">"📧 Email: "</span> + msg);
+    }
+}
+
+<span class="kw">class</span> <span class="cls">NotificationFactory</span> {
+    <span class="kw">public static</span> <span class="cls">Notification</span> <span class="fn">create</span>(String type) {
+        <span class="kw">return switch</span> (type) {
+            <span class="kw">case</span> <span class="str">"email"</span> -> <span class="kw">new</span> <span class="cls">EmailNotification</span>();
+            <span class="kw">case</span> <span class="str">"sms"</span>   -> <span class="kw">new</span> <span class="cls">SMSNotification</span>();
+            <span class="kw">default</span> -> <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>();
+        };
+    }
+}</pre>
+      </div>
+    </div>
+
+    <!-- OBSERVER -->
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-behavioral">Comportamiento</span>
+        <div class="pattern-info">
+          <h4>Observer</h4>
+          <p>Define una dependencia uno-a-muchos: cuando un objeto cambia de estado, todos sus dependientes son notificados automáticamente.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="when-use">
+          <strong>Cuándo usarlo</strong>
+          <p>Eventos del DOM, sistemas de eventos, notificaciones en tiempo real, data binding, pub/sub. Es la base de la reactividad en frameworks frontend.</p>
+        </div>
+        <div class="interview-tip">
+          <strong>💡 Tip de entrevista</strong>
+          <p>Relaciona con <code>addEventListener</code> en JS, signals en frameworks modernos, o <code>@EventListener</code> en Spring. Si mencionas que React useState es un observer simplificado, sumas puntos.</p>
+        </div>
+        <div class="code-tabs">
+          <button class="code-tab-btn active" onclick="switchCode(this, 'observer')">JavaScript</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'observer')">Python</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'observer')">Java</button>
+        </div>
+        <pre class="code-block active" data-group="observer"><span class="cm">// JavaScript — EventEmitter simple</span>
+<span class="kw">class</span> <span class="cls">EventEmitter</span> {
+  <span class="kw">constructor</span>() { <span class="kw">this</span>.listeners = {}; }
+
+  <span class="fn">on</span>(event, callback) {
+    (<span class="kw">this</span>.listeners[event] ??= []).<span class="fn">push</span>(callback);
+  }
+
+  <span class="fn">emit</span>(event, data) {
+    <span class="kw">this</span>.listeners[event]?.<span class="fn">forEach</span>(cb => <span class="fn">cb</span>(data));
+  }
+}
+
+<span class="kw">const</span> store = <span class="kw">new</span> <span class="cls">EventEmitter</span>();
+store.<span class="fn">on</span>(<span class="str">"userLogin"</span>, user => console.<span class="fn">log</span>(<span class="str">`👋 ${user}`</span>));
+store.<span class="fn">on</span>(<span class="str">"userLogin"</span>, user => <span class="fn">analytics</span>(user));
+store.<span class="fn">emit</span>(<span class="str">"userLogin"</span>, <span class="str">"Ana"</span>); <span class="cm">// notifica a ambos</span></pre>
+        <pre class="code-block" data-group="observer"><span class="cm"># Python — Observer</span>
+<span class="kw">class</span> <span class="cls">EventEmitter</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self._listeners: dict[str, list] = {}
+
+    <span class="kw">def</span> <span class="fn">on</span>(self, event: str, callback):
+        self._listeners.<span class="fn">setdefault</span>(event, []).<span class="fn">append</span>(callback)
+
+    <span class="kw">def</span> <span class="fn">emit</span>(self, event: str, data=<span class="kw">None</span>):
+        <span class="kw">for</span> cb <span class="kw">in</span> self._listeners.<span class="fn">get</span>(event, []):
+            <span class="fn">cb</span>(data)
+
+store = <span class="cls">EventEmitter</span>()
+store.<span class="fn">on</span>(<span class="str">"login"</span>, <span class="kw">lambda</span> u: <span class="fn">print</span>(<span class="str">f"👋 {u}"</span>))
+store.<span class="fn">emit</span>(<span class="str">"login"</span>, <span class="str">"Ana"</span>)</pre>
+        <pre class="code-block" data-group="observer"><span class="cm">// Java — Observer con interfaces</span>
+<span class="kw">interface</span> <span class="cls">Observer</span> {
+    <span class="kw">void</span> <span class="fn">update</span>(String event, Object data);
+}
+
+<span class="kw">class</span> <span class="cls">EventEmitter</span> {
+    <span class="kw">private</span> Map&lt;String, List&lt;<span class="cls">Observer</span>&gt;&gt; listeners = <span class="kw">new</span> HashMap&lt;&gt;();
+
+    <span class="kw">public void</span> <span class="fn">on</span>(String event, <span class="cls">Observer</span> obs) {
+        listeners.<span class="fn">computeIfAbsent</span>(event, k -> <span class="kw">new</span> ArrayList&lt;&gt;()).<span class="fn">add</span>(obs);
+    }
+
+    <span class="kw">public void</span> <span class="fn">emit</span>(String event, Object data) {
+        listeners.<span class="fn">getOrDefault</span>(event, List.<span class="fn">of</span>())
+                 .<span class="fn">forEach</span>(obs -> obs.<span class="fn">update</span>(event, data));
+    }
+}</pre>
+      </div>
+    </div>
+
+    <!-- STRATEGY -->
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-behavioral">Comportamiento</span>
+        <div class="pattern-info">
+          <h4>Strategy</h4>
+          <p>Define una familia de algoritmos, encapsula cada uno y los hace intercambiables. El cliente elige cuál usar en runtime.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="when-use">
+          <strong>Cuándo usarlo</strong>
+          <p>Distintos métodos de pago, algoritmos de ordenación, validaciones, estrategias de caché, cálculos de descuento, compresión de archivos.</p>
+        </div>
+        <div class="interview-tip">
+          <strong>💡 Tip de entrevista</strong>
+          <p>Es el patrón anti-<code>if/else</code> gigante. En vez de un switch con 10 casos, cada caso es una estrategia independiente. Menciona que en JS/Python las funciones de primera clase lo hacen trivial (pasas la función directamente).</p>
+        </div>
+        <div class="code-tabs">
+          <button class="code-tab-btn active" onclick="switchCode(this, 'strategy')">JavaScript</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'strategy')">Python</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'strategy')">Java</button>
+        </div>
+        <pre class="code-block active" data-group="strategy"><span class="cm">// JavaScript — Strategy con funciones</span>
+<span class="kw">const</span> strategies = {
+  <span class="fn">creditCard</span>: (amount) => console.<span class="fn">log</span>(<span class="str">`💳 Cobrado ${amount}€`</span>),
+  <span class="fn">paypal</span>:     (amount) => console.<span class="fn">log</span>(<span class="str">`🅿️ PayPal ${amount}€`</span>),
+  <span class="fn">crypto</span>:     (amount) => console.<span class="fn">log</span>(<span class="str">`₿ Crypto ${amount}€`</span>),
+};
+
+<span class="kw">function</span> <span class="fn">checkout</span>(amount, method) {
+  strategies[method](amount); <span class="cm">// sin if/else</span>
+}
+
+<span class="fn">checkout</span>(99, <span class="str">"paypal"</span>); <span class="cm">// 🅿️ PayPal 99€</span></pre>
+        <pre class="code-block" data-group="strategy"><span class="cm"># Python — Strategy con callable</span>
+<span class="kw">from</span> typing <span class="kw">import</span> Callable
+
+<span class="kw">def</span> <span class="fn">credit_card</span>(amount): <span class="fn">print</span>(<span class="str">f"💳 Cobrado {amount}€"</span>)
+<span class="kw">def</span> <span class="fn">paypal</span>(amount):      <span class="fn">print</span>(<span class="str">f"🅿️ PayPal {amount}€"</span>)
+<span class="kw">def</span> <span class="fn">crypto</span>(amount):      <span class="fn">print</span>(<span class="str">f"₿ Crypto {amount}€"</span>)
+
+strategies = {<span class="str">"card"</span>: credit_card, <span class="str">"paypal"</span>: paypal, <span class="str">"crypto"</span>: crypto}
+
+<span class="kw">def</span> <span class="fn">checkout</span>(amount: float, method: str):
+    strategies[method](amount)
+
+<span class="fn">checkout</span>(99, <span class="str">"paypal"</span>)  <span class="cm"># 🅿️ PayPal 99€</span></pre>
+        <pre class="code-block" data-group="strategy"><span class="cm">// Java — Strategy con interfaces</span>
+<span class="kw">interface</span> <span class="cls">PaymentStrategy</span> {
+    <span class="kw">void</span> <span class="fn">pay</span>(<span class="kw">double</span> amount);
+}
+
+<span class="kw">class</span> <span class="cls">CreditCard</span> <span class="kw">implements</span> <span class="cls">PaymentStrategy</span> {
+    <span class="kw">public void</span> <span class="fn">pay</span>(<span class="kw">double</span> amount) {
+        System.out.<span class="fn">println</span>(<span class="str">"💳 Cobrado "</span> + amount + <span class="str">"€"</span>);
+    }
+}
+
+<span class="kw">class</span> <span class="cls">Checkout</span> {
+    <span class="kw">private</span> <span class="cls">PaymentStrategy</span> strategy;
+    <span class="kw">public</span> <span class="fn">Checkout</span>(<span class="cls">PaymentStrategy</span> s) { <span class="kw">this</span>.strategy = s; }
+    <span class="kw">public void</span> <span class="fn">process</span>(<span class="kw">double</span> amt) { strategy.<span class="fn">pay</span>(amt); }
+}
+<span class="cm">// new Checkout(new CreditCard()).process(99);</span></pre>
+      </div>
+    </div>
+
+    <!-- DECORATOR -->
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-structural">Estructural</span>
+        <div class="pattern-info">
+          <h4>Decorator</h4>
+          <p>Añade responsabilidades a un objeto dinámicamente, sin modificar su clase. Alternativa flexible a la herencia.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="when-use">
+          <strong>Cuándo usarlo</strong>
+          <p>Middleware en Express/Django, decoradores Python (<code>@login_required</code>), HOCs en React, logging, caché, validación, compresión. Cada "capa" añade funcionalidad.</p>
+        </div>
+        <div class="interview-tip">
+          <strong>💡 Tip de entrevista</strong>
+          <p>Los decoradores de Python (<code>@</code>) son literalmente este patrón. En JS, los middlewares de Express (<code>app.use()</code>) son decorators en cadena. Mencionar esto demuestra que entiendes el patrón más allá de la teoría.</p>
+        </div>
+        <div class="code-tabs">
+          <button class="code-tab-btn active" onclick="switchCode(this, 'decorator')">JavaScript</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'decorator')">Python</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'decorator')">Java</button>
+        </div>
+        <pre class="code-block active" data-group="decorator"><span class="cm">// JavaScript — Decorar funciones (middleware)</span>
+<span class="kw">function</span> <span class="fn">withLogging</span>(fn) {
+  <span class="kw">return function</span>(...args) {
+    console.<span class="fn">log</span>(<span class="str">`⏱ Llamando ${fn.name}`</span>);
+    <span class="kw">const</span> result = <span class="fn">fn</span>(...args);
+    console.<span class="fn">log</span>(<span class="str">`✅ Resultado: ${result}`</span>);
+    <span class="kw">return</span> result;
+  };
+}
+
+<span class="kw">function</span> <span class="fn">withCache</span>(fn) {
+  <span class="kw">const</span> cache = <span class="kw">new</span> Map();
+  <span class="kw">return function</span>(...args) {
+    <span class="kw">const</span> key = JSON.<span class="fn">stringify</span>(args);
+    <span class="kw">if</span> (cache.<span class="fn">has</span>(key)) <span class="kw">return</span> cache.<span class="fn">get</span>(key);
+    <span class="kw">const</span> result = <span class="fn">fn</span>(...args);
+    cache.<span class="fn">set</span>(key, result);
+    <span class="kw">return</span> result;
+  };
+}
+
+<span class="kw">const</span> <span class="fn">calculate</span> = <span class="fn">withLogging</span>(<span class="fn">withCache</span>((x) => x * 2));</pre>
+        <pre class="code-block" data-group="decorator"><span class="cm"># Python — Decoradores nativos</span>
+<span class="kw">import</span> functools, time
+
+<span class="kw">def</span> <span class="fn">timer</span>(func):
+    <span class="dc">@functools.wraps(func)</span>
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        start = time.<span class="fn">time</span>()
+        result = <span class="fn">func</span>(*args, **kwargs)
+        <span class="fn">print</span>(<span class="str">f"⏱ {func.__name__}: {time.time()-start:.3f}s"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="kw">def</span> <span class="fn">retry</span>(max_attempts=3):
+    <span class="kw">def</span> <span class="fn">decorator</span>(func):
+        <span class="dc">@functools.wraps(func)</span>
+        <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(max_attempts):
+                <span class="kw">try</span>: <span class="kw">return</span> <span class="fn">func</span>(*args, **kwargs)
+                <span class="kw">except</span> Exception: <span class="kw">pass</span>
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> decorator
+
+<span class="dc">@timer</span>
+<span class="dc">@retry(max_attempts=3)</span>
+<span class="kw">def</span> <span class="fn">fetch_data</span>(url): ...</pre>
+        <pre class="code-block" data-group="decorator"><span class="cm">// Java — Decorator clásico</span>
+<span class="kw">interface</span> <span class="cls">DataSource</span> {
+    String <span class="fn">read</span>();
+}
+
+<span class="kw">class</span> <span class="cls">FileDataSource</span> <span class="kw">implements</span> <span class="cls">DataSource</span> {
+    <span class="kw">public</span> String <span class="fn">read</span>() { <span class="kw">return</span> <span class="str">"raw data"</span>; }
+}
+
+<span class="kw">class</span> <span class="cls">EncryptionDecorator</span> <span class="kw">implements</span> <span class="cls">DataSource</span> {
+    <span class="kw">private final</span> <span class="cls">DataSource</span> wrapped;
+    <span class="kw">public</span> <span class="fn">EncryptionDecorator</span>(<span class="cls">DataSource</span> ds) { <span class="kw">this</span>.wrapped = ds; }
+    <span class="kw">public</span> String <span class="fn">read</span>() {
+        <span class="kw">return</span> <span class="fn">decrypt</span>(wrapped.<span class="fn">read</span>()); <span class="cm">// añade comportamiento</span>
+    }
+}
+<span class="cm">// new EncryptionDecorator(new FileDataSource()).read()</span></pre>
+      </div>
+    </div>
+
+    <!-- ADAPTER -->
+    <div class="pattern-card">
+      <div class="pattern-header" onclick="togglePattern(this)">
+        <span class="pattern-badge badge-structural">Estructural</span>
+        <div class="pattern-info">
+          <h4>Adapter</h4>
+          <p>Convierte la interfaz de una clase en otra que el cliente espera. Permite que clases incompatibles trabajen juntas.</p>
+        </div>
+        <span class="pattern-toggle">▶</span>
+      </div>
+      <div class="pattern-body">
+        <div class="when-use">
+          <strong>Cuándo usarlo</strong>
+          <p>Integrar APIs de terceros, legacy code, normalizar datos de distintas fuentes, abstraer librerías para que sean intercambiables.</p>
+        </div>
+        <div class="code-tabs">
+          <button class="code-tab-btn active" onclick="switchCode(this, 'adapter')">JavaScript</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'adapter')">Python</button>
+          <button class="code-tab-btn" onclick="switchCode(this, 'adapter')">Java</button>
+        </div>
+        <pre class="code-block active" data-group="adapter"><span class="cm">// JS — Adapter para APIs con distinto formato</span>
+<span class="cm">// API vieja devuelve: { first_name, last_name }</span>
+<span class="cm">// Tu app espera:     { fullName }</span>
+
+<span class="kw">class</span> <span class="cls">UserAdapter</span> {
+  <span class="fn">adapt</span>(legacyUser) {
+    <span class="kw">return</span> {
+      fullName: <span class="str">`${legacyUser.first_name} ${legacyUser.last_name}`</span>,
+      email: legacyUser.email_address,
+    };
+  }
+}
+
+<span class="kw">const</span> adapter = <span class="kw">new</span> <span class="cls">UserAdapter</span>();
+<span class="kw">const</span> user = adapter.<span class="fn">adapt</span>({
+  first_name: <span class="str">"Ana"</span>, last_name: <span class="str">"García"</span>,
+  email_address: <span class="str">"ana@mail.com"</span>
+}); <span class="cm">// { fullName: "Ana García", email: "ana@mail.com" }</span></pre>
+        <pre class="code-block" data-group="adapter"><span class="cm"># Python — Adapter para librería de terceros</span>
+<span class="kw">class</span> <span class="cls">LegacyPrinter</span>:
+    <span class="kw">def</span> <span class="fn">print_old</span>(self, text):
+        <span class="fn">print</span>(<span class="str">f"[OLD] {text}"</span>)
+
+<span class="kw">class</span> <span class="cls">PrinterAdapter</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, legacy: <span class="cls">LegacyPrinter</span>):
+        self._legacy = legacy
+
+    <span class="kw">def</span> <span class="fn">print</span>(self, text):  <span class="cm"># interfaz que tu app espera</span>
+        self._legacy.<span class="fn">print_old</span>(text)
+
+printer = <span class="cls">PrinterAdapter</span>(<span class="cls">LegacyPrinter</span>())
+printer.<span class="fn">print</span>(<span class="str">"Hola"</span>)  <span class="cm"># [OLD] Hola</span></pre>
+        <pre class="code-block" data-group="adapter"><span class="cm">// Java — Adapter clásico</span>
+<span class="kw">interface</span> <span class="cls">ModernPrinter</span> {
+    <span class="kw">void</span> <span class="fn">print</span>(String text);
+}
+
+<span class="kw">class</span> <span class="cls">LegacyPrinter</span> {
+    <span class="kw">void</span> <span class="fn">printOld</span>(String t) { System.out.<span class="fn">println</span>(<span class="str">"[OLD] "</span> + t); }
+}
+
+<span class="kw">class</span> <span class="cls">PrinterAdapter</span> <span class="kw">implements</span> <span class="cls">ModernPrinter</span> {
+    <span class="kw">private final</span> <span class="cls">LegacyPrinter</span> legacy;
+    <span class="kw">public</span> <span class="fn">PrinterAdapter</span>(<span class="cls">LegacyPrinter</span> lp) { <span class="kw">this</span>.legacy = lp; }
+    <span class="kw">public void</span> <span class="fn">print</span>(String t) { legacy.<span class="fn">printOld</span>(t); }
+}</pre>
+      </div>
+    </div>
+
+  </div><!-- /tab-universal -->
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB: FRONTEND                           -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-frontend">
+    <div class="subtab-bar" data-subtabs="frontend">
+      <button class="subtab-btn active" data-subtab="fe-react">React / JS</button>
+      <button class="subtab-btn" data-subtab="fe-angular">Angular</button>
+      <button class="subtab-btn" data-subtab="fe-vue">Vue</button>
+      <button class="subtab-btn" data-subtab="fe-general">General</button>
+    </div>
+
+    <!-- REACT / JS -->
+    <div class="subtab-content active" id="subtab-fe-react">
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-frontend">Componente</span>
+          <div class="pattern-info">
+            <h4>Container / Presentational</h4>
+            <p>Separa la lógica de datos (container) de la UI pura (presentational). El container maneja estado y API calls; el presentational solo recibe props y renderiza.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="when-use">
+            <strong>Cuándo usarlo</strong>
+            <p>Componentes que mezclan fetch de datos con renderizado. Separa para poder reutilizar la UI con distintas fuentes de datos y testear más fácil.</p>
+          </div>
+          <div class="interview-tip">
+            <strong>💡 Tip de entrevista</strong>
+            <p>Aunque Dan Abramov (creador de Redux) dijo que hoy prefiere hooks a este patrón, sigue siendo válido conceptualmente. Los custom hooks son el container moderno.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'container')">React</button>
+          </div>
+          <pre class="code-block active" data-group="container"><span class="cm">// Container — lógica</span>
+<span class="kw">function</span> <span class="fn">useUsers</span>() {
+  <span class="kw">const</span> [users, setUsers] = <span class="fn">useState</span>([]);
+  <span class="fn">useEffect</span>(() => {
+    <span class="fn">fetch</span>(<span class="str">"/api/users"</span>).<span class="fn">then</span>(r => r.<span class="fn">json</span>()).<span class="fn">then</span>(setUsers);
+  }, []);
+  <span class="kw">return</span> users;
+}
+
+<span class="cm">// Presentational — solo UI</span>
+<span class="kw">function</span> <span class="cls">UserList</span>({ users }) {
+  <span class="kw">return</span> (
+    &lt;ul&gt;
+      {users.<span class="fn">map</span>(u => &lt;li key={u.id}&gt;{u.name}&lt;/li&gt;)}
+    &lt;/ul&gt;
+  );
+}
+
+<span class="cm">// Uso combinado</span>
+<span class="kw">function</span> <span class="cls">UsersPage</span>() {
+  <span class="kw">const</span> users = <span class="fn">useUsers</span>();          <span class="cm">// container (hook)</span>
+  <span class="kw">return</span> &lt;<span class="cls">UserList</span> users={users} /&gt;; <span class="cm">// presentational</span>
+}</pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-frontend">React</span>
+          <div class="pattern-info">
+            <h4>Custom Hook</h4>
+            <p>Extrae lógica reutilizable con estado en una función <code>use*</code>. Es el patrón de composición nativo de React moderno.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="interview-tip">
+            <strong>💡 Tip de entrevista</strong>
+            <p>Los hooks reemplazaron HOCs y Render Props como patrón principal de reutilización. Son más simples, componibles y fáciles de testear. Siempre di que prefieres hooks sobre HOCs.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'hook')">React</button>
+          </div>
+          <pre class="code-block active" data-group="hook"><span class="cm">// Custom hook reutilizable</span>
+<span class="kw">function</span> <span class="fn">useLocalStorage</span>(key, initialValue) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(() => {
+    <span class="kw">const</span> stored = localStorage.<span class="fn">getItem</span>(key);
+    <span class="kw">return</span> stored ? JSON.<span class="fn">parse</span>(stored) : initialValue;
+  });
+
+  <span class="fn">useEffect</span>(() => {
+    localStorage.<span class="fn">setItem</span>(key, JSON.<span class="fn">stringify</span>(value));
+  }, [key, value]);
+
+  <span class="kw">return</span> [value, setValue];
+}
+
+<span class="cm">// Uso — misma API que useState</span>
+<span class="kw">const</span> [theme, setTheme] = <span class="fn">useLocalStorage</span>(<span class="str">"theme"</span>, <span class="str">"light"</span>);
+<span class="kw">const</span> [lang, setLang] = <span class="fn">useLocalStorage</span>(<span class="str">"lang"</span>, <span class="str">"es"</span>);</pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-frontend">React</span>
+          <div class="pattern-info">
+            <h4>Compound Components</h4>
+            <p>Componentes que trabajan juntos compartiendo estado implícitamente. Como <code>&lt;select&gt;</code> y <code>&lt;option&gt;</code> en HTML — no funcionan solos.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="when-use">
+            <strong>Cuándo usarlo</strong>
+            <p>Tabs, acordeones, menús, formularios complejos. Cuando quieres una API declarativa y flexible para el consumidor del componente.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'compound')">React</button>
+          </div>
+          <pre class="code-block active" data-group="compound"><span class="cm">// API declarativa para el consumidor</span>
+&lt;<span class="cls">Tabs</span> defaultTab=<span class="str">"home"</span>&gt;
+  &lt;<span class="cls">Tabs.List</span>&gt;
+    &lt;<span class="cls">Tabs.Tab</span> id=<span class="str">"home"</span>&gt;Inicio&lt;/<span class="cls">Tabs.Tab</span>&gt;
+    &lt;<span class="cls">Tabs.Tab</span> id=<span class="str">"settings"</span>&gt;Config&lt;/<span class="cls">Tabs.Tab</span>&gt;
+  &lt;/<span class="cls">Tabs.List</span>&gt;
+  &lt;<span class="cls">Tabs.Panel</span> id=<span class="str">"home"</span>&gt;Contenido inicio&lt;/<span class="cls">Tabs.Panel</span>&gt;
+  &lt;<span class="cls">Tabs.Panel</span> id=<span class="str">"settings"</span>&gt;Configuración&lt;/<span class="cls">Tabs.Panel</span>&gt;
+&lt;/<span class="cls">Tabs</span>&gt;
+
+<span class="cm">// Implementación con Context</span>
+<span class="kw">const</span> TabsContext = <span class="fn">createContext</span>();
+
+<span class="kw">function</span> <span class="cls">Tabs</span>({ children, defaultTab }) {
+  <span class="kw">const</span> [active, setActive] = <span class="fn">useState</span>(defaultTab);
+  <span class="kw">return</span> (
+    &lt;TabsContext.Provider value={{ active, setActive }}&gt;
+      {children}
+    &lt;/TabsContext.Provider&gt;
+  );
+}
+
+Tabs.Tab = ({ id, children }) => {
+  <span class="kw">const</span> { active, setActive } = <span class="fn">useContext</span>(TabsContext);
+  <span class="kw">return</span> &lt;button onClick={() => <span class="fn">setActive</span>(id)}&gt;{children}&lt;/button&gt;;
+};</pre>
+        </div>
+      </div>
+
+    </div><!-- /subtab-fe-react -->
+
+    <!-- ANGULAR -->
+    <div class="subtab-content" id="subtab-fe-angular">
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-architectural">Arquitectural</span>
+          <div class="pattern-info">
+            <h4>Dependency Injection</h4>
+            <p>Angular lo tiene integrado de fábrica. Los servicios se inyectan automáticamente en componentes vía el constructor. Es core del framework.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="interview-tip">
+            <strong>💡 Tip de entrevista</strong>
+            <p>Di que Angular usa un <strong>injector jerárquico</strong>: puedes tener servicios singleton a nivel root o scoped a nivel componente. Esto es clave para testing (inyectas mocks).</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'angdi')">TypeScript</button>
+          </div>
+          <pre class="code-block active" data-group="angdi"><span class="dc">@Injectable</span>({ providedIn: <span class="str">'root'</span> }) <span class="cm">// singleton global</span>
+<span class="kw">class</span> <span class="cls">AuthService</span> {
+  <span class="kw">private</span> user: User | <span class="kw">null</span> = <span class="kw">null</span>;
+
+  <span class="fn">login</span>(credentials: Credentials): Observable&lt;User&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">post</span>&lt;User&gt;(<span class="str">'/api/login'</span>, credentials)
+      .<span class="fn">pipe</span>(<span class="fn">tap</span>(user => <span class="kw">this</span>.user = user));
+  }
+}
+
+<span class="dc">@Component</span>({ selector: <span class="str">'app-login'</span>, template: <span class="str">'...'</span> })
+<span class="kw">class</span> <span class="cls">LoginComponent</span> {
+  <span class="cm">// Angular inyecta AuthService automáticamente</span>
+  <span class="kw">constructor</span>(<span class="kw">private</span> auth: <span class="cls">AuthService</span>) {}
+
+  <span class="fn">onSubmit</span>() {
+    <span class="kw">this</span>.auth.<span class="fn">login</span>(<span class="kw">this</span>.form.value).<span class="fn">subscribe</span>();
+  }
+}</pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-behavioral">Reactivo</span>
+          <div class="pattern-info">
+            <h4>Observable / RxJS (Observer en Angular)</h4>
+            <p>Angular usa RxJS como base. Los HTTP calls, formularios reactivos y eventos son streams observables.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'rxjs')">TypeScript</button>
+          </div>
+          <pre class="code-block active" data-group="rxjs"><span class="cm">// Búsqueda con debounce usando Observables</span>
+<span class="kw">this</span>.searchControl.valueChanges.<span class="fn">pipe</span>(
+  <span class="fn">debounceTime</span>(300),        <span class="cm">// espera 300ms</span>
+  <span class="fn">distinctUntilChanged</span>(),   <span class="cm">// ignora si no cambió</span>
+  <span class="fn">switchMap</span>(query =>         <span class="cm">// cancela petición anterior</span>
+    <span class="kw">this</span>.http.<span class="fn">get</span>&lt;Result[]&gt;(<span class="str">`/api/search?q=${query}`</span>)
+  )
+).<span class="fn">subscribe</span>(results => <span class="kw">this</span>.results = results);</pre>
+        </div>
+      </div>
+    </div><!-- /subtab-fe-angular -->
+
+    <!-- VUE -->
+    <div class="subtab-content" id="subtab-fe-vue">
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-frontend">Vue 3</span>
+          <div class="pattern-info">
+            <h4>Composables (equivalente a Custom Hooks)</h4>
+            <p>Funciones <code>use*</code> que encapsulan lógica reactiva reutilizable con la Composition API.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'composable')">Vue 3</button>
+          </div>
+          <pre class="code-block active" data-group="composable"><span class="cm">// composables/useFetch.js</span>
+<span class="kw">import</span> { ref, watchEffect } <span class="kw">from</span> <span class="str">'vue'</span>;
+
+<span class="kw">export function</span> <span class="fn">useFetch</span>(url) {
+  <span class="kw">const</span> data = <span class="fn">ref</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> error = <span class="fn">ref</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> loading = <span class="fn">ref</span>(<span class="kw">true</span>);
+
+  <span class="fn">watchEffect</span>(<span class="kw">async</span> () => {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url.value);
+      data.value = <span class="kw">await</span> res.<span class="fn">json</span>();
+    } <span class="kw">catch</span> (e) { error.value = e; }
+    <span class="kw">finally</span> { loading.value = <span class="kw">false</span>; }
+  });
+
+  <span class="kw">return</span> { data, error, loading };
+}
+
+<span class="cm">// En componente</span>
+<span class="kw">const</span> { data: users, loading } = <span class="fn">useFetch</span>(<span class="fn">ref</span>(<span class="str">'/api/users'</span>));</pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-frontend">Vue 3</span>
+          <div class="pattern-info">
+            <h4>Provide / Inject (Dependency Injection)</h4>
+            <p>Inyectar dependencias a componentes hijos sin prop drilling. Similar al Context de React.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'provide')">Vue 3</button>
+          </div>
+          <pre class="code-block active" data-group="provide"><span class="cm">// Componente padre — provee</span>
+<span class="kw">import</span> { provide, ref } <span class="kw">from</span> <span class="str">'vue'</span>;
+
+<span class="kw">const</span> theme = <span class="fn">ref</span>(<span class="str">'dark'</span>);
+<span class="fn">provide</span>(<span class="str">'theme'</span>, theme); <span class="cm">// disponible para todo el subárbol</span>
+
+<span class="cm">// Componente nieto (cualquier profundidad) — consume</span>
+<span class="kw">import</span> { inject } <span class="kw">from</span> <span class="str">'vue'</span>;
+
+<span class="kw">const</span> theme = <span class="fn">inject</span>(<span class="str">'theme'</span>); <span class="cm">// recibe el ref reactivo</span>
+<span class="cm">// Sin pasar props por cada nivel intermedio</span></pre>
+        </div>
+      </div>
+    </div><!-- /subtab-fe-vue -->
+
+    <!-- FRONTEND GENERAL -->
+    <div class="subtab-content" id="subtab-fe-general">
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-architectural">Arquitectural</span>
+          <div class="pattern-info">
+            <h4>Flux / Redux (Store unidireccional)</h4>
+            <p>Estado global centralizado con flujo unidireccional: Action → Dispatcher → Store → View. Predecible y debuggeable.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="interview-tip">
+            <strong>💡 Tip de entrevista</strong>
+            <p>Menciona que hoy se prefieren alternativas más ligeras como Zustand (React), Pinia (Vue) o signals (Angular). Redux sigue siendo relevante pero la tendencia es hacia menos boilerplate.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'flux')">Concepto JS</button>
+          </div>
+          <pre class="code-block active" data-group="flux"><span class="cm">// Flujo unidireccional simplificado</span>
+
+<span class="cm">// 1. ESTADO (Store)</span>
+<span class="kw">let</span> state = { count: 0, items: [] };
+
+<span class="cm">// 2. ACTIONS (qué pasó)</span>
+<span class="kw">const</span> increment = { type: <span class="str">"INCREMENT"</span> };
+<span class="kw">const</span> addItem  = { type: <span class="str">"ADD_ITEM"</span>, payload: <span class="str">"Café"</span> };
+
+<span class="cm">// 3. REDUCER (cómo cambia el estado)</span>
+<span class="kw">function</span> <span class="fn">reducer</span>(state, action) {
+  <span class="kw">switch</span>(action.type) {
+    <span class="kw">case</span> <span class="str">"INCREMENT"</span>:
+      <span class="kw">return</span> { ...state, count: state.count + 1 };
+    <span class="kw">case</span> <span class="str">"ADD_ITEM"</span>:
+      <span class="kw">return</span> { ...state, items: [...state.items, action.payload] };
+    <span class="kw">default</span>: <span class="kw">return</span> state;
+  }
+}
+
+<span class="cm">// 4. DISPATCH (View → Action → Reducer → New State → View)</span>
+state = <span class="fn">reducer</span>(state, increment); <span class="cm">// { count: 1 }</span></pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-structural">Estructural</span>
+          <div class="pattern-info">
+            <h4>Module Pattern</h4>
+            <p>Encapsula código en módulos con interfaz pública y datos privados. Es la base de los módulos ES (<code>import/export</code>).</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'module')">JavaScript</button>
+          </div>
+          <pre class="code-block active" data-group="module"><span class="cm">// Módulo ES moderno — el archivo ES el módulo</span>
+
+<span class="cm">// userService.js</span>
+<span class="kw">const</span> API_URL = <span class="str">"/api/users"</span>;  <span class="cm">// privado (no exportado)</span>
+<span class="kw">let</span> cache = <span class="kw">null</span>;                <span class="cm">// privado</span>
+
+<span class="kw">export async function</span> <span class="fn">getUsers</span>() {  <span class="cm">// público</span>
+  <span class="kw">if</span> (cache) <span class="kw">return</span> cache;
+  cache = <span class="kw">await</span> <span class="fn">fetch</span>(API_URL).<span class="fn">then</span>(r => r.<span class="fn">json</span>());
+  <span class="kw">return</span> cache;
+}
+
+<span class="kw">export function</span> <span class="fn">clearCache</span>() {     <span class="cm">// público</span>
+  cache = <span class="kw">null</span>;
+}
+
+<span class="cm">// Solo getUsers y clearCache son accesibles</span>
+<span class="cm">// API_URL y cache están encapsulados</span></pre>
+        </div>
+      </div>
+    </div><!-- /subtab-fe-general -->
+
+  </div><!-- /tab-frontend -->
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- TAB: BACKEND                            -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-backend">
+    <div class="subtab-bar" data-subtabs="backend">
+      <button class="subtab-btn active" data-subtab="be-node">Node.js</button>
+      <button class="subtab-btn" data-subtab="be-python">Python</button>
+      <button class="subtab-btn" data-subtab="be-java">Java / Spring</button>
+      <button class="subtab-btn" data-subtab="be-general">General</button>
+    </div>
+
+    <!-- NODE.JS -->
+    <div class="subtab-content active" id="subtab-be-node">
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-backend">Express</span>
+          <div class="pattern-info">
+            <h4>Middleware Pattern</h4>
+            <p>Cadena de funciones que procesan la request secuencialmente. Cada middleware puede modificar req/res, o pasar al siguiente. Es el Decorator pattern aplicado a HTTP.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="interview-tip">
+            <strong>💡 Tip de entrevista</strong>
+            <p>Explica que es una cadena de responsabilidad (Chain of Responsibility): cada middleware decide si procesa, modifica o pasa la request. El orden importa.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'middleware')">Express</button>
+          </div>
+          <pre class="code-block active" data-group="middleware"><span class="cm">// Cada middleware: (req, res, next) => { ... next() }</span>
+
+<span class="cm">// 1. Logger</span>
+app.<span class="fn">use</span>((req, res, next) => {
+  console.<span class="fn">log</span>(<span class="str">`${req.method} ${req.url}`</span>);
+  <span class="fn">next</span>(); <span class="cm">// pasa al siguiente</span>
+});
+
+<span class="cm">// 2. Auth</span>
+<span class="kw">function</span> <span class="fn">authMiddleware</span>(req, res, next) {
+  <span class="kw">const</span> token = req.headers.authorization;
+  <span class="kw">if</span> (!token) <span class="kw">return</span> res.<span class="fn">status</span>(401).<span class="fn">json</span>({ error: <span class="str">"No token"</span> });
+  req.user = <span class="fn">verifyToken</span>(token); <span class="cm">// decora req</span>
+  <span class="fn">next</span>();
+}
+
+<span class="cm">// 3. Aplicar a rutas específicas</span>
+app.<span class="fn">get</span>(<span class="str">"/api/profile"</span>, authMiddleware, (req, res) => {
+  res.<span class="fn">json</span>(req.user); <span class="cm">// req.user ya existe</span>
+});</pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-backend">Node.js</span>
+          <div class="pattern-info">
+            <h4>Repository Pattern</h4>
+            <p>Abstrae el acceso a datos detrás de una interfaz. El servicio no sabe si los datos vienen de PostgreSQL, MongoDB o un JSON. Facilita testing y cambiar de BD.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'reponode')">Node.js</button>
+          </div>
+          <pre class="code-block active" data-group="reponode"><span class="cm">// userRepository.js — abstrae la BD</span>
+<span class="kw">class</span> <span class="cls">UserRepository</span> {
+  <span class="kw">constructor</span>(db) { <span class="kw">this</span>.db = db; }
+
+  <span class="kw">async</span> <span class="fn">findById</span>(id) {
+    <span class="kw">return this</span>.db.<span class="fn">query</span>(<span class="str">"SELECT * FROM users WHERE id = $1"</span>, [id]);
+  }
+  <span class="kw">async</span> <span class="fn">create</span>(data) {
+    <span class="kw">return this</span>.db.<span class="fn">query</span>(
+      <span class="str">"INSERT INTO users (name, email) VALUES ($1, $2)"</span>,
+      [data.name, data.email]
+    );
+  }
+}
+
+<span class="cm">// userService.js — no sabe qué BD hay debajo</span>
+<span class="kw">class</span> <span class="cls">UserService</span> {
+  <span class="kw">constructor</span>(userRepo) { <span class="kw">this</span>.repo = userRepo; }
+
+  <span class="kw">async</span> <span class="fn">getUser</span>(id) {
+    <span class="kw">const</span> user = <span class="kw">await this</span>.repo.<span class="fn">findById</span>(id);
+    <span class="kw">if</span> (!user) <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">"Not found"</span>);
+    <span class="kw">return</span> user;
+  }
+}
+
+<span class="cm">// En tests: new UserService(mockRepo) → fácil</span></pre>
+        </div>
+      </div>
+    </div><!-- /subtab-be-node -->
+
+    <!-- PYTHON -->
+    <div class="subtab-content" id="subtab-be-python">
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-backend">Django / FastAPI</span>
+          <div class="pattern-info">
+            <h4>Middleware (Django) / Depends (FastAPI)</h4>
+            <p>Django usa middleware como clases; FastAPI usa <code>Depends()</code> para inyección de dependencias, que también actúa como middleware funcional.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'pyback')">FastAPI</button>
+            <button class="code-tab-btn" onclick="switchCode(this, 'pyback')">Django</button>
+          </div>
+          <pre class="code-block active" data-group="pyback"><span class="cm"># FastAPI — Depends como inyección + middleware</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> Depends, FastAPI, HTTPException
+
+app = <span class="cls">FastAPI</span>()
+
+<span class="cm"># Dependencia reutilizable (como middleware)</span>
+<span class="kw">async def</span> <span class="fn">get_current_user</span>(token: str = <span class="fn">Header</span>()):
+    user = <span class="fn">verify_token</span>(token)
+    <span class="kw">if not</span> user:
+        <span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=401)
+    <span class="kw">return</span> user
+
+<span class="cm"># Dependencia que depende de otra</span>
+<span class="kw">async def</span> <span class="fn">get_db</span>():
+    db = <span class="cls">SessionLocal</span>()
+    <span class="kw">try</span>: <span class="kw">yield</span> db
+    <span class="kw">finally</span>: db.<span class="fn">close</span>()
+
+<span class="dc">@app.get("/profile")</span>
+<span class="kw">async def</span> <span class="fn">profile</span>(
+    user = <span class="fn">Depends</span>(get_current_user),
+    db = <span class="fn">Depends</span>(get_db)
+):
+    <span class="kw">return</span> db.<span class="fn">query</span>(<span class="cls">User</span>).<span class="fn">filter_by</span>(id=user.id).<span class="fn">first</span>()</pre>
+          <pre class="code-block" data-group="pyback"><span class="cm"># Django — Middleware como clase</span>
+<span class="kw">class</span> <span class="cls">RequestTimingMiddleware</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, get_response):
+        self.get_response = get_response
+
+    <span class="kw">def</span> <span class="fn">__call__</span>(self, request):
+        start = time.<span class="fn">time</span>()
+        response = self.<span class="fn">get_response</span>(request)  <span class="cm"># siguiente</span>
+        duration = time.<span class="fn">time</span>() - start
+        response[<span class="str">"X-Request-Duration"</span>] = <span class="fn">str</span>(duration)
+        <span class="kw">return</span> response
+
+<span class="cm"># settings.py</span>
+MIDDLEWARE = [
+    <span class="str">"myapp.middleware.RequestTimingMiddleware"</span>,
+    <span class="str">"django.middleware.security.SecurityMiddleware"</span>,
+    <span class="cm">...</span>
+]</pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-backend">Python</span>
+          <div class="pattern-info">
+            <h4>Repository + Service Layer</h4>
+            <p>Separación clásica en backend Python: Repository (acceso a datos), Service (lógica de negocio), Router (HTTP).</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'pyrepo')">Python</button>
+          </div>
+          <pre class="code-block active" data-group="pyrepo"><span class="cm"># repository.py — solo acceso a datos</span>
+<span class="kw">class</span> <span class="cls">UserRepository</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, db: Session):
+        self.db = db
+
+    <span class="kw">def</span> <span class="fn">get_by_id</span>(self, id: int) -> User | <span class="kw">None</span>:
+        <span class="kw">return</span> self.db.<span class="fn">query</span>(User).<span class="fn">get</span>(id)
+
+    <span class="kw">def</span> <span class="fn">create</span>(self, data: UserCreate) -> User:
+        user = <span class="cls">User</span>(**data.<span class="fn">dict</span>())
+        self.db.<span class="fn">add</span>(user)
+        self.db.<span class="fn">commit</span>()
+        <span class="kw">return</span> user
+
+<span class="cm"># service.py — lógica de negocio</span>
+<span class="kw">class</span> <span class="cls">UserService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, repo: <span class="cls">UserRepository</span>):
+        self.repo = repo
+
+    <span class="kw">def</span> <span class="fn">register</span>(self, data: UserCreate) -> User:
+        <span class="kw">if</span> self.repo.<span class="fn">get_by_email</span>(data.email):
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">"Email ya existe"</span>)
+        data.password = <span class="fn">hash_password</span>(data.password)
+        <span class="kw">return</span> self.repo.<span class="fn">create</span>(data)</pre>
+        </div>
+      </div>
+    </div><!-- /subtab-be-python -->
+
+    <!-- JAVA / SPRING -->
+    <div class="subtab-content" id="subtab-be-java">
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-backend">Spring</span>
+          <div class="pattern-info">
+            <h4>Dependency Injection + IoC Container</h4>
+            <p>Spring gestiona la creación y ciclo de vida de objetos (beans). Tú declaras qué necesitas; Spring lo inyecta. Es el corazón del framework.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="interview-tip">
+            <strong>💡 Tip de entrevista</strong>
+            <p>Menciona la inversión de control (IoC): tú no creas objetos con <code>new</code>, el contenedor lo hace. Esto facilita testing (inyectar mocks), desacopla componentes y permite cambiar implementaciones sin tocar código cliente.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'springdi')">Java / Spring</button>
+          </div>
+          <pre class="code-block active" data-group="springdi"><span class="cm">// Repository</span>
+<span class="dc">@Repository</span>
+<span class="kw">public interface</span> <span class="cls">UserRepository</span>
+    <span class="kw">extends</span> <span class="cls">JpaRepository</span>&lt;User, Long&gt; {
+  Optional&lt;User&gt; <span class="fn">findByEmail</span>(String email);
+}
+
+<span class="cm">// Service — Spring inyecta el Repository</span>
+<span class="dc">@Service</span>
+<span class="kw">public class</span> <span class="cls">UserService</span> {
+    <span class="kw">private final</span> <span class="cls">UserRepository</span> repo;
+
+    <span class="kw">public</span> <span class="fn">UserService</span>(<span class="cls">UserRepository</span> repo) {
+        <span class="kw">this</span>.repo = repo; <span class="cm">// inyectado por Spring</span>
+    }
+
+    <span class="kw">public</span> User <span class="fn">register</span>(UserDTO dto) {
+        repo.<span class="fn">findByEmail</span>(dto.email())
+            .<span class="fn">ifPresent</span>(u -> { <span class="kw">throw new</span> <span class="cls">ConflictException</span>(); });
+        <span class="kw">return</span> repo.<span class="fn">save</span>(<span class="kw">new</span> <span class="cls">User</span>(dto));
+    }
+}
+
+<span class="cm">// Controller — Spring inyecta el Service</span>
+<span class="dc">@RestController</span>
+<span class="dc">@RequestMapping("/api/users")</span>
+<span class="kw">public class</span> <span class="cls">UserController</span> {
+    <span class="kw">private final</span> <span class="cls">UserService</span> service;
+
+    <span class="kw">public</span> <span class="fn">UserController</span>(<span class="cls">UserService</span> s) { <span class="kw">this</span>.service = s; }
+
+    <span class="dc">@PostMapping</span>
+    <span class="kw">public</span> User <span class="fn">create</span>(<span class="dc">@RequestBody</span> UserDTO dto) {
+        <span class="kw">return</span> service.<span class="fn">register</span>(dto);
+    }
+}</pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-structural">Estructural</span>
+          <div class="pattern-info">
+            <h4>DTO (Data Transfer Object)</h4>
+            <p>Objeto simple para transferir datos entre capas. Separa lo que recibe el API de lo que guarda la BD. Seguridad y limpieza.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'dto')">Java</button>
+          </div>
+          <pre class="code-block active" data-group="dto"><span class="cm">// Lo que el cliente envía (sin id, sin password hash)</span>
+<span class="kw">public record</span> <span class="cls">CreateUserDTO</span>(
+    String name,
+    String email,
+    String password  <span class="cm">// texto plano</span>
+) {}
+
+<span class="cm">// Lo que el cliente recibe (sin password)</span>
+<span class="kw">public record</span> <span class="cls">UserResponseDTO</span>(
+    Long id,
+    String name,
+    String email
+) {}
+
+<span class="cm">// Entidad de BD (tiene todo)</span>
+<span class="dc">@Entity</span>
+<span class="kw">public class</span> <span class="cls">User</span> {
+    <span class="dc">@Id @GeneratedValue</span>
+    <span class="kw">private</span> Long id;
+    <span class="kw">private</span> String name;
+    <span class="kw">private</span> String email;
+    <span class="kw">private</span> String passwordHash; <span class="cm">// nunca sale al API</span>
+}
+
+<span class="cm">// El servicio convierte entre DTOs y entidades</span></pre>
+        </div>
+      </div>
+    </div><!-- /subtab-be-java -->
+
+    <!-- BACKEND GENERAL -->
+    <div class="subtab-content" id="subtab-be-general">
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-architectural">Arquitectural</span>
+          <div class="pattern-info">
+            <h4>MVC (Model-View-Controller)</h4>
+            <p>Separa datos (Model), presentación (View) y lógica de coordinación (Controller). Es el patrón arquitectural más usado en backend web.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="interview-tip">
+            <strong>💡 Tip de entrevista</strong>
+            <p>Django usa MTV (Model-Template-View) que es MVC renombrado. Spring MVC es MVC clásico. Express no es MVC por defecto pero se puede estructurar así. Menciona que en APIs REST la "View" es el JSON response.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'mvc')">Concepto</button>
+          </div>
+          <pre class="code-block active" data-group="mvc"><span class="cm">// Estructura MVC típica en backend</span>
+
+<span class="cm">📁 src/</span>
+<span class="cm">├── models/        ← Model (datos + BD)</span>
+<span class="cm">│   └── User.js         esquema, validaciones, queries</span>
+<span class="cm">│</span>
+<span class="cm">├── controllers/   ← Controller (recibe HTTP, orquesta)</span>
+<span class="cm">│   └── UserController.js   parsea req, llama service, devuelve res</span>
+<span class="cm">│</span>
+<span class="cm">├── services/      ← Lógica de negocio (opcional, recomendado)</span>
+<span class="cm">│   └── UserService.js      reglas, validaciones, cálculos</span>
+<span class="cm">│</span>
+<span class="cm">├── routes/        ← Mapeo URL → Controller</span>
+<span class="cm">│   └── userRoutes.js       GET /users → UserController.list</span>
+<span class="cm">│</span>
+<span class="cm">└── views/         ← View (JSON response / templates)</span>
+<span class="cm">    └── En APIs REST, el "view" es la respuesta JSON</span>
+
+<span class="cm">// Flujo: Request → Route → Controller → Service → Model → Response</span></pre>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-header" onclick="togglePattern(this)">
+          <span class="pattern-badge badge-architectural">Arquitectural</span>
+          <div class="pattern-info">
+            <h4>CQRS (Command Query Responsibility Segregation)</h4>
+            <p>Separa las operaciones de lectura (Query) de las de escritura (Command). Cada una puede tener su propio modelo, BD e incluso servicio.</p>
+          </div>
+          <span class="pattern-toggle">▶</span>
+        </div>
+        <div class="pattern-body">
+          <div class="when-use">
+            <strong>Cuándo usarlo</strong>
+            <p>Sistemas con alta carga donde leer y escribir tienen requerimientos muy distintos. E-commerce (miles leen catálogo, pocos compran), dashboards analíticos, sistemas financieros.</p>
+          </div>
+          <div class="interview-tip">
+            <strong>💡 Tip de entrevista</strong>
+            <p>No siempre se necesita CQRS. Menciona que añade complejidad y solo vale la pena cuando leer y escribir tienen patrones de acceso muy diferentes. Muchas apps funcionan bien con un solo modelo.</p>
+          </div>
+          <div class="code-tabs">
+            <button class="code-tab-btn active" onclick="switchCode(this, 'cqrs')">Concepto</button>
+          </div>
+          <pre class="code-block active" data-group="cqrs"><span class="cm">// Sin CQRS — un solo modelo para todo</span>
+UserService.<span class="fn">getUser</span>(id)         <span class="cm">// lectura</span>
+UserService.<span class="fn">updateUser</span>(id, data) <span class="cm">// escritura</span>
+<span class="cm">// Mismo modelo, misma BD, mismo servicio</span>
+
+<span class="cm">// ─────────────────────────────────────</span>
+
+<span class="cm">// Con CQRS — separado</span>
+
+<span class="cm">// QUERIES (lectura) — optimizado para leer rápido</span>
+UserQueryService.<span class="fn">getUser</span>(id)     <span class="cm">// puede leer de caché/read replica</span>
+UserQueryService.<span class="fn">search</span>(filters) <span class="cm">// puede usar Elasticsearch</span>
+
+<span class="cm">// COMMANDS (escritura) — optimizado para consistencia</span>
+UserCommandService.<span class="fn">create</span>(data)  <span class="cm">// escribe en BD principal</span>
+UserCommandService.<span class="fn">update</span>(data)  <span class="cm">// validaciones estrictas</span>
+
+<span class="cm">// La BD de lectura se sincroniza con la de escritura</span>
+<span class="cm">// (eventual consistency via eventos)</span></pre>
+        </div>
+      </div>
+    </div><!-- /subtab-be-general -->
+
+  </div><!-- /tab-backend -->
+</div><!-- /tabs-outer -->
+
+</div><!-- /container -->
+
+<footer>
+  Patrones de Diseño — Guía de Entrevista · Febrero 2026
+</footer>
+
+<script>
+// Main tabs
+document.querySelectorAll('.tab-bar .tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const parent = btn.closest('.tabs-outer');
+    parent.querySelectorAll('.tab-bar .tab-btn').forEach(b => b.classList.remove('active'));
+    parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Sub-tabs
+document.querySelectorAll('.subtab-bar .subtab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const bar = btn.closest('.subtab-bar');
+    const container = btn.closest('.tab-content');
+    bar.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
+    container.querySelectorAll('.subtab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('subtab-' + btn.dataset.subtab).classList.add('active');
+  });
+});
+
+// Toggle pattern cards
+function togglePattern(header) {
+  header.closest('.pattern-card').classList.toggle('open');
+}
+
+// Code language tabs within patterns
+function switchCode(btn, group) {
+  const tabs = btn.closest('.pattern-body');
+  const btns = btn.parentElement.querySelectorAll('.code-tab-btn');
+  const blocks = tabs.querySelectorAll(`.code-block[data-group="${group}"]`);
+  const idx = Array.from(btns).indexOf(btn);
+
+  btns.forEach(b => b.classList.remove('active'));
+  blocks.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (blocks[idx]) blocks[idx].classList.add('active');
+}
+</script>
+</body>
+</html>
