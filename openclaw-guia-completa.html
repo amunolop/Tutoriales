@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw — Guía completa · Tu asistente IA personal</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--lobster:#e63946;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;position:relative}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1100px;margin:0 auto;padding:48px 28px 100px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:40px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--lobster);border:2px solid var(--lobster);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(26px,4vw,44px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--lobster);border-bottom:3px solid var(--lobster)}
+  .subtitle{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:40px;width:fit-content;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:10px 18px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:2px solid var(--ink)}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:36px 0 16px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:16px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout.red{border-color:var(--lobster);background:rgba(230,57,70,.05)}.callout.red strong{color:var(--lobster)}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  .job-box{background:linear-gradient(135deg,#faf8f4,#f0ebe0);border:3px solid var(--lobster);border-radius:8px;padding:24px 28px;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .job-box.green{border-color:var(--accent2)}.job-box.blue{border-color:var(--accent3)}.job-box.yellow{border-color:var(--yellow)}.job-box.purple{border-color:var(--purple)}.job-box.orange{border-color:var(--accent)}
+  .job-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .job-name{font-size:18px;font-weight:700}
+  .job-desc{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+  .tag{font-size:9px;font-weight:700;letter-spacing:2px;padding:4px 10px;border-radius:3px;text-transform:uppercase}
+  .tag-r{background:rgba(230,57,70,.12);color:var(--lobster);border:2px solid var(--lobster)}
+  .tag-o{background:rgba(193,68,14,.12);color:var(--accent);border:2px solid var(--accent)}.tag-g{background:rgba(42,110,78,.12);color:var(--accent2);border:2px solid var(--accent2)}.tag-b{background:rgba(26,74,138,.12);color:var(--accent3);border:2px solid var(--accent3)}.tag-y{background:rgba(232,160,32,.12);color:var(--yellow);border:2px solid var(--yellow)}.tag-p{background:rgba(122,58,205,.12);color:var(--purple);border:2px solid var(--purple)}
+  .lifecycle-flow{display:flex;align-items:stretch;gap:0;background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
+  .lf-step{flex:1;padding:18px 14px;text-align:center;position:relative;transition:background .2s;min-width:0}
+  .lf-step:not(:last-child)::after{content:'▶';position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;z-index:2}
+  .lf-step:not(:last-child){border-right:2px solid var(--border)}
+  .lf-num{font-size:9px;color:var(--muted);margin-bottom:4px}.lf-icon{font-size:20px;margin-bottom:4px}.lf-name{font-size:11px;font-weight:700;margin-bottom:2px}.lf-desc{font-size:9px;color:var(--muted);line-height:1.4}
+  .steps-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+  .step-box{flex:1;min-width:180px;background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:18px;transition:all .2s}
+  .step-box:hover{border-color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .step-box.o{border-left:4px solid var(--accent)}.step-box.g{border-left:4px solid var(--accent2)}.step-box.b{border-left:4px solid var(--accent3)}.step-box.y{border-left:4px solid var(--yellow)}.step-box.p{border-left:4px solid var(--purple)}.step-box.r{border-left:4px solid var(--lobster)}
+  .step-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .step-label.o{color:var(--accent)}.step-label.g{color:var(--accent2)}.step-label.b{color:var(--accent3)}.step-label.y{color:var(--yellow)}.step-label.p{color:var(--purple)}.step-label.r{color:var(--lobster)}
+  .step-name{font-size:14px;font-weight:700;margin-bottom:6px}
+  .step-desc{font-size:11px;color:var(--muted);line-height:1.6}
+  .step-connector{display:flex;align-items:center;justify-content:center;min-width:28px;color:var(--muted)}
+  .arrow-right{font-size:20px;animation:pulse 2s ease infinite}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:16px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 14px;text-align:left}
+  .vtable td{padding:11px 14px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td:first-child{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border)}
+  .repo-box{background:linear-gradient(135deg,#fffaf0,#faf5e8);border:2px solid var(--yellow);border-radius:8px;padding:20px 24px;display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .repo-box.o{border-color:var(--accent)}.repo-box.r{border-color:var(--lobster)}.repo-box.g{border-color:var(--accent2)}.repo-box.b{border-color:var(--accent3)}
+  .repo-icon{font-size:28px;flex-shrink:0}.repo-title{font-size:15px;font-weight:700;margin-bottom:6px}.repo-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+  .repo-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .rchip{font-size:10px;padding:4px 10px;border-radius:3px;border:1px solid}
+  .rchip.o{background:rgba(193,68,14,.06);border-color:rgba(193,68,14,.3);color:var(--accent)}.rchip.g{background:rgba(42,110,78,.06);border-color:rgba(42,110,78,.3);color:var(--accent2)}.rchip.b{background:rgba(26,74,138,.06);border-color:rgba(26,74,138,.3);color:var(--accent3)}.rchip.y{background:rgba(232,160,32,.06);border-color:rgba(232,160,32,.3);color:var(--yellow)}.rchip.p{background:rgba(122,58,205,.06);border-color:rgba(122,58,205,.3);color:var(--purple)}.rchip.r{background:rgba(230,57,70,.06);border-color:rgba(230,57,70,.3);color:var(--lobster)}
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);white-space:pre}
+  .kw{color:#c1440e;font-weight:600}.an{color:#1a4a8a;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.nu{color:#7a3acd}
+  .chunk-block{border:2px solid rgba(42,110,78,.3);border-radius:6px;padding:14px 16px;background:rgba(42,110,78,.04)}
+  .chunk-block.bl{border-color:rgba(26,74,138,.3);background:rgba(26,74,138,.04)}
+  .chunk-block.rl{border-color:rgba(230,57,70,.3);background:rgba(230,57,70,.04)}
+  .chunk-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-weight:700;color:var(--accent2)}
+  .chunk-block.bl .chunk-title{color:var(--accent3)}.chunk-block.rl .chunk-title{color:var(--lobster)}
+  .chunk-flow{display:flex;align-items:center;gap:8px}
+  .chunk-node{flex:1;border-radius:4px;padding:10px 8px;text-align:center;border:2px solid}
+  .cn-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .cn-name{font-size:11px;font-weight:700;line-height:1.3}
+  .cn-sub{font-size:9px;color:var(--muted);margin-top:3px}
+  .mini-arrow{color:var(--muted);font-size:14px;flex-shrink:0}
+  @media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}.steps-row{flex-direction:column}.lifecycle-flow{flex-direction:column}.lf-step:not(:last-child)::after{content:'▼';right:auto;bottom:-10px;top:auto;left:50%;transform:translateX(-50%)}.lf-step:not(:last-child){border-right:none;border-bottom:2px solid var(--border)}.chunk-flow{flex-direction:column}.mini-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Open Source · Personal AI Agent · 🦞</div>
+  <h1><em>OpenClaw</em><br>Tu asistente IA personal</h1>
+  <p class="subtitle">// Agente autónomo local · Skills · Tools · Canales (WhatsApp, Telegram, Slack) · 310K+ ★ GitHub · Creado por Peter Steinberger</p>
+</header>
+
+<!-- ═══════ DIAGRAMA SIEMPRE VISIBLE ═══════ -->
+<div class="job-box">
+  <div class="job-header"><span class="tag tag-r">🦞 Concepto</span><span class="job-name">¿Qué es OpenClaw?</span></div>
+  <p class="job-desc">OpenClaw es un <strong style="color:var(--lobster)">agente de IA autónomo y open-source</strong> que corre en tu propia máquina. A diferencia de ChatGPT o Claude (que solo conversan), OpenClaw tiene <strong>"ojos y manos"</strong>: puede navegar la web, leer/escribir ficheros, ejecutar comandos, enviar mensajes y automatizar workflows. Es como tener un compañero de trabajo digital 24/7 que se comunica contigo por WhatsApp, Telegram o Slack.</p>
+  <div class="chunk-block bl">
+    <div class="chunk-title">Arquitectura simplificada</div>
+    <div class="chunk-flow">
+      <div class="chunk-node" style="border-color:var(--accent3);background:rgba(26,74,138,.06)"><div class="cn-label" style="color:var(--accent3)">Tú</div><div class="cn-name">WhatsApp<br>Telegram<br>Slack</div><div class="cn-sub">Envías mensajes</div></div>
+      <span class="mini-arrow">→</span>
+      <div class="chunk-node" style="border-color:var(--lobster);background:rgba(230,57,70,.06)"><div class="cn-label" style="color:var(--lobster)">Gateway</div><div class="cn-name">OpenClaw<br>Local</div><div class="cn-sub">Tu máquina / servidor</div></div>
+      <span class="mini-arrow">→</span>
+      <div class="chunk-node" style="border-color:var(--purple);background:rgba(122,58,205,.06)"><div class="cn-label" style="color:var(--purple)">LLM</div><div class="cn-name">Claude API<br>GPT · Gemini<br>Ollama local</div><div class="cn-sub">Piensa y decide</div></div>
+      <span class="mini-arrow">→</span>
+      <div class="chunk-node" style="border-color:var(--accent2);background:rgba(42,110,78,.06)"><div class="cn-label" style="color:var(--accent2)">Tools</div><div class="cn-name">Browser · Shell<br>Files · APIs<br>Cron · Skills</div><div class="cn-sub">Ejecuta acciones</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setView('que')">🦞 Qué es</button>
+  <button class="mode-btn" onclick="setView('arch')">🏗️ Arquitectura</button>
+  <button class="mode-btn" onclick="setView('install')">⚙️ Instalación</button>
+  <button class="mode-btn" onclick="setView('skills')">🧩 Skills</button>
+  <button class="mode-btn" onclick="setView('examples')">💡 Ejemplos</button>
+  <button class="mode-btn" onclick="setView('security')">🔒 Seguridad</button>
+</div>
+
+<!-- ═══════ 1 · QUÉ ES ═══════ -->
+<div id="view-que" class="mode-panel active">
+  <div class="sec-title" data-n="1">Chatbot vs Agente — la diferencia clave</div>
+  <div class="grid2">
+    <div class="callout orange" style="margin:0"><strong>Chatbot (ChatGPT, Claude.ai):</strong><br>• Solo conversa — genera texto<br>• No puede tocar tu sistema<br>• Pierde contexto entre sesiones<br>• Tú haces el trabajo, él aconseja<br>• Vive en la nube del proveedor</div>
+    <div class="callout red" style="margin:0"><strong>Agente (OpenClaw):</strong><br>• Conversa <strong>y ejecuta</strong> acciones<br>• Lee/escribe ficheros, ejecuta shell<br>• Memoria persistente 24/7<br>• Él hace el trabajo, tú supervisas<br>• Vive en <strong>tu máquina</strong> (privacidad)</div>
+  </div>
+
+  <div class="sec-title" data-n="2">Las 3 piezas de OpenClaw</div>
+  <div class="steps-row">
+    <div class="step-box r"><div class="step-label r">Pieza 1</div><div class="step-name">Gateway</div><div class="step-desc">El "cerebro central" que corre en tu máquina. Conecta canales, LLMs y tools. Es un servidor Node.js local con WebSocket.</div></div>
+    <div class="step-box b"><div class="step-label b">Pieza 2</div><div class="step-name">Canales</div><div class="step-desc">Cómo hablas con el agente: WhatsApp (Baileys), Telegram (grammY), Slack, Discord, Signal, iMessage, IRC, WebChat, y 15+ más.</div></div>
+    <div class="step-box g"><div class="step-label g">Pieza 3</div><div class="step-name">Skills & Tools</div><div class="step-desc">Qué puede hacer: navegar web, ejecutar shell, leer/escribir ficheros, generar imágenes, cron jobs, y 100+ skills de la comunidad.</div></div>
+  </div>
+
+  <div class="sec-title" data-n="3">Datos rápidos</div>
+  <table class="vtable">
+    <thead><tr><th>Aspecto</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <tr><td>Creador</td><td>Peter Steinberger (fundador de PSPDFKit)</td></tr>
+      <tr><td>Licencia</td><td>MIT — completamente open-source y gratuito</td></tr>
+      <tr><td>GitHub</td><td>310K+ stars · 58K+ forks · 1200+ contributors</td></tr>
+      <tr><td>Lenguaje</td><td>Node.js (TypeScript)</td></tr>
+      <tr><td>Modelos</td><td>Claude (Anthropic), GPT (OpenAI), Gemini (Google), Ollama (local)</td></tr>
+      <tr><td>Coste</td><td>Software gratis. Solo pagas API del LLM: ~$10-70/mes según uso</td></tr>
+      <tr><td>Plataforma</td><td>macOS, Linux, Windows. Raspberry Pi, VMs cloud, Docker</td></tr>
+      <tr><td>Nombres previos</td><td>Clawdbot → Moltbot → OpenClaw (enero 2026)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════ 2 · ARQUITECTURA ═══════ -->
+<div id="view-arch" class="mode-panel">
+  <div class="sec-title" data-n="1">Diagrama de arquitectura completa</div>
+
+  <div class="job-box blue">
+    <div class="job-header"><span class="tag tag-b">Capa 1</span><span class="job-name">Canales de entrada</span></div>
+    <div class="job-desc">El usuario envía un mensaje desde cualquier plataforma. OpenClaw soporta 20+ canales simultáneamente.</div>
+    <div class="repo-chips">
+      <span class="rchip g">WhatsApp</span><span class="rchip b">Telegram</span><span class="rchip p">Slack</span><span class="rchip b">Discord</span><span class="rchip g">Signal</span><span class="rchip o">iMessage</span><span class="rchip y">Google Chat</span><span class="rchip r">Microsoft Teams</span><span class="rchip b">IRC</span><span class="rchip p">Matrix</span><span class="rchip g">WebChat</span><span class="rchip o">LINE</span>
+    </div>
+  </div>
+
+  <div style="text-align:center;color:var(--muted);font-size:18px;margin:-8px 0">▼</div>
+
+  <div class="job-box">
+    <div class="job-header"><span class="tag tag-r">Capa 2</span><span class="job-name">Gateway (control plane)</span></div>
+    <div class="job-desc">Servidor local WebSocket (<code>ws://127.0.0.1:18789</code>). Recibe mensajes, gestiona sesiones, memoria, routing multi-agente y coordina tools. Es el corazón de OpenClaw.</div>
+    <div class="steps-row">
+      <div class="step-box r"><div class="step-label r">Sessions</div><div class="step-name">Memoria</div><div class="step-desc">Contexto persistente 24/7. MEMORY.md, USER.md, SOUL.md. Dreaming (consolida aprendizajes).</div></div>
+      <div class="step-box r"><div class="step-label r">Router</div><div class="step-name">Multi-agente</div><div class="step-desc">Rutas diferentes canales/personas a agentes aislados con workspaces separados.</div></div>
+      <div class="step-box r"><div class="step-label r">Scheduler</div><div class="step-name">Cron & Heartbeat</div><div class="step-desc">Tareas programadas, proactividad. El agente puede actuar sin que le pidas nada.</div></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;color:var(--muted);font-size:18px;margin:-8px 0">▼</div>
+
+  <div class="grid2" style="margin-bottom:24px">
+    <div class="job-box purple" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-p">Capa 3</span><span class="job-name">LLM Provider</span></div>
+      <div class="job-desc" style="margin-bottom:0">El "cerebro" que piensa. Agnóstico: elige cualquier proveedor o usa modelos locales con Ollama.</div>
+      <div class="repo-chips" style="margin-top:10px">
+        <span class="rchip p">Claude Opus 4.6</span><span class="rchip p">GPT-5.2</span><span class="rchip p">Gemini 3</span><span class="rchip p">Ollama (local)</span><span class="rchip p">GLM-5</span>
+      </div>
+    </div>
+    <div class="job-box green" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-g">Capa 4</span><span class="job-name">Tools & Skills</span></div>
+      <div class="job-desc" style="margin-bottom:0">Las "manos" del agente. 26 tools built-in + 53 skills oficiales + 13.700+ en ClawHub.</div>
+      <div class="repo-chips" style="margin-top:10px">
+        <span class="rchip g">exec (shell)</span><span class="rchip g">browser</span><span class="rchip g">web_search</span><span class="rchip g">fs (files)</span><span class="rchip g">message</span><span class="rchip g">cron</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Ficheros del workspace</div>
+  <div class="callout blue" style="margin-top:0"><strong>El workspace es una carpeta con ficheros Markdown que definen quién eres, cómo es tu agente y qué recuerda.</strong></div>
+  <table class="vtable">
+    <thead><tr><th>Fichero</th><th>Qué contiene</th></tr></thead>
+    <tbody>
+      <tr><td>SOUL.md</td><td>Personalidad del agente: tono, estilo, reglas de comportamiento. Es el "system prompt" editable.</td></tr>
+      <tr><td>USER.md</td><td>Info sobre ti: nombre, preferencias, zona horaria, contexto profesional.</td></tr>
+      <tr><td>MEMORY.md</td><td>Memoria a largo plazo. El agente escribe aquí cosas que aprende sobre ti entre sesiones.</td></tr>
+      <tr><td>AGENTS.md</td><td>Configuración multi-agente: qué agentes existen, qué canales atienden, qué tools tienen.</td></tr>
+      <tr><td>HEARTBEAT.md</td><td>Instrucciones de check-in proactivo: cada cuánto te contacta, qué revisa automáticamente.</td></tr>
+      <tr><td>openclaw.json</td><td>Config técnica: modelo, API keys, tools habilitados, skills, canales.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════ 3 · INSTALACIÓN ═══════ -->
+<div id="view-install" class="mode-panel">
+  <div class="sec-title" data-n="1">Instalación rápida</div>
+  <div class="callout green" style="margin-top:0"><strong>Requisitos:</strong> Node.js 22+, una API key de un LLM (Claude recomendado), y una máquina que se quede encendida (tu portátil, un Mac Mini, Raspberry Pi, o VM cloud).</div>
+
+  <div class="grid2">
+    <div>
+      <div class="step-box o" style="margin-bottom:12px"><div class="step-label o">macOS / Linux</div><div class="step-name">Instalación en un comando</div><div class="step-desc">El script instala Node.js, Python y el CLI de OpenClaw.</div></div>
+      <pre style="margin:0"><span class="cm"># Instalar OpenClaw</span>
+<span class="kw">curl</span> -fsSL https://get.openclaw.ai | bash
+
+<span class="cm"># Crear workspace</span>
+<span class="kw">openclaw</span> init
+
+<span class="cm"># Configurar modelo y API key</span>
+<span class="kw">openclaw</span> config
+
+<span class="cm"># Arrancar el gateway</span>
+<span class="kw">openclaw</span> gateway start</pre>
+    </div>
+    <div>
+      <div class="step-box b" style="margin-bottom:12px"><div class="step-label b">Windows</div><div class="step-name">PowerShell</div><div class="step-desc">Script equivalente para Windows con PowerShell.</div></div>
+      <pre style="margin:0"><span class="cm"># PowerShell como admin</span>
+<span class="kw">irm</span> https://get.openclaw.ai/win | iex
+
+<span class="cm"># Crear workspace</span>
+<span class="kw">openclaw</span> init
+
+<span class="cm"># Configurar</span>
+<span class="kw">openclaw</span> config
+
+<span class="cm"># Arrancar</span>
+<span class="kw">openclaw</span> gateway start</pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Conectar un canal (Telegram ejemplo)</div>
+  <pre>
+<span class="cm"># 1. Crear bot en Telegram: habla con @BotFather, crea bot, copia token</span>
+
+<span class="cm"># 2. Añadir token a la config</span>
+<span class="kw">openclaw</span> config
+<span class="cm"># → channels → telegram → token: "TU_BOT_TOKEN"</span>
+
+<span class="cm"># 3. Reiniciar gateway</span>
+<span class="kw">openclaw</span> gateway restart
+
+<span class="cm"># 4. Abre Telegram → busca tu bot → envía "Hola"</span>
+<span class="cm"># → El agente responde con la personalidad de SOUL.md</span>
+  </pre>
+
+  <div class="sec-title" data-n="3">Comandos esenciales del CLI</div>
+  <table class="vtable">
+    <thead><tr><th>Comando</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td>openclaw init</td><td>Crea workspace: SOUL.md, USER.md, MEMORY.md, openclaw.json</td></tr>
+      <tr><td>openclaw config</td><td>Abre la configuración interactiva</td></tr>
+      <tr><td>openclaw gateway start</td><td>Arranca el gateway (el agente se activa)</td></tr>
+      <tr><td>openclaw gateway restart</td><td>Reinicia tras cambios de config</td></tr>
+      <tr><td>openclaw doctor</td><td>Diagnostica problemas de configuración</td></tr>
+      <tr><td>openclaw skills list</td><td>Lista skills instalados</td></tr>
+      <tr><td>openclaw skills install X</td><td>Instala un skill desde ClawHub</td></tr>
+      <tr><td>openclaw status</td><td>Estado del sistema: modelo, canales, memoria</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════ 4 · SKILLS ═══════ -->
+<div id="view-skills" class="mode-panel">
+  <div class="sec-title" data-n="1">Skills vs Tools — no los confundas</div>
+  <div class="grid2">
+    <div class="callout green" style="margin:0"><strong>Tool</strong> = una función que el agente puede invocar: <code>exec</code> (shell), <code>browser</code>, <code>web_search</code>, <code>fs</code> (files), <code>message</code>. Son los permisos reales. Sin el tool <code>exec</code>, el agente no puede ejecutar nada aunque tenga un skill que lo instruya.</div>
+    <div class="callout blue" style="margin:0"><strong>Skill</strong> = un fichero Markdown (SKILL.md) que se inyecta en el system prompt. Le dice al agente <em>cómo</em> hacer algo: "cuando te pidan notas de Obsidian, busca en ~/vault/". <strong>Un skill es un manual, no un permiso.</strong></div>
+  </div>
+
+  <div class="callout yellow"><strong>Regla de los 3 requisitos:</strong> Para que un skill funcione necesitas: <strong>1)</strong> Config: ¿está el tool habilitado? <strong>2)</strong> Instalación: ¿está la herramienta instalada en la máquina? <strong>3)</strong> Autorización: ¿tienes credenciales? Si falla cualquiera de los 3, el skill no hace nada.</div>
+
+  <div class="sec-title" data-n="2">Crear tu propio skill</div>
+  <pre>
+<span class="cm"># 1. Crear carpeta del skill</span>
+<span class="kw">mkdir</span> -p ~/.openclaw/skills/deploy-checker
+<span class="kw">cd</span> ~/.openclaw/skills/deploy-checker
+
+<span class="cm"># 2. Crear SKILL.md</span>
+<span class="kw">cat</span> > SKILL.md << 'EOF'
+---
+name: deploy-checker
+description: Check deployment status and health of our Java services on staging and production.
+metadata:
+  openclaw:
+    emoji: "🚀"
+    requires:
+      bins: ["curl"]
+---
+
+# Deploy Checker
+
+When the user asks about deployment status, health checks, or service availability:
+
+1. Use `curl` to hit the health endpoint:
+   - Staging: `https://staging.myapp.com/actuator/health`
+   - Production: `https://prod.myapp.com/actuator/health`
+
+2. Parse the JSON response and report:
+   - Status (UP/DOWN)
+   - Database connection
+   - Disk space
+   - Last deploy timestamp from `/actuator/info`
+
+3. If any service is DOWN, immediately alert with details.
+
+Always report in a clear table format.
+EOF
+
+<span class="cm"># 3. Reiniciar gateway para que lo cargue</span>
+<span class="kw">openclaw</span> gateway restart
+
+<span class="cm"># 4. Verificar que se registró</span>
+<span class="kw">openclaw</span> skills list --eligible
+  </pre>
+
+  <div class="sec-title" data-n="3">Skills recomendados para developers</div>
+  <table class="vtable">
+    <thead><tr><th>Skill</th><th>Qué hace</th><th>Instalar</th></tr></thead>
+    <tbody>
+      <tr><td>git-auto</td><td>Genera commit messages, PR descriptions y release notes</td><td><code>openclaw skills install git-auto</code></td></tr>
+      <tr><td>code-review</td><td>Revisa diffs y sugiere mejoras de seguridad y estilo</td><td><code>openclaw skills install code-review</code></td></tr>
+      <tr><td>docs-research</td><td>Busca en API docs y devuelve snippets de código</td><td><code>openclaw skills install docs-research</code></td></tr>
+      <tr><td>ci-support</td><td>Resume pipelines fallidos y sugiere next actions</td><td><code>openclaw skills install ci-support</code></td></tr>
+      <tr><td>obsidian</td><td>Organiza notas de Obsidian por contexto</td><td><code>openclaw skills install obsidian</code></td></tr>
+      <tr><td>summarize</td><td>Resume textos, emails, artículos largos</td><td><code>openclaw skills install summarize</code></td></tr>
+      <tr><td>humanizer</td><td>Reescribe textos para que suenen más naturales</td><td><code>openclaw skills install humanizer</code></td></tr>
+      <tr><td>session-logs</td><td>Busca en historial de conversaciones pasadas</td><td><code>openclaw skills install session-logs</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════ 5 · EJEMPLOS ═══════ -->
+<div id="view-examples" class="mode-panel">
+  <div class="sec-title" data-n="1">Ejemplo: Automatizar CI/CD con OpenClaw</div>
+  <div class="job-box green">
+    <div class="job-header"><span class="tag tag-g">Dev</span><span class="job-name">"Monitoriza mis deployments"</span></div>
+    <div class="job-desc">Le dices por Telegram: <em>"Cada vez que el pipeline de Jenkins falle en main, avísame por WhatsApp con el error y un link al log"</em>. OpenClaw crea un webhook, lo conecta a Jenkins, y te notifica automáticamente.</div>
+    <pre style="margin:0">
+<span class="cm">// Tú escribes en Telegram:</span>
+<span class="st">"Configura un webhook para que cuando Jenkins falle en
+ main, me envíes un resumen del error por WhatsApp"</span>
+
+<span class="cm">// OpenClaw:</span>
+<span class="cm">// 1. Crea un endpoint webhook local</span>
+<span class="cm">// 2. Configura Jenkins para enviar notificaciones</span>
+<span class="cm">// 3. Parsea el payload del build</span>
+<span class="cm">// 4. Te envía por WhatsApp:</span>
+<span class="st">"🔴 Build failed en main
+ Job: api-server-pipeline
+ Step: integration-tests
+ Error: Connection refused to DB staging
+ Log: https://jenkins.myco.com/job/api/342/console
+ Última vez que pasó: hace 3 días (mismo error)"</span></pre>
+  </div>
+
+  <div class="sec-title" data-n="2">Ejemplo: Code review automático</div>
+  <div class="job-box blue">
+    <div class="job-header"><span class="tag tag-b">Dev</span><span class="job-name">"Revisa mi último PR"</span></div>
+    <div class="job-desc">Le envías por Slack: <em>"Revisa el PR #142 del repo api-server"</em>. OpenClaw abre el browser, lee el diff en GitHub, analiza el código y te da feedback.</div>
+    <pre style="margin:0">
+<span class="cm">// Tú escribes en Slack:</span>
+<span class="st">"Revisa el PR #142 en api-server"</span>
+
+<span class="cm">// OpenClaw:</span>
+<span class="st">"📋 Review del PR #142 — Add user registration endpoint
+
+ ✅ Buena separación Service/DAO
+ ✅ Validaciones de email correctas
+
+ ⚠️ L42: El password se logea en plain text (logger.info).
+    Quita este log o usa password=**** en producción.
+
+ ⚠️ L67: Missing @Override en el método validate().
+
+ 💡 Sugerencia: El try-catch en L89 captura Exception
+    genérica. Mejor capturar DuplicateKeyException.
+
+ ¿Quieres que abra un comentario en el PR?"</span></pre>
+  </div>
+
+  <div class="sec-title" data-n="3">Ejemplo: Investigación técnica</div>
+  <div class="job-box yellow">
+    <div class="job-header"><span class="tag tag-y">Research</span><span class="job-name">"Compara Spring Boot vs Quarkus para nuestro caso"</span></div>
+    <div class="job-desc">Le pides por WhatsApp que investigue. OpenClaw busca en la web, lee docs oficiales y genera un informe adaptado a tu contexto (conoce tu stack porque está en USER.md).</div>
+    <pre style="margin:0">
+<span class="cm">// Tú escribes:</span>
+<span class="st">"Necesito decidir entre Spring Boot y Quarkus para
+ el nuevo microservicio de pagos. Investiga pros/contras
+ para nuestro caso (Kubernetes, Java 21, PostgreSQL)"</span>
+
+<span class="cm">// OpenClaw busca, lee docs, y responde:</span>
+<span class="st">"📊 Comparativa Spring Boot vs Quarkus para tu caso:
+
+ Para tu setup (K8s + Java 21 + PostgreSQL):
+
+ Spring Boot:
+ + Tu equipo ya lo conoce (según mi memoria)
+ + Ecosistema maduro de librerías
+ - Cold start ~3s, imagen Docker ~350MB
+
+ Quarkus:
+ + Cold start ~0.5s con GraalVM native
+ + Imagen Docker ~80MB (encaja con tu objetivo Distroless)
+ - Curva de aprendizaje, menos librerías enterprise
+
+ Mi recomendación: Para el servicio de pagos,
+ Spring Boot (familiaridad del equipo > performance).
+ Para el worker de notificaciones, Quarkus native
+ (cold start importa en scale-to-zero).
+
+ ¿Quiero que genere un ADR con esta decisión?"</span></pre>
+  </div>
+
+  <div class="sec-title" data-n="4">Ejemplo: Productividad personal</div>
+  <div class="job-box purple">
+    <div class="job-header"><span class="tag tag-p">Personal</span><span class="job-name">"Organiza mi semana"</span></div>
+    <div class="job-desc">OpenClaw conecta con tu calendario, tus notas y tu email para darte un resumen proactivo cada mañana.</div>
+    <pre style="margin:0">
+<span class="cm">// En HEARTBEAT.md configuras:</span>
+<span class="st">"Cada mañana a las 8:00, envíame por Telegram:
+ - Reuniones del día
+ - PRs pendientes de review
+ - Tickets Jira asignados a mí
+ - Si hay deploys programados hoy"</span>
+
+<span class="cm">// Cada mañana recibes:</span>
+<span class="st">"☀️ Buenos días Antonio. Tu día:
+
+ 📅 3 reuniones: daily (9:00), planning (11:00), 1:1 (16:00)
+ 👀 2 PRs esperando tu review (#156, #159)
+ 🎯 3 tickets Jira en sprint: PROJ-445 (en progreso),
+    PROJ-448 (pendiente), PROJ-451 (blocked)
+ 🚀 Deploy a staging programado a las 14:00
+
+ ¿Quieres que priorice algo o cancele alguna reunión?"</span></pre>
+  </div>
+
+  <div class="sec-title" data-n="5">Ejemplo: Automatizar tareas repetitivas</div>
+  <div class="job-box orange">
+    <div class="job-header"><span class="tag tag-o">Auto</span><span class="job-name">"Cada noche, haz backup y limpia logs"</span></div>
+    <div class="job-desc">Configuras un cron job para tareas de mantenimiento nocturnas. OpenClaw ejecuta y te reporta por la mañana.</div>
+    <pre style="margin:0">
+<span class="cm">// Tú dices:</span>
+<span class="st">"Cada día a las 02:00:
+ 1. Haz backup de la BD de staging a S3
+ 2. Limpia logs de más de 7 días en /var/log/app/
+ 3. Ejecuta SonarQube analysis en el repo principal
+ 4. Si hay vulnerabilidades nuevas, avísame"</span>
+
+<span class="cm">// OpenClaw crea un cron job y cada noche:</span>
+<span class="cm">// - pg_dump → aws s3 cp</span>
+<span class="cm">// - find /var/log/app/ -mtime +7 -delete</span>
+<span class="cm">// - sonar-scanner en el repo</span>
+<span class="cm">// - Parsea resultados y te envía resumen</span></pre>
+  </div>
+</div>
+
+<!-- ═══════ 6 · SEGURIDAD ═══════ -->
+<div id="view-security" class="mode-panel">
+  <div class="sec-title" data-n="1">⚠️ Riesgos reales</div>
+  <div class="callout red" style="margin-top:0"><strong>OpenClaw es potente Y potencialmente peligroso.</strong> Tiene acceso a tu sistema: ficheros, shell, email, navegador. Una mala configuración puede exponer datos sensibles. Trata OpenClaw como tratarías dar acceso root a un becario muy inteligente pero impredecible.</div>
+
+  <table class="vtable">
+    <thead><tr><th>Riesgo</th><th>Descripción</th><th>Mitigación</th></tr></thead>
+    <tbody>
+      <tr><td>Prompt injection</td><td>Un email o web maliciosa inyecta instrucciones al agente</td><td>Limitar tools con <code>tools.allow/deny</code>. No dar acceso a email sin filtros.</td></tr>
+      <tr><td>Skills maliciosos</td><td>Skills de terceros en ClawHub pueden contener código peligroso</td><td>Leer SIEMPRE el SKILL.md antes de instalar. Preferir skills oficiales.</td></tr>
+      <tr><td>Exposición gateway</td><td>Si expones el puerto 18789 a internet sin auth</td><td>Usar Tailscale para acceso remoto. Nunca exponer sin autenticación.</td></tr>
+      <tr><td>Credenciales en config</td><td>API keys en openclaw.json en texto plano</td><td>Usar variables de entorno o secret managers.</td></tr>
+      <tr><td>Acciones destructivas</td><td>El agente puede borrar ficheros, emails, etc.</td><td>Activar <code>tools.exec.ask: true</code> para pedir confirmación antes de ejecutar.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title" data-n="2">Config de seguridad recomendada</div>
+  <pre>
+<span class="cm">// openclaw.json — config segura para empezar</span>
+{
+  <span class="st">"tools"</span>: {
+    <span class="st">"allow"</span>: [<span class="st">"group:fs"</span>, <span class="st">"browser"</span>, <span class="st">"web_search"</span>, <span class="st">"message"</span>],
+    <span class="st">"deny"</span>: [<span class="st">"exec"</span>],           <span class="cm">// Shell deshabilitado al inicio</span>
+    <span class="st">"exec"</span>: {
+      <span class="st">"ask"</span>: <span class="kw">true</span>,              <span class="cm">// Pide confirmación antes de ejecutar</span>
+      <span class="st">"security"</span>: <span class="st">"sandboxed"</span>  <span class="cm">// Modo sandbox</span>
+    }
+  },
+  <span class="st">"skills"</span>: {
+    <span class="st">"allowBundled"</span>: [          <span class="cm">// Solo skills oficiales</span>
+      <span class="st">"summarize"</span>,
+      <span class="st">"humanizer"</span>,
+      <span class="st">"session-logs"</span>
+    ]
+  }
+}
+  </pre>
+
+  <div class="callout green"><strong>Regla de mínimo privilegio:</strong> Empieza con todo denegado. Habilita tools y skills uno a uno según los necesites. <code>openclaw doctor</code> te avisa de configs inseguras.</div>
+
+  <div class="repo-box r">
+    <div class="repo-icon">🔒</div>
+    <div>
+      <div class="repo-title" style="color:var(--lobster)">Checklist de seguridad antes de usar</div>
+      <div class="repo-desc" style="line-height:2.1">
+        <strong style="color:var(--lobster)">1.</strong> Ejecuta <code>openclaw doctor</code> y resuelve todos los warnings<br>
+        <strong style="color:var(--accent)">2.</strong> No expongas el gateway a internet sin Tailscale o VPN<br>
+        <strong style="color:var(--accent3)">3.</strong> Lee CADA skill antes de instalarlo — son código ejecutable<br>
+        <strong style="color:var(--accent2)">4.</strong> Activa <code>tools.exec.ask: true</code> hasta que confíes en el agente<br>
+        <strong style="color:var(--yellow)">5.</strong> No pongas API keys directamente en openclaw.json — usa env vars<br>
+        <strong style="color:var(--purple)">6.</strong> Haz backups de tu workspace (MEMORY.md, SOUL.md) periódicamente
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function setView(n){document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).classList.add('active');event.target.classList.add('active')}
+</script>
+</body>
+</html>
