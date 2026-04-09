@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testing Manual — Alta de Cuenta · Servlets + SPA + REST</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;position:relative}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1100px;margin:0 auto;padding:48px 28px 100px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:40px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(26px,4vw,44px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:40px;width:fit-content;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:10px 18px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:2px solid var(--ink)}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:36px 0 16px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:16px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  .job-box{background:linear-gradient(135deg,#faf8f4,#f0ebe0);border:3px solid var(--accent);border-radius:8px;padding:24px 28px;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .job-box.green{border-color:var(--accent2)}.job-box.blue{border-color:var(--accent3)}.job-box.yellow{border-color:var(--yellow)}.job-box.purple{border-color:var(--purple)}
+  .job-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .job-name{font-size:18px;font-weight:700}
+  .job-desc{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+  .tag{font-size:9px;font-weight:700;letter-spacing:2px;padding:4px 10px;border-radius:3px;text-transform:uppercase}
+  .tag-o{background:rgba(193,68,14,.12);color:var(--accent);border:2px solid var(--accent)}.tag-g{background:rgba(42,110,78,.12);color:var(--accent2);border:2px solid var(--accent2)}.tag-b{background:rgba(26,74,138,.12);color:var(--accent3);border:2px solid var(--accent3)}.tag-y{background:rgba(232,160,32,.12);color:var(--yellow);border:2px solid var(--yellow)}.tag-p{background:rgba(122,58,205,.12);color:var(--purple);border:2px solid var(--purple)}
+  .steps-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+  .step-box{flex:1;min-width:180px;background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:18px;transition:all .2s}
+  .step-box:hover{border-color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .step-box.o{border-left:4px solid var(--accent)}.step-box.g{border-left:4px solid var(--accent2)}.step-box.b{border-left:4px solid var(--accent3)}.step-box.y{border-left:4px solid var(--yellow)}.step-box.p{border-left:4px solid var(--purple)}
+  .step-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .step-label.o{color:var(--accent)}.step-label.g{color:var(--accent2)}.step-label.b{color:var(--accent3)}.step-label.y{color:var(--yellow)}.step-label.p{color:var(--purple)}
+  .step-name{font-size:14px;font-weight:700;margin-bottom:6px}
+  .step-desc{font-size:11px;color:var(--muted);line-height:1.6}
+  .step-connector{display:flex;align-items:center;justify-content:center;min-width:28px;color:var(--muted)}
+  .arrow-right{font-size:20px;animation:pulse 2s ease infinite}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:16px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 14px;text-align:left}
+  .vtable td{padding:11px 14px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td:first-child{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border)}
+  .repo-box{background:linear-gradient(135deg,#fffaf0,#faf5e8);border:2px solid var(--yellow);border-radius:8px;padding:20px 24px;display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .repo-box.o{border-color:var(--accent)}.repo-box.g{border-color:var(--accent2)}.repo-box.b{border-color:var(--accent3)}.repo-box.p{border-color:var(--purple)}
+  .repo-icon{font-size:28px;flex-shrink:0}.repo-title{font-size:15px;font-weight:700;margin-bottom:6px}.repo-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);white-space:pre}
+  .kw{color:#c1440e;font-weight:600}.an{color:#1a4a8a;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.nu{color:#7a3acd}.fn{color:#0369a1;font-weight:600}
+
+  /* ── PYRAMID ── */
+  .pyramid{display:flex;flex-direction:column;align-items:center;gap:0;margin:20px 0}
+  .pyr-row{display:flex;align-items:stretch;gap:0;width:100%}
+  .pyr-level{border:2px solid;border-radius:6px;padding:14px 16px;text-align:center;margin:3px;transition:all .2s}
+  .pyr-level:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+  .pyr-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+  .pyr-name{font-size:13px;font-weight:700;margin-bottom:4px}
+  .pyr-desc{font-size:9px;color:var(--muted);line-height:1.4}
+  .pyr-tags{display:flex;gap:4px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+  .pyr-tag{font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:3px;text-transform:uppercase;border:1.5px solid}
+  .pt-back{color:var(--accent);border-color:var(--accent);background:rgba(193,68,14,.06)}
+  .pt-front{color:var(--accent3);border-color:var(--accent3);background:rgba(26,74,138,.06)}
+  .pt-rest{color:var(--accent2);border-color:var(--accent2);background:rgba(42,110,78,.06)}
+  .pt-full{color:var(--purple);border-color:var(--purple);background:rgba(122,58,205,.06)}
+
+  /* ── FILE TREE ── */
+  .ftree{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:20px 24px;margin:16px 0}
+  .ft-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;position:relative}
+  .ft-item.folder{font-weight:700;color:var(--ink)}
+  .ft-item.file{color:var(--ink2)}
+  .ft-icon{width:18px;height:18px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;font-weight:700}
+  .fi-folder{background:var(--yellow);color:#fff}.fi-java{background:var(--accent);color:#fff}.fi-js{background:var(--accent3);color:#fff}.fi-test{background:var(--accent2);color:#fff}.fi-xml{background:var(--purple);color:#fff}.fi-html{background:#e05a1e;color:#fff}.fi-cy{background:#04c38e;color:#fff}
+  .ft-indent{display:inline-block}
+  .ft-tag{font-size:8px;font-weight:700;letter-spacing:1px;padding:1px 6px;border-radius:2px;margin-left:auto;text-transform:uppercase;flex-shrink:0}
+  .ftt-unit{color:var(--accent2);background:rgba(42,110,78,.08)}.ftt-int{color:var(--accent3);background:rgba(26,74,138,.08)}.ftt-api{color:var(--accent);background:rgba(193,68,14,.08)}.ftt-e2e{color:var(--purple);background:rgba(122,58,205,.08)}.ftt-src{color:var(--muted);background:rgba(0,0,0,.04)}
+  .ft-line{position:absolute;left:0;top:0;bottom:0}
+
+  /* ── CHUNK BLOCK ── */
+  .chunk-block{border:2px solid rgba(42,110,78,.3);border-radius:6px;padding:14px 16px;background:rgba(42,110,78,.04)}
+  .chunk-block.bl{border-color:rgba(26,74,138,.3);background:rgba(26,74,138,.04)}
+  .chunk-block.or{border-color:rgba(193,68,14,.3);background:rgba(193,68,14,.04)}
+  .chunk-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-weight:700;color:var(--accent2)}
+  .chunk-block.bl .chunk-title{color:var(--accent3)}.chunk-block.or .chunk-title{color:var(--accent)}
+  .chunk-flow{display:flex;align-items:center;gap:8px}
+  .chunk-node{flex:1;border-radius:4px;padding:10px 8px;text-align:center;border:2px solid}
+  .cn-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .cn-name{font-size:11px;font-weight:700;line-height:1.3}
+  .cn-sub{font-size:9px;color:var(--muted);margin-top:3px}
+  .mini-arrow{color:var(--muted);font-size:14px;flex-shrink:0}
+
+  @media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}.steps-row{flex-direction:column}.chunk-flow{flex-direction:column}.mini-arrow{transform:rotate(90deg)}.pyr-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Java Servlets · Vanilla JS SPA · API REST</div>
+  <h1>Manual de <em>Testing</em><br>Alta de Cuenta</h1>
+  <p class="subtitle">// Ejemplo real: formulario de registro con datos personales, cuenta, password y expediente — Qué testear en cada capa, con qué herramienta y ejemplos de código</p>
+</header>
+
+<!-- ═══════ CASO DE USO — siempre visible ═══════ -->
+<div class="job-box">
+  <div class="job-header"><span class="tag tag-o">Caso de uso</span><span class="job-name">Alta de cuenta de usuario</span></div>
+  <p class="job-desc">El usuario rellena un formulario en la SPA con datos personales (nombre, email, DNI), cuenta (username), password (con confirmación) y expediente (número y tipo). El front valida localmente, envía un POST al API REST, el servlet recibe el JSON, el service aplica reglas de negocio y el DAO persiste en BD.</p>
+  <div class="steps-row">
+    <div class="step-box b"><div class="step-label b">1 · Frontend SPA</div><div class="step-name">Formulario JS</div><div class="step-desc">Valida email, password ≥ 8 chars, DNI con formato, campos obligatorios. Envía <code>POST /api/cuentas</code> con fetch.</div></div>
+    <div class="step-connector"><span class="arrow-right">→</span></div>
+    <div class="step-box g"><div class="step-label g">2 · API REST</div><div class="step-name">POST /api/cuentas</div><div class="step-desc">Contrato JSON: <code>{ nombre, email, dni, username, password, expediente }</code>. Respuesta: 201 Created o 400/409.</div></div>
+    <div class="step-connector"><span class="arrow-right">→</span></div>
+    <div class="step-box o"><div class="step-label o">3 · Backend</div><div class="step-name">Servlet → Service → DAO</div><div class="step-desc">CuentaServlet parsea JSON. CuentaService valida duplicados, hashea password. CuentaDao inserta en BD.</div></div>
+  </div>
+</div>
+
+<!-- ═══════ TOGGLE ═══════ -->
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setView('piramide')">🔺 Pirámide</button>
+  <button class="mode-btn" onclick="setView('unit')">🧪 Unit Tests</button>
+  <button class="mode-btn" onclick="setView('integration')">🔗 Integración</button>
+  <button class="mode-btn" onclick="setView('api')">📡 API Contract</button>
+  <button class="mode-btn" onclick="setView('frontend')">🖥️ Frontend</button>
+  <button class="mode-btn" onclick="setView('e2e')">🌐 E2E</button>
+  <button class="mode-btn" onclick="setView('toolbox')">🧰 Estructura</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 1 · PIRÁMIDE DE TESTS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-piramide" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">La pirámide aplicada al alta de cuenta</div>
+  <div class="callout green" style="margin-top:0"><strong>Principio:</strong> Muchos tests rápidos abajo (unit), menos en el medio (integración/API), pocos arriba (E2E). Las etiquetas <span style="font-size:9px;font-weight:700;color:var(--accent)">BACK</span> <span style="font-size:9px;font-weight:700;color:var(--accent3)">FRONT</span> <span style="font-size:9px;font-weight:700;color:var(--accent2)">REST</span> indican en qué lado se ejecuta cada test.</div>
+
+  <!-- PIRÁMIDE VISUAL -->
+  <div class="pyramid">
+    <!-- E2E -->
+    <div class="pyr-row" style="justify-content:center">
+      <div class="pyr-level" style="border-color:var(--purple);background:rgba(122,58,205,.04);width:40%">
+        <div class="pyr-label" style="color:var(--purple)">10% · E2E</div>
+        <div class="pyr-name">Navegador real + servidor real + BD real</div>
+        <div class="pyr-desc">Flujo completo: abrir formulario → rellenar → submit → ver confirmación<br>~5s por test · Solo happy paths críticos</div>
+        <div class="pyr-tags"><span class="pyr-tag pt-full">FRONT + BACK + BD</span></div>
+      </div>
+    </div>
+    <!-- API CONTRACT -->
+    <div class="pyr-row" style="justify-content:center">
+      <div class="pyr-level" style="border-color:var(--accent2);background:rgba(42,110,78,.04);width:55%">
+        <div class="pyr-label" style="color:var(--accent2)">10% · API Contract</div>
+        <div class="pyr-name">Validar el contrato JSON del POST /api/cuentas</div>
+        <div class="pyr-desc">Que el JSON tiene los campos correctos, status codes esperados, errores bien formateados<br>~200ms · REST Assured contra Tomcat embebido</div>
+        <div class="pyr-tags"><span class="pyr-tag pt-rest">REST</span><span class="pyr-tag pt-back">BACK</span></div>
+      </div>
+    </div>
+    <!-- INTEGRATION -->
+    <div class="pyr-row" style="justify-content:center">
+      <div class="pyr-level" style="border-color:var(--accent3);background:rgba(26,74,138,.04);width:70%">
+        <div class="pyr-label" style="color:var(--accent3)">15% · Integration</div>
+        <div class="pyr-name">DAO ↔ BD real · Servlet ↔ Service ↔ DAO</div>
+        <div class="pyr-desc">CuentaDao contra H2: INSERT, findByEmail, findByUsername duplicado<br>~100ms · H2 in-memory / Testcontainers</div>
+        <div class="pyr-tags"><span class="pyr-tag pt-back">BACK</span></div>
+      </div>
+    </div>
+    <!-- UNIT BACK -->
+    <div class="pyr-row">
+      <div class="pyr-level" style="border-color:var(--accent);background:rgba(193,68,14,.04);flex:1">
+        <div class="pyr-label" style="color:var(--accent)">35% · Unit Backend</div>
+        <div class="pyr-name">Service + Servlet aislados</div>
+        <div class="pyr-desc">CuentaService: hash password, validar duplicado, reglas expediente<br>CuentaServlet: parsear JSON, devolver status correctos<br>~ms · JUnit 5 + Mockito (mock DAO, mock Request/Response)</div>
+        <div class="pyr-tags"><span class="pyr-tag pt-back">BACK</span></div>
+      </div>
+      <div class="pyr-level" style="border-color:var(--accent3);background:rgba(26,74,138,.04);flex:1">
+        <div class="pyr-label" style="color:var(--accent3)">30% · Unit Frontend</div>
+        <div class="pyr-name">Validaciones JS + Fetch mocks + DOM</div>
+        <div class="pyr-desc">validarEmail(), validarPassword(), validarDni()<br>Fetch API con MSW · Formulario con jsdom<br>~ms · Vitest + MSW + jsdom</div>
+        <div class="pyr-tags"><span class="pyr-tag pt-front">FRONT</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Mapa: qué testear para el alta de cuenta</div>
+  <table class="vtable">
+    <thead><tr><th>Qué</th><th>Lado</th><th>Nivel</th><th>Ejemplo concreto</th></tr></thead>
+    <tbody>
+      <tr><td>validarEmail()</td><td><span class="pyr-tag pt-front">FRONT</span></td><td>Unit</td><td>"test@mail.com" → true, "" → false, "sinArroba" → false</td></tr>
+      <tr><td>validarPassword()</td><td><span class="pyr-tag pt-front">FRONT</span></td><td>Unit</td><td>≥8 chars, al menos 1 número, password === confirmación</td></tr>
+      <tr><td>validarDni()</td><td><span class="pyr-tag pt-front">FRONT</span></td><td>Unit</td><td>"12345678A" → true, "1234" → false, letra correcta</td></tr>
+      <tr><td>fetch POST</td><td><span class="pyr-tag pt-front">FRONT</span></td><td>Unit</td><td>Que llama a /api/cuentas con el body JSON correcto</td></tr>
+      <tr><td>Formulario DOM</td><td><span class="pyr-tag pt-front">FRONT</span></td><td>Unit</td><td>Submit con email vacío → muestra error inline</td></tr>
+      <tr><td>hashPassword()</td><td><span class="pyr-tag pt-back">BACK</span></td><td>Unit</td><td>BCrypt hash es distinto del plain text, verify funciona</td></tr>
+      <tr><td>CuentaService.crear()</td><td><span class="pyr-tag pt-back">BACK</span></td><td>Unit</td><td>Email duplicado → lanza DuplicateException. Mock DAO.</td></tr>
+      <tr><td>CuentaServlet.doPost()</td><td><span class="pyr-tag pt-back">BACK</span></td><td>Unit</td><td>JSON válido → 201. JSON inválido → 400. Mock service.</td></tr>
+      <tr><td>CuentaDao.save()</td><td><span class="pyr-tag pt-back">BACK</span></td><td>Integration</td><td>INSERT en H2 → findById devuelve los mismos datos</td></tr>
+      <tr><td>CuentaDao duplicado</td><td><span class="pyr-tag pt-back">BACK</span></td><td>Integration</td><td>INSERT con email existente → SQLException UNIQUE</td></tr>
+      <tr><td>POST /api/cuentas</td><td><span class="pyr-tag pt-rest">REST</span></td><td>Contract</td><td>201 con body {id, username}. 400 si falta campo. 409 si duplicado.</td></tr>
+      <tr><td>Flujo completo</td><td><span class="pyr-tag pt-full">FULL</span></td><td>E2E</td><td>Cypress: abrir → rellenar → submit → ver "Cuenta creada"</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title" data-n="3">Qué NO testear</div>
+  <div class="grid2">
+    <div class="callout orange" style="margin:0"><strong>✗ No:</strong><br>• Getters/setters de Cuenta.java<br>• El propio Tomcat<br>• CSS del formulario<br>• console.log / Logger<br>• Librerías de terceros (BCrypt internals)</div>
+    <div class="callout green" style="margin:0"><strong>✓ Sí:</strong><br>• Toda validación (front + back)<br>• Hash de password<br>• Cada status code del endpoint<br>• Duplicados (email, username)<br>• Formato JSON request/response</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 2 · UNIT TESTS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-unit" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Unit Test del Service — lógica de negocio</div>
+  <div class="callout blue" style="margin-top:0"><strong>Patrón GIVEN-WHEN-THEN:</strong> Prepara escenario → ejecuta acción → verifica resultado. El DAO está mockeado — solo testeas la lógica del Service.</div>
+
+  <pre>
+<cm>// CuentaServiceTest.java — JUnit 5 + Mockito</cm>
+
+<an>@ExtendWith</an>(<cl>MockitoExtension</cl>.<kw>class</kw>)
+<kw>class</kw> <cl>CuentaServiceTest</cl> {
+
+    <an>@Mock</an> <kw>private</kw> <cl>CuentaDao</cl> cuentaDao;
+    <an>@InjectMocks</an> <kw>private</kw> <cl>CuentaService</cl> service;
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>crear_conDatosValidos_guardaConPasswordHasheado</fn>() {
+        <cm>// GIVEN</cm>
+        <cl>AltaCuentaDto</cl> dto = <kw>new</kw> <cl>AltaCuentaDto</cl>(
+            <st>"Ana García"</st>, <st>"ana@mail.com"</st>, <st>"12345678A"</st>,
+            <st>"anagarcia"</st>, <st>"Pass1234"</st>, <st>"EXP-001"</st>, <st>"Premium"</st>
+        );
+        when(cuentaDao.existsByEmail(<st>"ana@mail.com"</st>)).thenReturn(<kw>false</kw>);
+        when(cuentaDao.existsByUsername(<st>"anagarcia"</st>)).thenReturn(<kw>false</kw>);
+        when(cuentaDao.save(any())).thenAnswer(i -> {
+            <cl>Cuenta</cl> c = i.getArgument(<nu>0</nu>);
+            c.setId(<nu>1L</nu>);
+            <kw>return</kw> c;
+        });
+
+        <cm>// WHEN</cm>
+        <cl>Cuenta</cl> result = service.crear(dto);
+
+        <cm>// THEN</cm>
+        assertNotNull(result.getId());
+        assertEquals(<st>"ana@mail.com"</st>, result.getEmail());
+        assertNotEquals(<st>"Pass1234"</st>, result.getPasswordHash()); <cm>// Hasheado!</cm>
+        assertTrue(result.getPasswordHash().startsWith(<st>"$2a$"</st>)); <cm>// BCrypt</cm>
+        verify(cuentaDao).save(any(<cl>Cuenta</cl>.<kw>class</kw>));
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>crear_conEmailDuplicado_lanzaExcepcion</fn>() {
+        <cl>AltaCuentaDto</cl> dto = <kw>new</kw> <cl>AltaCuentaDto</cl>(
+            <st>"Ana"</st>, <st>"existente@mail.com"</st>, <st>"12345678A"</st>,
+            <st>"ana"</st>, <st>"Pass1234"</st>, <st>"EXP-001"</st>, <st>"Premium"</st>
+        );
+        when(cuentaDao.existsByEmail(<st>"existente@mail.com"</st>)).thenReturn(<kw>true</kw>);
+
+        <cl>DuplicateException</cl> ex = assertThrows(
+            <cl>DuplicateException</cl>.<kw>class</kw>,
+            () -> service.crear(dto)
+        );
+        assertEquals(<st>"El email ya está registrado"</st>, ex.getMessage());
+        verify(cuentaDao, never()).save(any()); <cm>// No debe guardar</cm>
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>crear_conExpedienteInvalido_lanzaValidationError</fn>() {
+        <cl>AltaCuentaDto</cl> dto = <kw>new</kw> <cl>AltaCuentaDto</cl>(
+            <st>"Ana"</st>, <st>"ana@mail.com"</st>, <st>"12345678A"</st>,
+            <st>"ana"</st>, <st>"Pass1234"</st>, <st>""</st>, <st>""</st>  <cm>// Expediente vacío</cm>
+        );
+
+        assertThrows(<cl>ValidationException</cl>.<kw>class</kw>,
+            () -> service.crear(dto));
+    }
+}
+  </pre>
+
+  <div class="sec-title" data-n="2">Unit Test del Servlet — mockear Request/Response</div>
+
+  <pre>
+<cm>// CuentaServletTest.java</cm>
+
+<an>@ExtendWith</an>(<cl>MockitoExtension</cl>.<kw>class</kw>)
+<kw>class</kw> <cl>CuentaServletTest</cl> {
+
+    <an>@Mock</an> <kw>private</kw> <cl>CuentaService</cl> service;
+    <an>@Mock</an> <kw>private</kw> <cl>HttpServletRequest</cl> request;
+    <an>@Mock</an> <kw>private</kw> <cl>HttpServletResponse</cl> response;
+    <kw>private</kw> <cl>CuentaServlet</cl> servlet;
+    <kw>private</kw> <cl>StringWriter</cl> writer;
+
+    <an>@BeforeEach</an>
+    <kw>void</kw> <fn>setUp</fn>() <kw>throws</kw> Exception {
+        servlet = <kw>new</kw> <cl>CuentaServlet</cl>(service);
+        writer = <kw>new</kw> <cl>StringWriter</cl>();
+        when(response.getWriter()).thenReturn(<kw>new</kw> <cl>PrintWriter</cl>(writer));
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>doPost_jsonValido_retorna201ConId</fn>() <kw>throws</kw> Exception {
+        <cm>// GIVEN — simular body JSON en el request</cm>
+        String json = <st>"""
+            {"nombre":"Ana","email":"ana@mail.com","dni":"12345678A",
+             "username":"ana","password":"Pass1234",
+             "expediente":"EXP-001","tipoExpediente":"Premium"}
+            """</st>;
+        when(request.getReader()).thenReturn(
+            <kw>new</kw> <cl>BufferedReader</cl>(<kw>new</kw> <cl>StringReader</cl>(json)));
+
+        <cl>Cuenta</cl> creada = <kw>new</kw> <cl>Cuenta</cl>();
+        creada.setId(<nu>1L</nu>); creada.setUsername(<st>"ana"</st>);
+        when(service.crear(any())).thenReturn(creada);
+
+        <cm>// WHEN</cm>
+        servlet.doPost(request, response);
+
+        <cm>// THEN</cm>
+        verify(response).setStatus(<nu>201</nu>);
+        verify(response).setContentType(<st>"application/json"</st>);
+        assertTrue(writer.toString().contains(<st>"\"id\":1"</st>));
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>doPost_emailDuplicado_retorna409</fn>() <kw>throws</kw> Exception {
+        String json = <st>"""
+            {"nombre":"Ana","email":"dup@mail.com","dni":"12345678A",
+             "username":"ana","password":"Pass1234",
+             "expediente":"EXP-001","tipoExpediente":"Premium"}
+            """</st>;
+        when(request.getReader()).thenReturn(
+            <kw>new</kw> <cl>BufferedReader</cl>(<kw>new</kw> <cl>StringReader</cl>(json)));
+        when(service.crear(any()))
+            .thenThrow(<kw>new</kw> <cl>DuplicateException</cl>(<st>"Email ya registrado"</st>));
+
+        servlet.doPost(request, response);
+
+        verify(response).setStatus(<nu>409</nu>);
+        assertTrue(writer.toString().contains(<st>"Email ya registrado"</st>));
+    }
+}
+  </pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 3 · INTEGRACIÓN -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-integration" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Test del DAO contra BD real (H2)</div>
+  <div class="callout blue" style="margin-top:0"><strong>Objetivo:</strong> Verificar que las queries SQL y constraints (UNIQUE email, UNIQUE username) funcionan contra una BD real.</div>
+
+  <pre>
+<cm>// CuentaDaoIntegrationTest.java — H2 in-memory</cm>
+
+<kw>class</kw> <cl>CuentaDaoIntegrationTest</cl> {
+
+    <kw>private static</kw> <cl>DataSource</cl> ds;
+    <kw>private</kw> <cl>JdbcCuentaDao</cl> dao;
+
+    <an>@BeforeAll</an>
+    <kw>static void</kw> <fn>initDb</fn>() <kw>throws</kw> Exception {
+        <cl>JdbcDataSource</cl> h2 = <kw>new</kw> <cl>JdbcDataSource</cl>();
+        h2.setURL(<st>"jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1"</st>);
+        ds = h2;
+        <cm>// Crear tablas</cm>
+        <kw>try</kw> (<cl>var</cl> conn = ds.getConnection();
+             <cl>var</cl> stmt = conn.createStatement()) {
+            stmt.execute(<st>"""
+                CREATE TABLE cuentas (
+                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                    nombre VARCHAR(100) NOT NULL,
+                    email VARCHAR(150) NOT NULL UNIQUE,
+                    dni VARCHAR(9) NOT NULL,
+                    username VARCHAR(50) NOT NULL UNIQUE,
+                    password_hash VARCHAR(200) NOT NULL,
+                    expediente VARCHAR(20) NOT NULL,
+                    tipo_expediente VARCHAR(30)
+                )"""</st>);
+        }
+    }
+
+    <an>@BeforeEach</an>
+    <kw>void</kw> <fn>limpiar</fn>() { dao = <kw>new</kw> <cl>JdbcCuentaDao</cl>(ds); dao.deleteAll(); }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>save_yLuego_findByEmail_retornaMismo</fn>() {
+        <cl>Cuenta</cl> c = crearCuentaTest(<st>"ana@mail.com"</st>, <st>"ana"</st>);
+        <cl>Cuenta</cl> guardada = dao.save(c);
+
+        assertNotNull(guardada.getId());
+        <cl>Cuenta</cl> encontrada = dao.findByEmail(<st>"ana@mail.com"</st>);
+        assertEquals(<st>"ana"</st>, encontrada.getUsername());
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>save_emailDuplicado_lanzaSQLException</fn>() {
+        dao.save(crearCuentaTest(<st>"dup@mail.com"</st>, <st>"user1"</st>));
+
+        assertThrows(Exception.<kw>class</kw>, () ->
+            dao.save(crearCuentaTest(<st>"dup@mail.com"</st>, <st>"user2"</st>))
+        ); <cm>// UNIQUE constraint violation</cm>
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>existsByEmail_retornaTrueSiExiste</fn>() {
+        dao.save(crearCuentaTest(<st>"existe@mail.com"</st>, <st>"user1"</st>));
+        assertTrue(dao.existsByEmail(<st>"existe@mail.com"</st>));
+        assertFalse(dao.existsByEmail(<st>"noexiste@mail.com"</st>));
+    }
+
+    <kw>private</kw> <cl>Cuenta</cl> crearCuentaTest(String email, String user) {
+        <kw>return new</kw> <cl>Cuenta</cl>(<kw>null</kw>, <st>"Test"</st>, email, <st>"12345678A"</st>,
+            user, <st>"$2a$hash"</st>, <st>"EXP-001"</st>, <st>"Premium"</st>);
+    }
+}
+  </pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 4 · API CONTRACT -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-api" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Contrato del endpoint POST /api/cuentas</div>
+
+  <div class="chunk-block bl">
+    <div class="chunk-title">Request → Responses posibles</div>
+    <div class="chunk-flow">
+      <div class="chunk-node" style="background:rgba(26,74,138,.06);border-color:var(--accent3)"><div class="cn-label" style="color:var(--accent3)">Request</div><div class="cn-name">POST /api/cuentas</div><div class="cn-sub">Content-Type: application/json<br>{nombre, email, dni, username, password, expediente, tipoExpediente}</div></div>
+      <span class="mini-arrow">→</span>
+      <div class="chunk-node" style="background:rgba(42,110,78,.06);border-color:var(--accent2)"><div class="cn-label" style="color:var(--accent2)">201 Created</div><div class="cn-name">{ id, username }</div><div class="cn-sub">Cuenta creada OK</div></div>
+      <span class="mini-arrow">|</span>
+      <div class="chunk-node" style="background:rgba(232,160,32,.06);border-color:var(--yellow)"><div class="cn-label" style="color:var(--yellow)">400 Bad Request</div><div class="cn-name">{ error, fields[] }</div><div class="cn-sub">Validación fallida</div></div>
+      <span class="mini-arrow">|</span>
+      <div class="chunk-node" style="background:rgba(193,68,14,.06);border-color:var(--accent)"><div class="cn-label" style="color:var(--accent)">409 Conflict</div><div class="cn-name">{ error, message }</div><div class="cn-sub">Email/username duplicado</div></div>
+    </div>
+  </div>
+
+  <pre>
+<cm>// CuentaApiContractTest.java — REST Assured</cm>
+
+<kw>class</kw> <cl>CuentaApiContractTest</cl> {
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>post_datosValidos_retorna201ConId</fn>() {
+        given()
+            .baseUri(BASE_URL)
+            .contentType(<cl>ContentType</cl>.JSON)
+            .body(<st>"""
+                {"nombre":"Ana García","email":"nueva@mail.com",
+                 "dni":"12345678A","username":"anagarcia",
+                 "password":"Pass1234",
+                 "expediente":"EXP-100","tipoExpediente":"Premium"}
+                """</st>)
+        .when()
+            .post(<st>"/api/cuentas"</st>)
+        .then()
+            .statusCode(<nu>201</nu>)
+            .contentType(<cl>ContentType</cl>.JSON)
+            .body(<st>"id"</st>, notNullValue())
+            .body(<st>"username"</st>, equalTo(<st>"anagarcia"</st>));
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>post_sinEmail_retorna400ConCamposInvalidos</fn>() {
+        given()
+            .baseUri(BASE_URL)
+            .contentType(<cl>ContentType</cl>.JSON)
+            .body(<st>"""
+                {"nombre":"Ana","email":"","dni":"12345678A",
+                 "username":"ana","password":"Pass1234",
+                 "expediente":"EXP-100","tipoExpediente":"Premium"}
+                """</st>)
+        .when()
+            .post(<st>"/api/cuentas"</st>)
+        .then()
+            .statusCode(<nu>400</nu>)
+            .body(<st>"error"</st>, equalTo(<st>"Validation failed"</st>))
+            .body(<st>"fields"</st>, hasItem(<st>"email"</st>));
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>post_emailDuplicado_retorna409</fn>() {
+        <cm>// Crear primero</cm>
+        crearCuentaTest(<st>"dup@mail.com"</st>);
+
+        <cm>// Intentar duplicar</cm>
+        given()
+            .baseUri(BASE_URL).contentType(<cl>ContentType</cl>.JSON)
+            .body(<st>"""
+                {"nombre":"Otro","email":"dup@mail.com","dni":"87654321B",
+                 "username":"otro","password":"Pass1234",
+                 "expediente":"EXP-200","tipoExpediente":"Basic"}
+                """</st>)
+        .when()
+            .post(<st>"/api/cuentas"</st>)
+        .then()
+            .statusCode(<nu>409</nu>)
+            .body(<st>"message"</st>, containsString(<st>"ya está registrado"</st>));
+    }
+}
+  </pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 5 · FRONTEND -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-frontend" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Validaciones JS puras — sin DOM</div>
+
+  <pre>
+<cm>// cuenta-validators.test.js — Vitest</cm>
+
+<kw>import</kw> { describe, it, expect } <kw>from</kw> <st>'vitest'</st>;
+<kw>import</kw> { validarEmail, validarPassword, validarDni, validarExpediente }
+  <kw>from</kw> <st>'./cuenta-validators.js'</st>;
+
+<fn>describe</fn>(<st>'validarEmail'</st>, () => {
+  it(<st>'acepta emails válidos'</st>,  () => { expect(validarEmail(<st>'ana@mail.com'</st>)).toBe(<kw>true</kw>); });
+  it(<st>'rechaza string vacío'</st>,   () => { expect(validarEmail(<st>''</st>)).toBe(<kw>false</kw>); });
+  it(<st>'rechaza sin arroba'</st>,     () => { expect(validarEmail(<st>'anamail.com'</st>)).toBe(<kw>false</kw>); });
+  it(<st>'rechaza null'</st>,           () => { expect(validarEmail(<kw>null</kw>)).toBe(<kw>false</kw>); });
+});
+
+<fn>describe</fn>(<st>'validarPassword'</st>, () => {
+  it(<st>'acepta ≥8 chars con número'</st>, () => { expect(validarPassword(<st>'Pass1234'</st>)).toBe(<kw>true</kw>); });
+  it(<st>'rechaza < 8 chars'</st>,          () => { expect(validarPassword(<st>'Pa1'</st>)).toBe(<kw>false</kw>); });
+  it(<st>'rechaza sin números'</st>,        () => { expect(validarPassword(<st>'Password'</st>)).toBe(<kw>false</kw>); });
+});
+
+<fn>describe</fn>(<st>'validarDni'</st>, () => {
+  it(<st>'acepta 8 dígitos + letra'</st>, () => { expect(validarDni(<st>'12345678Z'</st>)).toBe(<kw>true</kw>); });
+  it(<st>'rechaza sin letra'</st>,        () => { expect(validarDni(<st>'12345678'</st>)).toBe(<kw>false</kw>); });
+  it(<st>'valida letra correcta'</st>,    () => { expect(validarDni(<st>'12345678A'</st>)).toBe(<kw>false</kw>); }); <cm>// letra real: Z</cm>
+});
+
+<fn>describe</fn>(<st>'validarExpediente'</st>, () => {
+  it(<st>'acepta formato EXP-NNN'</st>, () => { expect(validarExpediente(<st>'EXP-001'</st>)).toBe(<kw>true</kw>); });
+  it(<st>'rechaza vacío'</st>,           () => { expect(validarExpediente(<st>''</st>)).toBe(<kw>false</kw>); });
+});
+  </pre>
+
+  <div class="sec-title" data-n="2">Fetch API mock — MSW</div>
+
+  <pre>
+<cm>// cuenta-api.test.js — Vitest + MSW</cm>
+
+<kw>import</kw> { http, HttpResponse } <kw>from</kw> <st>'msw'</st>;
+<kw>import</kw> { setupServer } <kw>from</kw> <st>'msw/node'</st>;
+<kw>import</kw> { crearCuenta } <kw>from</kw> <st>'./cuenta-api.js'</st>;
+
+<kw>const</kw> server = setupServer(
+  http.post(<st>'/api/cuentas'</st>, <kw>async</kw> ({ request }) => {
+    <kw>const</kw> body = <kw>await</kw> request.json();
+    <kw>if</kw> (!body.email) <kw>return</kw> HttpResponse.json(
+      { error: <st>'Validation failed'</st>, fields: [<st>'email'</st>] }, { status: <nu>400</nu> });
+    <kw>return</kw> HttpResponse.json(
+      { id: <nu>1</nu>, username: body.username }, { status: <nu>201</nu> });
+  })
+);
+beforeAll(() => server.listen());
+afterAll(() => server.close());
+
+<fn>describe</fn>(<st>'crearCuenta'</st>, () => {
+  it(<st>'envía POST y retorna id'</st>, <kw>async</kw> () => {
+    <kw>const</kw> res = <kw>await</kw> crearCuenta({
+      nombre:<st>'Ana'</st>, email:<st>'ana@mail.com'</st>, dni:<st>'12345678Z'</st>,
+      username:<st>'ana'</st>, password:<st>'Pass1234'</st>,
+      expediente:<st>'EXP-001'</st>, tipoExpediente:<st>'Premium'</st>
+    });
+    expect(res.id).toBe(<nu>1</nu>);
+    expect(res.username).toBe(<st>'ana'</st>);
+  });
+
+  it(<st>'lanza error si validación falla'</st>, <kw>async</kw> () => {
+    <kw>await</kw> expect(crearCuenta({ email:<st>''</st> })).rejects.toThrow(<st>'400'</st>);
+  });
+});
+  </pre>
+
+  <div class="sec-title" data-n="3">Test de DOM — formulario de alta</div>
+
+  <pre>
+<cm>// cuenta-form.test.js — Vitest + jsdom</cm>
+
+<fn>describe</fn>(<st>'Formulario de alta'</st>, () => {
+  it(<st>'muestra error inline si email vacío al submit'</st>, () => {
+    document.body.innerHTML = <st>`
+      &lt;form id="alta-form"&gt;
+        &lt;input id="email" value="" /&gt;
+        &lt;span id="email-error" class="hidden"&gt;&lt;/span&gt;
+        &lt;input id="password" value="Pass1234" /&gt;
+        &lt;button type="submit"&gt;Crear cuenta&lt;/button&gt;
+      &lt;/form&gt;`</st>;
+
+    require(<st>'./cuenta-form.js'</st>);
+    document.getElementById(<st>'alta-form'</st>)
+      .dispatchEvent(<kw>new</kw> Event(<st>'submit'</st>, {cancelable:<kw>true</kw>}));
+
+    <kw>const</kw> err = document.getElementById(<st>'email-error'</st>);
+    expect(err.classList.contains(<st>'hidden'</st>)).toBe(<kw>false</kw>);
+    expect(err.textContent).toContain(<st>'obligatorio'</st>);
+  });
+
+  it(<st>'muestra error si passwords no coinciden'</st>, () => {
+    document.body.innerHTML = <st>`
+      &lt;form id="alta-form"&gt;
+        &lt;input id="email" value="ana@mail.com" /&gt;
+        &lt;input id="password" value="Pass1234" /&gt;
+        &lt;input id="password-confirm" value="Diferente" /&gt;
+        &lt;span id="password-error" class="hidden"&gt;&lt;/span&gt;
+        &lt;button type="submit"&gt;Crear cuenta&lt;/button&gt;
+      &lt;/form&gt;`</st>;
+
+    require(<st>'./cuenta-form.js'</st>);
+    document.getElementById(<st>'alta-form'</st>)
+      .dispatchEvent(<kw>new</kw> Event(<st>'submit'</st>, {cancelable:<kw>true</kw>}));
+
+    expect(document.getElementById(<st>'password-error'</st>).textContent)
+      .toContain(<st>'no coinciden'</st>);
+  });
+});
+  </pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 6 · E2E -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-e2e" class="mode-panel">
+
+  <div class="sec-title" data-n="1">E2E con Cypress — alta de cuenta completa</div>
+  <div class="callout orange" style="margin-top:0"><strong>Solo 3-5 tests E2E.</strong> Happy path + errores críticos. Todo lo demás ya lo cubren los unit e integration tests.</div>
+
+  <pre>
+<cm>// cypress/e2e/alta-cuenta.cy.js</cm>
+
+<fn>describe</fn>(<st>'Alta de cuenta'</st>, () => {
+  beforeEach(() => {
+    cy.request(<st>'POST'</st>, <st>'/api/test/reset-db'</st>);
+    cy.visit(<st>'/alta'</st>);
+  });
+
+  it(<st>'registra una cuenta nueva y redirige al login'</st>, () => {
+    <cm>// Rellenar datos personales</cm>
+    cy.get(<st>'[data-cy="nombre"]'</st>).type(<st>'Ana García'</st>);
+    cy.get(<st>'[data-cy="email"]'</st>).type(<st>'ana@mail.com'</st>);
+    cy.get(<st>'[data-cy="dni"]'</st>).type(<st>'12345678Z'</st>);
+
+    <cm>// Rellenar cuenta</cm>
+    cy.get(<st>'[data-cy="username"]'</st>).type(<st>'anagarcia'</st>);
+    cy.get(<st>'[data-cy="password"]'</st>).type(<st>'Pass1234'</st>);
+    cy.get(<st>'[data-cy="password-confirm"]'</st>).type(<st>'Pass1234'</st>);
+
+    <cm>// Rellenar expediente</cm>
+    cy.get(<st>'[data-cy="expediente"]'</st>).type(<st>'EXP-001'</st>);
+    cy.get(<st>'[data-cy="tipo-expediente"]'</st>).select(<st>'Premium'</st>);
+
+    <cm>// Submit</cm>
+    cy.get(<st>'[data-cy="btn-crear"]'</st>).click();
+
+    <cm>// Verificar resultado</cm>
+    cy.url().should(<st>'include'</st>, <st>'/login'</st>);
+    cy.get(<st>'.toast-success'</st>).should(<st>'contain'</st>, <st>'Cuenta creada'</st>);
+  });
+
+  it(<st>'muestra error si email ya existe'</st>, () => {
+    <cm>// Pre-crear cuenta vía API</cm>
+    cy.request(<st>'POST'</st>, <st>'/api/cuentas'</st>, {
+      nombre:<st>'Previo'</st>, email:<st>'dup@mail.com'</st>, dni:<st>'87654321B'</st>,
+      username:<st>'previo'</st>, password:<st>'Pass1234'</st>,
+      expediente:<st>'EXP-099'</st>, tipoExpediente:<st>'Basic'</st>
+    });
+
+    <cm>// Intentar registrar con mismo email desde la UI</cm>
+    cy.get(<st>'[data-cy="nombre"]'</st>).type(<st>'Otro'</st>);
+    cy.get(<st>'[data-cy="email"]'</st>).type(<st>'dup@mail.com'</st>);
+    cy.get(<st>'[data-cy="dni"]'</st>).type(<st>'11111111H'</st>);
+    cy.get(<st>'[data-cy="username"]'</st>).type(<st>'otro'</st>);
+    cy.get(<st>'[data-cy="password"]'</st>).type(<st>'Pass1234'</st>);
+    cy.get(<st>'[data-cy="password-confirm"]'</st>).type(<st>'Pass1234'</st>);
+    cy.get(<st>'[data-cy="expediente"]'</st>).type(<st>'EXP-100'</st>);
+    cy.get(<st>'[data-cy="btn-crear"]'</st>).click();
+
+    cy.get(<st>'.toast-error'</st>).should(<st>'contain'</st>, <st>'ya está registrado'</st>);
+    cy.url().should(<st>'include'</st>, <st>'/alta'</st>); <cm>// No redirige</cm>
+  });
+
+  it(<st>'validación inline impide submit con campos vacíos'</st>, () => {
+    cy.get(<st>'[data-cy="btn-crear"]'</st>).click();
+    cy.get(<st>'.field-error'</st>).should(<st>'have.length.at.least'</st>, <nu>3</nu>);
+    cy.url().should(<st>'include'</st>, <st>'/alta'</st>); <cm>// No salió de la página</cm>
+  });
+});
+  </pre>
+
+  <div class="callout green"><strong>Selectores <code>data-cy</code>:</strong> Ponlos en el HTML del formulario: <code>&lt;input data-cy="email" id="email" /&gt;</code>. Son estables — no dependen de CSS ni de texto que cambie. Es la práctica recomendada por Cypress.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 7 · ESTRUCTURA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-toolbox" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Estructura de directorios</div>
+  <div class="callout blue" style="margin-top:0"><strong>Cada fichero de test tiene su nivel claro.</strong> Los colores y etiquetas te dicen si es unit, integración, contract o E2E.</div>
+
+  <!-- VISUAL FILE TREE -->
+  <div class="ftree">
+    <!-- ROOT -->
+    <div class="ft-item folder"><span class="ft-icon fi-folder">📁</span><strong>alta-cuenta/</strong></div>
+
+    <!-- SRC MAIN JAVA -->
+    <div class="ft-item folder" style="padding-left:24px"><span class="ft-icon fi-folder">📁</span><strong>src/main/java/</strong><span class="ft-tag ftt-src">Código fuente</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-java">J</span>CuentaServlet.java<span class="ft-tag ftt-src">Servlet · doPost</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-java">J</span>CuentaService.java<span class="ft-tag ftt-src">Lógica negocio</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-java">J</span>JdbcCuentaDao.java<span class="ft-tag ftt-src">JDBC queries</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-java">J</span>Cuenta.java<span class="ft-tag ftt-src">Entity</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-java">J</span>AltaCuentaDto.java<span class="ft-tag ftt-src">DTO entrada</span></div>
+
+    <!-- SRC MAIN WEBAPP -->
+    <div class="ft-item folder" style="padding-left:24px"><span class="ft-icon fi-folder">📁</span><strong>src/main/webapp/</strong><span class="ft-tag ftt-src">SPA Frontend</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-html">H</span>index.html</div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-html">H</span>alta.html<span class="ft-tag ftt-src">Formulario de alta</span></div>
+    <div class="ft-item folder" style="padding-left:56px"><span class="ft-icon fi-folder">📁</span><strong>js/</strong></div>
+    <div class="ft-item file" style="padding-left:88px"><span class="ft-icon fi-js">JS</span>cuenta-api.js<span class="ft-tag ftt-src">fetch POST</span></div>
+    <div class="ft-item file" style="padding-left:88px"><span class="ft-icon fi-js">JS</span>cuenta-validators.js<span class="ft-tag ftt-src">validarEmail, etc</span></div>
+    <div class="ft-item file" style="padding-left:88px"><span class="ft-icon fi-js">JS</span>cuenta-form.js<span class="ft-tag ftt-src">DOM listeners</span></div>
+
+    <!-- SEPARATOR -->
+    <div style="border-top:2px dashed var(--border);margin:16px 0"></div>
+
+    <!-- SRC TEST JAVA -->
+    <div class="ft-item folder" style="padding-left:24px"><span class="ft-icon fi-folder" style="background:var(--accent2)">📁</span><strong>src/test/java/</strong><span class="ft-tag ftt-unit">Tests Java</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-test">T</span>CuentaServiceTest.java<span class="ft-tag ftt-unit">Unit · mock DAO</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-test">T</span>CuentaServletTest.java<span class="ft-tag ftt-unit">Unit · mock req/res</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-test">T</span>CuentaDaoIntegrationTest.java<span class="ft-tag ftt-int">Integration · H2</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-test">T</span>CuentaApiContractTest.java<span class="ft-tag ftt-api">Contract · REST Assured</span></div>
+
+    <!-- SRC TEST JS -->
+    <div class="ft-item folder" style="padding-left:24px"><span class="ft-icon fi-folder" style="background:var(--accent3)">📁</span><strong>src/test/js/</strong><span class="ft-tag ftt-unit">Tests JS</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-js">T</span>cuenta-validators.test.js<span class="ft-tag ftt-unit">Unit · lógica pura</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-js">T</span>cuenta-api.test.js<span class="ft-tag ftt-unit">Unit · MSW mock</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-js">T</span>cuenta-form.test.js<span class="ft-tag ftt-unit">Unit · jsdom</span></div>
+
+    <!-- CYPRESS -->
+    <div class="ft-item folder" style="padding-left:24px"><span class="ft-icon fi-folder" style="background:var(--purple)">📁</span><strong>cypress/e2e/</strong><span class="ft-tag ftt-e2e">Tests E2E</span></div>
+    <div class="ft-item file" style="padding-left:56px"><span class="ft-icon fi-cy">C</span>alta-cuenta.cy.js<span class="ft-tag ftt-e2e">E2E · navegador real</span></div>
+
+    <!-- CONFIG -->
+    <div style="border-top:2px dashed var(--border);margin:16px 0"></div>
+    <div class="ft-item file" style="padding-left:24px"><span class="ft-icon fi-xml">X</span>pom.xml<span class="ft-tag ftt-src">JUnit, Mockito, H2, REST Assured</span></div>
+    <div class="ft-item file" style="padding-left:24px"><span class="ft-icon fi-js">V</span>vitest.config.js<span class="ft-tag ftt-src">Vitest + jsdom</span></div>
+    <div class="ft-item file" style="padding-left:24px"><span class="ft-icon fi-cy">C</span>cypress.config.js<span class="ft-tag ftt-src">Cypress config</span></div>
+  </div>
+
+  <div class="sec-title" data-n="2">Regla de decisión rápida</div>
+  <div class="repo-box o">
+    <div class="repo-icon">🎯</div>
+    <div>
+      <div class="repo-title" style="color:var(--accent)">¿Dónde va este test?</div>
+      <div class="repo-desc" style="line-height:2.2">
+        <strong style="color:var(--accent2)">1.</strong> ¿Es lógica pura sin BD ni red? → <strong>Unit</strong> con mock (JUnit+Mockito / Vitest)<br>
+        <strong style="color:var(--accent3)">2.</strong> ¿Toca BD real o SQL? → <strong>Integration</strong> con H2 (JUnit)<br>
+        <strong style="color:var(--accent)">3.</strong> ¿Valida la forma del JSON o status codes? → <strong>Contract</strong> con REST Assured<br>
+        <strong style="color:var(--yellow)">4.</strong> ¿Es un flujo de usuario completo? → <strong>E2E</strong> con Cypress<br>
+        <strong style="color:var(--purple)">5.</strong> ¿Ya lo cubre un nivel inferior? → <strong>NO lo dupliques</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">Dependencias Maven</div>
+  <pre>
+<cm>&lt;!-- pom.xml — solo dependencias de test --&gt;</cm>
+
+<cm>&lt;!-- JUnit 5 --&gt;</cm>
+&lt;<an>dependency</an>&gt;
+  &lt;<cl>groupId</cl>&gt;org.junit.jupiter&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;junit-jupiter&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>5.11.4</nu>&lt;/<cl>version</cl>&gt;
+  &lt;<cl>scope</cl>&gt;<st>test</st>&lt;/<cl>scope</cl>&gt;
+&lt;/<an>dependency</an>&gt;
+
+<cm>&lt;!-- Mockito --&gt;</cm>
+&lt;<an>dependency</an>&gt;
+  &lt;<cl>groupId</cl>&gt;org.mockito&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;mockito-junit-jupiter&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>5.14.2</nu>&lt;/<cl>version</cl>&gt;
+  &lt;<cl>scope</cl>&gt;<st>test</st>&lt;/<cl>scope</cl>&gt;
+&lt;/<an>dependency</an>&gt;
+
+<cm>&lt;!-- H2 --&gt;</cm>
+&lt;<an>dependency</an>&gt;
+  &lt;<cl>groupId</cl>&gt;com.h2database&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;h2&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>2.3.232</nu>&lt;/<cl>version</cl>&gt;
+  &lt;<cl>scope</cl>&gt;<st>test</st>&lt;/<cl>scope</cl>&gt;
+&lt;/<an>dependency</an>&gt;
+
+<cm>&lt;!-- REST Assured --&gt;</cm>
+&lt;<an>dependency</an>&gt;
+  &lt;<cl>groupId</cl>&gt;io.rest-assured&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;rest-assured&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>5.5.0</nu>&lt;/<cl>version</cl>&gt;
+  &lt;<cl>scope</cl>&gt;<st>test</st>&lt;/<cl>scope</cl>&gt;
+&lt;/<an>dependency</an>&gt;
+
+<cm>&lt;!-- Embedded Tomcat --&gt;</cm>
+&lt;<an>dependency</an>&gt;
+  &lt;<cl>groupId</cl>&gt;org.apache.tomcat.embed&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;tomcat-embed-core&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>10.1.34</nu>&lt;/<cl>version</cl>&gt;
+  &lt;<cl>scope</cl>&gt;<st>test</st>&lt;/<cl>scope</cl>&gt;
+&lt;/<an>dependency</an>&gt;
+  </pre>
+
+</div>
+
+</div>
+<script>
+function setView(n){document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).classList.add('active');event.target.classList.add('active')}
+</script>
+</body>
+</html>

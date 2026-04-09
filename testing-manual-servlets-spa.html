@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testing Manual — Java Servlets + SPA JavaScript + API REST</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;position:relative}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1100px;margin:0 auto;padding:48px 28px 100px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:40px}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(26px,4vw,44px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:40px;width:fit-content;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:10px 20px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:2px solid var(--ink)}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:36px 0 16px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:16px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  .job-box{background:linear-gradient(135deg,#faf8f4,#f0ebe0);border:3px solid var(--accent);border-radius:8px;padding:24px 28px;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .job-box.green{border-color:var(--accent2)}.job-box.blue{border-color:var(--accent3)}.job-box.yellow{border-color:var(--yellow)}.job-box.purple{border-color:var(--purple)}
+  .job-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .job-name{font-size:18px;font-weight:700}
+  .job-desc{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+  .tag{font-size:9px;font-weight:700;letter-spacing:2px;padding:4px 10px;border-radius:3px;text-transform:uppercase}
+  .tag-o{background:rgba(193,68,14,.12);color:var(--accent);border:2px solid var(--accent)}
+  .tag-g{background:rgba(42,110,78,.12);color:var(--accent2);border:2px solid var(--accent2)}
+  .tag-b{background:rgba(26,74,138,.12);color:var(--accent3);border:2px solid var(--accent3)}
+  .tag-y{background:rgba(232,160,32,.12);color:var(--yellow);border:2px solid var(--yellow)}
+  .tag-p{background:rgba(122,58,205,.12);color:var(--purple);border:2px solid var(--purple)}
+  .lifecycle-flow{display:flex;align-items:stretch;gap:0;background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
+  .lf-step{flex:1;padding:18px 14px;text-align:center;position:relative;transition:background .2s;min-width:0}
+  .lf-step:not(:last-child)::after{content:'▶';position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;z-index:2}
+  .lf-step:not(:last-child){border-right:2px solid var(--border)}
+  .lf-step:hover{background:rgba(0,0,0,.02)}
+  .lf-num{font-size:9px;color:var(--muted);margin-bottom:4px}.lf-icon{font-size:20px;margin-bottom:4px}.lf-name{font-size:11px;font-weight:700;margin-bottom:2px}.lf-desc{font-size:9px;color:var(--muted);line-height:1.4}
+  .steps-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+  .step-box{flex:1;min-width:200px;background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:18px;transition:all .2s}
+  .step-box:hover{border-color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .step-box.o{border-left:4px solid var(--accent)}.step-box.g{border-left:4px solid var(--accent2)}.step-box.b{border-left:4px solid var(--accent3)}.step-box.y{border-left:4px solid var(--yellow)}.step-box.p{border-left:4px solid var(--purple)}
+  .step-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .step-label.o{color:var(--accent)}.step-label.g{color:var(--accent2)}.step-label.b{color:var(--accent3)}.step-label.y{color:var(--yellow)}.step-label.p{color:var(--purple)}
+  .step-name{font-size:14px;font-weight:700;margin-bottom:6px}
+  .step-desc{font-size:11px;color:var(--muted);line-height:1.6}
+  .step-connector{display:flex;align-items:center;justify-content:center;min-width:28px;color:var(--muted)}
+  .arrow-right{font-size:20px;animation:pulse 2s ease infinite}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:16px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 16px;text-align:left}
+  .vtable td{padding:11px 16px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td:first-child{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap}
+  .repo-box{background:linear-gradient(135deg,#fffaf0,#faf5e8);border:2px solid var(--yellow);border-radius:8px;padding:20px 24px;display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .repo-box.o{border-color:var(--accent)}.repo-box.g{border-color:var(--accent2)}.repo-box.b{border-color:var(--accent3)}.repo-box.p{border-color:var(--purple)}
+  .repo-icon{font-size:28px;flex-shrink:0}.repo-title{font-size:15px;font-weight:700;margin-bottom:6px}.repo-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+  .repo-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .rchip{font-size:10px;padding:4px 10px;border-radius:3px;border:1px solid}
+  .rchip.o{background:rgba(193,68,14,.06);border-color:rgba(193,68,14,.3);color:var(--accent)}.rchip.g{background:rgba(42,110,78,.06);border-color:rgba(42,110,78,.3);color:var(--accent2)}.rchip.b{background:rgba(26,74,138,.06);border-color:rgba(26,74,138,.3);color:var(--accent3)}.rchip.y{background:rgba(232,160,32,.06);border-color:rgba(232,160,32,.3);color:var(--yellow)}.rchip.p{background:rgba(122,58,205,.06);border-color:rgba(122,58,205,.3);color:var(--purple)}
+  /* Chunk block for test flow */
+  .chunk-block{background:rgba(42,110,78,.04);border:2px solid rgba(42,110,78,.3);border-radius:6px;padding:14px 16px}
+  .chunk-block.bl{background:rgba(26,74,138,.04);border-color:rgba(26,74,138,.3)}
+  .chunk-block.or{background:rgba(193,68,14,.04);border-color:rgba(193,68,14,.3)}
+  .chunk-block.yl{background:rgba(232,160,32,.04);border-color:rgba(232,160,32,.3)}
+  .chunk-block.pu{background:rgba(122,58,205,.04);border-color:rgba(122,58,205,.3)}
+  .chunk-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-weight:700}
+  .chunk-block .chunk-title{color:var(--accent2)}.chunk-block.bl .chunk-title{color:var(--accent3)}.chunk-block.or .chunk-title{color:var(--accent)}.chunk-block.yl .chunk-title{color:var(--yellow)}.chunk-block.pu .chunk-title{color:var(--purple)}
+  .chunk-flow{display:flex;align-items:center;gap:8px}
+  .chunk-node{flex:1;border-radius:4px;padding:10px 8px;text-align:center;border:2px solid}
+  .cn-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .cn-name{font-size:11px;font-weight:700;line-height:1.3}
+  .cn-sub{font-size:9px;color:var(--muted);margin-top:3px}
+  .mini-arrow{color:var(--muted);font-size:14px;flex-shrink:0}
+  /* Code */
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);white-space:pre}
+  .kw{color:#c1440e;font-weight:600}.an{color:#1a4a8a;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.nu{color:#7a3acd}.fn{color:#0369a1;font-weight:600}
+  /* Code tabs */
+  .code-tabs{display:flex;gap:0;border-bottom:2px solid var(--border)}
+  .code-tab{font-size:11px;padding:10px 18px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--mono)}
+  .code-tab:hover{color:var(--ink)}.code-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .code-panel{display:none;background:#fafaf7;border:2px solid var(--border);border-top:none;border-radius:0 0 6px 6px;padding:24px;overflow-x:auto}
+  .code-panel.active{display:block}
+  @media(max-width:700px){.grid2{grid-template-columns:1fr}.steps-row{flex-direction:column}.step-connector{padding:4px 0}.arrow-right{transform:rotate(90deg)}.lifecycle-flow{flex-direction:column}.lf-step:not(:last-child)::after{content:'▼';right:auto;bottom:-10px;top:auto;left:50%;transform:translateX(-50%)}.lf-step:not(:last-child){border-right:none;border-bottom:2px solid var(--border)}.chunk-flow{flex-direction:column}.mini-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Java Servlets · SPA JavaScript · API REST</div>
+  <h1>Manual de <em>Testing</em><br>Cliente-Servidor</h1>
+  <p class="subtitle">// Pirámide de tests · JUnit 5 · Mockito · Fetch API mocks · Cypress · Testcontainers — Qué testear, cómo y con qué herramienta en cada capa</p>
+</header>
+
+<!-- ═══════ DIAGRAMA ARQUITECTURA — siempre visible ═══════ -->
+<div class="job-box blue">
+  <div class="job-header"><span class="tag tag-b">Arquitectura</span><span class="job-name">SPA + API REST + Servlets</span></div>
+  <p class="job-desc">Tu app tiene 3 capas claras que se testean de forma diferente. El navegador ejecuta la SPA (Vanilla JS), que habla con el backend (Servlets Java) vía REST JSON. Cada capa tiene sus herramientas y su nivel de la pirámide.</p>
+
+  <div class="steps-row">
+    <div class="step-box b">
+      <div class="step-label b">Frontend</div>
+      <div class="step-name">SPA · Vanilla JS</div>
+      <div class="step-desc">HTML + CSS + JavaScript vanilla. Fetch API para llamar al backend. Web Components opcionales. Sin framework.</div>
+    </div>
+    <div class="step-connector"><span class="arrow-right">→</span></div>
+    <div class="step-box g">
+      <div class="step-label g">API REST</div>
+      <div class="step-name">HTTP JSON</div>
+      <div class="step-desc">GET, POST, PUT, DELETE. Contrato JSON entre front y back. Validación de request/response.</div>
+    </div>
+    <div class="step-connector"><span class="arrow-right">→</span></div>
+    <div class="step-box o">
+      <div class="step-label o">Backend</div>
+      <div class="step-name">Java Servlets</div>
+      <div class="step-desc">HttpServlet sobre Tomcat. 3 capas: Servlet (controller) → Service (lógica) → DAO/Repository (datos).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TOGGLE ═══════ -->
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setView('piramide')">🔺 Pirámide</button>
+  <button class="mode-btn" onclick="setView('unit')">🧪 Unit Tests</button>
+  <button class="mode-btn" onclick="setView('integration')">🔗 Integración</button>
+  <button class="mode-btn" onclick="setView('api')">📡 API / Contrato</button>
+  <button class="mode-btn" onclick="setView('frontend')">🖥️ Frontend</button>
+  <button class="mode-btn" onclick="setView('e2e')">🌐 E2E</button>
+  <button class="mode-btn" onclick="setView('toolbox')">🧰 Toolbox</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 1 · PIRÁMIDE DE TESTS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-piramide" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">La pirámide de tests para tu stack</div>
+
+  <div class="callout green" style="margin-top:0"><strong>Principio:</strong> Muchos tests rápidos abajo (unit), menos en el medio (integración), pocos arriba (E2E). Cada nivel cubre lo que el inferior no puede. No dupliques lo que ya cubre otro nivel.</div>
+
+  <div class="lifecycle-flow">
+    <div class="lf-step" style="flex:3"><div class="lf-num">70%</div><div class="lf-icon">🧪</div><div class="lf-name" style="color:var(--accent2)">Unit Tests</div><div class="lf-desc">Rápidos · Aislados<br>Service, DAO, Utils<br>JS functions</div></div>
+    <div class="lf-step" style="flex:2"><div class="lf-num">20%</div><div class="lf-icon">🔗</div><div class="lf-name" style="color:var(--accent3)">Integration</div><div class="lf-desc">Servlet + BD real<br>API contract<br>Fetch + mock server</div></div>
+    <div class="lf-step" style="flex:1"><div class="lf-num">10%</div><div class="lf-icon">🌐</div><div class="lf-name" style="color:var(--accent)">E2E</div><div class="lf-desc">Navegador real<br>Cypress / Playwright<br>Happy paths</div></div>
+  </div>
+
+  <div class="sec-title" data-n="2">Qué testear en cada capa</div>
+
+  <table class="vtable">
+    <thead><tr><th>Capa</th><th>Qué testear</th><th>Herramienta</th><th>Velocidad</th></tr></thead>
+    <tbody>
+      <tr><td>Service Java</td><td>Lógica de negocio pura. Validaciones, cálculos, transformaciones. Mockear el DAO.</td><td>JUnit 5 + Mockito</td><td>~ms</td></tr>
+      <tr><td>DAO / Repository</td><td>Queries SQL, mappings, CRUD. Contra BD real o H2 en memoria.</td><td>JUnit 5 + H2 / Testcontainers</td><td>~100ms</td></tr>
+      <tr><td>Servlet</td><td>Routing, parsing JSON request, status codes, headers. Mockear HttpServletRequest/Response.</td><td>JUnit 5 + Mockito</td><td>~ms</td></tr>
+      <tr><td>API Contract</td><td>Request/response JSON completo. Status codes. Content-Type. Error handling.</td><td>REST Assured / HttpClient</td><td>~200ms</td></tr>
+      <tr><td>JS Functions</td><td>Lógica pura del front: validaciones, formateos, parseo, state management.</td><td>Vitest / Jest (jsdom)</td><td>~ms</td></tr>
+      <tr><td>Fetch Calls</td><td>Que la SPA llama al endpoint correcto con el body correcto. Mock de fetch.</td><td>Vitest + MSW (mock server)</td><td>~ms</td></tr>
+      <tr><td>DOM / UI</td><td>Que los componentes renderizan y reaccionan a eventos.</td><td>Vitest + jsdom / Testing Library</td><td>~10ms</td></tr>
+      <tr><td>E2E</td><td>Flujos completos: login → crear → listar → borrar. Navegador real.</td><td>Cypress / Playwright</td><td>~5s</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title" data-n="3">Regla de oro: qué NO testear</div>
+  <div class="grid2">
+    <div class="callout orange" style="margin:0"><strong>✗ No testees:</strong><br>• Getters y setters triviales<br>• Constructores sin lógica<br>• Código de frameworks/librerías<br>• El propio servidor Tomcat<br>• CSS / layout visual (eso es QA visual, no funcional)<br>• Logs (console.log, Logger)</div>
+    <div class="callout green" style="margin:0"><strong>✓ Sí testea:</strong><br>• Toda lógica de negocio (cálculos, validaciones)<br>• Cada endpoint REST (happy path + error paths)<br>• Transformaciones de datos (DTO ↔ Entity, JSON parse)<br>• Edge cases: null, vacío, límites, concurrencia<br>• Seguridad: auth, permisos, input sanitization<br>• Que el front llama al endpoint correcto</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 2 · UNIT TESTS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-unit" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Unit Test del Service — lógica de negocio</div>
+  <div class="callout blue" style="margin-top:0"><strong>Patrón:</strong> Testea el Service con el DAO mockeado. Verifica que la lógica de negocio funciona sin depender de la BD. Usa <code>@Mock</code> para las dependencias y <code>@InjectMocks</code> para el SUT (System Under Test).</div>
+
+  <pre>
+<cm>// ContratoServiceTest.java</cm>
+<cm>// Test del Service con DAO mockeado — puro unit test</cm>
+
+<kw>import static</kw> org.junit.jupiter.api.Assertions.*;
+<kw>import static</kw> org.mockito.Mockito.*;
+
+<an>@ExtendWith</an>(<cl>MockitoExtension</cl>.<kw>class</kw>)
+<kw>class</kw> <cl>ContratoServiceTest</cl> {
+
+    <an>@Mock</an>
+    <kw>private</kw> <cl>ContratoDao</cl> contratoDao;
+
+    <an>@InjectMocks</an>
+    <kw>private</kw> <cl>ContratoService</cl> service;
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>getById_existente_retornaContrato</fn>() {
+        <cm>// GIVEN — preparar el escenario</cm>
+        <cl>Contrato</cl> esperado = <kw>new</kw> <cl>Contrato</cl>(<nu>1L</nu>, <st>"CLT-001"</st>, <st>"Activo"</st>);
+        when(contratoDao.findById(<nu>1L</nu>)).thenReturn(esperado);
+
+        <cm>// WHEN — ejecutar la acción</cm>
+        <cl>Contrato</cl> resultado = service.getById(<nu>1L</nu>);
+
+        <cm>// THEN — verificar resultado</cm>
+        assertNotNull(resultado);
+        assertEquals(<st>"CLT-001"</st>, resultado.getCodigo());
+        assertEquals(<st>"Activo"</st>, resultado.getEstado());
+        verify(contratoDao, times(<nu>1</nu>)).findById(<nu>1L</nu>);
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>getById_noExiste_lanzaExcepcion</fn>() {
+        <cm>// GIVEN</cm>
+        when(contratoDao.findById(<nu>99L</nu>)).thenReturn(<kw>null</kw>);
+
+        <cm>// WHEN + THEN</cm>
+        <cl>ContratoNotFoundException</cl> ex = assertThrows(
+            <cl>ContratoNotFoundException</cl>.<kw>class</kw>,
+            () -> service.getById(<nu>99L</nu>)
+        );
+        assertEquals(<st>"Contrato no encontrado: 99"</st>, ex.getMessage());
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>crear_conDatosValidos_guardaYRetorna</fn>() {
+        <cm>// GIVEN</cm>
+        <cl>ContratoDto</cl> dto = <kw>new</kw> <cl>ContratoDto</cl>(<st>"CLT-002"</st>, <st>"Pendiente"</st>);
+        <cl>Contrato</cl> guardado = <kw>new</kw> <cl>Contrato</cl>(<nu>2L</nu>, <st>"CLT-002"</st>, <st>"Pendiente"</st>);
+        when(contratoDao.save(any(<cl>Contrato</cl>.<kw>class</kw>))).thenReturn(guardado);
+
+        <cm>// WHEN</cm>
+        <cl>Contrato</cl> resultado = service.crear(dto);
+
+        <cm>// THEN</cm>
+        assertNotNull(resultado.getId());
+        assertEquals(<st>"CLT-002"</st>, resultado.getCodigo());
+        verify(contratoDao).save(any(<cl>Contrato</cl>.<kw>class</kw>));
+    }
+}
+  </pre>
+
+  <div class="sec-title" data-n="2">Unit Test del Servlet — mockear Request/Response</div>
+
+  <pre>
+<cm>// ContratoServletTest.java</cm>
+<cm>// Test del Servlet con HttpServletRequest/Response mockeados</cm>
+
+<an>@ExtendWith</an>(<cl>MockitoExtension</cl>.<kw>class</kw>)
+<kw>class</kw> <cl>ContratoServletTest</cl> {
+
+    <an>@Mock</an> <kw>private</kw> <cl>ContratoService</cl> service;
+    <an>@Mock</an> <kw>private</kw> <cl>HttpServletRequest</cl> request;
+    <an>@Mock</an> <kw>private</kw> <cl>HttpServletResponse</cl> response;
+
+    <kw>private</kw> <cl>ContratoServlet</cl> servlet;
+    <kw>private</kw> <cl>StringWriter</cl> responseWriter;
+
+    <an>@BeforeEach</an>
+    <kw>void</kw> <fn>setUp</fn>() <kw>throws</kw> Exception {
+        servlet = <kw>new</kw> <cl>ContratoServlet</cl>(service);
+        responseWriter = <kw>new</kw> <cl>StringWriter</cl>();
+        when(response.getWriter()).thenReturn(<kw>new</kw> <cl>PrintWriter</cl>(responseWriter));
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>doGet_conId_retornaJsonYStatus200</fn>() <kw>throws</kw> Exception {
+        <cm>// GIVEN</cm>
+        when(request.getPathInfo()).thenReturn(<st>"/1"</st>);
+        <cl>Contrato</cl> c = <kw>new</kw> <cl>Contrato</cl>(<nu>1L</nu>, <st>"CLT-001"</st>, <st>"Activo"</st>);
+        when(service.getById(<nu>1L</nu>)).thenReturn(c);
+
+        <cm>// WHEN</cm>
+        servlet.doGet(request, response);
+
+        <cm>// THEN</cm>
+        verify(response).setStatus(<nu>200</nu>);
+        verify(response).setContentType(<st>"application/json"</st>);
+        String json = responseWriter.toString();
+        assertTrue(json.contains(<st>"CLT-001"</st>));
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>doGet_noExiste_retorna404</fn>() <kw>throws</kw> Exception {
+        when(request.getPathInfo()).thenReturn(<st>"/99"</st>);
+        when(service.getById(<nu>99L</nu>))
+            .thenThrow(<kw>new</kw> <cl>ContratoNotFoundException</cl>(<st>"99"</st>));
+
+        servlet.doGet(request, response);
+
+        verify(response).setStatus(<nu>404</nu>);
+    }
+}
+  </pre>
+
+  <div class="callout green"><strong>Patrón GIVEN-WHEN-THEN:</strong> Usa siempre esta estructura. GIVEN prepara el escenario (mocks, datos). WHEN ejecuta la acción. THEN verifica el resultado. Es tu plantilla universal para cualquier test.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 3 · INTEGRACIÓN -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-integration" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Test del DAO contra BD real (H2 en memoria)</div>
+  <div class="callout blue" style="margin-top:0"><strong>Objetivo:</strong> Verificar que las queries SQL y los mappings funcionan con una BD real. H2 en modo in-memory para velocidad. Testcontainers si necesitas MySQL/PostgreSQL exactos.</div>
+
+  <pre>
+<cm>// ContratoDaoIntegrationTest.java</cm>
+
+<kw>class</kw> <cl>ContratoDaoIntegrationTest</cl> {
+
+    <kw>private static</kw> <cl>DataSource</cl> ds;
+    <kw>private</kw> <cl>ContratoDao</cl> dao;
+
+    <an>@BeforeAll</an>
+    <kw>static void</kw> <fn>initDb</fn>() <kw>throws</kw> Exception {
+        ds = <kw>new</kw> <cl>JdbcDataSource</cl>();
+        ((<cl>JdbcDataSource</cl>) ds).setURL(<st>"jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1"</st>);
+        <cm>// Ejecutar schema.sql para crear tablas</cm>
+        <kw>try</kw> (<cl>Connection</cl> conn = ds.getConnection()) {
+            <cl>ScriptUtils</cl>.executeSqlScript(conn,
+                <kw>new</kw> <cl>File</cl>(<st>"src/main/resources/schema.sql"</st>));
+        }
+    }
+
+    <an>@BeforeEach</an>
+    <kw>void</kw> <fn>setUp</fn>() {
+        dao = <kw>new</kw> <cl>JdbcContratoDao</cl>(ds);
+        <cm>// Limpiar datos entre tests</cm>
+        dao.deleteAll();
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>save_yLuego_findById_retornaMismo</fn>() {
+        <cl>Contrato</cl> nuevo = <kw>new</kw> <cl>Contrato</cl>(<kw>null</kw>, <st>"CLT-001"</st>, <st>"Activo"</st>);
+
+        <cl>Contrato</cl> guardado = dao.save(nuevo);
+
+        assertNotNull(guardado.getId());
+        <cl>Contrato</cl> encontrado = dao.findById(guardado.getId());
+        assertEquals(<st>"CLT-001"</st>, encontrado.getCodigo());
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>findAll_retornaListaOrdenada</fn>() {
+        dao.save(<kw>new</kw> <cl>Contrato</cl>(<kw>null</kw>, <st>"B-002"</st>, <st>"Activo"</st>));
+        dao.save(<kw>new</kw> <cl>Contrato</cl>(<kw>null</kw>, <st>"A-001"</st>, <st>"Activo"</st>));
+
+        <cl>List</cl>&lt;<cl>Contrato</cl>&gt; todos = dao.findAll();
+
+        assertEquals(<nu>2</nu>, todos.size());
+        assertEquals(<st>"A-001"</st>, todos.get(<nu>0</nu>).getCodigo()); <cm>// Ordenado</cm>
+    }
+}
+  </pre>
+
+  <div class="sec-title" data-n="2">Test de integración completo — Servlet + Service + DAO</div>
+  <div class="callout orange" style="margin-top:0"><strong>Embedded Tomcat:</strong> Arrancas un Tomcat embebido con tu Servlet real, BD H2 real, y llamas vía HTTP. Es el test más cercano a producción sin ser E2E.</div>
+
+  <pre>
+<cm>// ContratoIntegrationTest.java — Tomcat embebido + BD real</cm>
+
+<kw>class</kw> <cl>ContratoIntegrationTest</cl> {
+
+    <kw>private static</kw> <cl>Tomcat</cl> tomcat;
+    <kw>private static</kw> <cl>HttpClient</cl> client;
+    <kw>private static</kw> String baseUrl;
+
+    <an>@BeforeAll</an>
+    <kw>static void</kw> <fn>startServer</fn>() <kw>throws</kw> Exception {
+        tomcat = <kw>new</kw> <cl>Tomcat</cl>();
+        tomcat.setPort(<nu>0</nu>); <cm>// Puerto aleatorio</cm>
+        <cl>Context</cl> ctx = tomcat.addContext(<st>""</st>, <kw>new</kw> <cl>File</cl>(<st>"."</st>).getAbsolutePath());
+        <cl>Tomcat</cl>.addServlet(ctx, <st>"contratos"</st>, <kw>new</kw> <cl>ContratoServlet</cl>());
+        ctx.addServletMappingDecoded(<st>"/api/contratos/*"</st>, <st>"contratos"</st>);
+        tomcat.start();
+        baseUrl = <st>"http://localhost:"</st> + tomcat.getConnector().getLocalPort();
+        client = <cl>HttpClient</cl>.newHttpClient();
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>crearYObtener_flujoCompleto</fn>() <kw>throws</kw> Exception {
+        <cm>// POST — crear</cm>
+        <cl>HttpRequest</cl> post = <cl>HttpRequest</cl>.newBuilder()
+            .uri(<cl>URI</cl>.create(baseUrl + <st>"/api/contratos"</st>))
+            .header(<st>"Content-Type"</st>, <st>"application/json"</st>)
+            .POST(<cl>BodyPublishers</cl>.ofString(
+                <st>"{\"codigo\":\"CLT-001\",\"estado\":\"Activo\"}"</st>))
+            .build();
+        <cl>HttpResponse</cl>&lt;String&gt; postRes = client.send(post,
+            <cl>BodyHandlers</cl>.ofString());
+        assertEquals(<nu>201</nu>, postRes.statusCode());
+
+        <cm>// GET — obtener</cm>
+        <cl>HttpRequest</cl> get = <cl>HttpRequest</cl>.newBuilder()
+            .uri(<cl>URI</cl>.create(baseUrl + <st>"/api/contratos/1"</st>))
+            .GET().build();
+        <cl>HttpResponse</cl>&lt;String&gt; getRes = client.send(get,
+            <cl>BodyHandlers</cl>.ofString());
+        assertEquals(<nu>200</nu>, getRes.statusCode());
+        assertTrue(getRes.body().contains(<st>"CLT-001"</st>));
+    }
+
+    <an>@AfterAll</an>
+    <kw>static void</kw> <fn>stopServer</fn>() <kw>throws</kw> Exception {
+        tomcat.stop();
+    }
+}
+  </pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 4 · API / CONTRATO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-api" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Contract testing — validar el contrato REST</div>
+  <div class="callout green" style="margin-top:0"><strong>¿Qué es?</strong> Verificar que el JSON que devuelve tu API tiene la estructura exacta que el frontend espera. Si cambias un campo en el backend, el contract test falla antes de que rompa la SPA.</div>
+
+  <div class="chunk-block bl">
+    <div class="chunk-title">Contrato del endpoint GET /api/contratos/{id}</div>
+    <div class="chunk-flow">
+      <div class="chunk-node" style="background:rgba(26,74,138,.06);border-color:var(--accent3)"><div class="cn-label" style="color:var(--accent3)">Request</div><div class="cn-name">GET /api/contratos/1</div><div class="cn-sub">Accept: application/json</div></div>
+      <span class="mini-arrow">→</span>
+      <div class="chunk-node" style="background:rgba(42,110,78,.06);border-color:var(--accent2)"><div class="cn-label" style="color:var(--accent2)">Response 200</div><div class="cn-name">{ id, codigo, estado }</div><div class="cn-sub">Content-Type: application/json</div></div>
+      <span class="mini-arrow">|</span>
+      <div class="chunk-node" style="background:rgba(193,68,14,.06);border-color:var(--accent)"><div class="cn-label" style="color:var(--accent)">Response 404</div><div class="cn-name">{ error, message }</div><div class="cn-sub">Contrato no encontrado</div></div>
+    </div>
+  </div>
+
+  <pre>
+<cm>// ContratoApiContractTest.java — REST Assured</cm>
+
+<kw>class</kw> <cl>ContratoApiContractTest</cl> {
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>get_retornaEstructuraCorrecta</fn>() {
+        given()
+            .baseUri(BASE_URL)
+            .accept(<cl>ContentType</cl>.JSON)
+        .when()
+            .get(<st>"/api/contratos/1"</st>)
+        .then()
+            .statusCode(<nu>200</nu>)
+            .contentType(<cl>ContentType</cl>.JSON)
+            .body(<st>"id"</st>, notNullValue())
+            .body(<st>"codigo"</st>, matchesPattern(<st>"CLT-\\d{3}"</st>))
+            .body(<st>"estado"</st>, isOneOf(<st>"Activo"</st>, <st>"Pendiente"</st>, <st>"Cerrado"</st>));
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>post_sinBody_retorna400</fn>() {
+        given()
+            .baseUri(BASE_URL)
+            .contentType(<cl>ContentType</cl>.JSON)
+            .body(<st>"{}"</st>)
+        .when()
+            .post(<st>"/api/contratos"</st>)
+        .then()
+            .statusCode(<nu>400</nu>)
+            .body(<st>"error"</st>, equalTo(<st>"Validation failed"</st>));
+    }
+
+    <an>@Test</an>
+    <kw>void</kw> <fn>get_noExiste_retorna404ConMensaje</fn>() {
+        given()
+            .baseUri(BASE_URL)
+        .when()
+            .get(<st>"/api/contratos/99999"</st>)
+        .then()
+            .statusCode(<nu>404</nu>)
+            .body(<st>"message"</st>, containsString(<st>"no encontrado"</st>));
+    }
+}
+  </pre>
+
+  <div class="callout yellow"><strong>Cuándo se rompe el contrato:</strong> Si renombras <code>"codigo"</code> a <code>"code"</code> en el backend, el contract test falla. Si el front espera <code>"codigo"</code> y recibe <code>"code"</code>, la SPA se rompe. El contract test lo detecta <strong>antes del deploy</strong>.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 5 · FRONTEND -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-frontend" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Test de funciones JS puras — lógica sin DOM</div>
+  <div class="callout blue" style="margin-top:0"><strong>Herramienta:</strong> Vitest (o Jest). Testea funciones que no tocan el DOM: validaciones, formateo, parseo, cálculos. Son los tests más rápidos y valiosos del front.</div>
+
+  <pre>
+<cm>// contrato-utils.test.js — Vitest</cm>
+
+<kw>import</kw> { describe, it, expect } <kw>from</kw> <st>'vitest'</st>;
+<kw>import</kw> { validarCodigo, formatearEstado, calcularTotal } <kw>from</kw> <st>'./contrato-utils.js'</st>;
+
+<fn>describe</fn>(<st>'validarCodigo'</st>, () => {
+  <fn>it</fn>(<st>'acepta formato CLT-NNN'</st>, () => {
+    expect(validarCodigo(<st>'CLT-001'</st>)).toBe(<kw>true</kw>);
+    expect(validarCodigo(<st>'CLT-999'</st>)).toBe(<kw>true</kw>);
+  });
+
+  <fn>it</fn>(<st>'rechaza formatos inválidos'</st>, () => {
+    expect(validarCodigo(<st>''</st>)).toBe(<kw>false</kw>);
+    expect(validarCodigo(<st>'ABC'</st>)).toBe(<kw>false</kw>);
+    expect(validarCodigo(<kw>null</kw>)).toBe(<kw>false</kw>);
+  });
+});
+
+<fn>describe</fn>(<st>'calcularTotal'</st>, () => {
+  <fn>it</fn>(<st>'suma los importes de las líneas'</st>, () => {
+    <kw>const</kw> lineas = [
+      { concepto: <st>'Licencia'</st>, importe: <nu>1000</nu> },
+      { concepto: <st>'Soporte'</st>, importe: <nu>500</nu> },
+    ];
+    expect(calcularTotal(lineas)).toBe(<nu>1500</nu>);
+  });
+
+  <fn>it</fn>(<st>'retorna 0 con array vacío'</st>, () => {
+    expect(calcularTotal([])).toBe(<nu>0</nu>);
+  });
+});
+  </pre>
+
+  <div class="sec-title" data-n="2">Test de Fetch API — mockear llamadas al backend</div>
+  <div class="callout green" style="margin-top:0"><strong>MSW (Mock Service Worker)</strong> intercepta las llamadas HTTP del front sin tocar el backend real. Perfecto para testear que tu SPA llama al endpoint correcto con el body correcto.</div>
+
+  <pre>
+<cm>// contrato-api.test.js — Vitest + MSW</cm>
+
+<kw>import</kw> { http, HttpResponse } <kw>from</kw> <st>'msw'</st>;
+<kw>import</kw> { setupServer } <kw>from</kw> <st>'msw/node'</st>;
+<kw>import</kw> { getContrato, crearContrato } <kw>from</kw> <st>'./contrato-api.js'</st>;
+
+<cm>// Mock server que intercepta fetch</cm>
+<kw>const</kw> server = setupServer(
+  http.get(<st>'/api/contratos/:id'</st>, ({ params }) => {
+    <kw>if</kw> (params.id === <st>'1'</st>) {
+      <kw>return</kw> HttpResponse.json(
+        { id: <nu>1</nu>, codigo: <st>'CLT-001'</st>, estado: <st>'Activo'</st> }
+      );
+    }
+    <kw>return</kw> <kw>new</kw> HttpResponse(<kw>null</kw>, { status: <nu>404</nu> });
+  }),
+  http.post(<st>'/api/contratos'</st>, <kw>async</kw> ({ request }) => {
+    <kw>const</kw> body = <kw>await</kw> request.json();
+    <kw>return</kw> HttpResponse.json(
+      { id: <nu>2</nu>, ...body }, { status: <nu>201</nu> }
+    );
+  })
+);
+
+beforeAll(() => server.listen());
+afterAll(() => server.close());
+
+<fn>describe</fn>(<st>'getContrato'</st>, () => {
+  <fn>it</fn>(<st>'retorna el contrato cuando existe'</st>, <kw>async</kw> () => {
+    <kw>const</kw> c = <kw>await</kw> getContrato(<nu>1</nu>);
+    expect(c.codigo).toBe(<st>'CLT-001'</st>);
+    expect(c.estado).toBe(<st>'Activo'</st>);
+  });
+
+  <fn>it</fn>(<st>'lanza error cuando no existe'</st>, <kw>async</kw> () => {
+    <kw>await</kw> expect(getContrato(<nu>99</nu>)).rejects.toThrow(<st>'404'</st>);
+  });
+});
+
+<fn>describe</fn>(<st>'crearContrato'</st>, () => {
+  <fn>it</fn>(<st>'envía POST y retorna con id'</st>, <kw>async</kw> () => {
+    <kw>const</kw> nuevo = <kw>await</kw> crearContrato({
+      codigo: <st>'CLT-002'</st>, estado: <st>'Pendiente'</st>
+    });
+    expect(nuevo.id).toBeDefined();
+    expect(nuevo.codigo).toBe(<st>'CLT-002'</st>);
+  });
+});
+  </pre>
+
+  <div class="sec-title" data-n="3">Test de DOM — interacción con la UI</div>
+
+  <pre>
+<cm>// contrato-form.test.js — Vitest + jsdom + Testing Library</cm>
+
+<kw>import</kw> { describe, it, expect, vi } <kw>from</kw> <st>'vitest'</st>;
+
+<fn>describe</fn>(<st>'Formulario de contrato'</st>, () => {
+  <fn>it</fn>(<st>'muestra error si código vacío al enviar'</st>, () => {
+    <cm>// GIVEN — montar el HTML</cm>
+    document.body.innerHTML = <st>`
+      &lt;form id="contrato-form"&gt;
+        &lt;input id="codigo" value="" /&gt;
+        &lt;span id="error" class="hidden"&gt;&lt;/span&gt;
+        &lt;button type="submit"&gt;Guardar&lt;/button&gt;
+      &lt;/form&gt;
+    `</st>;
+
+    <cm>// Cargar el script que adjunta el listener</cm>
+    require(<st>'./contrato-form.js'</st>);
+
+    <cm>// WHEN — submit sin código</cm>
+    document.getElementById(<st>'contrato-form'</st>).dispatchEvent(
+      <kw>new</kw> Event(<st>'submit'</st>, { cancelable: <kw>true</kw> })
+    );
+
+    <cm>// THEN — muestra error</cm>
+    <kw>const</kw> error = document.getElementById(<st>'error'</st>);
+    expect(error.classList.contains(<st>'hidden'</st>)).toBe(<kw>false</kw>);
+    expect(error.textContent).toContain(<st>'obligatorio'</st>);
+  });
+});
+  </pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 6 · E2E -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-e2e" class="mode-panel">
+
+  <div class="sec-title" data-n="1">E2E con Cypress — el test definitivo</div>
+  <div class="callout orange" style="margin-top:0"><strong>E2E = navegador real + servidor real + BD real.</strong> Es el test más lento pero el único que verifica que todo funciona junto. Testea solo los happy paths principales y los errores críticos. No dupliques lo que ya cubren los unit tests.</div>
+
+  <pre>
+<cm>// cypress/e2e/contratos.cy.js</cm>
+
+<fn>describe</fn>(<st>'Gestión de contratos'</st>, () => {
+
+  beforeEach(() => {
+    <cm>// Resetear BD a estado conocido antes de cada test</cm>
+    cy.request(<st>'POST'</st>, <st>'/api/test/reset-db'</st>);
+    cy.visit(<st>'/'</st>);
+  });
+
+  <fn>it</fn>(<st>'crea un contrato y aparece en la lista'</st>, () => {
+    <cm>// Navegar al formulario</cm>
+    cy.get(<st>'[data-cy="btn-nuevo"]'</st>).click();
+
+    <cm>// Rellenar formulario</cm>
+    cy.get(<st>'#codigo'</st>).type(<st>'CLT-100'</st>);
+    cy.get(<st>'#estado'</st>).select(<st>'Activo'</st>);
+    cy.get(<st>'[data-cy="btn-guardar"]'</st>).click();
+
+    <cm>// Verificar que aparece en la lista</cm>
+    cy.get(<st>'[data-cy="tabla-contratos"]'</st>)
+      .should(<st>'contain'</st>, <st>'CLT-100'</st>)
+      .and(<st>'contain'</st>, <st>'Activo'</st>);
+
+    <cm>// Verificar notificación de éxito</cm>
+    cy.get(<st>'.toast-success'</st>)
+      .should(<st>'be.visible'</st>)
+      .and(<st>'contain'</st>, <st>'Contrato creado'</st>);
+  });
+
+  <fn>it</fn>(<st>'muestra error al crear con código duplicado'</st>, () => {
+    <cm>// Crear primero</cm>
+    cy.request(<st>'POST'</st>, <st>'/api/contratos'</st>, {
+      codigo: <st>'CLT-DUP'</st>, estado: <st>'Activo'</st>
+    });
+
+    <cm>// Intentar crear duplicado desde la UI</cm>
+    cy.get(<st>'[data-cy="btn-nuevo"]'</st>).click();
+    cy.get(<st>'#codigo'</st>).type(<st>'CLT-DUP'</st>);
+    cy.get(<st>'[data-cy="btn-guardar"]'</st>).click();
+
+    <cm>// Verificar error</cm>
+    cy.get(<st>'.toast-error'</st>)
+      .should(<st>'contain'</st>, <st>'ya existe'</st>);
+  });
+
+  <fn>it</fn>(<st>'filtra contratos por estado'</st>, () => {
+    cy.get(<st>'[data-cy="filtro-estado"]'</st>).select(<st>'Pendiente'</st>);
+
+    cy.get(<st>'[data-cy="tabla-contratos"] tr'</st>).each(($row) => {
+      cy.wrap($row).should(<st>'contain'</st>, <st>'Pendiente'</st>);
+    });
+  });
+});
+  </pre>
+
+  <div class="callout green"><strong>Buenas prácticas E2E:</strong><br>
+  • Usa <code>data-cy="nombre"</code> en el HTML para selectores estables (no dependen de CSS).<br>
+  • Resetea la BD antes de cada test — los tests deben ser independientes.<br>
+  • Solo 5-10 tests E2E para los flujos críticos. El resto se cubre con unit + integration.<br>
+  • Nunca testees estilos CSS en E2E — eso es QA visual, no funcional.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 7 · TOOLBOX -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-toolbox" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Stack de herramientas recomendado</div>
+
+  <table class="vtable">
+    <thead><tr><th>Herramienta</th><th>Para qué</th><th>Nivel</th></tr></thead>
+    <tbody>
+      <tr><td>JUnit 5</td><td>Framework base para todos los tests Java. Annotations <code>@Test</code>, <code>@BeforeEach</code>, assertions.</td><td>Unit + Integration</td></tr>
+      <tr><td>Mockito</td><td>Mocks y stubs para aislar dependencias. <code>@Mock</code>, <code>when().thenReturn()</code>, <code>verify()</code>.</td><td>Unit</td></tr>
+      <tr><td>H2 Database</td><td>BD in-memory compatible SQL. Para tests de DAO sin infraestructura externa.</td><td>Integration</td></tr>
+      <tr><td>Testcontainers</td><td>Contenedores Docker para tests: MySQL, PostgreSQL, Redis reales. Para cuando H2 no basta.</td><td>Integration</td></tr>
+      <tr><td>REST Assured</td><td>DSL fluido para testear APIs REST. <code>given().when().then()</code>. Valida JSON, status, headers.</td><td>API Contract</td></tr>
+      <tr><td>Embedded Tomcat</td><td>Arrancar Tomcat dentro del test para tests de integración completos sin deploy externo.</td><td>Integration</td></tr>
+      <tr><td>Vitest</td><td>Test runner para JavaScript. Rápido, compatible con ESM, API similar a Jest. Reemplaza a Jest.</td><td>Unit (Front)</td></tr>
+      <tr><td>MSW</td><td>Mock Service Worker: intercepta fetch/XHR a nivel de red. Mock server sin servidor real.</td><td>Unit (Front)</td></tr>
+      <tr><td>jsdom</td><td>Simula el DOM del navegador en Node.js. Para tests de UI sin abrir un browser.</td><td>Unit (Front)</td></tr>
+      <tr><td>Cypress</td><td>E2E en navegador real. Grabación de vídeo, time travel, auto-wait. El estándar para SPA.</td><td>E2E</td></tr>
+      <tr><td>Playwright</td><td>Alternativa a Cypress. Multi-browser (Chrome, Firefox, Safari). Más potente pero más complejo.</td><td>E2E</td></tr>
+      <tr><td>JaCoCo</td><td>Mide code coverage de los tests Java. Genera informes HTML/XML. Se integra con SonarQube.</td><td>Métricas</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title" data-n="2">Dependencias Maven</div>
+
+  <pre>
+<cm>&lt;!-- pom.xml — dependencias de testing --&gt;</cm>
+
+<cm>&lt;!-- JUnit 5 --&gt;</cm>
+&lt;<an>dependency</an>&gt;
+  &lt;<cl>groupId</cl>&gt;org.junit.jupiter&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;junit-jupiter&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>5.11.4</nu>&lt;/<cl>version</cl>&gt;
+  &lt;<cl>scope</cl>&gt;<st>test</st>&lt;/<cl>scope</cl>&gt;
+&lt;/<an>dependency</an>&gt;
+
+<cm>&lt;!-- Mockito --&gt;</cm>
+&lt;<an>dependency</an>&gt;
+  &lt;<cl>groupId</cl>&gt;org.mockito&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;mockito-junit-jupiter&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>5.14.2</nu>&lt;/<cl>version</cl>&gt;
+  &lt;<cl>scope</cl>&gt;<st>test</st>&lt;/<cl>scope</cl>&gt;
+&lt;/<an>dependency</an>&gt;
+
+<cm>&lt;!-- H2 in-memory DB --&gt;</cm>
+&lt;<an>dependency</an>&gt;
+  &lt;<cl>groupId</cl>&gt;com.h2database&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;h2&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>2.3.232</nu>&lt;/<cl>version</cl>&gt;
+  &lt;<cl>scope</cl>&gt;<st>test</st>&lt;/<cl>scope</cl>&gt;
+&lt;/<an>dependency</an>&gt;
+
+<cm>&lt;!-- REST Assured --&gt;</cm>
+&lt;<an>dependency</an>&gt;
+  &lt;<cl>groupId</cl>&gt;io.rest-assured&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;rest-assured&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>5.5.0</nu>&lt;/<cl>version</cl>&gt;
+  &lt;<cl>scope</cl>&gt;<st>test</st>&lt;/<cl>scope</cl>&gt;
+&lt;/<an>dependency</an>&gt;
+
+<cm>&lt;!-- Embedded Tomcat (para integration tests) --&gt;</cm>
+&lt;<an>dependency</an>&gt;
+  &lt;<cl>groupId</cl>&gt;org.apache.tomcat.embed&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;tomcat-embed-core&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>10.1.34</nu>&lt;/<cl>version</cl>&gt;
+  &lt;<cl>scope</cl>&gt;<st>test</st>&lt;/<cl>scope</cl>&gt;
+&lt;/<an>dependency</an>&gt;
+
+<cm>&lt;!-- JaCoCo plugin para coverage --&gt;</cm>
+&lt;<an>plugin</an>&gt;
+  &lt;<cl>groupId</cl>&gt;org.jacoco&lt;/<cl>groupId</cl>&gt;
+  &lt;<cl>artifactId</cl>&gt;jacoco-maven-plugin&lt;/<cl>artifactId</cl>&gt;
+  &lt;<cl>version</cl>&gt;<nu>0.8.12</nu>&lt;/<cl>version</cl>&gt;
+&lt;/<an>plugin</an>&gt;
+  </pre>
+
+  <div class="sec-title" data-n="3">Estructura de directorios recomendada</div>
+
+  <div style="background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:20px;font-size:11.5px;line-height:1.85;font-family:var(--mono)">
+<span style="color:var(--accent);font-weight:700">proyecto/</span>
+├── <span style="color:var(--accent3)">src/main/java/</span>
+│   ├── servlet/          <span style="color:var(--muted)">← ContratoServlet.java</span>
+│   ├── service/          <span style="color:var(--muted)">← ContratoService.java</span>
+│   ├── dao/              <span style="color:var(--muted)">← ContratoDao.java, JdbcContratoDao.java</span>
+│   └── model/            <span style="color:var(--muted)">← Contrato.java, ContratoDto.java</span>
+│
+├── <span style="color:var(--accent3)">src/main/webapp/</span>
+│   ├── index.html        <span style="color:var(--muted)">← SPA entry point</span>
+│   ├── js/
+│   │   ├── contrato-api.js       <span style="color:var(--muted)">← fetch calls</span>
+│   │   ├── contrato-utils.js     <span style="color:var(--muted)">← lógica pura</span>
+│   │   └── contrato-form.js      <span style="color:var(--muted)">← DOM listeners</span>
+│   └── css/
+│
+├── <span style="color:var(--accent2);font-weight:700">src/test/java/</span>           <span style="color:var(--muted)">← Tests Java</span>
+│   ├── service/
+│   │   └── <span style="color:var(--accent2)">ContratoServiceTest.java</span>         <span style="color:var(--muted)">← Unit (mock DAO)</span>
+│   ├── servlet/
+│   │   └── <span style="color:var(--accent2)">ContratoServletTest.java</span>         <span style="color:var(--muted)">← Unit (mock req/res)</span>
+│   ├── dao/
+│   │   └── <span style="color:var(--accent2)">ContratoDaoIntegrationTest.java</span>  <span style="color:var(--muted)">← Integration (H2)</span>
+│   ├── integration/
+│   │   └── <span style="color:var(--accent2)">ContratoIntegrationTest.java</span>     <span style="color:var(--muted)">← Full stack (Tomcat)</span>
+│   └── contract/
+│       └── <span style="color:var(--accent2)">ContratoApiContractTest.java</span>     <span style="color:var(--muted)">← REST Assured</span>
+│
+├── <span style="color:var(--accent2);font-weight:700">src/test/js/</span>              <span style="color:var(--muted)">← Tests JavaScript</span>
+│   ├── <span style="color:var(--accent2)">contrato-utils.test.js</span>            <span style="color:var(--muted)">← Unit (lógica pura)</span>
+│   ├── <span style="color:var(--accent2)">contrato-api.test.js</span>              <span style="color:var(--muted)">← Unit (MSW mock)</span>
+│   └── <span style="color:var(--accent2)">contrato-form.test.js</span>             <span style="color:var(--muted)">← Unit (jsdom)</span>
+│
+└── <span style="color:var(--yellow);font-weight:700">cypress/e2e/</span>              <span style="color:var(--muted)">← Tests E2E</span>
+    └── <span style="color:var(--yellow)">contratos.cy.js</span>                   <span style="color:var(--muted)">← Navegador real</span>
+  </div>
+
+  <div class="repo-box o" style="margin-top:24px">
+    <div class="repo-icon">🎯</div>
+    <div>
+      <div class="repo-title" style="color:var(--accent)">Regla de oro del testing</div>
+      <div class="repo-desc" style="line-height:2.1">
+        <strong style="color:var(--accent)">1.</strong> Si es lógica de negocio → <strong>unit test</strong> con mock (ms)<br>
+        <strong style="color:var(--accent3)">2.</strong> Si toca BD o red → <strong>integration test</strong> con H2/Tomcat (100ms)<br>
+        <strong style="color:var(--accent2)">3.</strong> Si es el contrato JSON → <strong>contract test</strong> con REST Assured (200ms)<br>
+        <strong style="color:var(--yellow)">4.</strong> Si es un flujo de usuario completo → <strong>E2E</strong> con Cypress (5s)<br>
+        <strong style="color:var(--purple)">5.</strong> Si ya lo cubre un nivel inferior → <strong>NO lo dupliques arriba</strong>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+<script>
+function setView(n){document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).classList.add('active');event.target.classList.add('active')}
+</script>
+</body>
+</html>
