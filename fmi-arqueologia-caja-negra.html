@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMI · Arqueología de Caja Negra · Extracción de Semántica Legacy sin Ahogar la IA</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;position:relative}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1100px;margin:0 auto;padding:48px 28px 100px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:40px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(26px,4vw,44px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:40px;width:fit-content;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:10px 18px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:2px solid var(--ink)}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:36px 0 16px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:16px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  .job-box{background:linear-gradient(135deg,#faf8f4,#f0ebe0);border:3px solid var(--accent);border-radius:8px;padding:24px 28px;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .job-box.green{border-color:var(--accent2)}.job-box.blue{border-color:var(--accent3)}.job-box.yellow{border-color:var(--yellow)}.job-box.purple{border-color:var(--purple)}
+  .job-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .job-name{font-size:18px;font-weight:700}
+  .job-desc{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+  .tag{font-size:9px;font-weight:700;letter-spacing:2px;padding:4px 10px;border-radius:3px;text-transform:uppercase}
+  .tag-o{background:rgba(193,68,14,.12);color:var(--accent);border:2px solid var(--accent)}
+  .tag-g{background:rgba(42,110,78,.12);color:var(--accent2);border:2px solid var(--accent2)}
+  .tag-b{background:rgba(26,74,138,.12);color:var(--accent3);border:2px solid var(--accent3)}
+  .tag-y{background:rgba(232,160,32,.12);color:var(--yellow);border:2px solid var(--yellow)}
+  .tag-p{background:rgba(122,58,205,.12);color:var(--purple);border:2px solid var(--purple)}
+  .steps-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+  .step-box{flex:1;min-width:200px;background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:18px;transition:all .2s}
+  .step-box:hover{border-color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .step-box.o{border-left:4px solid var(--accent)}.step-box.g{border-left:4px solid var(--accent2)}.step-box.b{border-left:4px solid var(--accent3)}.step-box.y{border-left:4px solid var(--yellow)}.step-box.p{border-left:4px solid var(--purple)}
+  .step-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .step-label.o{color:var(--accent)}.step-label.g{color:var(--accent2)}.step-label.b{color:var(--accent3)}.step-label.y{color:var(--yellow)}.step-label.p{color:var(--purple)}
+  .step-name{font-size:14px;font-weight:700;margin-bottom:6px}
+  .step-desc{font-size:11px;color:var(--muted);line-height:1.6}
+  .step-connector{display:flex;align-items:center;justify-content:center;min-width:28px;color:var(--muted)}
+  .arrow-right{font-size:20px;animation:pulse 2s ease infinite}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:16px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 14px;text-align:left}
+  .vtable td{padding:11px 14px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td:first-child{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap}
+  .repo-box{background:linear-gradient(135deg,#fffaf0,#faf5e8);border:2px solid var(--yellow);border-radius:8px;padding:20px 24px;display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .repo-box.o{border-color:var(--accent)}.repo-box.g{border-color:var(--accent2)}.repo-box.b{border-color:var(--accent3)}.repo-box.p{border-color:var(--purple)}
+  .repo-icon{font-size:28px;flex-shrink:0}.repo-title{font-size:15px;font-weight:700;margin-bottom:6px}.repo-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);white-space:pre}
+  .kw{color:#c1440e;font-weight:600}.an{color:#1a4a8a;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.nu{color:#7a3acd}.fn{color:#0369a1;font-weight:600}
+  .comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
+  .comp-card{background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:20px}
+  .comp-card.bad{border-left:4px solid var(--accent)}.comp-card.good{border-left:4px solid var(--accent2)}
+  .comp-header{font-size:12px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .comp-header.bad{color:var(--accent)}.comp-header.good{color:var(--accent2)}
+  .comp-icon{font-size:18px}
+  .comp-content{font-size:11px;line-height:1.7;color:var(--ink2)}
+  .flow-diagram{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:24px;margin:20px 0}
+  .flow-step{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .flow-step:last-child{margin-bottom:0}
+  .flow-num{width:32px;height:32px;background:var(--ink);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+  .flow-content{flex:1}
+  .flow-title{font-size:13px;font-weight:700;margin-bottom:4px}
+  .flow-desc{font-size:11px;color:var(--muted);line-height:1.6}
+  .metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:20px 0}
+  .metric-card{background:linear-gradient(135deg,#faf8f4,#f0ebe0);border:2px solid var(--border);border-radius:6px;padding:18px;text-align:center}
+  .metric-value{font-size:32px;font-weight:700;color:var(--accent);margin-bottom:4px}
+  .metric-value.good{color:var(--accent2)}
+  .metric-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted)}
+  .quote-box{border-left:4px solid var(--purple);background:rgba(122,58,205,.03);padding:18px 24px;margin:20px 0;border-radius:0 6px 6px 0}
+  .quote-text{font-size:13px;line-height:1.8;color:var(--ink2);font-style:italic;margin-bottom:12px}
+  .quote-author{font-size:11px;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:8px}
+  .quote-author::before{content:'—';color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">FMI · Framework Migración Intención</div>
+  <h1>Arqueología de <em>Caja Negra</em></h1>
+  <div class="subtitle">
+    Cómo extraer la semántica de un sistema legacy sin ahogar la IA revisando código espagueti.<br>
+    Una metodología de ingeniería inversa basada en comportamiento observable.
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- MODO TOGGLE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setView('filosofia')">FILOSOFÍA</button>
+  <button class="mode-btn" onclick="setView('gigantes')">GIGANTES</button>
+  <button class="mode-btn" onclick="setView('workflow')">WORKFLOW</button>
+  <button class="mode-btn" onclick="setView('inventario')">INVENTARIO</button>
+  <button class="mode-btn" onclick="setView('golden')">GOLDEN MASTER</button>
+  <button class="mode-btn" onclick="setView('scripts')">SCRIPTS</button>
+  <button class="mode-btn" onclick="setView('antipatrones')">ANTI-PATRONES</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 1 · FILOSOFÍA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-filosofia" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">El problema: código espagueti vs. economía de tokens</div>
+
+  <div class="job-box o">
+    <div class="job-header">
+      <div class="job-name" style="color:var(--accent)">El fracaso de los 2 meses</div>
+      <span class="tag tag-o">CASO REAL</span>
+    </div>
+    <div class="job-desc">
+      Durante dos meses intenté extraer tests de integración desde el código legacy de WebDTE (2005). El resultado fue un fracaso rotundo. ¿La razón? El código está completamente acoplado: lógica de negocio mezclada con SQL, HTML generado en servlets, validaciones duplicadas en 5 lugares diferentes. Los tests unitarios no servían porque no había "unidades" — todo dependía de todo.
+    </div>
+    <div class="callout orange" style="margin:0">
+      <strong>La revelación:</strong> No se puede obtener semántica desde código mal estructurado. La única forma viable es tratar el sistema como <strong>caja negra</strong>, observar su comportamiento real, capturar la intención mediante tests de caracterización (Golden Master), y LUEGO refactorizar con esa red de seguridad activa.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Por qué caja negra > revisión de código</div>
+
+  <div class="comp-grid">
+    <div class="comp-card bad">
+      <div class="comp-header bad">
+        <span class="comp-icon">❌</span>
+        Enfoque ingenuo
+      </div>
+      <div class="comp-content">
+        <strong>Estrategia:</strong> "La IA revisará las 50,000 líneas de código legacy y extraerá la lógica de negocio"<br><br>
+        <strong>Costo:</strong> 500,000 tokens (contexto + análisis)<br><br>
+        <strong>Riesgo:</strong> Alucinaciones — la IA inventa lógica que no existe al intentar interpretar condicionales anidados de 8 niveles<br><br>
+        <strong>Resultado:</strong> Agotamiento cognitivo sin garantías. Los tests generados no validan nada real.
+      </div>
+    </div>
+
+    <div class="comp-card good">
+      <div class="comp-header good">
+        <span class="comp-icon">✅</span>
+        Arqueología de Caja Negra
+      </div>
+      <div class="comp-content">
+        <strong>Estrategia:</strong> web.xml + vistas HTML → parámetros descubiertos → sistema funcionando (comportamiento observable) → Golden Master<br><br>
+        <strong>Costo:</strong> 5,000 tokens (solo artefactos declarativos)<br><br>
+        <strong>Riesgo:</strong> Mínimo — el sistema real no miente. Si responde X para entrada Y, esa es la verdad absoluta.<br><br>
+        <strong>Resultado:</strong> Inventario funcional en 2 horas vs. 15 días. Tests que validan comportamiento REAL.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <strong>Economía de Tokens:</strong> El código espagueti es <strong>ruido semántico</strong>. La IA gasta tokens descifrando estructuras sintácticas caóticas en lugar de capturar la intención de negocio. Al usar artefactos declarativos (web.xml, formularios HTML), obtienes el 80% de la semántica con el 1% del costo.
+  </div>
+
+  <div class="sec-title" data-n="3">Fundamento teórico</div>
+
+  <div class="callout green">
+    Tu enfoque no es improvisado — es la aplicación correcta de <strong>BDD (Behavior-Driven Development)</strong> a sistemas legacy. Gherkin se inventó precisamente para esto: capturar intención observable sin asumir implementación.
+  </div>
+
+  <pre><kw>Escenario</kw>: Validar certificado digital
+  <kw>Dado</kw> un certificado con NIF <st>"12345678Z"</st>
+  <kw>Y</kw> fecha de vencimiento <st>"31/12/2026"</st>
+  <kw>Cuando</kw> valido el certificado
+  <kw>Entonces</kw> el sistema responde <st>"VIGENTE"</st>
+
+<cm># ✅ Este test NO asume cómo está implementada la validación</cm>
+<cm># ✅ Es portable: Java → Express → Go</cm>
+<cm># ✅ Sobrevive refactors completos</cm></pre>
+
+  <div class="sec-title" data-n="4">web.xml: el mapa que no miente</div>
+
+  <div class="repo-box b">
+    <div class="repo-icon">🗺️</div>
+    <div>
+      <div class="repo-title" style="color:var(--accent3)">El único artefacto que dice la verdad</div>
+      <div class="repo-desc">
+        El <code>web.xml</code> es declarativo (no tiene lógica acoplada), estable (cambia raramente) y completo (lista TODAS las funcionalidades expuestas). Es el índice del libro — no necesitas leer 500 páginas para saber qué capítulos hay. Cada <code>&lt;servlet-mapping&gt;</code> es una funcionalidad documentada sin ambigüedad.
+      </div>
+    </div>
+  </div>
+
+  <div class="metric-row">
+    <div class="metric-card">
+      <div class="metric-value">87%</div>
+      <div class="metric-label">Reducción tiempo</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value good">99%</div>
+      <div class="metric-label">Reducción tokens IA</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value good">4 días</div>
+      <div class="metric-label">vs. 30 días tradicional</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 2 · GIGANTES DE LA INGENIERÍA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-gigantes" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Tu metodología validada por los maestros</div>
+
+  <div class="callout purple" style="margin-top:0">
+    <strong>No estás inventando nada nuevo</strong> — estás aplicando correctamente principios validados por décadas de ingeniería de software. La diferencia es que los adaptas al contexto de IA con restricciones de tokens.
+  </div>
+
+  <div class="quote-box">
+    <div class="quote-text">
+      "When changing legacy code, the biggest risk is that you'll break something without knowing it. The only way to work safely is to create characterization tests — tests that describe the current behavior of the system, not what you think it should do."
+    </div>
+    <div class="quote-author">Michael Feathers, "Working Effectively with Legacy Code" (2004)</div>
+  </div>
+
+  <div class="job-box purple">
+    <div class="job-header">
+      <div class="job-name">Michael Feathers: Characterization Tests</div>
+      <span class="tag tag-p">TU GOLDEN MASTER</span>
+    </div>
+    <div class="job-desc">
+      Feathers formalizó el concepto de <strong>Characterization Tests</strong>: tests que capturan el comportamiento actual del sistema (aunque esté mal diseñado) para crear una red de seguridad antes de refactorizar. No validan "corrección" — validan "consistencia".
+    </div>
+    <table class="vtable">
+      <tr>
+        <td>Concepto Feathers</td>
+        <td><strong>Characterization Test:</strong> Captura comportamiento observable sin juzgarlo</td>
+      </tr>
+      <tr>
+        <td>Tu equivalente FMI</td>
+        <td><strong>Golden Master:</strong> HTTP request → respuesta capturada → futuras ejecuciones deben dar lo mismo</td>
+      </tr>
+      <tr>
+        <td>Propósito</td>
+        <td>Red de seguridad para refactorizar sin romper funcionalidad</td>
+      </tr>
+      <tr>
+        <td>Cuándo usarlo</td>
+        <td>ANTES de tocar una sola línea de código legacy</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="quote-box">
+    <div class="quote-text">
+      "The Strangler Fig pattern involves gradually creating a new system around the edges of the old, letting it slowly replace the original until the old system can be strangled and removed."
+    </div>
+    <div class="quote-author">Martin Fowler, "Refactoring" (2018 edition)</div>
+  </div>
+
+  <div class="job-box green">
+    <div class="job-header">
+      <div class="job-name">Martin Fowler: Strangler Fig Pattern</div>
+      <span class="tag tag-g">TU MIGRACIÓN INCREMENTAL</span>
+    </div>
+    <div class="job-desc">
+      Fowler propone <strong>NO hacer migraciones Big Bang</strong>. En lugar de reescribir todo el sistema de golpe, sustituyes funcionalidades una a una mientras el viejo sistema sigue funcionando. Eventualmente, el nuevo sistema "estrangula" al viejo.
+    </div>
+    <table class="vtable">
+      <tr>
+        <td>Concepto Fowler</td>
+        <td><strong>Strangler Fig:</strong> Migración incremental pieza a pieza</td>
+      </tr>
+      <tr>
+        <td>Tu equivalente FMI</td>
+        <td><strong>Servlet a servlet:</strong> Cada funcionalidad migrada pasa tests de intención antes de "estrangular" la versión legacy</td>
+      </tr>
+      <tr>
+        <td>Ventaja</td>
+        <td>Coexistencia viejo/nuevo → rollback trivial si algo falla</td>
+      </tr>
+      <tr>
+        <td>Validación</td>
+        <td>Golden Master garantiza que nuevo ≡ viejo en comportamiento</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="quote-box">
+    <div class="quote-text">
+      "The ubiquitous language is a language structured around the domain model and used by all team members to connect all activities of the team with the software. A change in the language is a change to the model."
+    </div>
+    <div class="quote-author">Eric Evans, "Domain-Driven Design" (2003)</div>
+  </div>
+
+  <div class="job-box blue">
+    <div class="job-header">
+      <div class="job-name">Eric Evans: Ubiquitous Language</div>
+      <span class="tag tag-b">TU NOMENCLATURA CERRADA</span>
+    </div>
+    <div class="job-desc">
+      Evans insiste en que el código debe hablar el <strong>lenguaje del dominio</strong>, no el lenguaje de la tecnología. Los nombres deben revelar intención de negocio, no detalles de implementación.
+    </div>
+    <table class="vtable">
+      <tr>
+        <td>Concepto Evans</td>
+        <td><strong>Ubiquitous Language:</strong> Código que habla el idioma del negocio</td>
+      </tr>
+      <tr>
+        <td>Tu equivalente FMI</td>
+        <td><strong>Vocabulario cerrado:</strong> Finder, Store, Validator, Calculator, UseCase — nunca Service, Manager, Helper, Util</td>
+      </tr>
+      <tr>
+        <td>Propósito</td>
+        <td>Nombres correctos = compresión de tokens para IA. Un <code>CertificadoValidator</code> no necesita explicación.</td>
+      </tr>
+      <tr>
+        <td>Anti-patrón</td>
+        <td><code>CertificadoServiceManagerHelperImpl</code> → ruido semántico que confunde IA</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="quote-box">
+    <div class="quote-text">
+      "Make it work, make it right, make it fast — in that order. Don't optimize prematurely. First get the behavior right with tests."
+    </div>
+    <div class="quote-author">Kent Beck, "Test-Driven Development by Example" (2002)</div>
+  </div>
+
+  <div class="job-box yellow">
+    <div class="job-header">
+      <div class="job-name">Kent Beck: Test-First Development</div>
+      <span class="tag tag-y">TU RED DE SEGURIDAD</span>
+    </div>
+    <div class="job-desc">
+      Beck popularizó el ciclo <strong>Red-Green-Refactor</strong>: primero el test (que falla), luego el código mínimo para pasarlo, finalmente refactorizar con confianza porque el test valida que no rompiste nada.
+    </div>
+    <table class="vtable">
+      <tr>
+        <td>Concepto Beck</td>
+        <td><strong>Test-First:</strong> Test antes que código</td>
+      </tr>
+      <tr>
+        <td>Tu equivalente FMI</td>
+        <td><strong>Golden Master antes de refactorizar:</strong> Capturas comportamiento actual, luego migras, el test valida que nueva implementación ≡ vieja</td>
+      </tr>
+      <tr>
+        <td>Filosofía</td>
+        <td>"Make it work" (sistema legacy funciona) → "Make it right" (refactor 3 capas) → test garantiza que funcionalidad se preserva</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="repo-box p">
+    <div class="repo-icon">📚</div>
+    <div>
+      <div class="repo-title">Bibliografía esencial</div>
+      <div class="repo-desc" style="line-height:2.2">
+        <strong>Michael Feathers</strong> — "Working Effectively with Legacy Code" (2004)<br>
+        <strong>Martin Fowler</strong> — "Refactoring: Improving the Design of Existing Code" (2018)<br>
+        <strong>Eric Evans</strong> — "Domain-Driven Design: Tackling Complexity in the Heart of Software" (2003)<br>
+        <strong>Kent Beck</strong> — "Test-Driven Development by Example" (2002)<br>
+        <strong>Robert C. Martin</strong> — "Clean Code: A Handbook of Agile Software Craftsmanship" (2008)
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 3 · WORKFLOW COMPLETO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-workflow" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Las 5 fases de la arqueología</div>
+
+  <div class="callout blue" style="margin-top:0">
+    Este es el flujo completo, desde el sistema legacy opaco hasta el refactor 3 capas validado. Cada fase tiene entregables concretos y criterios de completitud.
+  </div>
+
+  <div class="flow-diagram">
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--accent)">0</div>
+      <div class="flow-content">
+        <div class="flow-title">Rescate Arqueológico</div>
+        <div class="flow-desc">Dockerizar el WAR binario legacy (JDK 1.5 + Tomcat 5.5) para tener un sistema ejecutable como referencia viva. Sin esto, no puedes hacer tests de intención porque el sistema no arranca.</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--accent2)">1</div>
+      <div class="flow-content">
+        <div class="flow-title">Inventario de Funcionalidades</div>
+        <div class="flow-desc">Analizar web.xml + vistas HTML/JSP para crear matriz de trazabilidad: Servlet → URL → Parámetros. Esto es ingeniería inversa pasiva — NO tocas código todavía.</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--accent3)">2</div>
+      <div class="flow-content">
+        <div class="flow-title">Golden Master (Tests de Intención)</div>
+        <div class="flow-desc">Atacar sistema legacy vía HTTP con parámetros descubiertos. Capturar respuesta (HTML, JSON, lo que sea) como "verdad absoluta". Si futuras ejecuciones dan lo mismo → comportamiento preservado.</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--yellow)">3</div>
+      <div class="flow-content">
+        <div class="flow-title">Arqueología Selectiva</div>
+        <div class="flow-desc">Solo AHORA abres el código Java. Buscas semántica rescatable (validaciones, cálculos, algoritmos) guiado por los tests. Ignoras ruido tecnológico (SQL inline, renderizado HTML).</div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num" style="background:var(--purple)">4</div>
+      <div class="flow-content">
+        <div class="flow-title">Refactorización con Red de Seguridad</div>
+        <div class="flow-desc">Construyes nueva arquitectura 3 capas (Domain/Infrastructure/Transport). Cada servlet migrado pasa tests de intención antes de "estrangular" la versión legacy. Coexistencia hasta completar.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Criterios de decisión: ¿Cuándo mirar código?</div>
+
+  <table class="vtable">
+    <thead>
+      <tr>
+        <th>Escenario</th>
+        <th>% Caja Negra</th>
+        <th>% Arqueología</th>
+        <th>Criterio</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>CRUD simple</td>
+        <td style="color:var(--accent2);font-weight:700">100%</td>
+        <td style="color:var(--muted)">0%</td>
+        <td>Crear/Leer/Actualizar/Eliminar → comportamiento observable completo</td>
+      </tr>
+      <tr>
+        <td>Validación formato</td>
+        <td style="color:var(--accent2);font-weight:700">100%</td>
+        <td style="color:var(--muted)">0%</td>
+        <td>Email, NIF, fecha → test detecta qué rechaza, algoritmo se infiere o busca en 2 min</td>
+      </tr>
+      <tr>
+        <td>Validación compleja</td>
+        <td style="color:var(--accent2);font-weight:700">80%</td>
+        <td style="color:var(--yellow);font-weight:700">20%</td>
+        <td>Unicidad, reglas de negocio → test detecta CUANDO falla, código explica POR QUÉ</td>
+      </tr>
+      <tr>
+        <td>Cálculos</td>
+        <td style="color:var(--yellow);font-weight:700">70%</td>
+        <td style="color:var(--yellow);font-weight:700">30%</td>
+        <td>Precio, descuentos, impuestos → test da ejemplos, código revela fórmula exacta</td>
+      </tr>
+      <tr>
+        <td>Lógica criptográfica</td>
+        <td style="color:var(--yellow);font-weight:700">40%</td>
+        <td style="color:var(--accent);font-weight:700">60%</td>
+        <td>Firmas, hashes → algoritmo específico requiere revisar implementación</td>
+      </tr>
+      <tr>
+        <td>Flujos multi-paso</td>
+        <td style="color:var(--accent2);font-weight:700">80%</td>
+        <td style="color:var(--yellow);font-weight:700">20%</td>
+        <td>Wizards, workflows → test captura secuencia completa, código muestra estado intermedio</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout green">
+    <strong>Regla de oro:</strong> Empieza siempre con caja negra (100%). Solo miras código cuando el test NO explica algo crítico (algoritmo, fórmula, condicional oculto). Esto minimiza tokens gastados en ruido.
+  </div>
+
+  <div class="sec-title" data-n="3">Entregables por fase</div>
+
+  <div class="steps-row">
+    <div class="step-box o">
+      <div class="step-label o">FASE 0</div>
+      <div class="step-name">Artefacto Ejecutable</div>
+      <div class="step-desc">
+        • Dockerfile con JDK 1.5 + Tomcat 5.5<br>
+        • Sistema legacy desplegado en URL viva<br>
+        • BD poblada con datos de prueba
+      </div>
+    </div>
+
+    <div class="step-box g">
+      <div class="step-label g">FASE 1</div>
+      <div class="step-name">Inventario CSV</div>
+      <div class="step-desc">
+        • inventario_funcionalidades.csv<br>
+        • Columnas: Servlet | URL | Vista | Parámetros<br>
+        • 1 fila = 1 funcionalidad
+      </div>
+    </div>
+
+    <div class="step-box b">
+      <div class="step-label b">FASE 2</div>
+      <div class="step-name">Tests .feature</div>
+      <div class="step-desc">
+        • 1 archivo .feature por funcionalidad<br>
+        • Escenarios Gherkin (Dado/Cuando/Entonces)<br>
+        • Golden masters capturados
+      </div>
+    </div>
+
+    <div class="step-box y">
+      <div class="step-label y">FASE 3</div>
+      <div class="step-name">Semántica Extraída</div>
+      <div class="step-desc">
+        • Clases Domain (Validator, Calculator)<br>
+        • Tests unitarios (lógica pura)<br>
+        • Documento "reglas_negocio.md"
+      </div>
+    </div>
+
+    <div class="step-box p">
+      <div class="step-label p">FASE 4</div>
+      <div class="step-name">Sistema Refactorizado</div>
+      <div class="step-desc">
+        • Arquitectura 3 capas desplegada<br>
+        • Tests de intención PASAN (verde)<br>
+        • Documento comparativa legacy vs. nuevo
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 4 · INVENTARIO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-inventario" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Paso 1: Analizar web.xml</div>
+
+  <div class="callout orange" style="margin-top:0">
+    El <code>web.xml</code> es tu mapa del tesoro. Cada <code>&lt;servlet-mapping&gt;</code> te dice: "Aquí hay una funcionalidad expuesta". No te dice QUÉ hace ni CÓMO, pero te dice que EXISTE.
+  </div>
+
+  <pre><cm>&lt;!-- Fragmento típico de web.xml (sistema legacy 2005) --&gt;</cm>
+<an>&lt;servlet&gt;</an>
+  <an>&lt;servlet-name&gt;</an>FirmaServlet<an>&lt;/servlet-name&gt;</an>
+  <an>&lt;servlet-class&gt;</an>com.webdte.servlets.FirmaServlet<an>&lt;/servlet-class&gt;</an>
+<an>&lt;/servlet&gt;</an>
+
+<an>&lt;servlet-mapping&gt;</an>
+  <an>&lt;servlet-name&gt;</an>FirmaServlet<an>&lt;/servlet-name&gt;</an>
+  <an>&lt;url-pattern&gt;</an>/firmarDocumento<an>&lt;/url-pattern&gt;</an>
+<an>&lt;/servlet-mapping&gt;</an>
+
+<an>&lt;servlet&gt;</an>
+  <an>&lt;servlet-name&gt;</an>ValidaServlet<an>&lt;/servlet-name&gt;</an>
+  <an>&lt;servlet-class&gt;</an>com.webdte.servlets.ValidaServlet<an>&lt;/servlet-class&gt;</an>
+<an>&lt;/servlet&gt;</an>
+
+<an>&lt;servlet-mapping&gt;</an>
+  <an>&lt;servlet-name&gt;</an>ValidaServlet<an>&lt;/servlet-name&gt;</an>
+  <an>&lt;url-pattern&gt;</an>/validarFirma<an>&lt;/url-pattern&gt;</an>
+<an>&lt;/servlet-mapping&gt;</an></pre>
+
+  <div class="callout blue">
+    <strong>Extracción automática:</strong> Un grep sencillo extrae esta info sin revisar código Java. Formato ideal: CSV con columnas Servlet | Clase | URL Pattern.
+  </div>
+
+  <div class="sec-title" data-n="2">Paso 2: Rastrear vistas (HTML/JSP)</div>
+
+  <pre><cm>&lt;!-- formulario_firma.jsp --&gt;</cm>
+<an>&lt;form</an> <cl>action</cl>=<st>"/webdte/firmarDocumento"</st> <cl>method</cl>=<st>"POST"</st><an>&gt;</an>
+  <an>&lt;input</an> <cl>type</cl>=<st>"hidden"</st> <cl>name</cl>=<st>"documentoId"</st> <cl>value</cl>=<st>"&lt;%=docId%&gt;"</st> <an>/&gt;</an>
+  
+  <an>&lt;select</an> <cl>name</cl>=<st>"certificadoId"</st><an>&gt;</an>
+    <an>&lt;option</an> <cl>value</cl>=<st>"1"</st><an>&gt;</an>Certificado DNIe<an>&lt;/option&gt;</an>
+    <an>&lt;option</an> <cl>value</cl>=<st>"2"</st><an>&gt;</an>Certificado FNMT<an>&lt;/option&gt;</an>
+  <an>&lt;/select&gt;</an>
+  
+  <an>&lt;input</an> <cl>type</cl>=<st>"submit"</st> <cl>value</cl>=<st>"Firmar"</st> <an>/&gt;</an>
+<an>&lt;/form&gt;</an></pre>
+
+  <div class="callout green">
+    <strong>Parámetros descubiertos:</strong> Este formulario revela que <code>/firmarDocumento</code> espera 2 parámetros: <code>documentoId</code> (hidden, viene de sesión) y <code>certificadoId</code> (selector usuario). Esto es ingeniería inversa sin tocar Java.
+  </div>
+
+  <div class="sec-title" data-n="3">Paso 3: Matriz de trazabilidad</div>
+
+  <table class="vtable">
+    <thead>
+      <tr>
+        <th>Servlet</th>
+        <th>Clase Java</th>
+        <th>URL Pattern</th>
+        <th>Vista de Entrada</th>
+        <th>Parámetros Esperados</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>FirmaServlet</td>
+        <td>com.webdte.servlets.FirmaServlet</td>
+        <td>POST /firmarDocumento</td>
+        <td>formulario_firma.jsp</td>
+        <td>documentoId, certificadoId</td>
+      </tr>
+      <tr>
+        <td>ValidaServlet</td>
+        <td>com.webdte.servlets.ValidaServlet</td>
+        <td>POST /validarFirma</td>
+        <td>consulta_firma.jsp</td>
+        <td>hashDocumento</td>
+      </tr>
+      <tr>
+        <td>CertificadoServlet</td>
+        <td>com.webdte.servlets.CertificadoServlet</td>
+        <td>GET /consultarCertificado</td>
+        <td>formulario_consulta.jsp</td>
+        <td>nif</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout yellow">
+    <strong>Próximo paso:</strong> Para cada fila de esta tabla, creas un test de intención (Golden Master). Atacas la URL con los parámetros, capturas la respuesta. Esto se hace SIN abrir el código Java todavía.
+  </div>
+
+  <div class="sec-title" data-n="4">Casos edge: descubrir parámetros ocultos</div>
+
+  <div class="job-box yellow">
+    <div class="job-header">
+      <div class="job-name">Técnica: Inspección de tráfico HTTP</div>
+      <span class="tag tag-y">DEVTOOLS</span>
+    </div>
+    <div class="job-desc">
+      Algunos parámetros NO están en formularios (cookies, headers HTTP, campos ocultos dinámicos). Para descubrirlos:
+    </div>
+    <div style="font-size:11px;line-height:1.9">
+      <strong>1.</strong> Abrir sistema legacy en navegador<br>
+      <strong>2.</strong> Ejecutar funcionalidad manualmente (ej: firmar documento)<br>
+      <strong>3.</strong> Inspeccionar request completo en DevTools → Network → Headers + Payload<br>
+      <strong>4.</strong> Copiar request EXACTO (incluye cookies, tokens CSRF, etc.)<br>
+      <strong>5.</strong> Replicar en test con esos parámetros adicionales
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 5 · GOLDEN MASTER -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-golden" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Filosofía del Golden Master</div>
+
+  <div class="callout purple" style="margin-top:0">
+    <strong>Golden Master NO valida corrección</strong> — valida <strong>consistencia</strong>. Si el sistema legacy tiene un bug (ej: calcula mal un impuesto), el Golden Master captura ese comportamiento bugueado como "verdad". Más tarde, cuando refactorices, el test DEBE pasar con el mismo bug. Arreglar el bug es una tarea separada que requiere cambiar el test también.
+  </div>
+
+  <div class="quote-box">
+    <div class="quote-text">
+      "A characterization test is a test that characterizes the actual behavior of a piece of code. There's no 'Well, it should do this' or 'I think it does that.' The tests document the actual current behavior of the system."
+    </div>
+    <div class="quote-author">Michael Feathers, "Working Effectively with Legacy Code"</div>
+  </div>
+
+  <div class="sec-title" data-n="2">Implementación con REST Assured</div>
+
+  <pre><cm>// test/java/golden/FirmarDocumentoGoldenTest.java</cm>
+<kw>import static</kw> io.restassured.RestAssured.*;
+<kw>import static</kw> org.hamcrest.Matchers.*;
+
+<kw>public class</kw> <cl>FirmarDocumentoGoldenTest</cl> {
+
+  <cm>// Preparación: insertar datos de prueba en BD</cm>
+  <an>@BeforeEach</an>
+  <kw>void</kw> <fn>prepararDatosPrueba</fn>() {
+    <fn>insertarDocumento</fn>(<st>"DOC-001"</st>, <st>"contrato.pdf"</st>);
+    <fn>insertarCertificado</fn>(<st>"CERT-123"</st>, <st>"12345678Z"</st>, <st>"2026-12-31"</st>);
+  }
+
+  <cm>// Test: capturar respuesta legacy como Golden Master</cm>
+  <an>@Test</an>
+  <kw>void</kw> <fn>firmar_documento_valido_responde_ok</fn>() {
+    <cm>// Atacar sistema legacy</cm>
+    String respuestaLegacy = <fn>given</fn>()
+        .<fn>formParam</fn>(<st>"documentoId"</st>, <st>"DOC-001"</st>)
+        .<fn>formParam</fn>(<st>"certificadoId"</st>, <st>"CERT-123"</st>)
+    .<fn>when</fn>()
+        .<fn>post</fn>(<st>"http://legacy.webdte.com/firmarDocumento"</st>)
+    .<fn>then</fn>()
+        .<fn>statusCode</fn>(<nu>200</nu>)
+        .<fn>extract</fn>().<fn>asString</fn>();
+
+    <cm>// Guardar Golden Master (primera vez)</cm>
+    <fn>guardarGoldenMaster</fn>(<st>"firma_ok"</st>, respuestaLegacy);
+
+    <cm>// Verificar (siguientes veces)</cm>
+    String goldenMaster = <fn>cargarGoldenMaster</fn>(<st>"firma_ok"</st>);
+    <fn>assertEquals</fn>(goldenMaster, respuestaLegacy,
+      <st>"El comportamiento del sistema legacy cambió"</st>);
+  }
+
+  <cm>// Test: validar que certificado caducado da error</cm>
+  <an>@Test</an>
+  <kw>void</kw> <fn>certificado_caducado_responde_error</fn>() {
+    <fn>insertarCertificado</fn>(<st>"CERT-VIEJO"</st>, <st>"87654321X"</st>, <st>"2020-01-01"</st>);
+
+    <fn>given</fn>()
+        .<fn>formParam</fn>(<st>"documentoId"</st>, <st>"DOC-001"</st>)
+        .<fn>formParam</fn>(<st>"certificadoId"</st>, <st>"CERT-VIEJO"</st>)
+    .<fn>when</fn>()
+        .<fn>post</fn>(<st>"http://legacy.webdte.com/firmarDocumento"</st>)
+    .<fn>then</fn>()
+        .<fn>statusCode</fn>(<nu>400</nu>)
+        .<fn>body</fn>(<fn>containsString</fn>(<st>"caducado"</st>));
+  }
+}</pre>
+
+  <div class="callout green">
+    <strong>Clave:</strong> La primera ejecución CAPTURA la respuesta. Las siguientes VALIDAN que sigue siendo la misma. Esto detecta regresiones accidentales (cambió algo en el sistema sin querer).
+  </div>
+
+  <div class="sec-title" data-n="3">Versión Gherkin (portable)</div>
+
+  <pre><cm># features/firmar_documento.feature</cm>
+<kw>Característica</kw>: Firma digital de documento
+  <kw>Como</kw> usuario con certificado válido
+  <kw>Quiero</kw> firmar un documento
+  <kw>Para</kw> validar su autenticidad
+
+  <kw>Antecedentes</kw>:
+    <kw>Dado</kw> que el sistema legacy está en <st>"http://legacy.webdte.com"</st>
+    <kw>Y</kw> el sistema refactorizado está en <st>"http://refactor.webdte.com"</st>
+
+  <kw>Escenario</kw>: Firma exitosa con certificado vigente
+    <kw>Dado</kw> un documento con ID <st>"DOC-001"</st>
+    <kw>Y</kw> un certificado válido con ID <st>"CERT-123"</st> que vence el <st>"31/12/2026"</st>
+    
+    <kw>Cuando</kw> envío POST a <st>"/firmarDocumento"</st> con:
+      | documentoId | certificadoId |
+      | DOC-001     | CERT-123      |
+    
+    <kw>Entonces</kw> el sistema legacy responde HTTP <nu>200</nu>
+    <kw>Y</kw> la respuesta HTML contiene <st>"Documento firmado correctamente"</st>
+    <kw>Y</kw> se crea un registro en la tabla <st>"firmas"</st> con documento_id = <st>"DOC-001"</st>
+
+  <kw>Escenario</kw>: Rechazo por certificado caducado
+    <kw>Dado</kw> un certificado caducado con ID <st>"CERT-VIEJO"</st> que venció el <st>"01/01/2020"</st>
+    
+    <kw>Cuando</kw> intento firmar el documento <st>"DOC-001"</st>
+    
+    <kw>Entonces</kw> ambos sistemas responden HTTP <nu>400</nu>
+    <kw>Y</kw> el mensaje de error contiene <st>"certificado caducado"</st></pre>
+
+  <div class="callout blue">
+    <strong>Ventaja Gherkin:</strong> Esta especificación es <strong>agnóstica de lenguaje</strong>. Sirve tanto para validar el servlet Java legacy como el futuro endpoint Express/Jakarta EE. Es la semántica pura sin tecnología.
+  </div>
+
+  <div class="sec-title" data-n="4">Validación: Legacy vs. Refactor</div>
+
+  <pre><cm>// Test que valida contrato semántico (no implementación)</cm>
+<an>@Test</an>
+<kw>void</kw> <fn>refactor_responde_semanticamente_igual_que_legacy</fn>() {
+  <cm>// Preparar BD</cm>
+  <fn>insertarDocumento</fn>(<st>"DOC-001"</st>);
+  <fn>insertarCertificado</fn>(<st>"CERT-123"</st>);
+
+  <cm>// Atacar LEGACY (responde HTML)</cm>
+  String htmlLegacy = <fn>post</fn>(<st>"http://legacy.webdte.com/firmarDocumento"</st>)
+      .<fn>formParam</fn>(<st>"documentoId"</st>, <st>"DOC-001"</st>)
+      .<fn>formParam</fn>(<st>"certificadoId"</st>, <st>"CERT-123"</st>)
+      .<fn>extract</fn>().<fn>asString</fn>();
+
+  <cm>// Atacar REFACTOR (responde JSON)</cm>
+  String jsonRefactor = <fn>post</fn>(<st>"http://refactor.webdte.com/api/firmar"</st>)
+      .<fn>contentType</fn>(<st>"application/json"</st>)
+      .<fn>body</fn>(<st>"{\"documentoId\":\"DOC-001\",\"certificadoId\":\"CERT-123\"}"</st>)
+      .<fn>extract</fn>().<fn>asString</fn>();
+
+  <cm>// Validación SEMÁNTICA (no sintáctica)</cm>
+  <fn>assertTrue</fn>(htmlLegacy.<fn>contains</fn>(<st>"firmado correctamente"</st>),
+    <st>"Legacy indica éxito"</st>);
+  <fn>assertTrue</fn>(jsonRefactor.<fn>contains</fn>(<st>"\"status\":\"ok\""</st>),
+    <st>"Refactor indica éxito"</st>);
+
+  <cm>// Validación BD: ambos escribieron el registro</cm>
+  <fn>assertEquals</fn>(<nu>1</nu>, <fn>contarFirmasEnBD</fn>(<st>"DOC-001"</st>),
+    <st>"Exactamente 1 firma creada"</st>);
+}</pre>
+
+  <div class="callout orange">
+    <strong>Contrato semántico:</strong> No comparamos HTML vs. JSON carácter a carácter. Comparamos <strong>intención</strong>: ambos indican éxito, ambos escriben en BD. El formato de respuesta es irrelevante.
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 6 · SCRIPTS AUTOMATIZADOS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-scripts" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Script 1: Analizar web.xml</div>
+
+  <pre><cm>#!/bin/bash</cm>
+<cm># analizar_webxml.sh - Extrae servlets y mappings a CSV</cm>
+
+<kw>WEBXML</kw>=<st>"WEB-INF/web.xml"</st>
+<kw>OUTPUT</kw>=<st>"inventario_servlets.csv"</st>
+
+<cm># Header CSV</cm>
+<kw>echo</kw> <st>"Servlet,Clase,URLPattern"</st> > <kw>$OUTPUT</kw>
+
+<cm># Extraer servlets (nombre + clase)</cm>
+<fn>grep</fn> -A <nu>2</nu> <st>"&lt;servlet&gt;"</st> <kw>$WEBXML</kw> | \
+<fn>grep</fn> -E <st>"servlet-name|servlet-class"</st> | \
+<fn>sed</fn> <st>'s/.*&gt;\(.*\)&lt;.*/\1/'</st> | \
+<fn>paste</fn> - - >> servlets_temp.txt
+
+<cm># Extraer mappings (nombre + URL)</cm>
+<fn>grep</fn> -A <nu>2</nu> <st>"&lt;servlet-mapping&gt;"</st> <kw>$WEBXML</kw> | \
+<fn>grep</fn> -E <st>"servlet-name|url-pattern"</st> | \
+<fn>sed</fn> <st>'s/.*&gt;\(.*\)&lt;.*/\1/'</st> | \
+<fn>paste</fn> - - >> mappings_temp.txt
+
+<cm># Combinar (join por nombre servlet)</cm>
+<fn>join</fn> -t <st>$'\t'</st> -1 <nu>1</nu> -2 <nu>1</nu> servlets_temp.txt mappings_temp.txt | \
+<fn>tr</fn> <st>'\t'</st> <st>','</st> >> <kw>$OUTPUT</kw>
+
+<cm># Limpiar temporales</cm>
+<fn>rm</fn> servlets_temp.txt mappings_temp.txt
+
+<kw>echo</kw> <st>"✅ Inventario generado: $OUTPUT"</st></pre>
+
+  <div class="callout green">
+    <strong>Salida:</strong> CSV con 3 columnas. Cada fila = 1 funcionalidad documentada sin abrir código Java.
+  </div>
+
+  <div class="sec-title" data-n="2">Script 2: Extraer parámetros de vistas</div>
+
+  <pre><cm>#!/usr/bin/env python3</cm>
+<cm># extraer_parametros.py - Analiza JSP/HTML buscando formularios</cm>
+
+<kw>import</kw> re
+<kw>import</kw> sys
+<kw>from</kw> pathlib <kw>import</kw> Path
+
+<kw>def</kw> <fn>extraer_parametros</fn>(archivo_vista):
+    contenido = Path(archivo_vista).<fn>read_text</fn>()
+    
+    <cm># Buscar formularios</cm>
+    forms = re.<fn>findall</fn>(
+        <st>r'&lt;form[^&gt;]*action="([^"]*)"[^&gt;]*&gt;(.*?)&lt;/form&gt;'</st>,
+        contenido,
+        re.DOTALL
+    )
+    
+    resultados = []
+    <kw>for</kw> action, form_body <kw>in</kw> forms:
+        <cm># Extraer inputs con name</cm>
+        inputs = re.<fn>findall</fn>(<st>r'name="([^"]*)"'</st>, form_body)
+        resultados.<fn>append</fn>({
+            <st>'url'</st>: action,
+            <st>'parametros'</st>: inputs
+        })
+    
+    <kw>return</kw> resultados
+
+<cm># Uso: python3 extraer_parametros.py formulario_firma.jsp</cm>
+<kw>if</kw> __name__ == <st>"__main__"</st>:
+    vista = sys.argv[<nu>1</nu>]
+    params = <fn>extraer_parametros</fn>(vista)
+    
+    <kw>for</kw> p <kw>in</kw> params:
+        <kw>print</kw>(<st>f"URL: {p['url']}"</st>)
+        <kw>print</kw>(<st>f"Params: {', '.join(p['parametros'])}"</st>)
+        <kw>print</kw>(<st>"-"</st> * <nu>40</nu>)</pre>
+
+  <div class="callout blue">
+    <strong>Salida ejemplo:</strong> <code>URL: /firmarDocumento | Params: documentoId, certificadoId</code>
+  </div>
+
+  <div class="sec-title" data-n="3">Script 3: Generar plantilla de test</div>
+
+  <pre><cm>#!/usr/bin/env python3</cm>
+<cm># generar_test.py - Crea esqueleto de test Gherkin</cm>
+
+<kw>import</kw> sys
+
+<kw>def</kw> <fn>generar_feature</fn>(servlet, url, parametros):
+    params_table = <st>"\n      | "</st>.<fn>join</fn>(parametros)
+    
+    template = <st>f"""# language: es
+Característica: {servlet}
+  Como usuario del sistema
+  Quiero usar la funcionalidad {servlet}
+  Para [COMPLETAR: objetivo de negocio]
+
+  Antecedentes:
+    Dado que el sistema legacy está en "http://legacy.webdte.com"
+    Y el sistema refactorizado está en "http://refactor.webdte.com"
+
+  Escenario: Caso exitoso
+    Dado [COMPLETAR: precondiciones]
+    Cuando envío POST a "{url}" con:
+      | {params_table} |
+    Entonces el sistema legacy responde HTTP 200
+    Y [COMPLETAR: validaciones de negocio]
+"""</st>
+    <kw>return</kw> template
+
+<cm># Uso: python3 generar_test.py FirmaServlet /firmarDocumento "documentoId,certificadoId"</cm>
+<kw>if</kw> __name__ == <st>"__main__"</st>:
+    servlet = sys.argv[<nu>1</nu>]
+    url = sys.argv[<nu>2</nu>]
+    params = sys.argv[<nu>3</nu>].<fn>split</fn>(<st>','</st>)
+    
+    feature = <fn>generar_feature</fn>(servlet, url, params)
+    
+    filename = <st>f"features/{servlet.lower()}.feature"</st>
+    <kw>with</kw> <fn>open</fn>(filename, <st>'w'</st>) <kw>as</kw> f:
+        f.<fn>write</fn>(feature)
+    
+    <kw>print</kw>(<st>f"✅ Test generado: {filename}"</st>)</pre>
+
+  <div class="callout yellow">
+    <strong>Output:</strong> Archivo <code>.feature</code> listo para completar con lógica de negocio. La estructura ya está — solo faltan los detalles semánticos.
+  </div>
+
+  <div class="sec-title" data-n="4">Workflow completo automatizado</div>
+
+  <pre><cm>#!/bin/bash</cm>
+<cm># pipeline_arqueologia.sh - Ejecuta los 3 scripts en secuencia</cm>
+
+<kw>echo</kw> <st>"🔍 FASE 1: Analizando web.xml..."</st>
+./analizar_webxml.sh
+
+<kw>echo</kw> <st>"📄 FASE 2: Extrayendo parámetros de vistas..."</st>
+<kw>for</kw> vista <kw>in</kw> webapp/*.jsp; <kw>do</kw>
+  python3 extraer_parametros.py <st>"$vista"</st>
+<kw>done</kw>
+
+<kw>echo</kw> <st>"🧪 FASE 3: Generando tests .feature..."</st>
+<kw>while</kw> IFS=, <kw>read</kw> -r servlet clase url; <kw>do</kw>
+  <cm># Aquí deberías tener lógica para obtener parámetros</cm>
+  <cm># Por simplicidad, asumimos que están en un archivo temporal</cm>
+  params=$(<fn>cat</fn> <st>"params_${servlet}.txt"</st>)
+  python3 generar_test.py <st>"$servlet"</st> <st>"$url"</st> <st>"$params"</st>
+<kw>done</kw> < inventario_servlets.csv
+
+<kw>echo</kw> <st>"✅ Pipeline completo. Revisa features/ para los tests generados."</st></pre>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 7 · ANTI-PATRONES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="view-antipatrones" class="mode-panel">
+
+  <div class="sec-title" data-n="1">Los errores que cometí (2 meses perdidos)</div>
+
+  <div class="callout orange" style="margin-top:0">
+    <strong>Lección dolorosa:</strong> Intenté extraer tests de integración leyendo código legacy. Pasé 2 meses atascado porque el código está tan acoplado que no hay forma de escribir tests unitarios sin refactorizar primero. Pero refactorizar sin tests es suicidio. Es un deadlock metodológico.
+  </div>
+
+  <div class="comp-grid">
+    <div class="comp-card bad">
+      <div class="comp-header bad">
+        <span class="comp-icon">❌</span>
+        Anti-patrón 1: Leer código antes que comportamiento
+      </div>
+      <div class="comp-content">
+        <strong>Error:</strong> Abrir el servlet Java y tratar de entender qué hace leyendo 500 líneas de if-else anidados con SQL inline.<br><br>
+        <strong>Consecuencia:</strong> Gastas tokens de IA en ruido sintáctico. La IA alucina lógica que no existe. Inviertes 2 días y no tienes ni un solo test funcional.<br><br>
+        <strong>Corrección:</strong> Primero ataca el sistema vía HTTP. Observa qué hace. LUEGO miras código solo si el comportamiento no explica algo.
+      </div>
+    </div>
+
+    <div class="comp-card bad">
+      <div class="comp-header bad">
+        <span class="comp-icon">❌</span>
+        Anti-patrón 2: Tests unitarios en código acoplado
+      </div>
+      <div class="comp-content">
+        <strong>Error:</strong> Intentar escribir tests unitarios para un servlet que mezcla lógica + SQL + renderizado HTML.<br><br>
+        <strong>Consecuencia:</strong> Los tests son inútiles porque mockear req/resp/BD/sesión es más complejo que el código mismo. Terminas testeando Mockito, no lógica de negocio.<br><br>
+        <strong>Corrección:</strong> Tests de integración (caja negra) primero. Refactorizar a 3 capas. LUEGO tests unitarios del Domain.
+      </div>
+    </div>
+
+    <div class="comp-card bad">
+      <div class="comp-header bad">
+        <span class="comp-icon">❌</span>
+        Anti-patrón 3: Confiar en documentación Word de 2005
+      </div>
+      <div class="comp-content">
+        <strong>Error:</strong> Leer especificación funcional en Word/PDF escrita hace 20 años y asumir que el sistema hace eso.<br><br>
+        <strong>Consecuencia:</strong> La documentación miente. El sistema evolucionó pero nadie actualizó el Word. Escribes tests basados en specs obsoletas.<br><br>
+        <strong>Corrección:</strong> El sistema FUNCIONANDO es la única spec confiable. Ignora documentación, captura comportamiento real.
+      </div>
+    </div>
+
+    <div class="comp-card bad">
+      <div class="comp-header bad">
+        <span class="comp-icon">❌</span>
+        Anti-patrón 4: Migración Big Bang
+      </div>
+      <div class="comp-content">
+        <strong>Error:</strong> "Reescribiré todo el sistema en Express de golpe y luego testeo".<br><br>
+        <strong>Consecuencia:</strong> 3 meses después tienes un sistema nuevo que no funciona. No puedes rollback. No sabes qué rompiste.<br><br>
+        <strong>Corrección:</strong> Strangler Fig — migra servlet a servlet. Cada pieza pasa tests de intención antes de "estrangular" la versión legacy.
+      </div>
+    </div>
+
+    <div class="comp-card bad">
+      <div class="comp-header bad">
+        <span class="comp-icon">❌</span>
+        Anti-patrón 5: Refactorizar sin tests
+      </div>
+      <div class="comp-content">
+        <strong>Error:</strong> "Este código es tan malo que primero lo limpio y luego escribo tests".<br><br>
+        <strong>Consecuencia:</strong> Introduces bugs sutiles. No tienes forma de saber si el refactor preservó funcionalidad.<br><br>
+        <strong>Corrección:</strong> Golden Master PRIMERO. Refactorizar DESPUÉS. El test te avisa si rompiste algo.
+      </div>
+    </div>
+
+    <div class="comp-card bad">
+      <div class="comp-header bad">
+        <span class="comp-icon">❌</span>
+        Anti-patrón 6: Asumir que la IA entiende código viejo
+      </div>
+      <div class="comp-content">
+        <strong>Error:</strong> "Le paso 10,000 líneas de servlets a GPT-4 y que genere los tests".<br><br>
+        <strong>Consecuencia:</strong> La IA inventa lógica. Los tests generados no validan nada real. Gastas 200K tokens en basura.<br><br>
+        <strong>Corrección:</strong> IA para generar PLANTILLAS de tests (estructura .feature). Tú completas con comportamiento observado real.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Señales de que estás haciendo algo mal</div>
+
+  <table class="vtable">
+    <thead>
+      <tr>
+        <th>Señal de Alarma</th>
+        <th>Qué significa</th>
+        <th>Solución</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Llevas 3 días leyendo código y no tienes un test</td>
+        <td>Parálisis por análisis — estás en modo "entender todo"</td>
+        <td>STOP. Ataca el sistema vía HTTP. 1 test por hora mínimo.</td>
+      </tr>
+      <tr>
+        <td>Tus tests mockean 10 dependencias</td>
+        <td>Código acoplado — no hay unidades testeables</td>
+        <td>Cambia a tests de integración (caja negra). Refactoriza después.</td>
+      </tr>
+      <tr>
+        <td>La IA te genera código que no compila</td>
+        <td>Le pasaste demasiado contexto / código legacy ruidoso</td>
+        <td>Reduce input. Solo artefactos declarativos (web.xml, .feature)</td>
+      </tr>
+      <tr>
+        <td>No sabes qué testear primero</td>
+        <td>Falta inventario — no sabes qué funcionalidades existen</td>
+        <td>Ejecuta script analizar_webxml.sh. Prioriza por criticidad negocio.</td>
+      </tr>
+      <tr>
+        <td>El test pasa pero no estás seguro de por qué</td>
+        <td>Test demasiado genérico / falta validación semántica</td>
+        <td>Agrega asserts específicos. Valida BD, no solo status HTTP.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="repo-box o">
+    <div class="repo-icon">🚨</div>
+    <div>
+      <div class="repo-title" style="color:var(--accent)">Regla de oro del TFM</div>
+      <div class="repo-desc">
+        Si una técnica te tiene atascado más de <strong>2 días sin producir un entregable concreto</strong> (test funcional, inventario CSV, semántica extraída), <strong>esa técnica está mal</strong>. Cambia de enfoque inmediatamente. El fracaso de los 2 meses ocurrió porque no apliqué esta regla — seguí insistiendo en leer código cuando debí atacar el sistema como caja negra desde el día 1.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+function setView(n){document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).classList.add('active');event.target.classList.add('active')}
+</script>
+</body>
+</html>
