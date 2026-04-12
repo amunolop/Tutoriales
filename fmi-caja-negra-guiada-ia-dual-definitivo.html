@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMI · Caja Negra Guiada · IA Dual + Playwright + Logs Semánticos</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;position:relative}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1120px;margin:0 auto;padding:48px 28px 100px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:40px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  @keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(26px,4vw,44px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.7}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:40px;width:fit-content;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:10px;font-weight:600;padding:10px 14px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:2px solid var(--ink)}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:36px 0 16px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:16px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);white-space:pre;margin:16px 0}
+  .kw{color:#c1440e;font-weight:600}.an{color:#1a4a8a;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.nu{color:#7a3acd}.fn{color:#0369a1;font-weight:600}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:16px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 14px;text-align:left}
+  .vtable td{padding:11px 14px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td:first-child{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap}
+  .steps-row{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+  .step-box{flex:1;min-width:130px;background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:16px;transition:all .2s}
+  .step-box:hover{border-color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .step-box.o{border-left:4px solid var(--accent)}.step-box.g{border-left:4px solid var(--accent2)}.step-box.b{border-left:4px solid var(--accent3)}.step-box.y{border-left:4px solid var(--yellow)}.step-box.p{border-left:4px solid var(--purple)}
+  .step-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .step-label.o{color:var(--accent)}.step-label.g{color:var(--accent2)}.step-label.b{color:var(--accent3)}.step-label.y{color:var(--yellow)}.step-label.p{color:var(--purple)}
+  .step-name{font-size:13px;font-weight:700;margin-bottom:5px}
+  .step-desc{font-size:10px;color:var(--muted);line-height:1.6}
+  .step-connector{display:flex;align-items:center;justify-content:center;min-width:22px;color:var(--muted)}
+  .arrow-right{font-size:16px;animation:pulse 2s ease infinite}
+  .flow-diagram{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:24px;margin:20px 0}
+  .flow-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px}
+  .flow-step:last-child{margin-bottom:0}
+  .flow-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;color:#fff}
+  .flow-num.o{background:var(--accent)}.flow-num.y{background:var(--yellow);color:var(--ink)}.flow-num.b{background:var(--accent3)}.flow-num.g{background:var(--accent2)}.flow-num.p{background:var(--purple)}.flow-num.k{background:var(--ink)}
+  .flow-content{flex:1}
+  .flow-title{font-size:13px;font-weight:700;margin-bottom:4px}
+  .flow-desc{font-size:11px;color:var(--muted);line-height:1.7}
+  .comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
+  .comp-card{background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:20px}
+  .comp-card.bad{border-left:4px solid var(--accent)}.comp-card.good{border-left:4px solid var(--accent2)}.comp-card.alt{border-left:4px solid var(--accent3)}
+  .comp-header{font-size:12px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .comp-header.bad{color:var(--accent)}.comp-header.good{color:var(--accent2)}.comp-header.alt{color:var(--accent3)}
+  .comp-content{font-size:11px;line-height:1.7;color:var(--ink2)}
+  .quote-box{border-left:4px solid var(--purple);background:rgba(122,58,205,.03);padding:18px 24px;margin:20px 0;border-radius:0 6px 6px 0}
+  .quote-text{font-size:13px;line-height:1.8;color:var(--ink2);font-style:italic;margin-bottom:12px}
+  .quote-author{font-size:11px;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:8px}
+  .quote-author::before{content:'—';color:var(--muted)}
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:20px 24px;margin:20px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:20px 24px;margin:20px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .layer-stack{margin:20px 0}
+  .layer{padding:14px 20px;border:2px solid var(--border);margin-bottom:-2px;font-size:12px;line-height:1.7;display:flex;gap:16px;align-items:flex-start}
+  .layer:first-child{border-radius:8px 8px 0 0}
+  .layer:last-child{border-radius:0 0 8px 8px}
+  .layer-label{font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;min-width:90px;flex-shrink:0;padding-top:2px}
+  .layer.lA{background:rgba(193,68,14,.04);border-left:5px solid var(--accent)}.layer.lA .layer-label{color:var(--accent)}
+  .layer.lB{background:rgba(232,160,32,.04);border-left:5px solid var(--yellow)}.layer.lB .layer-label{color:var(--yellow)}
+  .layer.lC{background:rgba(26,74,138,.04);border-left:5px solid var(--accent3)}.layer.lC .layer-label{color:var(--accent3)}
+  .layer.lD{background:rgba(42,110,78,.04);border-left:5px solid var(--accent2)}.layer.lD .layer-label{color:var(--accent2)}
+  .layer.lE{background:rgba(122,58,205,.04);border-left:5px solid var(--purple)}.layer.lE .layer-label{color:var(--purple)}
+  .metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin:20px 0}
+  .metric-card{background:linear-gradient(135deg,#faf8f4,#f0ebe0);border:2px solid var(--border);border-radius:6px;padding:16px;text-align:center}
+  .metric-value{font-size:26px;font-weight:700;color:var(--accent);margin-bottom:4px}
+  .metric-value.good{color:var(--accent2)}.metric-value.blue{color:var(--accent3)}
+  .metric-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--muted)}
+  .dual-ia{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:20px 0;border:3px solid var(--ink);border-radius:8px;overflow:hidden}
+  .ia-panel{padding:24px}
+  .ia-panel.ia1{background:linear-gradient(135deg,rgba(193,68,14,.06),rgba(232,160,32,.04));border-right:3px solid var(--ink)}
+  .ia-panel.ia2{background:linear-gradient(135deg,rgba(122,58,205,.06),rgba(26,74,138,.04))}
+  .ia-label{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px}
+  .ia-label.l1{color:var(--accent)}.ia-label.l2{color:var(--purple)}
+  .ia-name{font-family:var(--display);font-size:20px;font-weight:700;margin-bottom:6px}
+  .ia-role{font-size:12px;color:var(--ink2);line-height:1.7;margin-bottom:12px}
+  .ia-detail{font-size:11px;color:var(--muted);line-height:1.7}
+  .cycle-box{background:var(--surface);border:3px solid var(--purple);border-radius:8px;padding:24px;margin:20px 0;position:relative}
+  .cycle-label{position:absolute;top:-12px;left:20px;background:var(--purple);color:#fff;font-size:9px;font-weight:700;letter-spacing:2px;padding:4px 12px;border-radius:3px;text-transform:uppercase}
+  .trust-bar{display:flex;align-items:stretch;margin:20px 0;border-radius:6px;overflow:hidden;border:2px solid var(--ink)}
+  .trust-seg{padding:14px 16px;font-size:11px;font-weight:600;text-align:center;flex:1}
+  .trust-seg.t1{background:var(--accent2);color:#fff}
+  .trust-seg.t2{background:var(--accent3);color:#fff}
+  .trust-seg.t3{background:var(--yellow);color:var(--ink)}
+  @media(max-width:700px){.comp-grid,.dual-ia{grid-template-columns:1fr}.ia-panel.ia1{border-right:none;border-bottom:3px solid var(--ink)}.steps-row{flex-direction:column}.step-connector{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">FMI · Framework Migración Intención · Versión Definitiva</div>
+  <h1>Caja Negra <em>Guiada</em> con IA Dual</h1>
+  <div class="subtitle">
+    IA1 extrae intenciones del código · IA2 cartografía cada intención con tests Playwright<br>
+    Los HAR revelan el comportamiento real · De los HAR nacen los tests de validación<br>
+    Con la red de seguridad activa, se migra servlet a servlet, página a página
+  </div>
+</header>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="switchTab('tesis')">TESIS</button>
+  <button class="mode-btn" onclick="switchTab('ia-dual')">IA DUAL</button>
+  <button class="mode-btn" onclick="switchTab('fase0')">FASE 0 · LOGS</button>
+  <button class="mode-btn" onclick="switchTab('ia1')">FASE 1 · IA1</button>
+  <button class="mode-btn" onclick="switchTab('ia2')">FASE 2 · IA2</button>
+  <button class="mode-btn" onclick="switchTab('playwright')">FASE 3 · PLAYWRIGHT</button>
+  <button class="mode-btn" onclick="switchTab('refinamiento')">FASE 4 · REFINAR</button>
+  <button class="mode-btn" onclick="switchTab('validacion')">FASE 5 · VALIDACIÓN</button>
+  <button class="mode-btn" onclick="switchTab('migracion')">FASE 6 · MIGRAR</button>
+  <button class="mode-btn" onclick="switchTab('resumen')">RESUMEN</button>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: TESIS                                 -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-tesis" class="mode-panel active">
+
+  <div class="sec-title" data-n="T">LA TESIS</div>
+
+  <div class="quote-box">
+    <div class="quote-text">
+      Tengo el código pero es ilegible, parcheado, espagueti. La documentación no existe. Las especificaciones originales se perdieron. Pero la aplicación funciona perfectamente.<br><br>
+      No voy a intentar «entender» el código. Voy a usar la IA para extraer lo que el código <strong>intenta hacer</strong> (sus intenciones), diseñar pruebas que cartografíen esas intenciones, ejecutarlas como caja negra con Playwright, y con los resultados reales construir la red de seguridad para migrar.
+    </div>
+    <div class="quote-author">Planteamiento FMI — Caja Negra Guiada con IA Dual</div>
+  </div>
+
+  <div class="sec-title" data-n="1">LA FRASE QUE LO RESUME TODO</div>
+
+  <div class="callout green">
+    <strong>IA1 extrae intenciones del código → IA2 cartografía cada intención con tests Playwright → Playwright ejecuta y los HAR revelan el comportamiento real → de los HAR se crean los tests que validan ese comportamiento en front y back → con esa red de seguridad, se migra.</strong>
+  </div>
+
+  <div class="sec-title" data-n="2">TRES CONCEPTOS QUE CAMBIAN TODO</div>
+
+  <div class="comp-grid">
+    <div class="comp-card good">
+      <div class="comp-header good">🧠 Intención ≠ Implementación</div>
+      <div class="comp-content">
+        El código INTENTA validar un DNI — con un <code>if</code> anidado en 8 niveles, un regex roto, o una tabla de lookup. No nos importa cómo. Nos importa QUÉ intenta hacer. La IA1 extrae la intención; la sintaxis se descarta.
+      </div>
+    </div>
+    <div class="comp-card alt">
+      <div class="comp-header alt">🗺️ Cartografiar ≠ Validar</div>
+      <div class="comp-content">
+        La IA2 no genera tests para comprobar si algo funciona — la app funciona. Genera tests para <strong>mapear exhaustivamente</strong> cómo funciona: qué acepta, qué rechaza, qué errores da, qué formatos tolera. El conjunto de resultados es el mapa completo.
+      </div>
+    </div>
+  </div>
+  <div class="comp-grid">
+    <div class="comp-card bad">
+      <div class="comp-header bad">🔬 Tests cartografía ≠ Tests validación</div>
+      <div class="comp-content">
+        Los tests de <strong>cartografía</strong> son exploratorios: existen para descubrir, se ejecutan una o dos veces, su valor está en los HAR que producen. Los tests de <strong>validación</strong> son permanentes: se generan DESDE los HAR, se ejecutan en cada cambio, son la red de seguridad para migrar.
+      </div>
+    </div>
+    <div class="comp-card good">
+      <div class="comp-header good">📐 Dos IAs por diseño</div>
+      <div class="comp-content">
+        IA1 (Claude Code / Cursor) está <strong>contaminada por la sintaxis</strong> — y eso es bueno para extraer intención del espagueti. IA2 (Opus / razonador) está <strong>libre de sintaxis</strong> — y eso es bueno para diseñar tests exhaustivos sin sesgo de implementación.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: IA DUAL                               -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-ia-dual" class="mode-panel">
+
+  <div class="sec-title" data-n="★">ARQUITECTURA DE IA DUAL</div>
+
+  <div class="dual-ia">
+    <div class="ia-panel ia1">
+      <div class="ia-label l1">IA1 · ANALISTA</div>
+      <div class="ia-name">Claude Code / Cursor / OpenCode</div>
+      <div class="ia-role">
+        Tiene acceso al repositorio. Navega ficheros. Lee código espagueti.
+        Su trabajo es extraer <strong>intenciones</strong>, no entender implementación.
+      </div>
+      <div class="ia-detail">
+        <strong>Recibe:</strong><br>
+        • web.xml (mapa de endpoints)<br>
+        • DDL de tablas (entidades de dominio)<br>
+        • Páginas HTML con POST/GET (contratos de UI)<br>
+        • Código de servlets/lógica (espagueti)<br><br>
+        <strong>Produce:</strong><br>
+        • Documento de intenciones por funcionalidad<br>
+        • «Este servlet INTENTA hacer X, Y, Z»<br>
+        • Sin opinión sobre calidad ni refactoring<br><br>
+        <strong>NO produce:</strong><br>
+        • Tests<br>
+        • Código refactorizado<br>
+        • Juicios sobre implementación
+      </div>
+    </div>
+    <div class="ia-panel ia2">
+      <div class="ia-label l2">IA2 · CARTÓGRAFO</div>
+      <div class="ia-name">Claude Opus 4.6 / Modelo razonador</div>
+      <div class="ia-role">
+        NO ve el código. Solo recibe intenciones. Diseña tests de Playwright
+        que <strong>cartografían</strong> exhaustivamente cada intención.
+      </div>
+      <div class="ia-detail">
+        <strong>Recibe:</strong><br>
+        • Documento de intenciones (de IA1)<br>
+        • En 2ª pasada: HAR + logs semánticos<br><br>
+        <strong>Produce:</strong><br>
+        • Batería de tests Playwright (.spec.ts)<br>
+        • Casos felices + errores + límites + combinaciones<br>
+        • Tests de secuencia (flujos con estado)<br><br>
+        <strong>NO produce:</strong><br>
+        • Tests unitarios<br>
+        • Tests de integración<br>
+        • Nada que asuma implementación
+      </div>
+    </div>
+  </div>
+
+  <div class="callout purple">
+    <strong>¿Por qué dos IAs y no una?</strong> Si la misma IA lee el espagueti y genera tests, genera tests contaminados por la implementación. Ve el <code>if (dni.length() == 9)</code> y genera UN test con DNI de 8 caracteres. Un modelo razonador que solo recibe «intención: validar formato DNI español» genera 15 variantes — porque piensa en la intención completa, no en el <code>if</code> concreto.
+  </div>
+
+  <div class="sec-title" data-n="C">JERARQUÍA DE CONFIANZA</div>
+
+  <div class="trust-bar">
+    <div class="trust-seg t1">🥇 HAR<br><span style="font-size:9px;font-weight:400">Verdad absoluta — datos reales de red</span></div>
+    <div class="trust-seg t2">🥈 Intenciones IA1<br><span style="font-size:9px;font-weight:400">Hipótesis informadas del código</span></div>
+    <div class="trust-seg t3">🥉 Logs semánticos<br><span style="font-size:9px;font-weight:400">Pistas — consulta, nunca verdad</span></div>
+  </div>
+
+  <div class="callout yellow">
+    <strong>Los logs son una consulta, no una autoridad.</strong> Están escritos por el mismo desarrollador que escribió el espagueti. Pueden ser caóticos, incompletos, o engañosos (<code>catch(Exception e) { log.error("error"); }</code>). Se consultan cuando algo no cuadra en el HAR, pero la pista se confirma o descarta siempre con otra ejecución de Playwright.
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: FASE 0 · LOGS SEMÁNTICOS             -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-fase0" class="mode-panel">
+
+  <div class="sec-title" data-n="0">FASE 0 — INSTRUMENTACIÓN CON LOGS SEMÁNTICOS</div>
+
+  <div class="callout orange">
+    <strong>Única modificación al legacy permitida antes de cartografiar.</strong> No cambia lógica, solo añade trazas. El objetivo es que los logs capturen <strong>intención de negocio</strong>, no trazas técnicas. Se le pide a la IA que añada logs que ayuden a extraer comportamiento — la IA sabe mejor que el desarrollador original qué es relevante loguear.
+  </div>
+
+  <div class="sec-title" data-n="P">PROMPT PARA GENERAR LOGS SEMÁNTICOS</div>
+
+<pre><span class="cm">// Prompt para IA1 (Claude Code / Cursor) — Fase 0</span>
+
+<span class="st">`Analiza este servlet/página y añade logging semántico.
+
+NO cambies NINGUNA lógica, flujo, validación ni respuesta.
+SOLO añade líneas de log.
+
+Los logs deben capturar INTENCIÓN DE NEGOCIO, no trazas técnicas.
+
+FORMATO — una línea JSON por operación de negocio:
+{
+  "intent": "NOMBRE_OPERACION_NEGOCIO",
+  "input": { campos relevantes de entrada },
+  "validations": { resultado de cada validación detectada },
+  "result": "CREATED|REJECTED|ERROR|UPDATED|DELETED",
+  "detail": "razón si es rechazo o error"
+}
+
+REGLAS:
+- El campo "intent" debe ser un verbo de negocio en MAYÚSCULAS
+  (ALTA_CUENTA, VALIDAR_CERTIFICADO, BUSCAR_CONTRATO)
+- NO loguees: "entrando en método X", "param = Y", "saliendo"
+- SÍ loguea: qué operación de negocio se intentó, con qué datos
+  relevantes, y cuál fue el resultado
+- Si hay un catch genérico, loguea la excepción REAL, no "error"
+- Si hay múltiples validaciones, loguea el resultado de CADA UNA
+- En el front: loguea eventos de formulario relevantes
+  (submit, validación front, respuesta recibida)
+
+ANTI-PATRÓN — esto NO sirve:
+  log.debug("entering doPost()");
+  log.debug("param email = " + email);
+  log.debug("calling dao.insert()");
+
+PATRÓN CORRECTO:
+  log.info(jsonLog("ALTA_CUENTA",
+    Map.of("email",email,"dni",dni),
+    Map.of("email","OK","dni","FORMATO_INVALIDO"),
+    "REJECTED", "DNI no cumple formato"));`</span></pre>
+
+  <div class="sec-title" data-n="E">EJEMPLO: ANTES vs DESPUÉS</div>
+
+  <div class="comp-grid">
+    <div class="comp-card bad">
+      <div class="comp-header bad">❌ Logs técnicos (inútiles)</div>
+      <div class="comp-content">
+<pre style="border:none;padding:10px;margin:0;font-size:10px">DEBUG: entering doPost()
+DEBUG: param email = test@test.com
+DEBUG: param dni = 12345678Z
+DEBUG: calling validateDni()
+DEBUG: validateDni result = false
+DEBUG: error in process
+DEBUG: exiting doPost()</pre>
+        No sabes qué operación era. No sabes por qué falló el DNI. No sabes qué respondió al usuario. Ruido puro.
+      </div>
+    </div>
+    <div class="comp-card good">
+      <div class="comp-header good">✅ Logs semánticos (oro)</div>
+      <div class="comp-content">
+<pre style="border:none;padding:10px;margin:0;font-size:10px">{
+  "intent": "ALTA_CUENTA",
+  "input": {
+    "email": "test@test.com",
+    "dni": "12345678Z"
+  },
+  "validations": {
+    "email_formato": "OK",
+    "email_duplicado": "OK",
+    "dni_formato": "REJECTED"
+  },
+  "result": "REJECTED",
+  "detail": "letra DNI no coincide"
+}</pre>
+        Sabes exactamente qué intentó, qué validó, qué falló y por qué. En una línea.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="F">LOGS EN EL FRONT</div>
+
+<pre><span class="cm">// Log semántico en el front (añadido por IA en evento submit)</span>
+
+formAlta.addEventListener(<span class="st">'submit'</span>, <span class="kw">async</span> (e) => {
+  <span class="kw">const</span> campos = Object.fromEntries(<span class="kw">new</span> FormData(formAlta));
+
+  <span class="cm">// Log pre-envío: qué validaciones front se aplicaron</span>
+  console.log(JSON.stringify({
+    <span class="an">intent</span>: <span class="st">'FRONT_SUBMIT'</span>,
+    <span class="an">target</span>: formAlta.action,
+    <span class="an">method</span>: formAlta.method,
+    <span class="an">campos</span>: Object.keys(campos),
+    <span class="an">validaciones_html5</span>: {
+      email: formAlta.email.validity.valid,
+      dni: formAlta.dni.validity.valid,
+      password: formAlta.password.validity.valid,
+    },
+    <span class="an">timestamp</span>: <span class="kw">new</span> Date().toISOString(),
+  }));
+
+  <span class="cm">// ... envío original sin modificar ...</span>
+
+  <span class="cm">// Log post-respuesta: qué devolvió el back</span>
+  console.log(JSON.stringify({
+    <span class="an">intent</span>: <span class="st">'FRONT_RESPONSE'</span>,
+    <span class="an">status</span>: response.status,
+    <span class="an">contentType</span>: response.headers.get(<span class="st">'content-type'</span>),
+    <span class="an">bodyPreview</span>: body.substring(<span class="nu">0</span>, <span class="nu">200</span>),
+  }));
+});</pre>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 ¿Por qué la IA genera mejores logs que el desarrollador original?</div>
+    <div class="insight-content">
+      Porque la IA lee el código con la misión de extraer comportamiento, no de depurar bugs. El desarrollador original ponía <code>log.debug</code> donde tenía problemas en ese momento. La IA pone logs semánticos donde hay operaciones de negocio — que es exactamente lo que necesitas para cartografiar.
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠️ Recordatorio: los logs son CONSULTA, no verdad</div>
+    <div class="danger-content">
+      Aunque los logs semánticos son mucho mejores que los técnicos, siguen siendo código añadido sobre espagueti. Si la IA interpretó mal una intención al instrumentar, el log mentirá. Siempre: <strong>HAR manda, logs consultan</strong>. Si el log dice <code>"result":"REJECTED"</code> pero el HAR muestra un 200 con el registro creado, el HAR tiene razón.
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: FASE 1 · IA1                          -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-ia1" class="mode-panel">
+
+  <div class="sec-title" data-n="1">FASE 1 — IA1 EXTRAE INTENCIONES</div>
+
+  <div class="callout blue">
+    <strong>IA1 tiene acceso al repositorio completo.</strong> Le pasamos web.xml + DDL de tablas + páginas HTML con POST/GET + código de servlets. Su misión: extraer qué INTENTA hacer cada pieza, no cómo lo hace.
+  </div>
+
+  <div class="sec-title" data-n="I">INPUTS PARA IA1</div>
+
+  <table class="vtable">
+    <tr><th>Artefacto</th><th>Tipo</th><th>Qué aporta</th><th>Densidad semántica</th></tr>
+    <tr>
+      <td>web.xml</td>
+      <td>Declarativo</td>
+      <td>Mapa completo de endpoints y filtros</td>
+      <td>🟢 Máxima — no tiene ruido</td>
+    </tr>
+    <tr>
+      <td>DDL tablas</td>
+      <td>Declarativo</td>
+      <td>Entidades de dominio, relaciones, constraints</td>
+      <td>🟢 Máxima — el schema no miente</td>
+    </tr>
+    <tr>
+      <td>HTML forms</td>
+      <td>Declarativo</td>
+      <td>Campos, validaciones front, endpoints destino</td>
+      <td>🟢 Alta — contrato de UI visible</td>
+    </tr>
+    <tr>
+      <td>Código servlets</td>
+      <td>Imperativo</td>
+      <td>Intenciones de negocio enterradas en espagueti</td>
+      <td>🔴 Baja — mucho ruido por señal</td>
+    </tr>
+  </table>
+
+  <div class="sec-title" data-n="P">PROMPT PARA IA1</div>
+
+<pre><span class="cm">// Prompt para IA1 (Claude Code / Cursor / OpenCode)</span>
+
+<span class="st">`Actúa como un arqueólogo de software que extrae INTENCIONES de código legacy.
+
+TE PASO:
+1. web.xml — mapa de servlet-mappings y filtros
+2. DDL — schema de base de datos (CREATE TABLE)
+3. HTML — páginas con formularios POST/GET
+4. Código — servlets y clases Java (espagueti, 2005)
+
+TU TRABAJO:
+Para cada servlet/endpoint, produce una FICHA DE INTENCIÓN:
+
+{
+  "endpoint": "/api/cuentas",
+  "servlet": "CuentaServlet",
+  "intenciones": [
+    {
+      "id": "ALTA_CUENTA",
+      "descripcion": "Crear una nueva cuenta de usuario",
+      "metodo_http": "POST",
+      "campos_entrada": ["email", "nombre", "dni", "password", "tipo"],
+      "validaciones_detectadas": [
+        "email: formato válido + no duplicado en BD",
+        "dni: formato español (8 dígitos + letra)",
+        "password: mínimo 8 caracteres"
+      ],
+      "tabla_principal": "CUENTAS",
+      "respuesta_exito": "201 o redirect (no claro)",
+      "respuestas_error": [
+        "email duplicado → posible 409 o error genérico",
+        "validación fallida → posible 400"
+      ],
+      "dependencias": ["tabla CUENTAS", "secuencia SEQ_CUENTA"],
+      "incertidumbres": [
+        "No está claro si valida DNI en servidor o solo en front",
+        "El catch genérico en línea 247 puede enmascarar errores"
+      ]
+    }
+  ]
+}
+
+REGLAS CRÍTICAS:
+- Describe QUÉ intenta hacer, NUNCA CÓMO lo implementa
+- Las incertidumbres son tan valiosas como las certezas
+- Si detectas validaciones, indica si son front, back, o no claro
+- Si detectas manejo de errores silencioso (catch vacío), repórtalo
+- NO propongas tests, refactoring ni mejoras
+- NO juzgues la calidad del código
+- Usa lenguaje de NEGOCIO, no técnico:
+  "validar formato de DNI" NO "if dni.matches regex"
+
+ANTI-ALUCINACIÓN:
+- Si no estás seguro de una intención, márcala con INCIERTO
+- Si el código tiene caminos muertos o inalcanzables, repórtalos
+- Si hay lógica que no entiendes, di "INTENCIÓN_NO_CLARA"
+  y describe los indicios que ves`</span></pre>
+
+  <div class="sec-title" data-n="O">EJEMPLO DE OUTPUT DE IA1</div>
+
+<pre><span class="cm">// intenciones/cuenta-servlet.json</span>
+<span class="cm">// Generado por IA1 (Claude Code) analizando CuentaServlet.java</span>
+{
+  <span class="st">"endpoint"</span>: <span class="st">"/api/cuentas"</span>,
+  <span class="st">"servlet"</span>: <span class="st">"CuentaServlet"</span>,
+  <span class="st">"tabla_principal"</span>: <span class="st">"CUENTAS"</span>,
+  <span class="st">"intenciones"</span>: [
+    {
+      <span class="st">"id"</span>: <span class="st">"ALTA_CUENTA"</span>,
+      <span class="st">"metodo"</span>: <span class="st">"POST"</span>,
+      <span class="st">"descripcion"</span>: <span class="st">"Crear nueva cuenta de usuario en el sistema"</span>,
+      <span class="st">"campos_entrada"</span>: [<span class="st">"email"</span>, <span class="st">"nombre"</span>, <span class="st">"dni"</span>, <span class="st">"password"</span>, <span class="st">"tipo"</span>],
+      <span class="st">"validaciones"</span>: [
+        { <span class="st">"campo"</span>: <span class="st">"email"</span>, <span class="st">"regla"</span>: <span class="st">"formato email válido"</span>, <span class="st">"donde"</span>: <span class="st">"front + back"</span> },
+        { <span class="st">"campo"</span>: <span class="st">"email"</span>, <span class="st">"regla"</span>: <span class="st">"no duplicado en tabla CUENTAS"</span>, <span class="st">"donde"</span>: <span class="st">"back"</span> },
+        { <span class="st">"campo"</span>: <span class="st">"dni"</span>, <span class="st">"regla"</span>: <span class="st">"formato DNI español"</span>, <span class="st">"donde"</span>: <span class="st">"INCIERTO - hay regex en front pero no claro en back"</span> },
+        { <span class="st">"campo"</span>: <span class="st">"password"</span>, <span class="st">"regla"</span>: <span class="st">"mínimo 8 caracteres"</span>, <span class="st">"donde"</span>: <span class="st">"front (minlength=8)"</span> },
+        { <span class="st">"campo"</span>: <span class="st">"tipo"</span>, <span class="st">"regla"</span>: <span class="st">"solo valores: persona, empresa"</span>, <span class="st">"donde"</span>: <span class="st">"front (select options)"</span> }
+      ],
+      <span class="st">"respuesta_exito"</span>: <span class="st">"INCIERTO — parece devolver redirect a /cuentas con flash message"</span>,
+      <span class="st">"respuestas_error"</span>: [
+        <span class="st">"email duplicado → catch DuplicateKeyException → response genérico (NO 409)"</span>,
+        <span class="st">"validación fallida → posible forward a misma página con errores"</span>
+      ],
+      <span class="st">"incertidumbres"</span>: [
+        <span class="st">"Catch genérico en línea 247 traga excepciones — puede dar 200 en error real"</span>,
+        <span class="st">"Método auxiliar 'procesarAlta' en clase Utils tiene 400 líneas — intención parcialmente opaca"</span>,
+        <span class="st">"Hay un flag 'modoTest' que altera el flujo — no claro si activo en producción"</span>
+      ]
+    },
+    {
+      <span class="st">"id"</span>: <span class="st">"LISTAR_CUENTAS"</span>,
+      <span class="st">"metodo"</span>: <span class="st">"GET"</span>,
+      <span class="st">"descripcion"</span>: <span class="st">"Obtener listado de cuentas con paginación"</span>,
+      <span class="st">"campos_entrada"</span>: [<span class="st">"page"</span>, <span class="st">"size"</span>, <span class="st">"filtro"</span>],
+      <span class="st">"validaciones"</span>: [],
+      <span class="st">"respuesta_exito"</span>: <span class="st">"JSON con array de cuentas y metadatos de paginación"</span>,
+      <span class="st">"incertidumbres"</span>: [
+        <span class="st">"Parámetro 'filtro' no está claro — parece buscar por nombre O email"</span>
+      ]
+    }
+  ]
+}</pre>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Las incertidumbres son el output más valioso de IA1</div>
+    <div class="insight-content">
+      Cada incertidumbre se convierte en un bloque de tests de cartografía para IA2. «No claro si valida DNI en back» → IA2 genera 10 variantes de DNI para descubrir dónde se valida. «Catch genérico traga excepciones» → IA2 genera tests con datos que deberían provocar error para ver si el sistema responde 200 cuando no debería.
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: FASE 2 · IA2                          -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-ia2" class="mode-panel">
+
+  <div class="sec-title" data-n="2">FASE 2 — IA2 CARTOGRAFÍA CON TESTS PLAYWRIGHT</div>
+
+  <div class="callout purple">
+    <strong>IA2 recibe SOLO las intenciones. No ve código.</strong> Precisamente porque no tiene el sesgo de la implementación, piensa en la intención completa y genera una batería exhaustiva de tests para cartografiar cada funcionalidad.
+  </div>
+
+  <div class="sec-title" data-n="P">PROMPT PARA IA2</div>
+
+<pre><span class="cm">// Prompt para IA2 (Claude Opus / modelo razonador)</span>
+
+<span class="st">`Actúa como un diseñador de tests experto en cartografía de comportamiento.
+
+CONTEXTO:
+- App web legacy funcionando perfectamente en producción
+- Front y back desacoplados (HTML forms → API endpoints)
+- No tienes acceso al código — solo tienes intenciones extraídas
+
+TE PASO:
+Documento de intenciones (JSON) con:
+- Endpoints y sus operaciones de negocio
+- Campos de entrada conocidos
+- Validaciones detectadas (con certeza e incertidumbres)
+- Respuestas esperadas (con incertidumbres)
+
+TU TRABAJO:
+Para cada intención, genera tests de Playwright que CARTOGRAFÍEN
+exhaustivamente el comportamiento. No validas — descubres.
+
+ESTRUCTURA DE CARTOGRAFÍA POR INTENCIÓN:
+1. CAMINO FELIZ
+   - Datos válidos completos → capturar respuesta exacta
+   - Variantes del camino feliz (ej: tipo=persona vs tipo=empresa)
+
+2. FRONTERAS DE CADA CAMPO
+   - Campo vacío
+   - Campo con formato inválido (según validación detectada)
+   - Campo en el límite (maxlength, minlength)
+   - Campo con caracteres especiales / inyección
+   - Si hay select: probar TODAS las opciones + valor inexistente
+
+3. INCERTIDUMBRES (prioridad alta)
+   - Cada incertidumbre de IA1 → bloque de tests dedicado
+   - Ej: "INCIERTO si valida DNI en back" → 5 variantes DNI
+
+4. COMPORTAMIENTO DE ESTADO
+   - Crear → Leer → Verificar que existe
+   - Crear duplicado → Capturar qué pasa
+   - Crear → Borrar → Verificar que no existe (si aplica)
+
+5. DETECCIÓN DE DÓNDE VALIDA (front vs back)
+   - Intentar submit con campo inválido
+   - Si :invalid en DOM → front valida
+   - Si response HTTP con error → back valida
+   - Registrar dónde vive cada validación
+
+CADA TEST DEBE:
+- Capturar el response completo (status, headers, body)
+- Tomar screenshot antes y después
+- Registrar un objeto "contrato" en JSON
+- NO asumir status codes — capturar los reales
+- NO inventar campos que no estén en las intenciones
+
+ANTI-ALUCINACIÓN:
+- Si la intención dice INCIERTO, el test DESCUBRE — no asume
+- Si no sabes qué responderá, captura sin expect concreto
+- Marca como // DESCUBRIMIENTO los tests exploratorios`</span></pre>
+
+  <div class="sec-title" data-n="E">EJEMPLO: CARTOGRAFÍA DE «ALTA DE CUENTA»</div>
+
+<pre><span class="cm">// tests/cartografia/alta-cuenta.spec.ts</span>
+<span class="cm">// GENERADO por IA2 desde intenciones — NO ha visto el código</span>
+
+<span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="st">'@playwright/test'</span>;
+<span class="kw">import</span> { writeFileSync } <span class="kw">from</span> <span class="st">'fs'</span>;
+
+<span class="kw">const</span> contratos: <span class="kw">any</span>[] = [];
+<span class="kw">const</span> guardar = () => writeFileSync(
+  <span class="st">'./cartografia/alta-cuenta.json'</span>, JSON.stringify(contratos, <span class="kw">null</span>, <span class="nu">2</span>)
+);
+
+<span class="cm">// ─── Utilidad: ejecutar un alta y capturar contrato ───</span>
+<span class="kw">async function</span> <span class="fn">ejecutarAlta</span>(page, datos, caso) {
+  <span class="kw">await</span> page.goto(<span class="st">'/cuentas.html'</span>);
+
+  <span class="kw">for</span> (<span class="kw">const</span> [campo, valor] <span class="kw">of</span> Object.entries(datos)) {
+    <span class="kw">const</span> el = page.locator(<span class="st">`#form-alta [name="${campo}"]`</span>);
+    <span class="kw">const</span> tag = <span class="kw">await</span> el.evaluate(e => e.tagName);
+    <span class="kw">if</span> (tag === <span class="st">'SELECT'</span>) <span class="kw">await</span> el.selectOption(valor);
+    <span class="kw">else</span> <span class="kw">await</span> el.fill(valor);
+  }
+
+  <span class="kw">await</span> page.screenshot({ path: <span class="st">`./captures/${caso}-pre.png`</span> });
+
+  <span class="cm">// Intentar submit y capturar respuesta O validación front</span>
+  <span class="kw">const</span> responsePromise = page.waitForResponse(
+    r => r.url().includes(<span class="st">'/api/cuentas'</span>), { timeout: <span class="nu">3000</span> }
+  ).catch(() => <span class="kw">null</span>);
+
+  <span class="kw">await</span> page.click(<span class="st">'#form-alta button[type="submit"]'</span>);
+  <span class="kw">const</span> response = <span class="kw">await</span> responsePromise;
+
+  <span class="kw">await</span> page.screenshot({ path: <span class="st">`./captures/${caso}-post.png`</span> });
+
+  <span class="cm">// Detectar si la validación fue front o back</span>
+  <span class="kw">const</span> invalidFields = <span class="kw">await</span> page.$$eval(
+    <span class="st">'#form-alta :invalid'</span>,
+    els => els.map(e => e.getAttribute(<span class="st">'name'</span>))
+  );
+
+  <span class="kw">const</span> contrato = {
+    caso,
+    datos_enviados: datos,
+    validacion_front: invalidFields.length > <span class="nu">0</span> ? invalidFields : <span class="kw">null</span>,
+    llego_al_back: !!response,
+    status: response?.status() ?? <span class="kw">null</span>,
+    responseBody: response ? <span class="kw">await</span> response.text() : <span class="kw">null</span>,
+    contentType: response?.headers()[<span class="st">'content-type'</span>] ?? <span class="kw">null</span>,
+    timestamp: <span class="kw">new</span> Date().toISOString(),
+  };
+
+  contratos.push(contrato);
+  <span class="kw">return</span> contrato;
+}
+
+test.afterAll(() => guardar());
+
+<span class="cm">// ═══════════════════════════════════════════</span>
+<span class="cm">// 1. CAMINO FELIZ</span>
+<span class="cm">// ═══════════════════════════════════════════</span>
+
+test(<span class="st">'feliz: persona con datos completos válidos'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">const</span> c = <span class="kw">await</span> ejecutarAlta(page, {
+    email: <span class="st">'persona01@test.com'</span>, nombre: <span class="st">'Test Persona'</span>,
+    dni: <span class="st">'12345678Z'</span>, password: <span class="st">'Pass1234!'</span>, tipo: <span class="st">'persona'</span>,
+  }, <span class="st">'feliz-persona'</span>);
+  expect(c.llego_al_back).toBe(<span class="kw">true</span>);
+  expect(c.status).toBeLessThan(<span class="nu">400</span>);
+});
+
+test(<span class="st">'feliz: empresa con datos completos válidos'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">const</span> c = <span class="kw">await</span> ejecutarAlta(page, {
+    email: <span class="st">'empresa01@test.com'</span>, nombre: <span class="st">'Test Empresa SL'</span>,
+    dni: <span class="st">'87654321X'</span>, password: <span class="st">'Pass1234!'</span>, tipo: <span class="st">'empresa'</span>,
+  }, <span class="st">'feliz-empresa'</span>);
+  expect(c.llego_al_back).toBe(<span class="kw">true</span>);
+});
+
+<span class="cm">// ═══════════════════════════════════════════</span>
+<span class="cm">// 2. FRONTERAS DE CADA CAMPO</span>
+<span class="cm">// ═══════════════════════════════════════════</span>
+
+<span class="kw">const</span> datosBase = {
+  email: <span class="st">'base@test.com'</span>, nombre: <span class="st">'Test Base'</span>,
+  dni: <span class="st">'11111111H'</span>, password: <span class="st">'Pass1234!'</span>, tipo: <span class="st">'persona'</span>,
+};
+
+<span class="cm">// Email: variantes</span>
+<span class="kw">const</span> emailCasos = [
+  [<span class="st">'email-vacio'</span>,        { ...datosBase, email: <span class="st">''</span> }],
+  [<span class="st">'email-sin-arroba'</span>,   { ...datosBase, email: <span class="st">'noarroba.com'</span> }],
+  [<span class="st">'email-sin-dominio'</span>,  { ...datosBase, email: <span class="st">'user@'</span> }],
+  [<span class="st">'email-con-espacios'</span>, { ...datosBase, email: <span class="st">'us er@test.com'</span> }],
+  [<span class="st">'email-muy-largo'</span>,    { ...datosBase, email: <span class="st">'a'</span>.repeat(<span class="nu">200</span>) + <span class="st">'@test.com'</span> }],
+];
+
+<span class="kw">for</span> (<span class="kw">const</span> [caso, datos] <span class="kw">of</span> emailCasos) {
+  test(<span class="st">`frontera: ${caso}`</span>, <span class="kw">async</span> ({ page }) => {
+    <span class="kw">await</span> ejecutarAlta(page, datos, caso); <span class="cm">// DESCUBRIMIENTO</span>
+  });
+}
+
+<span class="cm">// ═══════════════════════════════════════════</span>
+<span class="cm">// 3. INCERTIDUMBRES DE IA1 (prioridad alta)</span>
+<span class="cm">// ═══════════════════════════════════════════</span>
+
+<span class="cm">// IA1 dijo: "INCIERTO si valida DNI en back"</span>
+<span class="kw">const</span> dniCasos = [
+  [<span class="st">'dni-sin-letra'</span>,       { ...datosBase, dni: <span class="st">'12345678'</span> }],
+  [<span class="st">'dni-letra-incorrecta'</span>, { ...datosBase, dni: <span class="st">'12345678A'</span> }], <span class="cm">// Z es correcta</span>
+  [<span class="st">'dni-solo-letras'</span>,      { ...datosBase, dni: <span class="st">'ABCDEFGHI'</span> }],
+  [<span class="st">'dni-7-digitos'</span>,        { ...datosBase, dni: <span class="st">'1234567Z'</span> }],
+  [<span class="st">'dni-9-digitos'</span>,        { ...datosBase, dni: <span class="st">'123456789Z'</span> }],
+  [<span class="st">'dni-nie-formato'</span>,      { ...datosBase, dni: <span class="st">'X1234567L'</span> }],
+  [<span class="st">'dni-vacio'</span>,            { ...datosBase, dni: <span class="st">''</span> }],
+];
+
+<span class="kw">for</span> (<span class="kw">const</span> [caso, datos] <span class="kw">of</span> dniCasos) {
+  test(<span class="st">`incertidumbre-dni: ${caso}`</span>, <span class="kw">async</span> ({ page }) => {
+    <span class="kw">const</span> c = <span class="kw">await</span> ejecutarAlta(page, datos, caso);
+    <span class="cm">// DESCUBRIMIENTO: ¿valida front, back, ambos, o ninguno?</span>
+    console.log(<span class="st">`🔍 ${caso}: front=${c.validacion_front} back=${c.status}`</span>);
+  });
+}
+
+<span class="cm">// IA1 dijo: "catch genérico traga excepciones"</span>
+test(<span class="st">'incertidumbre: catch genérico — datos que provocan error DB'</span>,
+  <span class="kw">async</span> ({ page }) => {
+    <span class="kw">const</span> c = <span class="kw">await</span> ejecutarAlta(page, {
+      ...datosBase,
+      nombre: <span class="st">"'"</span>.repeat(<span class="nu">500</span>), <span class="cm">// SQL injection attempt</span>
+    }, <span class="st">'catch-generico-sql'</span>);
+    <span class="cm">// DESCUBRIMIENTO: ¿200 silencioso? ¿500? ¿400 con mensaje?</span>
+  }
+);
+
+<span class="cm">// ═══════════════════════════════════════════</span>
+<span class="cm">// 4. COMPORTAMIENTO DE ESTADO</span>
+<span class="cm">// ═══════════════════════════════════════════</span>
+
+test(<span class="st">'estado: crear → duplicar → capturar rechazo'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">const</span> datos = { ...datosBase, email: <span class="st">'duplicado-test@test.com'</span>, dni: <span class="st">'99999999R'</span> };
+  <span class="kw">await</span> ejecutarAlta(page, datos, <span class="st">'estado-crear-1'</span>);
+  <span class="kw">await</span> ejecutarAlta(page, datos, <span class="st">'estado-crear-duplicado'</span>);
+  <span class="cm">// DESCUBRIMIENTO: ¿409? ¿200 silencioso? ¿error genérico?</span>
+});</pre>
+
+  <div class="callout green">
+    <strong>Observa lo que hace IA2 que IA1 nunca haría:</strong> IA1 ve el regex del DNI en el código y genera UN test. IA2 recibe «intención: validar formato DNI español» y genera SIETE variantes — porque piensa en la intención, no en el <code>if</code>. Además, genera el caso de NIE (X1234567L) que probablemente ni aparece en el código legacy pero es un caso real de formato de identificación español.
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: FASE 3 · PLAYWRIGHT                   -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-playwright" class="mode-panel">
+
+  <div class="sec-title" data-n="3">FASE 3 — PRIMERA EJECUCIÓN DE PLAYWRIGHT</div>
+
+  <div class="callout blue">
+    <strong>Playwright ejecuta la batería de IA2 contra la app legacy instrumentada (Fase 0).</strong> Se capturan tres artefactos en paralelo: HAR (tráfico HTTP), logs semánticos (intención de negocio del back y front), y screenshots/video (evidencia visual).
+  </div>
+
+<pre><span class="cm">// playwright.config.ts — Configuración para cartografía</span>
+<span class="kw">import</span> { defineConfig } <span class="kw">from</span> <span class="st">'@playwright/test'</span>;
+
+<span class="kw">export default</span> defineConfig({
+  use: {
+    baseURL: process.env.<span class="an">LEGACY_URL</span> || <span class="st">'http://localhost:8080/WebDTE'</span>,
+
+    <span class="cm">// Captura HAR automáticamente</span>
+    recordHar: {
+      path: <span class="st">'./har/'</span>,
+      mode: <span class="st">'full'</span>,       <span class="cm">// request + response body completo</span>
+      urlFilter: <span class="st">'**/api/**'</span>, <span class="cm">// solo endpoints de la app</span>
+    },
+
+    screenshot: <span class="st">'on'</span>,
+    video: <span class="st">'on'</span>,
+    trace: <span class="st">'on'</span>,       <span class="cm">// DOM snapshots en cada paso</span>
+  },
+
+  projects: [
+    {
+      name: <span class="st">'cartografia-1'</span>,
+      testDir: <span class="st">'./tests/cartografia'</span>,
+      <span class="cm">// Primera pasada: descubrimiento</span>
+    },
+    {
+      name: <span class="st">'cartografia-2'</span>,
+      testDir: <span class="st">'./tests/cartografia-refinada'</span>,
+      <span class="cm">// Segunda pasada: refinamiento con HAR + logs</span>
+    },
+    {
+      name: <span class="st">'validacion'</span>,
+      testDir: <span class="st">'./tests/validacion'</span>,
+      <span class="cm">// Tests permanentes generados desde HAR</span>
+    },
+  ],
+});</pre>
+
+  <div class="sec-title" data-n="R">QUÉ CAPTURAS EN LA PRIMERA EJECUCIÓN</div>
+
+  <table class="vtable">
+    <tr><th>Artefacto</th><th>Qué contiene</th><th>Para qué sirve</th></tr>
+    <tr>
+      <td>HAR</td>
+      <td>Request + response completo de cada interacción HTTP</td>
+      <td>Verdad absoluta del comportamiento — fuente de contratos</td>
+    </tr>
+    <tr>
+      <td>Logs semánticos back</td>
+      <td>JSON con intent, input, validations, result por operación</td>
+      <td>Consulta — qué entendió el servidor que estaba haciendo</td>
+    </tr>
+    <tr>
+      <td>Logs semánticos front</td>
+      <td>JSON con submit events, validaciones HTML5, respuesta recibida</td>
+      <td>Consulta — qué hizo el front antes y después del envío</td>
+    </tr>
+    <tr>
+      <td>cartografia/*.json</td>
+      <td>Contratos capturados por los tests (caso, datos, respuesta)</td>
+      <td>Input estructurado para la segunda pasada y para tests de validación</td>
+    </tr>
+    <tr>
+      <td>Screenshots + video</td>
+      <td>Evidencia visual de cada paso</td>
+      <td>Documentación + detección de comportamiento visual no capturado por HAR</td>
+    </tr>
+  </table>
+
+<pre><span class="cm"># Ejecutar primera cartografía</span>
+npx playwright test --project=cartografia-1
+
+<span class="cm"># Resultado:</span>
+<span class="cm"># ./har/cartografia.har                    ← tráfico HTTP completo</span>
+<span class="cm"># ./cartografia/alta-cuenta.json           ← contratos capturados</span>
+<span class="cm"># ./captures/feliz-persona-pre.png         ← screenshots</span>
+<span class="cm"># ./captures/feliz-persona-post.png</span>
+<span class="cm"># ./test-results/                          ← videos</span>
+<span class="cm">#</span>
+<span class="cm"># Logs semánticos en stdout del contenedor legacy:</span>
+<span class="cm"># {"intent":"ALTA_CUENTA","input":{...},"result":"CREATED",...}</span>
+<span class="cm"># {"intent":"ALTA_CUENTA","input":{...},"result":"REJECTED",...}</span></pre>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: FASE 4 · REFINAMIENTO                 -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-refinamiento" class="mode-panel">
+
+  <div class="sec-title" data-n="4">FASE 4 — SEGUNDA PASADA: IA2 REFINA LA CARTOGRAFÍA</div>
+
+  <div class="cycle-box">
+    <div class="cycle-label">Ciclo de refinamiento</div>
+    <div class="flow-diagram" style="border:none;padding:0;margin:12px 0 0">
+      <div class="flow-step">
+        <div class="flow-num o">1</div>
+        <div class="flow-content">
+          <div class="flow-title">IA2 recibe: intenciones + HAR 1ª pasada + logs semánticos</div>
+          <div class="flow-desc">Ahora sabe cómo respondió realmente el sistema a cada test. Los logs semánticos dan contexto extra (como consulta, no como verdad).</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num y">2</div>
+        <div class="flow-content">
+          <div class="flow-title">IA2 genera un DELTA, no tests desde cero</div>
+          <div class="flow-desc">Tests nuevos que cubren lo descubierto. Tests modificados que ajustan expectations. Tests eliminados que eran redundantes. Se mantiene trazabilidad.</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num b">3</div>
+        <div class="flow-content">
+          <div class="flow-title">Playwright ejecuta segunda pasada</div>
+          <div class="flow-desc">Cartografía refinada con tests más precisos. Los HAR de esta pasada son la versión definitiva.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="P">PROMPT PARA IA2 — SEGUNDA PASADA</div>
+
+<pre><span class="st">`Eres el mismo diseñador de tests de la primera pasada.
+
+TE PASO AHORA:
+1. Las intenciones originales (de IA1)
+2. Los contratos capturados en la 1ª ejecución (JSON)
+3. Los HAR de la 1ª ejecución
+4. Los logs semánticos del back y front (COMO CONSULTA)
+
+HALLAZGOS DE LA 1ª PASADA QUE DEBES INTEGRAR:
+- El alta exitosa devuelve 302 redirect, no 201
+- El email duplicado devuelve 200 con body HTML de error (no 409)
+- El DNI NO se valida en back — solo en front (HTML5 pattern)
+- El catch genérico devuelve 200 con página de error genérica
+- El campo "tipo" acepta valores fuera del select (no valida back)
+
+GENERA UN DELTA:
+- Tests NUEVOS: explorar los descubrimientos (ej: si back no valida
+  DNI, ¿qué pasa si envío caracteres unicode? ¿SQL injection en DNI?)
+- Tests MODIFICADOS: ajustar expectations ahora que sabemos los
+  status codes reales y formatos de respuesta
+- Tests ELIMINADOS: quitar los que eran redundantes
+- Tests de ESTADO más complejos basados en lo descubierto
+
+SOBRE LOS LOGS SEMÁNTICOS:
+Los logs son PISTAS, no verdad. Si un log dice "result: REJECTED"
+pero el HAR muestra status 200 con registro creado, el HAR manda.
+Usa los logs solo para entender contexto cuando el HAR no es
+suficiente (ej: el log puede revelar que se ejecutó una query
+aunque el response fue genérico).`</span></pre>
+
+  <div class="sec-title" data-n="E">EJEMPLO: QUÉ CAMBIA EN LA SEGUNDA PASADA</div>
+
+  <table class="vtable">
+    <tr><th>1ª pasada (ciega)</th><th>Descubrimiento</th><th>2ª pasada (refinada)</th></tr>
+    <tr>
+      <td><code>expect(status).toBeLessThan(400)</code></td>
+      <td>Alta exitosa devuelve 302</td>
+      <td><code>expect(status).toBe(302)</code> + verificar Location header</td>
+    </tr>
+    <tr>
+      <td>Test DNI sin letra → esperar rechazo back</td>
+      <td>Back NO valida DNI</td>
+      <td>Tests agresivos: unicode en DNI, SQL injection, 100 caracteres</td>
+    </tr>
+    <tr>
+      <td>Test duplicado → esperar 409</td>
+      <td>Duplicado devuelve 200 con HTML error</td>
+      <td>Capturar body HTML, buscar mensaje de error específico</td>
+    </tr>
+    <tr>
+      <td>Test tipo=invalido → esperar rechazo</td>
+      <td>Back acepta cualquier valor de tipo</td>
+      <td>Probar con valores absurdos, verificar qué se guarda en BD</td>
+    </tr>
+  </table>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Por qué dos pasadas y no tres</div>
+    <div class="insight-content">
+      La primera pasada descubre el 80% del comportamiento. La segunda refina y cubre los huecos. Una tercera pasada tendría rendimientos decrecientes — la cartografía ya está suficientemente completa para construir tests de validación fiables. Si durante la migración aparece un caso no cubierto, se añade un test puntual, no una tercera cartografía completa.
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: FASE 5 · VALIDACIÓN                   -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-validacion" class="mode-panel">
+
+  <div class="sec-title" data-n="5">FASE 5 — DE HAR A TESTS DE VALIDACIÓN (LA RED DE SEGURIDAD)</div>
+
+  <div class="callout green">
+    <strong>Aquí nacen los tests permanentes.</strong> Los tests de cartografía (Fase 2-4) ya cumplieron su misión — descubrieron cómo se comporta el sistema. Ahora, desde los HAR definitivos (2ª pasada), se crean los tests de validación que protegerán la migración. Separados en front y back.
+  </div>
+
+  <div class="sec-title" data-n="D">DOS TIPOS DE TESTS, DOS MOMENTOS, DOS PROPÓSITOS</div>
+
+  <div class="comp-grid">
+    <div class="comp-card bad">
+      <div class="comp-header bad">🗺️ Tests de CARTOGRAFÍA (Fases 2-4)</div>
+      <div class="comp-content">
+        <strong>Propósito:</strong> Descubrir comportamiento<br>
+        <strong>Momento:</strong> Antes de migrar<br>
+        <strong>Frecuencia:</strong> Se ejecutan 1-2 veces<br>
+        <strong>Valor:</strong> Los HAR que producen<br>
+        <strong>Después:</strong> Se archivan como documentación<br>
+        <strong>Analogía:</strong> Son las PREGUNTAS al sistema
+      </div>
+    </div>
+    <div class="comp-card good">
+      <div class="comp-header good">🛡️ Tests de VALIDACIÓN (Fase 5)</div>
+      <div class="comp-content">
+        <strong>Propósito:</strong> Proteger durante migración<br>
+        <strong>Momento:</strong> Desde ahora, en cada cambio<br>
+        <strong>Frecuencia:</strong> Se ejecutan en cada commit<br>
+        <strong>Valor:</strong> La red de seguridad<br>
+        <strong>Después:</strong> Viven para siempre en el repo<br>
+        <strong>Analogía:</strong> Son las AFIRMACIONES sobre el sistema
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="B">TESTS DE VALIDACIÓN BACK — DESDE HAR</div>
+
+<pre><span class="cm">// tests/validacion/back/cuenta-api.test.js</span>
+<span class="cm">// GENERADO desde HAR de 2ª pasada — comportamiento REAL confirmado</span>
+
+<span class="kw">import</span> { describe, it, expect } <span class="kw">from</span> <span class="st">'vitest'</span>;
+
+<span class="kw">const</span> BASE = process.env.<span class="an">BACKEND_URL</span> || <span class="st">'http://localhost:8080/WebDTE'</span>;
+
+describe(<span class="st">'API Cuentas — Comportamiento confirmado'</span>, () => {
+
+  <span class="cm">// ─── Del HAR sabemos: alta exitosa → 302 redirect ───</span>
+  it(<span class="st">'alta con datos válidos → 302 redirect a /cuentas'</span>, <span class="kw">async</span> () => {
+    <span class="kw">const</span> res = <span class="kw">await</span> fetch(BASE + <span class="st">'/api/cuentas'</span>, {
+      method: <span class="st">'POST'</span>,
+      redirect: <span class="st">'manual'</span>, <span class="cm">// no seguir redirect para capturarlo</span>
+      headers: { <span class="st">'Content-Type'</span>: <span class="st">'application/x-www-form-urlencoded'</span> },
+      body: <span class="st">'email=valid@test.com&nombre=Test&dni=12345678Z&password=Pass1234!&tipo=persona'</span>,
+    });
+
+    expect(res.status).toBe(<span class="nu">302</span>);
+    expect(res.headers.get(<span class="st">'location'</span>)).toContain(<span class="st">'/cuentas'</span>);
+  });
+
+  <span class="cm">// ─── Del HAR sabemos: duplicado → 200 con HTML de error ───</span>
+  it(<span class="st">'email duplicado → 200 con mensaje de error en body'</span>, <span class="kw">async</span> () => {
+    <span class="cm">// Crear primero</span>
+    <span class="kw">await</span> fetch(BASE + <span class="st">'/api/cuentas'</span>, {
+      method: <span class="st">'POST'</span>, redirect: <span class="st">'manual'</span>,
+      headers: { <span class="st">'Content-Type'</span>: <span class="st">'application/x-www-form-urlencoded'</span> },
+      body: <span class="st">'email=dup@test.com&nombre=Dup&dni=99999999R&password=Pass1234!&tipo=persona'</span>,
+    });
+    <span class="cm">// Duplicar</span>
+    <span class="kw">const</span> res = <span class="kw">await</span> fetch(BASE + <span class="st">'/api/cuentas'</span>, {
+      method: <span class="st">'POST'</span>,
+      headers: { <span class="st">'Content-Type'</span>: <span class="st">'application/x-www-form-urlencoded'</span> },
+      body: <span class="st">'email=dup@test.com&nombre=Dup2&dni=88888888T&password=Pass1234!&tipo=persona'</span>,
+    });
+
+    expect(res.status).toBe(<span class="nu">200</span>); <span class="cm">// sí, 200 — así funciona el legacy</span>
+    <span class="kw">const</span> body = <span class="kw">await</span> res.text();
+    expect(body).toContain(<span class="st">'ya existe'</span>); <span class="cm">// mensaje descubierto en HAR</span>
+  });
+
+  <span class="cm">// ─── Del HAR sabemos: back NO valida DNI ───</span>
+  it(<span class="st">'DNI inválido → back lo acepta (no valida)'</span>, <span class="kw">async</span> () => {
+    <span class="kw">const</span> res = <span class="kw">await</span> fetch(BASE + <span class="st">'/api/cuentas'</span>, {
+      method: <span class="st">'POST'</span>, redirect: <span class="st">'manual'</span>,
+      headers: { <span class="st">'Content-Type'</span>: <span class="st">'application/x-www-form-urlencoded'</span> },
+      body: <span class="st">'email=dnitest@test.com&nombre=Test&dni=INVALIDO&password=Pass1234!&tipo=persona'</span>,
+    });
+
+    <span class="cm">// CONFIRMADO por cartografía: el back acepta cualquier DNI</span>
+    expect(res.status).toBe(<span class="nu">302</span>); <span class="cm">// se crea aunque DNI sea basura</span>
+  });
+});</pre>
+
+  <div class="sec-title" data-n="F">TESTS DE VALIDACIÓN FRONT — DESDE HAR</div>
+
+<pre><span class="cm">// tests/validacion/front/cuenta-form.test.js</span>
+<span class="cm">// Validaciones que el front DEBE mantener tras migrar</span>
+
+<span class="kw">import</span> { describe, it, expect } <span class="kw">from</span> <span class="st">'vitest'</span>;
+
+describe(<span class="st">'Front Cuenta — Validaciones confirmadas'</span>, () => {
+
+  <span class="cm">// ─── De la cartografía sabemos: front SÍ valida DNI (HTML5 pattern) ───</span>
+  it(<span class="st">'campo DNI tiene pattern que valida formato español'</span>, () => {
+    <span class="cm">// El nuevo front DEBE mantener esta validación</span>
+    <span class="cm">// porque es la ÚNICA validación de DNI (back no valida)</span>
+    <span class="kw">const</span> pattern = /^\d{8}[A-Z]$/;
+    expect(pattern.test(<span class="st">'12345678Z'</span>)).toBe(<span class="kw">true</span>);
+    expect(pattern.test(<span class="st">'12345678'</span>)).toBe(<span class="kw">false</span>);
+    expect(pattern.test(<span class="st">'ABCDEFGHI'</span>)).toBe(<span class="kw">false</span>);
+  });
+
+  <span class="cm">// ─── De la cartografía sabemos: front valida email (required + type=email) ───</span>
+  it(<span class="st">'campo email es required y valida formato'</span>, () => {
+    <span class="cm">// Doble validación: front + back</span>
+    <span class="cm">// Ambas se deben mantener</span>
+    expect(<span class="st">'test@test.com'</span>).toMatch(/.+@.+/);
+    expect(<span class="st">'noarroba'</span>).not.toMatch(/.+@.+\..+/);
+  });
+
+  <span class="cm">// ─── De la cartografía sabemos: front valida password (minlength=8) ───</span>
+  it(<span class="st">'password requiere mínimo 8 caracteres'</span>, () => {
+    expect(<span class="st">'Pass1234!'</span>.length).toBeGreaterThanOrEqual(<span class="nu">8</span>);
+    expect(<span class="st">'short'</span>.length).toBeLessThan(<span class="nu">8</span>);
+  });
+
+  <span class="cm">// ─── DATO CRÍTICO descubierto en cartografía ───</span>
+  <span class="cm">// El front es la ÚNICA barrera para DNI.</span>
+  <span class="cm">// Si el nuevo front no valida DNI, se guardarán DNIs basura.</span>
+  <span class="cm">// Esto es una DECISIÓN de migración: ¿añadir validación back?</span>
+});</pre>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Los tests de validación documentan la REALIDAD, no el ideal</div>
+    <div class="insight-content">
+      El test «DNI inválido → back lo acepta» no es un bug — es la documentación del comportamiento real. Durante la migración, se decide si mantener este comportamiento o mejorarlo. Pero la decisión se toma conscientemente, con datos, no por accidente al reescribir.
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: FASE 6 · MIGRACIÓN                    -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-migracion" class="mode-panel">
+
+  <div class="sec-title" data-n="6">FASE 6 — MIGRAR CON RED DE SEGURIDAD</div>
+
+  <div class="callout green">
+    <strong>Ahora sí tocamos código.</strong> Con los tests de validación en verde (front + back), la IA ayuda a migrar servlet a servlet, página a página. Cada cambio se ejecuta contra la batería de validación. Si algo se pone rojo, el cambio está mal — no el test.
+  </div>
+
+  <div class="flow-diagram">
+    <div class="flow-step">
+      <div class="flow-num o">A</div>
+      <div class="flow-content">
+        <div class="flow-title">Elegir un servlet para migrar</div>
+        <div class="flow-desc">Se recomienda empezar por el más sencillo (menos intenciones, menos incertidumbres). Hacer vertical completa: un servlet migrado de principio a fin antes de pasar al siguiente.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num y">B</div>
+      <div class="flow-content">
+        <div class="flow-title">IA refactoriza apoyándose en el código + intenciones + contratos</div>
+        <div class="flow-desc">Ahora sí la IA lee el código espagueti, pero con tres guías: las intenciones de IA1, los contratos confirmados del HAR, y los tests de validación como red de seguridad. Refactoriza a 3 capas (Transport / Domain / Infrastructure).</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num g">C</div>
+      <div class="flow-content">
+        <div class="flow-title">Ejecutar tests de validación tras cada cambio</div>
+        <div class="flow-desc">Los tests de validación del back verifican que el comportamiento no cambió. Si un test falla, el refactoring introdujo una regresión — se corrige antes de continuar.</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num p">D</div>
+      <div class="flow-content">
+        <div class="flow-title">Decisiones conscientes de mejora</div>
+        <div class="flow-desc">«El back no valida DNI — ¿añadimos validación?» Se toma como decisión explícita, se modifica el test de validación para reflejar el nuevo comportamiento, y se documenta.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">REFACTORING A 3 CAPAS CON SEGURIDAD</div>
+
+  <div class="layer-stack">
+    <div class="layer lA">
+      <div class="layer-label">Transport</div>
+      <div>Servlet / Controller — solo recibe request, extrae parámetros, delega en Domain, formatea response. Los tests de validación back protegen esta capa.</div>
+    </div>
+    <div class="layer lB">
+      <div class="layer-label">Domain</div>
+      <div>POJOs puros, sin dependencias. Lógica de negocio, validaciones, reglas. Se le pueden añadir unit tests ahora que está aislada.</div>
+    </div>
+    <div class="layer lC">
+      <div class="layer-label">Infrastr.</div>
+      <div>DAO / Adapters — acceso a BD, servicios externos. Tests de integración con H2 o testcontainers.</div>
+    </div>
+  </div>
+
+  <div class="callout purple">
+    <strong>Los tests de validación no cambian durante el refactoring.</strong> Si el test dice «POST /api/cuentas con datos válidos → 302», eso se mantiene sea cual sea la estructura interna. Solo se modifican tests cuando se toma una decisión consciente de cambiar comportamiento (como añadir validación de DNI en back).
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB: RESUMEN                               -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-resumen" class="mode-panel">
+
+  <div class="sec-title" data-n="★">PIPELINE COMPLETO</div>
+
+  <div class="steps-row">
+    <div class="step-box o">
+      <div class="step-label o">FASE 0</div>
+      <div class="step-name">Logs sem.</div>
+      <div class="step-desc">IA instrumenta con logs de intención de negocio</div>
+    </div>
+    <div class="step-connector"><span class="arrow-right">→</span></div>
+    <div class="step-box y">
+      <div class="step-label y">FASE 1</div>
+      <div class="step-name">IA1 extrae</div>
+      <div class="step-desc">Intenciones del código + web.xml + DDL + HTML</div>
+    </div>
+    <div class="step-connector"><span class="arrow-right">→</span></div>
+    <div class="step-box p">
+      <div class="step-label p">FASE 2</div>
+      <div class="step-name">IA2 cartogr.</div>
+      <div class="step-desc">Batería exhaustiva de tests Playwright</div>
+    </div>
+    <div class="step-connector"><span class="arrow-right">→</span></div>
+    <div class="step-box b">
+      <div class="step-label b">FASE 3</div>
+      <div class="step-name">Playwright</div>
+      <div class="step-desc">1ª ejecución → HAR + logs</div>
+    </div>
+    <div class="step-connector"><span class="arrow-right">→</span></div>
+    <div class="step-box p">
+      <div class="step-label p">FASE 4</div>
+      <div class="step-name">Refinar</div>
+      <div class="step-desc">IA2 + HAR + logs → 2ª pasada</div>
+    </div>
+    <div class="step-connector"><span class="arrow-right">→</span></div>
+    <div class="step-box g">
+      <div class="step-label g">FASE 5</div>
+      <div class="step-name">Validación</div>
+      <div class="step-desc">Tests front + back desde HAR</div>
+    </div>
+    <div class="step-connector"><span class="arrow-right">→</span></div>
+    <div class="step-box o">
+      <div class="step-label o">FASE 6</div>
+      <div class="step-name">Migrar</div>
+      <div class="step-desc">Servlet a servlet con red de seguridad</div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="R">RESUMEN EJECUTIVO</div>
+
+  <table class="vtable">
+    <tr><th>Fase</th><th>Quién</th><th>Input</th><th>Output</th><th>Qué NO hace</th></tr>
+    <tr>
+      <td>0 · Instrumentar</td>
+      <td>IA1</td>
+      <td>Código legacy</td>
+      <td>Logs semánticos (sin cambiar lógica)</td>
+      <td>No refactoriza</td>
+    </tr>
+    <tr>
+      <td>1 · Intenciones</td>
+      <td>IA1</td>
+      <td>web.xml + DDL + HTML + código</td>
+      <td>Fichas de intención por endpoint</td>
+      <td>No genera tests</td>
+    </tr>
+    <tr>
+      <td>2 · Cartografía</td>
+      <td>IA2</td>
+      <td>Intenciones (NO código)</td>
+      <td>Tests Playwright exhaustivos</td>
+      <td>No ve código</td>
+    </tr>
+    <tr>
+      <td>3 · 1ª ejecución</td>
+      <td>Playwright</td>
+      <td>Tests de IA2 + app legacy</td>
+      <td>HAR + logs semánticos + contratos</td>
+      <td>No modifica nada</td>
+    </tr>
+    <tr>
+      <td>4 · Refinamiento</td>
+      <td>IA2</td>
+      <td>Intenciones + HAR + logs (consulta)</td>
+      <td>Delta de tests → 2ª ejecución Playwright</td>
+      <td>No genera desde cero</td>
+    </tr>
+    <tr>
+      <td>5 · Validación</td>
+      <td>IA / humano</td>
+      <td>HAR definitivos (2ª pasada)</td>
+      <td>Tests permanentes front + back</td>
+      <td>No son exploratorios</td>
+    </tr>
+    <tr>
+      <td>6 · Migrar</td>
+      <td>IA + humano</td>
+      <td>Código + intenciones + contratos</td>
+      <td>3 capas refactorizadas + validadas</td>
+      <td>No cambia comportamiento (salvo decisión)</td>
+    </tr>
+  </table>
+
+  <div class="sec-title" data-n="J">JERARQUÍA DE CONFIANZA</div>
+
+  <div class="trust-bar">
+    <div class="trust-seg t1">🥇 HAR<br><span style="font-size:9px;font-weight:400">Verdad absoluta</span></div>
+    <div class="trust-seg t2">🥈 Intenciones IA1<br><span style="font-size:9px;font-weight:400">Hipótesis informadas</span></div>
+    <div class="trust-seg t3">🥉 Logs semánticos<br><span style="font-size:9px;font-weight:400">Consulta — nunca verdad</span></div>
+  </div>
+
+  <div class="sec-title" data-n="N">MÉTRICAS</div>
+
+  <div class="metric-row">
+    <div class="metric-card">
+      <div class="metric-value">0</div>
+      <div class="metric-label">Líneas de espagueti que lees tú</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value good">2</div>
+      <div class="metric-label">IAs con roles separados</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value blue">2</div>
+      <div class="metric-label">Pasadas de cartografía</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value good">100%</div>
+      <div class="metric-label">Comportamiento real confirmado</div>
+    </div>
+  </div>
+
+  <div class="quote-box">
+    <div class="quote-text">
+      La IA1 extrae lo que el código intenta hacer.<br>
+      La IA2 diseña las preguntas para descubrir si lo consigue.<br>
+      Playwright ejecuta las preguntas contra la realidad.<br>
+      Los HAR son las respuestas que nadie puede inventar.<br>
+      Los tests de validación son las afirmaciones que protegen la migración.<br>
+      Los logs semánticos son una consulta — nunca la verdad.<br><br>
+      <strong>La semántica no se lee — se ejecuta y se captura.</strong>
+    </div>
+    <div class="quote-author">FMI · Caja Negra Guiada con IA Dual · Versión Definitiva</div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
