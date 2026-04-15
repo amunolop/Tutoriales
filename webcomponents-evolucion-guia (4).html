@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript/HTML Evolution — 2005→2026 · Web Components · PWA</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;position:relative}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1100px;margin:0 auto;padding:48px 28px 100px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:40px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--yellow);border:2px solid var(--yellow);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(26px,4vw,44px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--yellow);border-bottom:3px solid var(--yellow)}
+  .subtitle{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:40px;width:fit-content;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:10px 16px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:2px solid var(--ink)}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:36px 0 16px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:16px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  .job-box{background:linear-gradient(135deg,#faf8f4,#f0ebe0);border:3px solid var(--yellow);border-radius:8px;padding:24px 28px;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .job-box.green{border-color:var(--accent2)}.job-box.blue{border-color:var(--accent3)}.job-box.orange{border-color:var(--accent)}.job-box.purple{border-color:var(--purple)}
+  .job-header{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .job-name{font-size:18px;font-weight:700}
+  .job-desc{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+  .tag{font-size:9px;font-weight:700;letter-spacing:2px;padding:4px 10px;border-radius:3px;text-transform:uppercase}
+  .tag-o{background:rgba(193,68,14,.12);color:var(--accent);border:2px solid var(--accent)}.tag-g{background:rgba(42,110,78,.12);color:var(--accent2);border:2px solid var(--accent2)}.tag-b{background:rgba(26,74,138,.12);color:var(--accent3);border:2px solid var(--accent3)}.tag-y{background:rgba(232,160,32,.12);color:var(--yellow);border:2px solid var(--yellow)}.tag-p{background:rgba(122,58,205,.12);color:var(--purple);border:2px solid var(--purple)}
+  .lifecycle-flow{display:flex;align-items:stretch;gap:0;background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
+  .lf-step{flex:1;padding:16px 10px;text-align:center;position:relative;transition:background .2s;min-width:0}
+  .lf-step:not(:last-child)::after{content:'▶';position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;z-index:2}
+  .lf-step:not(:last-child){border-right:2px solid var(--border)}
+  .lf-num{font-size:9px;color:var(--muted);margin-bottom:4px}.lf-icon{font-size:18px;margin-bottom:4px}.lf-name{font-size:10px;font-weight:700;margin-bottom:2px}.lf-desc{font-size:8px;color:var(--muted);line-height:1.4}
+  .steps-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+  .step-box{flex:1;min-width:180px;background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:18px;transition:all .2s}
+  .step-box:hover{border-color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .step-box.o{border-left:4px solid var(--accent)}.step-box.g{border-left:4px solid var(--accent2)}.step-box.b{border-left:4px solid var(--accent3)}.step-box.y{border-left:4px solid var(--yellow)}.step-box.p{border-left:4px solid var(--purple)}
+  .step-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .step-label.o{color:var(--accent)}.step-label.g{color:var(--accent2)}.step-label.b{color:var(--accent3)}.step-label.y{color:var(--yellow)}.step-label.p{color:var(--purple)}
+  .step-name{font-size:14px;font-weight:700;margin-bottom:6px}
+  .step-desc{font-size:11px;color:var(--muted);line-height:1.6}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:16px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 14px;text-align:left}
+  .vtable td{padding:11px 14px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td:first-child{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border)}
+  .repo-box{background:linear-gradient(135deg,#fffaf0,#faf5e8);border:2px solid var(--yellow);border-radius:8px;padding:20px 24px;display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .repo-box.o{border-color:var(--accent)}.repo-box.g{border-color:var(--accent2)}.repo-box.b{border-color:var(--accent3)}.repo-box.p{border-color:var(--purple)}
+  .repo-icon{font-size:28px;flex-shrink:0}.repo-title{font-size:15px;font-weight:700;margin-bottom:6px}.repo-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);white-space:pre}
+  .kw{color:#c1440e;font-weight:600}.an{color:#1a4a8a;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.nu{color:#7a3acd}.fn{color:#0369a1;font-weight:600}
+  /* Timeline */
+  .tl{position:relative;padding-left:32px;margin:20px 0}
+  .tl::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:3px;background:var(--border)}
+  .tl-item{position:relative;margin-bottom:20px}
+  .tl-item::before{content:'';position:absolute;left:-26px;top:6px;width:14px;height:14px;border-radius:50%;border:3px solid;background:var(--surface)}
+  .tl-item.era1::before{border-color:var(--accent)}.tl-item.era2::before{border-color:var(--yellow)}.tl-item.era3::before{border-color:var(--accent3)}.tl-item.era4::before{border-color:var(--accent2)}.tl-item.era5::before{border-color:var(--purple)}
+  .tl-year{font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:4px}
+  .tl-title{font-size:14px;font-weight:700;margin-bottom:4px}
+  .tl-desc{font-size:11px;color:var(--muted);line-height:1.6}
+  @media(max-width:700px){.grid2{grid-template-columns:1fr}.steps-row{flex-direction:column}.lifecycle-flow{flex-direction:column}.lf-step:not(:last-child)::after{content:'▼';right:auto;bottom:-10px;top:auto;left:50%;transform:translateX(-50%)}.lf-step:not(:last-child){border-right:none;border-bottom:2px solid var(--border)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">2005 → 2026 · Vanilla JS · Web Components · PWA</div>
+  <h1>De jQuery a <em>Web Components</em><br>Guía de migración</h1>
+  <p class="subtitle">// La evolución completa: del document.getElementById al Shadow DOM · Custom Elements · App Shell · Service Workers · Sin frameworks, solo estándares nativos del navegador</p>
+</header>
+
+<!-- EVOLUCIÓN VISUAL -->
+<div class="job-box">
+  <div class="job-header"><span class="tag tag-y">20 años</span><span class="job-name">La evolución que has vivido</span></div>
+  <div class="lifecycle-flow">
+    <div class="lf-step"><div class="lf-num">2005</div><div class="lf-icon">📄</div><div class="lf-name" style="color:var(--accent)">DOM directo</div><div class="lf-desc">getElementById<br>innerHTML<br>AJAX XMLHttpRequest</div></div>
+    <div class="lf-step"><div class="lf-num">2006-12</div><div class="lf-icon">💲</div><div class="lf-name" style="color:var(--yellow)">jQuery era</div><div class="lf-desc">$(selector)<br>$.ajax<br>plugins</div></div>
+    <div class="lf-step"><div class="lf-num">2013-16</div><div class="lf-icon">🏗️</div><div class="lf-name" style="color:var(--accent3)">SPA frameworks</div><div class="lf-desc">Angular · React<br>Webpack · npm<br>Virtual DOM</div></div>
+    <div class="lf-step"><div class="lf-num">2017-20</div><div class="lf-icon">🧩</div><div class="lf-name" style="color:var(--accent2)">Web Standards</div><div class="lf-desc">ES Modules<br>Fetch API<br>Custom Elements</div></div>
+    <div class="lf-step"><div class="lf-num">2021-26</div><div class="lf-icon">⚡</div><div class="lf-name" style="color:var(--purple)">Nativo maduro</div><div class="lf-desc">Web Components<br>Shadow DOM<br>PWA · App Shell</div></div>
+  </div>
+</div>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setView('timeline')">📅 Evolución</button>
+  <button class="mode-btn" onclick="setView('wc')">🧩 Web Components</button>
+  <button class="mode-btn" onclick="setView('shadow')">🌑 Shadow DOM</button>
+  <button class="mode-btn" onclick="setView('state')">⚡ Estado</button>
+  <button class="mode-btn" onclick="setView('contract')">📡 Contrato API</button>
+  <button class="mode-btn" onclick="setView('shells')">🏠 Shell-lite vs App Shell</button>
+  <button class="mode-btn" onclick="setView('pwa')">📱 PWA</button>
+  <button class="mode-btn" onclick="setView('perf')">🎯 Performance</button>
+  <button class="mode-btn" onclick="setView('strangler')">🔄 Strangler Fig</button>
+  <button class="mode-btn" onclick="setView('code')">💻 Ejemplo real</button>
+</div>
+
+<!-- ═══════ 1 · EVOLUCIÓN ═══════ -->
+<div id="view-timeline" class="mode-panel active">
+  <div class="sec-title" data-n="1">Tu punto de partida — 2005</div>
+  <div class="callout orange" style="margin-top:0"><strong>Esto es lo que tenías.</strong> No es nostalgia — es importante entender <em>desde dónde</em> partes para saber <em>qué</em> resuelve cada pieza moderna.</div>
+
+  <div class="grid2">
+    <div class="job-box orange" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-o">2005</span><span class="job-name">Tu código real</span></div>
+      <pre style="margin:0;border:none;padding:8px;background:transparent;font-size:10.5px">
+<span class="cm">// JAVASCRIPT 2005 — tu día a día</span>
+
+<span class="cm">// No había querySelector, solo esto:</span>
+<span class="kw">var</span> nombre = <span class="an">document</span>.<span class="fn">getElementById</span>(<span class="st">"txtNombre"</span>);
+<span class="kw">var</span> filas = <span class="an">document</span>.<span class="fn">getElementsByTagName</span>(<span class="st">"tr"</span>);
+
+<span class="cm">// AJAX: 10 líneas para una petición</span>
+<span class="kw">var</span> xhr = <span class="kw">new</span> <span class="cl">XMLHttpRequest</span>();
+xhr.open(<span class="st">"GET"</span>, <span class="st">"servlet/contratos"</span>, <span class="kw">true</span>);
+xhr.onreadystatechange = <span class="kw">function</span>() {
+  <span class="kw">if</span> (xhr.readyState === <span class="nu">4</span>
+      && xhr.status === <span class="nu">200</span>) {
+    <span class="kw">var</span> data = xhr.responseText;
+    <span class="an">document</span>.<span class="fn">getElementById</span>(<span class="st">"resultado"</span>)
+      .innerHTML = data; <span class="cm">// HTML crudo del server</span>
+  }
+};
+xhr.send();
+
+<span class="cm">// Evento: attachEvent en IE, addEventListener en FF</span>
+<span class="kw">if</span> (btn.addEventListener) {
+  btn.addEventListener(<span class="st">"click"</span>, fn, <span class="kw">false</span>);
+} <span class="kw">else</span> {
+  btn.attachEvent(<span class="st">"onclick"</span>, fn); <span class="cm">// IE6</span>
+}
+
+<span class="cm">// Estado = variables globales</span>
+<span class="kw">var</span> contratos = [];
+<span class="kw">var</span> currentPage = <span class="nu">0</span>;</pre>
+    </div>
+    <div class="job-box green" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-g">2026</span><span class="job-name">El equivalente hoy</span></div>
+      <pre style="margin:0;border:none;padding:8px;background:transparent;font-size:10.5px">
+<span class="cm">// JAVASCRIPT 2026 — lo mismo, nativo y limpio</span>
+
+<span class="cm">// querySelector reemplaza getElementById:</span>
+<span class="kw">const</span> nombre = <span class="an">document</span>.<span class="fn">querySelector</span>(<span class="st">'#txtNombre'</span>);
+<span class="kw">const</span> filas = <span class="an">document</span>.<span class="fn">querySelectorAll</span>(<span class="st">'tr'</span>);
+
+<span class="cm">// AJAX: 2 líneas con async/await</span>
+<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">'/api/contratos'</span>);
+<span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>(); <span class="cm">// JSON, no HTML</span>
+
+<span class="cm">// Evento: un solo API, todos los browsers</span>
+btn.<span class="fn">addEventListener</span>(<span class="st">'click'</span>, fn);
+
+<span class="cm">// Estado: dentro del componente</span>
+<span class="kw">class</span> <span class="cl">ContratoList</span> <span class="kw">extends</span> <span class="cl">HTMLElement</span> {
+  #contratos = [];  <span class="cm">// Privado al componente</span>
+  #page = <span class="nu">0</span>;
+
+  <span class="kw">async</span> <span class="fn">connectedCallback</span>() {
+    <span class="kw">this</span>.#contratos =
+      <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">'/api/contratos'</span>)
+        .then(r => r.json());
+    <span class="kw">this</span>.<span class="fn">render</span>();
+  }
+}
+customElements.define(
+  <span class="st">'contrato-list'</span>, <span class="cl">ContratoList</span>);
+
+<span class="cm">// 0 variables globales, 0 conflictos</span></pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Timeline — lo que cambió y por qué</div>
+
+  <div class="tl">
+    <div class="tl-item era1"><div class="tl-year" style="color:var(--accent)">2005 — Tu punto de partida</div><div class="tl-title">document.getElementById + XMLHttpRequest + var</div><div class="tl-desc">Todo era <code>var</code>, todo era global, cada navegador hacía lo que quería (IE6 vs Firefox). No había módulos, no había <code>const</code>/<code>let</code>. Los scripts se metían con <code>&lt;script src&gt;</code> en orden manual y rezabas para que no hubiera colisión de nombres. El servidor (Servlets/JSP) generaba HTML completo y AJAX devolvía fragmentos HTML, no JSON.</div></div>
+
+    <div class="tl-item era1"><div class="tl-year" style="color:var(--accent)">2006 — jQuery cambia todo</div><div class="tl-title">$(document).ready() — una API para gobernarlos a todos</div><div class="tl-desc">jQuery resuelve el caos cross-browser: un <code>$(selector)</code> que funciona igual en IE6 y Firefox. <code>$.ajax()</code> unifica XMLHttpRequest. Plugins para todo: datepickers, sliders, modals. El 70% de las webs del mundo usarán jQuery. <strong>El problema: el DOM es la base de datos.</strong> El estado vive en atributos HTML y variables globales.</div></div>
+
+    <div class="tl-item era2"><div class="tl-year" style="color:var(--yellow)">2009-2011 — Node.js + HTML5</div><div class="tl-title">JS sale del navegador · HTML5 estandariza</div><div class="tl-desc">Node.js (2009) lleva JS al servidor. HTML5 (2011) trae <code>&lt;canvas&gt;</code>, <code>&lt;video&gt;</code>, <code>localStorage</code>, <code>history.pushState</code> (SPAs sin hash). <code>&lt;template&gt;</code> aparece tímidamente. Backbone.js (2010) introduce la idea de separar datos de vista — el primer paso hacia componentes.</div></div>
+
+    <div class="tl-item era3"><div class="tl-year" style="color:var(--accent3)">2013-2015 — La guerra de los frameworks</div><div class="tl-title">Angular 1 → React → Angular 2: el Big Bang</div><div class="tl-desc">AngularJS (2013) trae two-way binding y directivas. React (2013) responde con Virtual DOM y componentes funcionales. Angular 2 (2016) reescribe todo con TypeScript. Aparecen Webpack, npm/yarn, Babel, transpiladores. <strong>Para hacer un "Hello World" necesitas 200MB de node_modules.</strong> La web se complejifica enormemente.</div></div>
+
+    <div class="tl-item era3"><div class="tl-year" style="color:var(--accent3)">2015 — ES6/ES2015</div><div class="tl-title">JavaScript renace: const, let, arrow, class, import, Promise</div><div class="tl-desc">El salto más grande del lenguaje. <code>const/let</code>, arrow functions, template literals, destructuring, <code>class</code>, <code>Promise</code>, <code>import/export</code> (módulos nativos). Por primera vez no necesitas jQuery para escribir JS limpio. Pero los navegadores tardan 2-3 años en soportarlo todo — Babel transpila mientras tanto.</div></div>
+
+    <div class="tl-item era4"><div class="tl-year" style="color:var(--accent2)">2017-2018 — El estándar contraataca</div><div class="tl-title">Custom Elements v1 + Fetch API + async/await</div><div class="tl-desc"><code>customElements.define()</code> se estandariza. <code>fetch()</code> reemplaza a XMLHttpRequest. <code>async/await</code> hace el código asíncrono legible. <code>&lt;script type="module"&gt;</code> funciona sin bundler. CSS Grid y Flexbox maduran. <strong>Por primera vez, lo nativo es suficiente para muchos casos.</strong></div></div>
+
+    <div class="tl-item era4"><div class="tl-year" style="color:var(--accent2)">2019-2020 — Web Components maduran</div><div class="tl-title">Shadow DOM v1 + Constructable Stylesheets + PWA</div><div class="tl-desc">Shadow DOM se estabiliza en todos los navegadores. <code>adoptedStyleSheets</code> permite compartir CSS entre componentes. Service Workers + Manifest hacen PWAs instalables. Lit (Google) aparece como wrapper ligero de Web Components. <strong>Ya no necesitas React para tener componentes reutilizables.</strong></div></div>
+
+    <div class="tl-item era5"><div class="tl-year" style="color:var(--purple)">2021-2026 — El renacimiento vanilla</div><div class="tl-title">Import Maps · Declarative Shadow DOM · View Transitions</div><div class="tl-desc"><code>&lt;script type="importmap"&gt;</code> elimina la necesidad de bundlers para imports. Declarative Shadow DOM permite SSR de Web Components. <code>@property</code> en CSS, Container Queries, View Transitions API. Navigation API. <strong>El estándar del navegador ahora cubre el 95% de lo que los frameworks hacían.</strong></div></div>
+  </div>
+
+  <div class="sec-title" data-n="2">Lo que jQuery hacía vs lo nativo de hoy</div>
+  <table class="vtable">
+    <thead><tr><th>jQuery (2006)</th><th>Vanilla JS (2026)</th></tr></thead>
+    <tbody>
+      <tr><td>$('#id')</td><td><code>document.querySelector('#id')</code></td></tr>
+      <tr><td>$('.class')</td><td><code>document.querySelectorAll('.class')</code></td></tr>
+      <tr><td>$.ajax({url, success})</td><td><code>const res = await fetch(url)</code></td></tr>
+      <tr><td>$(el).on('click', fn)</td><td><code>el.addEventListener('click', fn)</code></td></tr>
+      <tr><td>$(el).addClass('x')</td><td><code>el.classList.add('x')</code></td></tr>
+      <tr><td>$(el).css('color','red')</td><td><code>el.style.color = 'red'</code></td></tr>
+      <tr><td>$(el).html(str)</td><td><code>el.innerHTML = str</code> (o mejor: DOM API)</td></tr>
+      <tr><td>$.each(arr, fn)</td><td><code>arr.forEach(fn)</code> / <code>for...of</code></td></tr>
+      <tr><td>$.Deferred()</td><td><code>new Promise()</code> / <code>async/await</code></td></tr>
+      <tr><td>$(document).ready(fn)</td><td><code>document.addEventListener('DOMContentLoaded', fn)</code></td></tr>
+      <tr><td>Plugins (datepicker, modal)</td><td>Web Components nativos / <code>&lt;dialog&gt;</code> / <code>&lt;details&gt;</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout green"><strong>La conclusión para tu migración:</strong> En 2005 necesitabas jQuery porque el estándar era un caos. En 2026, el estándar nativo cubre todo lo que jQuery hacía, más lo que React/Angular añadieron (componentes, estado, módulos). <strong>Migrar a Web Components nativos = migrar al estándar, no a otro framework que morirá en 5 años.</strong></div>
+</div>
+
+<!-- ═══════ 2 · WEB COMPONENTS ═══════ -->
+<div id="view-wc" class="mode-panel">
+  <div class="sec-title" data-n="1">Web Components — las 4 piezas del puzzle</div>
+  <div class="callout blue" style="margin-top:0"><strong>Web Components NO es un framework.</strong> Es un conjunto de 4 APIs estándar del navegador que juntas permiten crear componentes encapsulados y reutilizables. Como los componentes de React o Angular, pero nativos del navegador — sin npm install, sin build, sin dependencias.</div>
+
+  <div class="steps-row">
+    <div class="step-box o"><div class="step-label o">Pieza 1</div><div class="step-name">Custom Elements</div><div class="step-desc">Definir etiquetas HTML propias: <code>&lt;contrato-card&gt;</code>, <code>&lt;user-form&gt;</code>. El navegador las reconoce como elementos de primera clase con ciclo de vida.</div></div>
+    <div class="step-box b"><div class="step-label b">Pieza 2</div><div class="step-name">Shadow DOM</div><div class="step-desc">Encapsulamiento total: el CSS y el DOM del componente son invisibles desde fuera. No hay conflictos de estilos. Es una burbuja aislada.</div></div>
+    <div class="step-box g"><div class="step-label g">Pieza 3</div><div class="step-name">HTML Templates</div><div class="step-desc"><code>&lt;template&gt;</code> y <code>&lt;slot&gt;</code>: plantillas HTML que no se renderizan hasta que las clonas. Los slots permiten inyectar contenido desde fuera.</div></div>
+    <div class="step-box p"><div class="step-label p">Pieza 4</div><div class="step-name">ES Modules</div><div class="step-desc"><code>import/export</code> nativos: cada componente en su fichero .js, se importa con <code>&lt;script type="module"&gt;</code>. Sin bundler.</div></div>
+  </div>
+
+  <div class="sec-title" data-n="2">Custom Elements — tu primera etiqueta HTML propia</div>
+  <pre>
+<span class="cm">// contrato-card.js — un componente completo</span>
+
+<span class="kw">class</span> <span class="cl">ContratoCard</span> <span class="kw">extends</span> <span class="cl">HTMLElement</span> {
+
+  <span class="cm">// 1. Qué atributos observar para reaccionar a cambios</span>
+  <span class="kw">static</span> <span class="kw">get</span> <span class="fn">observedAttributes</span>() {
+    <span class="kw">return</span> [<span class="st">'codigo'</span>, <span class="st">'estado'</span>, <span class="st">'titular'</span>];
+  }
+
+  <span class="cm">// 2. Constructor: crear Shadow DOM</span>
+  <span class="fn">constructor</span>() {
+    <span class="kw">super</span>();
+    <span class="kw">this</span>.attachShadow({ mode: <span class="st">'open'</span> });
+  }
+
+  <span class="cm">// 3. Lifecycle: cuando se inserta en el DOM</span>
+  <span class="fn">connectedCallback</span>() {
+    <span class="kw">this</span>.<span class="fn">render</span>();
+  }
+
+  <span class="cm">// 4. Lifecycle: cuando un atributo observado cambia</span>
+  <span class="fn">attributeChangedCallback</span>(name, oldVal, newVal) {
+    <span class="kw">if</span> (oldVal !== newVal) <span class="kw">this</span>.<span class="fn">render</span>();
+  }
+
+  <span class="cm">// 5. Renderizar</span>
+  <span class="fn">render</span>() {
+    <span class="kw">const</span> codigo = <span class="kw">this</span>.getAttribute(<span class="st">'codigo'</span>) || <span class="st">''</span>;
+    <span class="kw">const</span> estado = <span class="kw">this</span>.getAttribute(<span class="st">'estado'</span>) || <span class="st">'Pendiente'</span>;
+    <span class="kw">const</span> titular = <span class="kw">this</span>.getAttribute(<span class="st">'titular'</span>) || <span class="st">''</span>;
+
+    <span class="kw">this</span>.shadowRoot.innerHTML = <span class="st">`
+      &lt;style&gt;
+        :host { display: block; border: 2px solid #d4c9b0; border-radius: 8px;
+                padding: 16px; margin: 8px 0; font-family: monospace; }
+        :host([estado="Activo"]) { border-color: #2a6e4e; }
+        :host([estado="Cerrado"]) { opacity: 0.6; }
+        .codigo { font-size: 18px; font-weight: 700; }
+        .estado { font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+      &lt;/style&gt;
+      &lt;div class="codigo"&gt;${codigo}&lt;/div&gt;
+      &lt;div&gt;${titular}&lt;/div&gt;
+      &lt;span class="estado"&gt;${estado}&lt;/span&gt;
+      &lt;slot&gt;&lt;/slot&gt;
+    `</span>;
+  }
+}
+
+<span class="cm">// 6. Registrar la etiqueta</span>
+customElements.define(<span class="st">'contrato-card'</span>, <span class="cl">ContratoCard</span>);
+  </pre>
+
+  <pre>
+<span class="cm">&lt;!-- Uso en HTML — tan natural como un &lt;div&gt; --&gt;</span>
+
+&lt;<span class="kw">script</span> type=<span class="st">"module"</span> src=<span class="st">"./contrato-card.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;
+
+&lt;<span class="an">contrato-card</span>
+  codigo=<span class="st">"CLT-001"</span>
+  estado=<span class="st">"Activo"</span>
+  titular=<span class="st">"Ana García"</span>&gt;
+  &lt;p&gt;Contenido extra vía slot&lt;/p&gt;
+&lt;/<span class="an">contrato-card</span>&gt;
+  </pre>
+
+  <div class="sec-title" data-n="3">Ciclo de vida — los 4 callbacks</div>
+  <table class="vtable">
+    <thead><tr><th>Callback</th><th>Cuándo</th><th>Equivalente React</th></tr></thead>
+    <tbody>
+      <tr><td>constructor()</td><td>Se crea el elemento (antes de insertarse en DOM)</td><td>constructor / useState init</td></tr>
+      <tr><td>connectedCallback()</td><td>Se inserta en el DOM (o se mueve)</td><td>componentDidMount / useEffect([])</td></tr>
+      <tr><td>disconnectedCallback()</td><td>Se elimina del DOM</td><td>componentWillUnmount / useEffect cleanup</td></tr>
+      <tr><td>attributeChangedCallback()</td><td>Un atributo observado cambia</td><td>componentDidUpdate / useEffect([dep])</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════ 3 · SHADOW DOM ═══════ -->
+<div id="view-shadow" class="mode-panel">
+  <div class="sec-title" data-n="1">Shadow DOM — la burbuja de encapsulamiento</div>
+  <div class="callout blue" style="margin-top:0"><strong>El Shadow DOM crea un árbol DOM aislado dentro de tu componente.</strong> El CSS de fuera no afecta al componente, y el CSS del componente no se escapa fuera. Es el equivalente nativo del CSS Modules o Styled Components de React — pero sin build step.</div>
+
+  <div class="grid2">
+    <div class="callout orange" style="margin:0"><strong>Sin Shadow DOM (2005-2015):</strong><br>Tu <code>.card { color: red }</code> en un CSS global afecta a TODAS las clases <code>.card</code> de la página. Si dos librerías usan la misma clase, una pisa a la otra. Solución: BEM, CSS Modules, Scoped CSS — todos parches al problema.</div>
+    <div class="callout green" style="margin:0"><strong>Con Shadow DOM (2020+):</strong><br>El CSS dentro del Shadow DOM solo afecta a ese componente. Puedes tener <code>.card { color: red }</code> en 10 componentes y cada uno es independiente. Sin BEM, sin hacks, sin conflictos. El navegador lo aísla por ti.</div>
+  </div>
+
+  <div class="sec-title" data-n="2">Cómo funciona</div>
+  <pre>
+<span class="cm">// Shadow DOM: luz vs sombra</span>
+
+<span class="cm">// LIGHT DOM — lo que escribe el usuario del componente</span>
+&lt;<span class="an">user-profile</span>&gt;
+  &lt;span slot=<span class="st">"name"</span>&gt;Antonio&lt;/span&gt;    <span class="cm">← Light DOM (visible, proyectable)</span>
+  &lt;span slot=<span class="st">"role"</span>&gt;Arquitecto&lt;/span&gt;
+&lt;/<span class="an">user-profile</span>&gt;
+
+<span class="cm">// SHADOW DOM — lo que crea el componente internamente</span>
+<span class="kw">this</span>.shadowRoot.innerHTML = <span class="st">`
+  &lt;style&gt;
+    .container { border: 2px solid #1a4a8a; padding: 16px; }
+    .name { font-size: 20px; font-weight: 700; }     ← AISLADO
+    .role { color: #8a7a65; }                         ← AISLADO
+  &lt;/style&gt;
+  &lt;div class="container"&gt;
+    &lt;div class="name"&gt;&lt;slot name="name"&gt;&lt;/slot&gt;&lt;/div&gt;  ← Slot proyecta Light DOM
+    &lt;div class="role"&gt;&lt;slot name="role"&gt;&lt;/slot&gt;&lt;/div&gt;
+  &lt;/div&gt;
+`</span>;
+  </pre>
+
+  <div class="sec-title" data-n="3">Pseudo-selectores del Shadow DOM</div>
+  <table class="vtable">
+    <thead><tr><th>Selector</th><th>Qué selecciona</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td>:host</td><td>El propio custom element desde dentro</td><td><code>:host { display: block; }</code></td></tr>
+      <tr><td>:host([attr])</td><td>El host cuando tiene un atributo</td><td><code>:host([disabled]) { opacity: .5; }</code></td></tr>
+      <tr><td>:host(.class)</td><td>El host cuando tiene una clase</td><td><code>:host(.active) { border-color: green; }</code></td></tr>
+      <tr><td>::slotted(sel)</td><td>Elementos Light DOM proyectados en slots</td><td><code>::slotted(span) { font-weight: 700; }</code></td></tr>
+      <tr><td>:host-context(sel)</td><td>El host cuando está dentro de un ancestro</td><td><code>:host-context(.dark) { color: #fff; }</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout yellow"><strong>CSS Custom Properties (variables) cruzan la barrera del Shadow DOM.</strong> Es la forma oficial de tematizar componentes desde fuera: el padre define <code>--primary: blue</code>, y el componente usa <code>var(--primary)</code> dentro de su Shadow DOM. Las variables CSS son tu API de estilos.</div>
+</div>
+
+<!-- ═══════ 4 · GESTIÓN DE ESTADO ═══════ -->
+<div id="view-state" class="mode-panel">
+  <div class="sec-title" data-n="1">El anti-patrón #1 — el DOM como base de datos</div>
+  <div class="callout orange" style="margin-top:0"><strong>Esto es lo que tienes en tu código legacy.</strong> El estado de la aplicación vive dentro del HTML: lees valores con <code>getElementById().value</code>, escribes con <code>innerHTML</code>, y el DOM es simultáneamente la vista Y los datos. Cuando algo cambia, no sabes si el DOM refleja el estado real o un estado anterior. Es la raíz de la mayoría de tus bugs.</div>
+
+  <div class="grid2">
+    <div class="job-box orange" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-o">✗ 2005</span><span class="job-name">DOM = estado</span></div>
+      <pre style="margin:0;border:none;padding:8px;background:transparent;font-size:10.5px">
+<span class="cm">// "¿Cuál es el estado actual?"</span>
+<span class="cm">// Respuesta: hay que LEER el DOM para saberlo</span>
+
+<span class="kw">var</span> nombre = <span class="an">document</span>.<span class="fn">getElementById</span>(<span class="st">"txtNombre"</span>).value;
+<span class="kw">var</span> activo = <span class="an">document</span>.<span class="fn">getElementById</span>(<span class="st">"chkActivo"</span>).checked;
+<span class="kw">var</span> filas  = <span class="an">document</span>.<span class="fn">getElementById</span>(<span class="st">"tabla"</span>)
+               .getElementsByTagName(<span class="st">"tr"</span>).length;
+
+<span class="cm">// ¿El usuario cambió el campo?</span>
+<span class="cm">// ¿El servidor actualizó la tabla?</span>
+<span class="cm">// ¿El innerHTML está sincronizado?</span>
+<span class="cm">// NO LO SABES. El DOM miente.</span>
+
+<span class="cm">// Para "guardar" estado: variable global</span>
+<span class="kw">var</span> contratos = [];   <span class="cm">// estado global</span>
+<span class="kw">var</span> filtro = <span class="st">""</span>;       <span class="cm">// otro estado global</span>
+<span class="kw">var</span> pagina = <span class="nu">0</span>;       <span class="cm">// otro más</span></pre>
+    </div>
+    <div class="job-box green" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-g">✓ 2026</span><span class="job-name">Datos = estado → DOM es consecuencia</span></div>
+      <pre style="margin:0;border:none;padding:8px;background:transparent;font-size:10.5px">
+<span class="cm">// Estado DENTRO del componente, privado</span>
+
+<span class="kw">class</span> <span class="cl">ContratoList</span> <span class="kw">extends</span> <span class="cl">HTMLElement</span> {
+  <span class="cm">// Estado = datos en memoria (source of truth)</span>
+  #contratos = [];
+  #filtro = <span class="st">''</span>;
+  #pagina = <span class="nu">0</span>;
+
+  <span class="cm">// El DOM se GENERA a partir del estado</span>
+  <span class="fn">render</span>() {
+    <span class="kw">const</span> filtrados = <span class="kw">this</span>.#contratos
+      .filter(c => c.codigo.includes(<span class="kw">this</span>.#filtro));
+
+    <span class="kw">this</span>.shadowRoot.querySelector(<span class="st">'.grid'</span>)
+      .innerHTML = filtrados.map(c =>
+        <span class="st">`&lt;contrato-card
+           codigo="${c.codigo}"&gt;
+         &lt;/contrato-card&gt;`</span>
+      ).join(<span class="st">''</span>);
+  }
+  <span class="cm">// Si quieres saber el estado: this.#contratos</span>
+  <span class="cm">// Single source of truth. Siempre.</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Los 3 niveles de estado</div>
+  <div class="steps-row">
+    <div class="step-box g"><div class="step-label g">Nivel 1 · Local</div><div class="step-name">Campos privados (#)</div><div class="step-desc">Estado que solo necesita un componente. Campos privados de clase: <code>#contratos</code>, <code>#loading</code>, <code>#error</code>. El componente es el dueño exclusivo.</div></div>
+    <div class="step-box b"><div class="step-label b">Nivel 2 · Padre↔Hijo</div><div class="step-name">Atributos ↓ Eventos ↑</div><div class="step-desc">Padre pasa datos al hijo vía atributos HTML: <code>&lt;card codigo="CLT-001"&gt;</code>. Hijo notifica al padre vía Custom Events: <code>dispatchEvent(new CustomEvent(...))</code>.</div></div>
+    <div class="step-box p"><div class="step-label p">Nivel 3 · Global</div><div class="step-name">Store compartido</div><div class="step-desc">Datos que necesitan 3+ componentes no relacionados (usuario logueado, tema, permisos). Un store centralizado con patrón pub/sub.</div></div>
+  </div>
+
+  <div class="sec-title" data-n="3">Store global vanilla — 25 líneas, sin dependencias</div>
+  <pre>
+<span class="cm">// js/store/app-store.js — esto reemplaza a Redux/Vuex/NgRx</span>
+
+<span class="kw">class</span> <span class="cl">AppStore</span> <span class="kw">extends</span> <span class="cl">EventTarget</span> {
+  #state = {};
+
+  <span class="fn">get</span>(key) {
+    <span class="kw">return</span> <span class="kw">this</span>.#state[key];
+  }
+
+  <span class="fn">set</span>(key, value) {
+    <span class="kw">const</span> old = <span class="kw">this</span>.#state[key];
+    <span class="kw">this</span>.#state[key] = value;
+    <span class="cm">// Notifica SOLO a quien escucha esta key</span>
+    <span class="kw">this</span>.dispatchEvent(<span class="kw">new</span> CustomEvent(<span class="st">'change'</span>, {
+      detail: { key, value, old }
+    }));
+  }
+
+  <span class="fn">subscribe</span>(key, callback) {
+    <span class="kw">const</span> handler = (e) => {
+      <span class="kw">if</span> (e.detail.key === key) callback(e.detail.value, e.detail.old);
+    };
+    <span class="kw">this</span>.addEventListener(<span class="st">'change'</span>, handler);
+    <span class="kw">return</span> () => <span class="kw">this</span>.removeEventListener(<span class="st">'change'</span>, handler); <span class="cm">// unsubscribe</span>
+  }
+}
+
+<span class="cm">// Singleton — una instancia para toda la app</span>
+<span class="kw">export const</span> store = <span class="kw">new</span> <span class="cl">AppStore</span>();
+  </pre>
+
+  <pre>
+<span class="cm">// Uso en un componente:</span>
+
+<span class="kw">import</span> { store } <span class="kw">from</span> <span class="st">'@store/app-store.js'</span>;
+
+<span class="kw">class</span> <span class="cl">UserBadge</span> <span class="kw">extends</span> <span class="cl">HTMLElement</span> {
+  #unsub;
+
+  <span class="fn">connectedCallback</span>() {
+    <span class="cm">// Suscribirse al usuario logueado</span>
+    <span class="kw">this</span>.#unsub = store.subscribe(<span class="st">'currentUser'</span>, (user) => {
+      <span class="kw">this</span>.shadowRoot.querySelector(<span class="st">'.name'</span>).textContent = user.nombre;
+    });
+
+    <span class="cm">// Render inicial con el valor actual</span>
+    <span class="kw">const</span> user = store.get(<span class="st">'currentUser'</span>);
+    <span class="kw">if</span> (user) <span class="kw">this</span>.shadowRoot.querySelector(<span class="st">'.name'</span>).textContent = user.nombre;
+  }
+
+  <span class="fn">disconnectedCallback</span>() {
+    <span class="kw">this</span>.#unsub();  <span class="cm">// Limpiar suscripción al desmontar</span>
+  }
+}
+
+<span class="cm">// Desde el login service:</span>
+store.set(<span class="st">'currentUser'</span>, { nombre: <span class="st">'Antonio'</span>, rol: <span class="st">'admin'</span> });
+<span class="cm">// → TODOS los componentes suscritos a 'currentUser' se actualizan</span>
+  </pre>
+
+  <div class="sec-title" data-n="4">Cuándo usar qué</div>
+  <table class="vtable">
+    <thead><tr><th>Mecanismo</th><th>Dirección</th><th>Tipo de dato</th><th>Cuándo usarlo</th></tr></thead>
+    <tbody>
+      <tr><td>Atributo HTML</td><td>Padre → hijo</td><td>Strings simples (<code>"CLT-001"</code>, <code>"Activo"</code>)</td><td>Datos primitivos que definen el componente. Visibles en el HTML.</td></tr>
+      <tr><td>Propiedad JS</td><td>Padre → hijo</td><td>Objetos, arrays, funciones</td><td>Datos complejos: <code>card.contrato = {id:1, lineas:[...]}</code>. No serializables.</td></tr>
+      <tr><td>Custom Event</td><td>Hijo → padre</td><td>Cualquiera (en <code>detail</code>)</td><td>Notificar acciones: "se hizo click en borrar", "el formulario es válido".</td></tr>
+      <tr><td>Store global</td><td>Cualquiera ↔ cualquiera</td><td>Cualquiera</td><td>Datos compartidos entre componentes lejanos: usuario, tema, permisos, carrito.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout green"><strong>Regla práctica:</strong> Empieza siempre con estado local (#campo). Solo sube a Custom Events cuando el padre necesita reaccionar. Solo usa store global cuando 3+ componentes no relacionados necesitan el mismo dato. Si todo tu estado acaba en el store, has creado un Redux casero — y ese no es el objetivo.</div>
+</div>
+
+<!-- ═══════ 5 · CONTRATO API ═══════ -->
+<div id="view-contract" class="mode-panel">
+  <div class="sec-title" data-n="1">El problema real — tu Servlet devuelve HTML</div>
+  <div class="callout orange" style="margin-top:0"><strong>Este es el acoplamiento que tienes que romper.</strong> Tu Servlet genera HTML con <code>response.getWriter().write("&lt;tr&gt;...")</code> y el frontend hace <code>innerHTML = respuesta</code>. El backend decide cómo se ve la página. No puedes cambiar el front sin tocar el back.</div>
+
+  <div class="grid2">
+    <div class="job-box orange" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-o">✗ Legacy</span><span class="job-name">Servlet devuelve HTML</span></div>
+      <pre style="margin:0;border:none;padding:8px;background:transparent;font-size:10.5px">
+<span class="cm">// ContratoServlet.java (2005)</span>
+PrintWriter out = response.getWriter();
+out.write(<span class="st">"&lt;table&gt;"</span>);
+<span class="kw">for</span> (Contrato c : contratos) {
+  out.write(<span class="st">"&lt;tr&gt;&lt;td&gt;"</span> + c.getCodigo()
+    + <span class="st">"&lt;/td&gt;&lt;td&gt;"</span> + c.getEstado()
+    + <span class="st">"&lt;/td&gt;&lt;/tr&gt;"</span>);
+}
+out.write(<span class="st">"&lt;/table&gt;"</span>);
+
+<span class="cm">// Frontend (2005)</span>
+xhr.onreadystatechange = <span class="kw">function</span>() {
+  <span class="an">document</span>.<span class="fn">getElementById</span>(<span class="st">"resultado"</span>)
+    .innerHTML = xhr.responseText;
+  <span class="cm">// HTML crudo del servidor → 0 control</span>
+}</pre>
+    </div>
+    <div class="job-box green" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-g">✓ Migrado</span><span class="job-name">Servlet devuelve JSON</span></div>
+      <pre style="margin:0;border:none;padding:8px;background:transparent;font-size:10.5px">
+<span class="cm">// ContratoServlet.java (migrado)</span>
+response.setContentType(<span class="st">"application/json"</span>);
+String json = <span class="kw">new</span> Gson().toJson(contratos);
+response.getWriter().write(json);
+
+<span class="cm">// Frontend (2026)</span>
+<span class="kw">const</span> contratos = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">'/api/contratos'</span>)
+  .then(r => r.json());
+
+<span class="cm">// El frontend DECIDE cómo renderizar</span>
+<span class="cm">// Web Component, tabla, cards, gráfico...</span>
+<span class="cm">// Cambia la UI sin tocar el backend</span></pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">El servicio JS como frontera</div>
+  <div class="callout blue" style="margin-top:0"><strong>El servicio JS es la capa que traduce entre tu API REST y tus componentes.</strong> Aquí se hace el fetch, se valida la respuesta, y se transforma si hace falta. Los componentes NUNCA llaman a fetch directamente — siempre a través del servicio.</div>
+
+  <pre>
+<span class="cm">// js/services/contrato-service.js</span>
+
+<span class="kw">const</span> BASE = <span class="st">'/api/v1/contratos'</span>;
+
+<span class="kw">async function</span> <span class="fn">handleResponse</span>(res) {
+  <span class="kw">if</span> (!res.ok) {
+    <span class="kw">const</span> error = <span class="kw">await</span> res.json().catch(() => ({ message: res.statusText }));
+    <span class="kw">throw new</span> Error(error.message || <span class="st">`HTTP ${res.status}`</span>);
+  }
+  <span class="kw">return</span> res.json();
+}
+
+<span class="cm">// Validar que el JSON tiene la estructura esperada</span>
+<span class="kw">function</span> <span class="fn">validateContrato</span>(data) {
+  <span class="kw">if</span> (!data.codigo || <span class="kw">typeof</span> data.codigo !== <span class="st">'string'</span>) {
+    <span class="kw">throw new</span> Error(<span class="st">`Contrato inválido: falta 'codigo'`</span>);
+  }
+  <span class="kw">if</span> (!data.estado) {
+    <span class="kw">throw new</span> Error(<span class="st">`Contrato inválido: falta 'estado'`</span>);
+  }
+  <span class="kw">return</span> data;
+}
+
+<span class="kw">export async function</span> <span class="fn">findAll</span>() {
+  <span class="kw">const</span> data = <span class="kw">await</span> handleResponse(<span class="kw">await</span> fetch(BASE));
+  <span class="kw">return</span> data.map(validateContrato); <span class="cm">// Valida CADA contrato</span>
+}
+
+<span class="kw">export async function</span> <span class="fn">findById</span>(id) {
+  <span class="kw">return</span> validateContrato(
+    <span class="kw">await</span> handleResponse(<span class="kw">await</span> fetch(<span class="st">`${BASE}/${id}`</span>))
+  );
+}
+
+<span class="kw">export async function</span> <span class="fn">create</span>(dto) {
+  <span class="kw">return</span> validateContrato(
+    <span class="kw">await</span> handleResponse(<span class="kw">await</span> fetch(BASE, {
+      method: <span class="st">'POST'</span>,
+      headers: { <span class="st">'Content-Type'</span>: <span class="st">'application/json'</span> },
+      body: JSON.stringify(dto)
+    }))
+  );
+}
+  </pre>
+
+  <div class="sec-title" data-n="3">Versionado pragmático</div>
+  <div class="callout green"><strong>Regla: <code>/api/v1/</code> desde el primer JSON endpoint.</strong> Cuando necesites romper la estructura (renombrar un campo, cambiar un tipo), creas <code>/api/v2/</code>. El frontend viejo sigue usando v1 mientras migras. Nunca rompes lo que ya funciona.</div>
+
+  <table class="vtable">
+    <thead><tr><th>Escenario</th><th>Qué hacer</th><th>Rompe clientes?</th></tr></thead>
+    <tbody>
+      <tr><td>Añadir campo nuevo</td><td>Añadir al JSON existente en /v1</td><td>❌ No — los clientes ignoran campos desconocidos</td></tr>
+      <tr><td>Renombrar campo</td><td>Crear /v2 con nuevo nombre. Mantener /v1.</td><td>⚠️ Sí si quitas el viejo. Mantén ambos.</td></tr>
+      <tr><td>Cambiar tipo (string→object)</td><td>Crear /v2. No tocar /v1.</td><td>✅ Sí — necesitas versión nueva</td></tr>
+      <tr><td>Eliminar endpoint</td><td>Deprecar con header, quitar en 3 meses</td><td>✅ Sí — avisar con antelación</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title" data-n="4">Migración progresiva: endpoint por endpoint</div>
+  <pre>
+<span class="cm">// Estrategia: cada Servlet se migra en 3 pasos</span>
+
+<span class="cm">// PASO 1: El Servlet ya tiene la lógica. Añade un IF:</span>
+<span class="kw">if</span> (request.getHeader(<span class="st">"Accept"</span>).contains(<span class="st">"application/json"</span>)) {
+    <span class="cm">// NUEVO: responder JSON</span>
+    response.setContentType(<span class="st">"application/json"</span>);
+    response.getWriter().write(<span class="kw">new</span> Gson().toJson(contratos));
+} <span class="kw">else</span> {
+    <span class="cm">// LEGACY: seguir devolviendo HTML</span>
+    response.setContentType(<span class="st">"text/html"</span>);
+    out.write(<span class="st">"&lt;table&gt;..."</span>);
+}
+
+<span class="cm">// PASO 2: El Web Component llama con Accept: application/json</span>
+<span class="cm">//         El JSP viejo sigue funcionando sin cambios</span>
+
+<span class="cm">// PASO 3: Cuando la pantalla migrada funciona, eliminas el else (HTML)</span>
+  </pre>
+
+  <div class="callout yellow"><strong>Esto es clave para tu migración FMI:</strong> No necesitas reescribir el Servlet entero. Añades un <code>if (Accept: JSON)</code> y ya tienes un endpoint REST conviviendo con el endpoint HTML legacy. El JSP viejo y el Web Component nuevo llaman al mismo Servlet — cada uno recibe el formato que entiende.</div>
+</div>
+
+<!-- ═══════ 6 · SHELL-LITE vs APP SHELL ═══════ -->
+<div id="view-shells" class="mode-panel">
+  <div class="sec-title" data-n="1">No son lo mismo — Shell-lite vs App Shell</div>
+  <div class="callout blue" style="margin-top:0"><strong>Son dos niveles de la misma idea arquitectónica.</strong> El concepto base es el mismo: separar el "esqueleto fijo" (header, nav, layout) del "contenido dinámico" (lo que cambia según la ruta). La diferencia es cuánta infraestructura pones encima.</div>
+
+  <div class="grid2">
+    <div class="job-box green" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-g">Shell-lite</span><span class="job-name">El esqueleto mínimo</span></div>
+      <div class="job-desc" style="margin-bottom:12px"><strong>Un index.html con layout fijo + un outlet dinámico + un router JS.</strong> Sin Service Worker, sin manifest, sin offline, sin PWA. Es la arquitectura de una SPA clásica: el servidor devuelve un solo HTML y JavaScript cambia el contenido según la URL.</div>
+      <div style="font-size:11px;line-height:1.7;color:var(--ink2)">
+        ✅ Un solo <code>index.html</code> con estructura fija<br>
+        ✅ Router JS que cambia el <code>&lt;main&gt;</code><br>
+        ✅ Web Components como páginas<br>
+        ✅ <code>&lt;script type="module"&gt;</code><br>
+        ❌ No hay Service Worker<br>
+        ❌ No hay manifest.json<br>
+        ❌ No funciona offline<br>
+        ❌ No es instalable
+      </div>
+    </div>
+    <div class="job-box purple" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-p">App Shell (completo)</span><span class="job-name">Shell-lite + PWA</span></div>
+      <div class="job-desc" style="margin-bottom:12px"><strong>Todo lo anterior MÁS Service Worker que cachea el shell + manifest que permite instalar.</strong> La app abre instantáneamente (shell del cache), funciona offline (al menos el esqueleto), y se puede "instalar" como app nativa en móvil/escritorio.</div>
+      <div style="font-size:11px;line-height:1.7;color:var(--ink2)">
+        ✅ Todo lo de Shell-lite, más:<br>
+        ✅ Service Worker cachea el shell<br>
+        ✅ manifest.json (icono, nombre, color)<br>
+        ✅ Funciona offline (shell cacheado)<br>
+        ✅ Instalable como "app" nativa<br>
+        ✅ Push notifications (opcional)<br>
+        ✅ Requiere HTTPS<br>
+        ✅ Estrategia cache-first / network-first
+      </div>
+    </div>
+  </div>
+
+  <div class="callout yellow" style="margin-top:24px"><strong>Para tu migración FMI:</strong> Empiezas con <strong>Shell-lite</strong> (fase 3 del FMI). Cuando el shell funcione y los componentes estén migrados, añades el Service Worker + manifest para convertirlo en <strong>App Shell completo / PWA</strong> (fase 4). Son capas incrementales, no alternativas.</div>
+
+  <div class="sec-title" data-n="2">Shell-lite — tu primer paso</div>
+  <pre>
+<span class="cm">&lt;!-- index.html — SHELL-LITE: estructura fija + outlet --&gt;</span>
+<span class="cm">&lt;!-- No hay manifest, no hay Service Worker. Solo estructura. --&gt;</span>
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang=<span class="st">"es"</span>&gt;
+&lt;head&gt;
+  &lt;meta charset=<span class="st">"UTF-8"</span>&gt;
+  &lt;meta name=<span class="st">"viewport"</span> content=<span class="st">"width=device-width,initial-scale=1"</span>&gt;
+  &lt;title&gt;WebDTE&lt;/title&gt;
+
+  <span class="cm">&lt;!-- Import Map: resuelve imports sin bundler ni Webpack --&gt;</span>
+  &lt;script type=<span class="st">"importmap"</span>&gt;{
+    <span class="st">"imports"</span>: {
+      <span class="st">"@components/"</span>: <span class="st">"./js/components/"</span>,
+      <span class="st">"@services/"</span>:   <span class="st">"./js/services/"</span>,
+      <span class="st">"@utils/"</span>:      <span class="st">"./js/utils/"</span>
+    }
+  }&lt;/script&gt;
+
+  &lt;link rel=<span class="st">"stylesheet"</span> href=<span class="st">"css/shell.css"</span>&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  <span class="cm">&lt;!-- ═══ SHELL FIJO: esto NUNCA cambia entre páginas ═══ --&gt;</span>
+  &lt;<span class="an">app-header</span>&gt;&lt;/<span class="an">app-header</span>&gt;
+
+  &lt;div class=<span class="st">"layout"</span>&gt;
+    &lt;<span class="an">app-sidebar</span>&gt;&lt;/<span class="an">app-sidebar</span>&gt;
+
+    <span class="cm">&lt;!-- ═══ OUTLET: esto SÍ cambia según la ruta ═══ --&gt;</span>
+    &lt;main id=<span class="st">"outlet"</span>&gt;
+      <span class="cm">&lt;!-- /              → &lt;home-page&gt;       --&gt;</span>
+      <span class="cm">&lt;!-- /contratos     → &lt;contrato-list&gt;   --&gt;</span>
+      <span class="cm">&lt;!-- /contratos/42  → &lt;contrato-detail&gt; --&gt;</span>
+      <span class="cm">&lt;!-- /nuevo         → &lt;contrato-form&gt;   --&gt;</span>
+    &lt;/main&gt;
+  &lt;/div&gt;
+
+  &lt;<span class="an">app-footer</span>&gt;&lt;/<span class="an">app-footer</span>&gt;
+
+  <span class="cm">&lt;!-- Entry point: solo el router, nada más --&gt;</span>
+  &lt;script type=<span class="st">"module"</span> src=<span class="st">"js/app.js"</span>&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+  </pre>
+
+  <div class="callout green"><strong>¿Ves la diferencia con tu HTML de 2005?</strong> En 2005 cada "página" era un HTML/JSP completo que el servidor generaba entero. Aquí hay <strong>un solo HTML</strong> que actúa de contenedor. El router JS carga el componente correspondiente y lo mete en el <code>&lt;main&gt;</code>. El header, sidebar y footer <strong>nunca se recargan</strong>.</div>
+
+  <div class="sec-title" data-n="3">Router vanilla — 30 líneas, sin dependencias</div>
+  <pre>
+<span class="cm">// js/router.js — esto es todo lo que necesitas</span>
+
+<span class="kw">const</span> routes = {
+  <span class="st">'/'</span>:              () => <span class="kw">import</span>(<span class="st">'@components/home-page.js'</span>),
+  <span class="st">'/contratos'</span>:    () => <span class="kw">import</span>(<span class="st">'@components/contrato-list.js'</span>),
+  <span class="st">'/contratos/:id'</span>: () => <span class="kw">import</span>(<span class="st">'@components/contrato-detail.js'</span>),
+  <span class="st">'/nuevo'</span>:         () => <span class="kw">import</span>(<span class="st">'@components/contrato-form.js'</span>),
+};
+
+<span class="kw">export async function</span> <span class="fn">navigate</span>(path) {
+  <span class="kw">const</span> outlet = document.getElementById(<span class="st">'outlet'</span>);
+
+  <span class="kw">for</span> (<span class="kw">const</span> [pattern, loader] <span class="kw">of</span> Object.entries(routes)) {
+    <span class="kw">const</span> match = matchRoute(pattern, path);
+    <span class="kw">if</span> (match) {
+      <span class="kw">await</span> loader();  <span class="cm">// Lazy load: descarga el .js solo cuando se necesita</span>
+      <span class="kw">const</span> tag = routeToTag(pattern);
+      outlet.innerHTML = <span class="st">`&lt;${tag}&gt;&lt;/${tag}&gt;`</span>;
+      <span class="kw">if</span> (match.params) {
+        <span class="kw">const</span> el = outlet.firstElementChild;
+        Object.entries(match.params).forEach(([k,v]) => el.setAttribute(k,v));
+      }
+      <span class="kw">return</span>;
+    }
+  }
+  outlet.innerHTML = <span class="st">'&lt;not-found&gt;&lt;/not-found&gt;'</span>;
+}
+
+<span class="cm">// Interceptar clicks en &lt;a href="/..."&gt; sin recargar página</span>
+document.addEventListener(<span class="st">'click'</span>, e => {
+  <span class="kw">const</span> a = e.target.closest(<span class="st">'a[href^="/"]'</span>);
+  <span class="kw">if</span> (a) {
+    e.preventDefault();
+    history.pushState({}, <span class="st">''</span>, a.href);
+    navigate(a.pathname);
+  }
+});
+window.addEventListener(<span class="st">'popstate'</span>, () => navigate(location.pathname));
+  </pre>
+
+  <div class="callout blue"><strong>import() dinámico = lazy loading nativo.</strong> Cuando el usuario va a <code>/contratos</code>, solo entonces se descarga <code>contrato-list.js</code>. Las otras páginas no se cargan hasta que se necesitan. Esto es lo que Webpack hacía con "code splitting" — pero aquí es nativo del navegador, sin build step.</div>
+
+  <div class="sec-title" data-n="4">De Shell-lite a App Shell — añadir la capa PWA</div>
+  <div class="callout purple"><strong>Cuando tu Shell-lite funcione bien</strong>, convertirlo en App Shell completo es añadir 2 ficheros (manifest.json + sw.js) y 3 líneas en app.js para registrar el Service Worker. Todo lo demás (estructura, router, componentes) no cambia nada. Lo ves en la pestaña 📱 PWA.</div>
+
+  <div class="lifecycle-flow">
+    <div class="lf-step" style="flex:3"><div class="lf-num">Ya lo tienes</div><div class="lf-icon">🏠</div><div class="lf-name" style="color:var(--accent2)">Shell-lite</div><div class="lf-desc">index.html + router<br>+ Web Components<br>SPA funcionando</div></div>
+    <div class="lf-step" style="flex:1"><div class="lf-num">+ manifest</div><div class="lf-icon">📄</div><div class="lf-name" style="color:var(--yellow)">manifest.json</div><div class="lf-desc">Nombre, icono<br>colores, display</div></div>
+    <div class="lf-step" style="flex:1"><div class="lf-num">+ sw.js</div><div class="lf-icon">⚙️</div><div class="lf-name" style="color:var(--purple)">Service Worker</div><div class="lf-desc">Cache shell<br>offline mode</div></div>
+    <div class="lf-step" style="flex:2"><div class="lf-num">= App Shell completo</div><div class="lf-icon">📱</div><div class="lf-name" style="color:var(--purple)">PWA</div><div class="lf-desc">Instalable, offline<br>push notifications</div></div>
+  </div>
+</div>
+
+<!-- ═══════ 5 · PWA ═══════ -->
+<div id="view-pwa" class="mode-panel">
+  <div class="sec-title" data-n="1">PWA — convierte tu SPA en "app instalable"</div>
+  <div class="callout purple" style="margin-top:0"><strong>PWA = SPA + Service Worker + Manifest.</strong> Tu web se puede instalar como app en móvil y escritorio. Funciona offline (el shell cacheado). Recibe push notifications. Sin Play Store ni App Store.</div>
+
+  <div class="steps-row">
+    <div class="step-box p"><div class="step-label p">Pieza 1</div><div class="step-name">manifest.json</div><div class="step-desc">Metadatos de la app: nombre, icono, color, orientación. Lo que ve el sistema operativo al "instalar".</div></div>
+    <div class="step-box p"><div class="step-label p">Pieza 2</div><div class="step-name">Service Worker</div><div class="step-desc">Script que intercepta peticiones HTTP. Cachea el shell, sirve offline, gestiona actualizaciones.</div></div>
+    <div class="step-box p"><div class="step-label p">Pieza 3</div><div class="step-name">HTTPS</div><div class="step-desc">Obligatorio. Los Service Workers solo funcionan en HTTPS (o localhost para desarrollo).</div></div>
+  </div>
+
+  <pre>
+<span class="cm">// manifest.json</span>
+{
+  <span class="st">"name"</span>: <span class="st">"WebDTE — Gestión de Contratos"</span>,
+  <span class="st">"short_name"</span>: <span class="st">"WebDTE"</span>,
+  <span class="st">"start_url"</span>: <span class="st">"/"</span>,
+  <span class="st">"display"</span>: <span class="st">"standalone"</span>,        <span class="cm">← Sin barra del navegador</span>
+  <span class="st">"background_color"</span>: <span class="st">"#f5f0e8"</span>,
+  <span class="st">"theme_color"</span>: <span class="st">"#1a4a8a"</span>,
+  <span class="st">"icons"</span>: [
+    { <span class="st">"src"</span>: <span class="st">"icon-192.png"</span>, <span class="st">"sizes"</span>: <span class="st">"192x192"</span> },
+    { <span class="st">"src"</span>: <span class="st">"icon-512.png"</span>, <span class="st">"sizes"</span>: <span class="st">"512x512"</span> }
+  ]
+}
+  </pre>
+
+  <pre>
+<span class="cm">// sw.js — Service Worker: cachear el App Shell</span>
+
+<span class="kw">const</span> CACHE = <span class="st">'webdte-shell-v1'</span>;
+<span class="kw">const</span> SHELL_FILES = [
+  <span class="st">'/'</span>, <span class="st">'/css/shell.css'</span>, <span class="st">'/js/app.js'</span>, <span class="st">'/js/router.js'</span>,
+  <span class="st">'/js/components/app-header.js'</span>, <span class="st">'/js/components/app-sidebar.js'</span>,
+  <span class="st">'/manifest.json'</span>, <span class="st">'/icon-192.png'</span>
+];
+
+<span class="cm">// Install: cachear el shell</span>
+self.addEventListener(<span class="st">'install'</span>, e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(SHELL_FILES))
+  );
+});
+
+<span class="cm">// Fetch: shell del cache, datos de la red</span>
+self.addEventListener(<span class="st">'fetch'</span>, e => {
+  <span class="kw">if</span> (e.request.url.includes(<span class="st">'/api/'</span>)) {
+    <span class="cm">// Datos del API: siempre red (network-first)</span>
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+  } <span class="kw">else</span> {
+    <span class="cm">// Shell: primero cache, luego red (cache-first)</span>
+    e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+  }
+});
+  </pre>
+
+  <pre>
+<span class="cm">// js/app.js — registrar el Service Worker</span>
+
+<span class="kw">if</span> (<span class="st">'serviceWorker'</span> <span class="kw">in</span> navigator) {
+  navigator.serviceWorker.register(<span class="st">'/sw.js'</span>)
+    .then(reg => console.log(<span class="st">'SW registrado, scope:'</span>, reg.scope))
+    .catch(err => console.error(<span class="st">'SW error:'</span>, err));
+}
+
+<span class="cm">// Arrancar el router</span>
+<span class="kw">import</span> { navigate } <span class="kw">from</span> <span class="st">'@utils/router.js'</span>;
+navigate(location.pathname);
+  </pre>
+</div>
+
+<!-- ═══════ 8 · PERFORMANCE ═══════ -->
+<div id="view-perf" class="mode-panel">
+  <div class="sec-title" data-n="1">El error más caro — re-render completo</div>
+  <div class="callout orange" style="margin-top:0"><strong>Anti-patrón:</strong> Cada vez que cambia un dato, haces <code>this.shadowRoot.innerHTML = `...todo...`</code>. Esto destruye y recrea TODO el árbol DOM del componente. Pierdes foco del input, scroll, estado de animaciones, y es lento con listas grandes.</div>
+
+  <div class="grid2">
+    <div class="job-box orange" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-o">✗ Caro</span><span class="job-name">Re-render total</span></div>
+      <pre style="margin:0;border:none;padding:8px;background:transparent;font-size:10.5px">
+<span class="cm">// Cada cambio → destruir y recrear TODO</span>
+<span class="fn">render</span>() {
+  <span class="kw">this</span>.shadowRoot.innerHTML = <span class="st">`
+    &lt;input value="${this.#nombre}"&gt;
+    &lt;span&gt;${this.#estado}&lt;/span&gt;
+    &lt;ul&gt;${this.#items.map(i =>
+      `&lt;li&gt;${i}&lt;/li&gt;`).join('')}&lt;/ul&gt;
+  `</span>;
+  <span class="cm">// ❌ Input pierde el foco</span>
+  <span class="cm">// ❌ 500 &lt;li&gt; se destruyen y recrean</span>
+  <span class="cm">// ❌ Scroll de la lista vuelve arriba</span>
+}</pre>
+    </div>
+    <div class="job-box green" style="margin-bottom:0">
+      <div class="job-header"><span class="tag tag-g">✓ Quirúrgico</span><span class="job-name">Actualizar solo lo que cambia</span></div>
+      <pre style="margin:0;border:none;padding:8px;background:transparent;font-size:10.5px">
+<span class="cm">// Actualizar SOLO el nodo afectado</span>
+<span class="fn">updateEstado</span>(nuevoEstado) {
+  <span class="kw">this</span>.#estado = nuevoEstado;
+  <span class="kw">this</span>.shadowRoot
+    .querySelector(<span class="st">'.estado'</span>)
+    .textContent = nuevoEstado;
+  <span class="cm">// ✅ Input mantiene foco</span>
+  <span class="cm">// ✅ Lista intacta</span>
+  <span class="cm">// ✅ Solo 1 nodo tocado</span>
+}
+
+<span class="fn">addItem</span>(item) {
+  <span class="kw">this</span>.#items.push(item);
+  <span class="kw">const</span> li = document.createElement(<span class="st">'li'</span>);
+  li.textContent = item;
+  <span class="kw">this</span>.shadowRoot.querySelector(<span class="st">'ul'</span>)
+    .appendChild(li); <span class="cm">// Añadir, no recrear</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">Lazy loading — solo carga lo que se ve</div>
+  <div class="callout blue" style="margin-top:0"><strong>El router ya hace lazy loading de páginas con <code>import()</code> dinámico.</strong> Pero hay otra capa: componentes que están "below the fold" (debajo del scroll) no deberían renderizarse hasta que sean visibles.</div>
+
+  <pre>
+<span class="cm">// Componente que no renderiza hasta que es visible</span>
+
+<span class="kw">class</span> <span class="cl">LazySection</span> <span class="kw">extends</span> <span class="cl">HTMLElement</span> {
+  #rendered = <span class="kw">false</span>;
+  #observer;
+
+  <span class="fn">connectedCallback</span>() {
+    <span class="kw">this</span>.attachShadow({ mode: <span class="st">'open'</span> });
+    <span class="kw">this</span>.shadowRoot.innerHTML = <span class="st">'&lt;div class="placeholder"&gt;Cargando...&lt;/div&gt;'</span>;
+
+    <span class="cm">// Observar cuando el componente entra en el viewport</span>
+    <span class="kw">this</span>.#observer = <span class="kw">new</span> <span class="cl">IntersectionObserver</span>((entries) => {
+      <span class="kw">if</span> (entries[<span class="nu">0</span>].isIntersecting && !<span class="kw">this</span>.#rendered) {
+        <span class="kw">this</span>.#rendered = <span class="kw">true</span>;
+        <span class="kw">this</span>.#observer.disconnect();
+        <span class="kw">this</span>.<span class="fn">loadContent</span>();  <span class="cm">// Ahora sí: fetch + render</span>
+      }
+    }, { rootMargin: <span class="st">'200px'</span> }); <span class="cm">// 200px antes de llegar → precarga suave</span>
+
+    <span class="kw">this</span>.#observer.observe(<span class="kw">this</span>);
+  }
+
+  <span class="kw">async</span> <span class="fn">loadContent</span>() {
+    <span class="kw">const</span> data = <span class="kw">await</span> fetch(<span class="st">'/api/estadisticas'</span>).then(r => r.json());
+    <span class="kw">this</span>.shadowRoot.innerHTML = <span class="st">`&lt;div class="stats"&gt;...${data}...&lt;/div&gt;`</span>;
+  }
+
+  <span class="fn">disconnectedCallback</span>() { <span class="kw">this</span>.#observer?.disconnect(); }
+}
+  </pre>
+
+  <div class="sec-title" data-n="3">Core Web Vitals — las métricas que importan</div>
+  <table class="vtable">
+    <thead><tr><th>Métrica</th><th>Qué mide</th><th>Bueno</th><th>Cómo mejorarlo</th></tr></thead>
+    <tbody>
+      <tr><td>LCP</td><td>Tiempo hasta que el contenido principal es visible</td><td>< 2.5s</td><td>Shell-lite con CSS inline, lazy load de imágenes, preload de fuentes</td></tr>
+      <tr><td>CLS</td><td>Saltos visuales durante la carga</td><td>< 0.1</td><td>Dimensiones fijas en imágenes, placeholders, no inyectar contenido arriba</td></tr>
+      <tr><td>INP</td><td>Tiempo de respuesta a interacciones</td><td>< 200ms</td><td>Evitar re-render completo, usar requestIdleCallback para tareas pesadas</td></tr>
+      <tr><td>TTFB</td><td>Tiempo hasta el primer byte del servidor</td><td>< 800ms</td><td>Cache del servidor, CDN, gzip, HTTP/2</td></tr>
+    </tbody>
+  </table>
+
+  <pre>
+<span class="cm">// Medir Web Vitals sin dependencias externas</span>
+
+<span class="kw">new</span> <span class="cl">PerformanceObserver</span>((list) => {
+  <span class="kw">for</span> (<span class="kw">const</span> entry <span class="kw">of</span> list.getEntries()) {
+    console.log(<span class="st">`${entry.name}: ${entry.startTime.toFixed(0)}ms`</span>);
+    <span class="cm">// En producción: enviar a tu endpoint de métricas</span>
+    <span class="cm">// fetch('/api/metrics', { body: JSON.stringify(entry) })</span>
+  }
+}).observe({ type: <span class="st">'largest-contentful-paint'</span>, buffered: <span class="kw">true</span> });
+
+<span class="cm">// requestIdleCallback: tareas pesadas sin bloquear la UI</span>
+requestIdleCallback(() => {
+  <span class="cm">// Precargar componentes de rutas probables</span>
+  <span class="kw">import</span>(<span class="st">'@components/contrato-list.js'</span>);
+  <span class="kw">import</span>(<span class="st">'@components/contrato-form.js'</span>);
+}, { timeout: <span class="nu">5000</span> });
+  </pre>
+</div>
+
+<!-- ═══════ 9 · STRANGLER FIG ═══════ -->
+<div id="view-strangler" class="mode-panel">
+  <div class="sec-title" data-n="1">Strangler Fig — la estrategia de migración real</div>
+  <div class="callout green" style="margin-top:0"><strong>La higuera estranguladora</strong> crece alrededor del árbol viejo, lo envuelve poco a poco, y cuando el árbol viejo muere, la higuera ya tiene su propia estructura. Aplicado a frontend: cada pantalla JSP se reemplaza por un Web Component, conviviendo en la misma app, hasta que el JSP desaparece.</div>
+
+  <div class="lifecycle-flow">
+    <div class="lf-step"><div class="lf-num">Fase 0</div><div class="lf-icon">📸</div><div class="lf-name" style="color:var(--accent)">Cartografía</div><div class="lf-desc">Mapear pantallas<br>endpoints, deps</div></div>
+    <div class="lf-step"><div class="lf-num">Fase 1</div><div class="lf-icon">🧩</div><div class="lf-name" style="color:var(--yellow)">Hojas primero</div><div class="lf-desc">Botones, badges<br>inputs → WC</div></div>
+    <div class="lf-step"><div class="lf-num">Fase 2</div><div class="lf-icon">📦</div><div class="lf-name" style="color:var(--accent3)">Pantallas</div><div class="lf-desc">Páginas completas<br>List, Form, Detail</div></div>
+    <div class="lf-step"><div class="lf-num">Fase 3</div><div class="lf-icon">🏠</div><div class="lf-name" style="color:var(--accent2)">Shell-lite</div><div class="lf-desc">Router + layout<br>index.html único</div></div>
+    <div class="lf-step"><div class="lf-num">Fase 4</div><div class="lf-icon">📱</div><div class="lf-name" style="color:var(--purple)">PWA</div><div class="lf-desc">SW + manifest<br>offline, instalable</div></div>
+  </div>
+
+  <div class="sec-title" data-n="2">Priorización — por dónde empezar</div>
+  <div class="callout blue" style="margin-top:0"><strong>Matriz Frecuencia × Complejidad.</strong> Empieza por pantallas de alta frecuencia y baja complejidad (quick wins). Deja para el final las pantallas complejas que se usan poco.</div>
+
+  <table class="vtable">
+    <thead><tr><th>Pantalla</th><th>Frecuencia</th><th>Complejidad</th><th>Orden</th></tr></thead>
+    <tbody>
+      <tr><td>Lista contratos</td><td>🔥 Diaria</td><td>🟢 Baja (solo GET + tabla)</td><td><strong style="color:var(--accent2)">① Primero</strong> — quick win, read-only</td></tr>
+      <tr><td>Detalle contrato</td><td>🔥 Diaria</td><td>🟢 Baja (GET + card)</td><td><strong style="color:var(--accent2)">② Segundo</strong> — navegación desde la lista</td></tr>
+      <tr><td>Login</td><td>🔥 Diaria</td><td>🟡 Media (auth, session)</td><td><strong style="color:var(--accent3)">③ Tercero</strong> — autenticación necesaria para todo</td></tr>
+      <tr><td>Formulario alta</td><td>🔶 Semanal</td><td>🟡 Media (validaciones, POST)</td><td><strong style="color:var(--accent3)">④ Cuarto</strong> — primer formulario de escritura</td></tr>
+      <tr><td>Firma digital</td><td>🔶 Semanal</td><td>🔴 Alta (cripto, flujos)</td><td><strong style="color:var(--accent)">⑤ Último</strong> — máxima complejidad</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title" data-n="3">Las 3 fases de convivencia JSP ↔ Web Component</div>
+
+  <div class="steps-row">
+    <div class="step-box o"><div class="step-label o">Fase A</div><div class="step-name">WC dentro del JSP</div><div class="step-desc">El JSP sigue existiendo. Le añades un <code>&lt;script type="module"&gt;</code> que registra el Web Component. El JSP y el WC conviven en la misma página. jQuery sigue funcionando.</div></div>
+    <div class="step-box b"><div class="step-label b">Fase B</div><div class="step-name">JSP desaparece</div><div class="step-desc">La pantalla se mueve al Shell-lite (index.html + router). El Servlet ahora devuelve JSON (con el truco del <code>Accept header</code>). El JSP se puede borrar.</div></div>
+    <div class="step-box g"><div class="step-label g">Fase C</div><div class="step-name">Solo JSON</div><div class="step-desc">El Servlet solo devuelve JSON. Se elimina el código HTML del Servlet. Frontend y backend están desacoplados. La migración de esta pantalla está completa.</div></div>
+  </div>
+
+  <div class="sec-title" data-n="4">Fase A en detalle — inyectar WC en JSP existente</div>
+  <pre>
+<span class="cm">&lt;!-- Tu JSP actual (2005) — no tocas NADA del legacy --&gt;</span>
+<span class="cm">&lt;!-- Solo AÑADES las 2 líneas de script module --&gt;</span>
+
+&lt;html&gt;
+&lt;head&gt;
+  &lt;script src=<span class="st">"jquery.min.js"</span>&gt;&lt;/script&gt;
+  &lt;script src=<span class="st">"app-legacy.js"</span>&gt;&lt;/script&gt;
+
+  <span class="cm">&lt;!-- ══ NUEVO: importar Web Components ══ --&gt;</span>
+  &lt;script type=<span class="st">"module"</span> src=<span class="st">"components/contrato-card.js"</span>&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Gestión de Contratos&lt;/h1&gt;
+
+  <span class="cm">&lt;!-- LEGACY: la tabla vieja sigue aquí --&gt;</span>
+  &lt;table id=<span class="st">"tablaVieja"</span>&gt;...&lt;/table&gt;
+
+  <span class="cm">&lt;!-- NUEVO: Web Component al lado del legacy --&gt;</span>
+  &lt;<span class="an">contrato-card</span>
+    codigo=<span class="st">"CLT-001"</span>
+    estado=<span class="st">"Activo"</span>
+    titular=<span class="st">"Ana García"</span>&gt;
+  &lt;/<span class="an">contrato-card</span>&gt;
+
+  <span class="cm">&lt;!-- jQuery puede interactuar con el WC --&gt;</span>
+  &lt;script&gt;
+    $(<span class="st">'contrato-card'</span>).attr(<span class="st">'estado'</span>, <span class="st">'Cerrado'</span>); <span class="cm">// ¡Funciona!</span>
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+  </pre>
+
+  <div class="callout yellow"><strong>¿Por qué funciona?</strong> Los Web Components son elementos HTML estándar. El navegador los trata como un <code>&lt;div&gt;</code> o un <code>&lt;input&gt;</code>. jQuery los ve como cualquier otro nodo DOM: <code>$(el).attr()</code>, <code>$(el).on()</code>, <code>$(el).find()</code> — todo funciona. No hay conflicto. Por eso puedes migrar componente a componente sin romper nada.</div>
+
+  <div class="sec-title" data-n="5">Métricas de progreso — sabes que avanzas</div>
+  <div class="callout green"><strong>Mide esto cada semana.</strong> Son métricas objetivas que puedes poner en tu TFM y en cualquier informe de progreso.</div>
+
+  <pre>
+<span class="cm"># Métricas de progreso de la migración</span>
+<span class="cm"># Ejecutar en la raíz del proyecto cada viernes</span>
+
+<span class="cm"># 1. ¿Cuántos getElementById quedan? (deben bajar a 0)</span>
+<span class="kw">grep</span> -r <span class="st">"getElementById"</span> src/main/webapp/js/ | wc -l
+<span class="cm"># Semana 1: 142 → Semana 8: 23 → Semana 12: 0 ✅</span>
+
+<span class="cm"># 2. ¿Cuántos $.ajax quedan? (deben migrar a fetch)</span>
+<span class="kw">grep</span> -r <span class="st">"\\$.ajax\|\\$.get\|\\$.post"</span> src/ | wc -l
+
+<span class="cm"># 3. ¿Cuántos JSP quedan?</span>
+<span class="kw">find</span> src/main/webapp -name <span class="st">"*.jsp"</span> | wc -l
+
+<span class="cm"># 4. ¿Cuántos Web Components hay?</span>
+<span class="kw">grep</span> -r <span class="st">"customElements.define"</span> src/main/webapp/js/ | wc -l
+
+<span class="cm"># 5. ¿Cuántos endpoints devuelven JSON?</span>
+<span class="kw">grep</span> -r <span class="st">"application/json"</span> src/main/java/ | wc -l
+
+<span class="cm"># 6. % de pantallas migradas</span>
+<span class="cm"># Pantallas totales: 15  |  Migradas: 8  |  → 53%</span>
+  </pre>
+
+  <div class="repo-box g" style="margin-top:16px">
+    <div class="repo-icon">🎯</div>
+    <div>
+      <div class="repo-title" style="color:var(--accent2)">Resumen Strangler Fig para tu caso</div>
+      <div class="repo-desc" style="line-height:2.2">
+        <strong style="color:var(--accent)">1.</strong> Cartografía: mapea las 15 pantallas JSP y sus endpoints<br>
+        <strong style="color:var(--yellow)">2.</strong> Empieza por la lista de contratos (read-only, alta frecuencia)<br>
+        <strong style="color:var(--accent3)">3.</strong> Inyecta el WC dentro del JSP (Fase A) — el legacy sigue vivo<br>
+        <strong style="color:var(--accent2)">4.</strong> Servlet: añade <code>if (Accept: JSON)</code> → mismo Servlet, dos formatos<br>
+        <strong style="color:var(--purple)">5.</strong> Cuando la pantalla WC funciona, borra el JSP (Fase B→C)<br>
+        <strong style="color:var(--accent)">6.</strong> Repite para cada pantalla. Mide cada viernes con los grep counts<br>
+        <strong style="color:var(--accent3)">7.</strong> Cuando todos los JSP desaparecen → Shell-lite → PWA
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ 10 · EJEMPLO REAL ═══════ -->
+<div id="view-code" class="mode-panel">
+  <div class="sec-title" data-n="1">Ejemplo real — lista de contratos como Web Component</div>
+
+  <pre>
+<span class="cm">// js/components/contrato-list.js</span>
+<span class="cm">// Componente que llama al API y renderiza la lista</span>
+
+<span class="kw">import</span> { findAll } <span class="kw">from</span> <span class="st">'@services/contrato-service.js'</span>;
+<span class="kw">import</span> <span class="st">'@components/contrato-card.js'</span>;  <span class="cm">// Registra &lt;contrato-card&gt;</span>
+
+<span class="kw">class</span> <span class="cl">ContratoList</span> <span class="kw">extends</span> <span class="cl">HTMLElement</span> {
+  <span class="fn">constructor</span>() {
+    <span class="kw">super</span>();
+    <span class="kw">this</span>.attachShadow({ mode: <span class="st">'open'</span> });
+  }
+
+  <span class="kw">async</span> <span class="fn">connectedCallback</span>() {
+    <span class="kw">this</span>.shadowRoot.innerHTML = <span class="st">`
+      &lt;style&gt;
+        :host { display: block; }
+        .grid { display: grid; grid-template-columns:
+                repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        .loading { text-align: center; padding: 40px;
+                   color: #8a7a65; }
+        .error { color: #c1440e; padding: 20px;
+                 border: 2px solid #c1440e; border-radius: 8px; }
+      &lt;/style&gt;
+      &lt;div class="loading"&gt;Cargando contratos...&lt;/div&gt;
+    `</span>;
+
+    <span class="kw">try</span> {
+      <span class="kw">const</span> contratos = <span class="kw">await</span> findAll();
+      <span class="kw">this</span>.shadowRoot.innerHTML = <span class="st">`
+        &lt;style&gt;/* ... mismos estilos ... */&lt;/style&gt;
+        &lt;div class="grid"&gt;
+          ${contratos.map(c => <span class="st">`
+            &lt;contrato-card
+              codigo="${c.codigo}"
+              estado="${c.estado}"
+              titular="${c.titular}"&gt;
+            &lt;/contrato-card&gt;
+          `</span>).join(<span class="st">''</span>)}
+        &lt;/div&gt;
+      `</span>;
+    } <span class="kw">catch</span> (err) {
+      <span class="kw">this</span>.shadowRoot.innerHTML = <span class="st">`
+        &lt;div class="error"&gt;Error: ${err.message}&lt;/div&gt;
+      `</span>;
+    }
+  }
+}
+
+customElements.define(<span class="st">'contrato-list'</span>, <span class="cl">ContratoList</span>);
+  </pre>
+
+  <div class="sec-title" data-n="2">Comunicación entre componentes</div>
+  <pre>
+<span class="cm">// Custom Events: un componente emite, otro escucha</span>
+<span class="cm">// Es el equivalente de @Output en Angular o onXxx en React</span>
+
+<span class="cm">// EMISOR: contrato-card.js</span>
+<span class="kw">this</span>.shadowRoot.querySelector(<span class="st">'.btn-delete'</span>)
+  .addEventListener(<span class="st">'click'</span>, () => {
+    <span class="kw">this</span>.dispatchEvent(<span class="kw">new</span> CustomEvent(<span class="st">'contrato-delete'</span>, {
+      detail: { id: <span class="kw">this</span>.getAttribute(<span class="st">'codigo'</span>) },
+      bubbles: <span class="kw">true</span>,       <span class="cm">← sube por el DOM</span>
+      composed: <span class="kw">true</span>       <span class="cm">← cruza Shadow DOM boundaries</span>
+    }));
+  });
+
+<span class="cm">// RECEPTOR: contrato-list.js (el padre)</span>
+<span class="kw">this</span>.addEventListener(<span class="st">'contrato-delete'</span>, <span class="kw">async</span> (e) => {
+  <span class="kw">await</span> deleteContrato(e.detail.id);
+  <span class="kw">this</span>.connectedCallback(); <span class="cm">// Re-render</span>
+});
+  </pre>
+
+  <div class="sec-title" data-n="3">Estructura de proyecto completa</div>
+  <pre>
+<span style="color:var(--accent);font-weight:700">webapp/</span>
+├── index.html              <span class="cm">← App Shell</span>
+├── manifest.json           <span class="cm">← PWA metadata</span>
+├── sw.js                   <span class="cm">← Service Worker</span>
+├── <span style="color:var(--accent3)">css/</span>
+│   └── shell.css           <span class="cm">← Solo estilos del shell (header, sidebar, layout)</span>
+├── <span style="color:var(--yellow)">js/</span>
+│   ├── app.js              <span class="cm">← Entry point: registra SW, inicia router</span>
+│   ├── <span style="color:var(--accent3)">components/</span>         <span class="cm">← Web Components</span>
+│   │   ├── app-header.js
+│   │   ├── app-sidebar.js
+│   │   ├── contrato-card.js
+│   │   ├── contrato-list.js
+│   │   ├── contrato-form.js
+│   │   ├── contrato-detail.js
+│   │   └── estado-badge.js
+│   ├── <span style="color:var(--accent2)">services/</span>           <span class="cm">← Fetch API wrappers</span>
+│   │   ├── contrato-service.js
+│   │   └── auth-service.js
+│   └── <span style="color:var(--purple)">utils/</span>              <span class="cm">← Router, helpers</span>
+│       ├── router.js
+│       └── event-bus.js    <span class="cm">← Pub/sub para comunicación global</span>
+└── <span style="color:var(--accent)">icons/</span>
+    ├── icon-192.png
+    └── icon-512.png
+  </pre>
+
+  <div class="repo-box b" style="margin-top:24px">
+    <div class="repo-icon">🎯</div>
+    <div>
+      <div class="repo-title" style="color:var(--accent3)">Resumen para tu migración FMI</div>
+      <div class="repo-desc" style="line-height:2.2">
+        <strong style="color:var(--accent)">1.</strong> <strong>Custom Elements</strong> = tus etiquetas HTML propias (<code>&lt;contrato-card&gt;</code>)<br>
+        <strong style="color:var(--accent3)">2.</strong> <strong>Shadow DOM</strong> = CSS aislado, sin conflictos con el legacy<br>
+        <strong style="color:var(--accent2)">3.</strong> <strong>ES Modules + Import Maps</strong> = sin Webpack, sin npm, sin build<br>
+        <strong style="color:var(--yellow)">4.</strong> <strong>Fetch API</strong> reemplaza $.ajax() → servicios con async/await<br>
+        <strong style="color:var(--purple)">5.</strong> <strong>App Shell</strong> = skeleton fijo + contenido dinámico por ruta<br>
+        <strong style="color:var(--accent)">6.</strong> <strong>Service Worker</strong> = cache del shell → carga instantánea + offline<br>
+        <strong style="color:var(--accent3)">7.</strong> <strong>Custom Events</strong> con <code>bubbles + composed</code> = comunicación entre WC<br>
+        <strong style="color:var(--accent2)">8.</strong> <strong>Migración incremental</strong>: los WC conviven con jQuery y Servlets sin conflicto
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function setView(n){document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).classList.add('active');event.target.classList.add('active')}
+</script>
+</body>
+</html>
