@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMI · Guía Operativa · 12 Semanas · WebDTE Completo</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;position:relative}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1120px;margin:0 auto;padding:48px 28px 100px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:32px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(26px,4vw,42px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.7}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:36px;width:fit-content;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:10.5px;font-weight:600;padding:10px 14px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:1px;transition:all .15s;border-right:2px solid var(--ink)}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:14px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+  .vtable td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td.h{font-weight:700;color:var(--accent);text-align:right;white-space:nowrap;font-family:var(--mono)}
+  .vtable td.h.green{color:var(--accent2)}
+  .vtable td.h.blue{color:var(--accent3)}
+  .vtable td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap}
+  .vtable tfoot td{background:var(--ink);color:var(--bg);font-weight:700;font-size:13px}
+  .metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:18px 0}
+  .metric-card{background:linear-gradient(135deg,#faf8f4,#f0ebe0);border:2px solid var(--border);border-radius:6px;padding:18px;text-align:center}
+  .metric-value{font-size:30px;font-weight:700;color:var(--accent);font-family:var(--display)}
+  .metric-value.good{color:var(--accent2)}.metric-value.blue{color:var(--accent3)}.metric-value.purple{color:var(--purple)}
+  .metric-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-top:6px}
+  .metric-sub{font-size:10px;color:var(--ink2);margin-top:4px}
+  .block-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:20px;margin-bottom:18px;transition:all .2s}
+  .block-card:hover{border-color:var(--ink);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .block-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:14px;flex-wrap:wrap}
+  .block-num{font-family:var(--display);font-size:24px;font-weight:700;color:var(--accent)}
+  .block-num.green{color:var(--accent2)}.block-num.blue{color:var(--accent3)}.block-num.purple{color:var(--purple)}.block-num.yellow{color:var(--yellow)}
+  .block-dates{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:2px}
+  .block-hours{font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink)}
+  .block-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px}
+  .block-tasks{font-size:11.5px;color:var(--ink2);line-height:1.8}
+  .block-tasks li{margin-bottom:4px;list-style:none;padding-left:18px;position:relative}
+  .block-tasks li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-weight:700}
+  .block-hito{margin-top:12px;padding:10px 14px;background:var(--surface2);border-left:3px solid var(--accent2);font-size:11px;color:var(--ink2)}
+  .block-hito strong{color:var(--accent2)}
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .checklist{list-style:none;padding:0;margin:14px 0}
+  .checklist li{padding:8px 12px;font-size:12px;color:var(--ink2);border-bottom:1px dashed var(--border);display:flex;align-items:flex-start;gap:10px;line-height:1.6}
+  .checklist li:last-child{border-bottom:none}
+  .checklist li::before{content:'☐';color:var(--accent);font-weight:700;font-size:16px;line-height:1}
+  .total-row{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--ink);color:var(--bg);font-weight:700;font-size:14px;border-radius:6px;margin-top:14px;font-family:var(--display)}
+  .quote-box{border-left:4px solid var(--purple);background:rgba(122,58,205,.03);padding:16px 22px;margin:18px 0;border-radius:0 6px 6px 0}
+  .quote-text{font-size:12.5px;line-height:1.8;color:var(--ink2);font-style:italic}
+  .quote-author{font-size:11px;font-weight:700;color:var(--purple);margin-top:8px}
+  @media(max-width:700px){.metric-row{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">FMI · Guía Operativa · WebDTE Completo + Seguridad</div>
+  <h1>12 semanas · <em>10 servlets</em> · OWASP</h1>
+  <div class="subtitle">
+    Plan ejecutivo: 16 abril → 11 junio 2026 · 315h productivas<br>
+    Scope: Clase padre + 4 filters → middleware + 10 servlets (7 profundos + 3 operativos) + auditoría OWASP<br>
+    Stack: Claude Code Opus (Planner) + Sonnet (Executor) · Cursor (refactor) · VSCode + Copilot (ajustes)
+  </div>
+</header>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="switchTab('panorama')">🎯 PANORAMA</button>
+  <button class="mode-btn" onclick="switchTab('plan')">📅 PLAN 6 BLOQUES</button>
+  <button class="mode-btn" onclick="switchTab('fases')">🧭 FASES 0-5</button>
+  <button class="mode-btn" onclick="switchTab('migrar')">🏗️ MIGRAR FASE 6</button>
+  <button class="mode-btn" onclick="switchTab('memoria')">📚 MEMORIA</button>
+  <button class="mode-btn" onclick="switchTab('control')">📊 CONTROL</button>
+  <button class="mode-btn" onclick="switchTab('alarmas')">⚠️ ALARMAS</button>
+  <button class="mode-btn" onclick="switchTab('checklist')">✅ CHECKLIST</button>
+</div>
+
+<!-- ═══ TAB: PANORAMA ═══ -->
+<div id="tab-panorama" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">SITUACIÓN A 16 DE ABRIL DE 2026</div>
+
+  <div class="metric-row">
+    <div class="metric-card">
+      <div class="metric-value">12</div>
+      <div class="metric-label">Semanas</div>
+      <div class="metric-sub">16 abril → 11 junio</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value blue">31h</div>
+      <div class="metric-label">Por semana</div>
+      <div class="metric-sub">3h × 5 + 8 + 8</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value good">315h</div>
+      <div class="metric-label">Productivas</div>
+      <div class="metric-sub">descontando 15% imprevistos</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value purple">7.5-8.5</div>
+      <div class="metric-label">Nota objetivo</div>
+      <div class="metric-sub">scope completo + seguridad</div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">SCOPE COMPLETO — 10 SERVLETS + SEGURIDAD</div>
+
+  <div class="callout green">
+    <strong>Opción 3 (híbrida):</strong> cobertura completa con dos niveles de profundidad. 6-7 servlets representativos con FMI completo (fases 0-6 + pirámide tests + OWASP por servlet + ADRs + métricas). 3-4 servlets operativos refactorizados con calidad básica (refactor 3 capas + tests Fase 5 verde + checklist OWASP básico).
+  </div>
+
+  <table class="vtable">
+    <tr><th>Bloque</th><th>Semanas</th><th>Contenido</th><th>Horas</th></tr>
+    <tr>
+      <td class="cat">① Cimientos</td><td>s1-2</td>
+      <td>Despliegue legacy + setup IA + auditoría OWASP baseline + Fases 0-1 app entera</td>
+      <td class="h">~61h</td>
+    </tr>
+    <tr>
+      <td class="cat">② Cartografía</td><td>s3-4</td>
+      <td>Fases 2-5 sobre los 10 servlets (cartografía + tests validación)</td>
+      <td class="h">~62h</td>
+    </tr>
+    <tr>
+      <td class="cat">③ Infraestructura común</td><td>s5-6</td>
+      <td>Clase padre + 4 filters → middleware + tests middleware + OWASP transversal</td>
+      <td class="h">~55h</td>
+    </tr>
+    <tr>
+      <td class="cat">④ Servlets profundos</td><td>s7-9</td>
+      <td>7 servlets con FMI completo + OWASP por servlet + métricas</td>
+      <td class="h">~82h</td>
+    </tr>
+    <tr>
+      <td class="cat">⑤ Cobertura operativa</td><td>s10-11</td>
+      <td>3 servlets operativos + OWASP final + CI/CD + despliegue migrado</td>
+      <td class="h">~50h</td>
+    </tr>
+    <tr>
+      <td class="cat">⑥ Memoria y defensa</td><td>s12</td>
+      <td>Cerrar memoria 60 págs + slides + ensayo + buffer final</td>
+      <td class="h">~45h</td>
+    </tr>
+    <tfoot>
+      <tr>
+        <td class="cat" style="background:var(--ink);color:var(--bg)" colspan="3">TOTAL (con buffer distribuido en cada bloque)</td>
+        <td class="h" style="color:var(--bg)">~315h</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="sec-title" data-n="3">TRES PILARES AL MISMO NIVEL</div>
+
+  <div class="callout purple">
+    <strong>La seguridad no es un añadido — es el tercer pilar junto con la arquitectura de 3 capas y los tests.</strong> El FMI migra WebDTE sobre 3 ejes simultáneos: (1) Arquitectura limpia (3 capas, naming semántico, vanilla). (2) Tests como contrato (Golden Master → pirámide completa). (3) Seguridad mejorada (OWASP baseline → middleware transversal → checklist por servlet → auditoría final).
+  </div>
+
+  <div class="sec-title" data-n="4">ASIGNACIÓN DE HERRAMIENTAS — DECIDIDA, NO CAMBIA EN 12 SEMANAS</div>
+
+  <table class="vtable">
+    <tr><th>Herramienta</th><th>Usada para</th><th>NO usada para</th></tr>
+    <tr>
+      <td class="cat">Claude Code Opus</td>
+      <td>Fases 0-1 (análisis), Fase 4 (gap analysis), revisión de outcomes, decisiones arquitectónicas</td>
+      <td>Generar código directamente</td>
+    </tr>
+    <tr>
+      <td class="cat">Claude Code Sonnet</td>
+      <td>Generación de tests (agents.md), refactor por prompt, instrumentación logs</td>
+      <td>Decisiones de diseño complejas</td>
+    </tr>
+    <tr>
+      <td class="cat">Cursor</td>
+      <td>Fase 6 refactor a 3 capas (ve el repo completo), debugging multi-fichero</td>
+      <td>Fases 0-5 (sin contexto necesario)</td>
+    </tr>
+    <tr>
+      <td class="cat">VSCode + Copilot</td>
+      <td>Ajustes manuales, autocompletado, configuración (pom.xml, etc.)</td>
+      <td>Generación inicial de archivos</td>
+    </tr>
+    <tr>
+      <td class="cat">Claude Plan Max</td>
+      <td>Sesiones largas con Opus, análisis profundos, revisiones completas</td>
+      <td>—</td>
+    </tr>
+  </table>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠️ Reglas de oro para 12 semanas</div>
+    <div class="danger-content">
+      <strong>1. Regla de las 3 iteraciones.</strong> Si la IA no da algo aceptable en 3 intentos, paras, lo haces a mano, avanzas.<br>
+      <strong>2. Sesiones máximo 2.5h con IA.</strong> Después tu juicio sobre los outputs baja.<br>
+      <strong>3. Cada domingo, 30 min de retrospectiva.</strong> 4 preguntas fijas.<br>
+      <strong>4. Empezar a escribir la memoria en semana 4.</strong> En paralelo, no al final.<br>
+      <strong>5. NO cambiar de herramienta para una tarea ya asignada.</strong> La comparación entre IAs es procrastinación disfrazada.
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ TAB: PLAN 6 BLOQUES ═══ -->
+<div id="tab-plan" class="mode-panel">
+
+  <div class="sec-title" data-n="P">PLAN EN 6 BLOQUES · 12 SEMANAS</div>
+
+  <div class="callout yellow">
+    <strong>Cada bloque tiene 2 semanas (62h).</strong> Total 12 semanas = 372h brutas, ~315h productivas. La memoria se escribe en paralelo desde el bloque 3. Los bloques son secuenciales: no se empieza el siguiente sin cumplir el hito del anterior.
+  </div>
+
+  <div class="block-card">
+    <div class="block-header">
+      <div>
+        <div class="block-num">BLOQUE 1 · CIMIENTOS</div>
+        <div class="block-dates">Semanas 1-2 · 62h · 16 — 29 abril</div>
+      </div>
+      <div class="block-hours">~61h</div>
+    </div>
+    <div class="block-title">🎯 Legacy desplegado + OWASP baseline + app entera instrumentada</div>
+    <ul class="block-tasks">
+      <li>Dockerizar WebDTE + configurar Tomcat + BD PostgreSQL → <strong>8h</strong></li>
+      <li>Desplegar en DigitalOcean con dominio + HTTPS → <strong>6h</strong></li>
+      <li>Setup workspace FMI + Claude Code Opus/Sonnet + Cursor → <strong>4h</strong></li>
+      <li>Auditoría OWASP baseline completa (10 categorías, scripts, security-audit-baseline.md) → <strong>18h</strong></li>
+      <li>Fase 0 — instrumentación logs semánticos sobre los 10 servlets → <strong>15h</strong></li>
+      <li>Fase 1 — IA1 extrae intenciones de los 10 servlets + matriz trazabilidad → <strong>10h</strong></li>
+    </ul>
+    <div class="block-hito">
+      <strong>HITO FIN BLOQUE 1:</strong> URL legacy viva. security-audit-baseline.md con OWASP completo. 10 servlets instrumentados. Intenciones extraídas. Matriz trazabilidad con los 10 endpoints mapeados.
+    </div>
+  </div>
+
+  <div class="block-card">
+    <div class="block-header">
+      <div>
+        <div class="block-num blue">BLOQUE 2 · CARTOGRAFÍA</div>
+        <div class="block-dates">Semanas 3-4 · 62h · 30 abril — 13 mayo</div>
+      </div>
+      <div class="block-hours">~62h</div>
+    </div>
+    <div class="block-title">🎯 Cartografía Playwright completa + suite tests de validación verde</div>
+    <ul class="block-tasks">
+      <li>Setup Playwright + storageState + auth + datos test → <strong>6h</strong></li>
+      <li>Fase 2 — IA2 genera baterías cartografía para 10 servlets → <strong>15h</strong></li>
+      <li>Fase 3 — Ejecución 1ª pasada + captura HARs → <strong>6h</strong></li>
+      <li>Fase 4 — Refinamiento + 2ª pasada HARs → <strong>10h</strong></li>
+      <li>Extraer contracts.json de los HARs definitivos → <strong>3h</strong></li>
+      <li>Setup stacks test (Maven + JUnit + Jersey + H2 / Vitest + jsdom + MSW) → <strong>8h</strong></li>
+      <li>Fase 5 — Generar tests validación BACK + FRONT para 10 servlets → <strong>14h</strong></li>
+    </ul>
+    <div class="block-hito">
+      <strong>HITO FIN BLOQUE 2:</strong> contracts.json definitivos para los 10 servlets. Suite completa de tests Fase 5 en verde. Cobertura ≥90% de los contratos HAR. Red de seguridad completa — preparados para refactorizar.
+    </div>
+  </div>
+
+  <div class="block-card">
+    <div class="block-header">
+      <div>
+        <div class="block-num purple">BLOQUE 3 · INFRAESTRUCTURA COMÚN</div>
+        <div class="block-dates">Semanas 5-6 · 62h · 14 — 27 mayo</div>
+      </div>
+      <div class="block-hours">~55h</div>
+    </div>
+    <div class="block-title">🎯 Clase padre + 4 filters migrados a middleware + OWASP transversal resuelto</div>
+    <ul class="block-tasks">
+      <li>Diseñar interfaces Middleware + MiddlewareChain + RequestContext en domain → <strong>5h</strong></li>
+      <li>Migrar AuthFilter → AuthenticationMiddleware (resuelve OWASP A01 + A07) → <strong>6h</strong></li>
+      <li>Migrar LogFilter → AuditLogMiddleware (resuelve OWASP A09) → <strong>4h</strong></li>
+      <li>Crear SecurityHeadersMiddleware (nuevo, resuelve OWASP A05) → <strong>4h</strong></li>
+      <li>Crear CsrfMiddleware (nuevo, resuelve OWASP A03 parcial) → <strong>5h</strong></li>
+      <li>Migrar EncodingFilter + ErrorHandlerMiddleware → <strong>4h</strong></li>
+      <li>Crear DispatcherServlet + Router (reemplaza BaseServlet) → <strong>6h</strong></li>
+      <li>Tests unitarios de cada middleware (JUnit + Mockito) → <strong>8h</strong></li>
+      <li>Tests integración del pipeline completo → <strong>5h</strong></li>
+      <li>Empezar memoria — Capítulos 1-3 (introducción, estado del arte, metodología) → <strong>8h</strong></li>
+    </ul>
+    <div class="block-hito">
+      <strong>HITO FIN BLOQUE 3:</strong> Pipeline middleware funcionando. 4 OWASP transversales resueltos (A01, A03, A05, A07, A09). Tests middleware verdes. DispatcherServlet + Router reemplazan BaseServlet. Memoria al 25%.
+    </div>
+  </div>
+
+  <div class="block-card">
+    <div class="block-header">
+      <div>
+        <div class="block-num">BLOQUE 4 · SERVLETS PROFUNDOS</div>
+        <div class="block-dates">Semanas 7-9 · 93h · 28 mayo — 17 junio</div>
+      </div>
+      <div class="block-hours">~82h</div>
+    </div>
+    <div class="block-title">🎯 7 servlets migrados con FMI completo + OWASP + pirámide tests</div>
+    <ul class="block-tasks">
+      <li>Servlet #1 — BusquedaServlet (hoja, read-only, quick win) → <strong>9h</strong></li>
+      <li>Servlet #2 — ListadoServlet (read-only, paginación) → <strong>9h</strong></li>
+      <li>Servlet #3 — CuentaServlet (escritura BD, validaciones, duplicados) → <strong>13h</strong></li>
+      <li>Servlet #4 — ContratoServlet (escritura + forward a DocumentoServlet) → <strong>13h</strong></li>
+      <li>Servlet #5 — DocumentoServlet (generación PDF/XSL-FO) → <strong>12h</strong></li>
+      <li>Servlet #6 — FirmaServlet (integración SOAP externa) → <strong>13h</strong></li>
+      <li>Servlet #7 — LoginServlet (autenticación, último por ser raíz del grafo) → <strong>13h</strong></li>
+    </ul>
+    <div class="block-hito">
+      <strong>HITO FIN BLOQUE 4:</strong> 7 servlets migrados a 3 capas con pirámide tests completa (5 niveles) y checklist OWASP verde por servlet. ADRs creados para cada decisión. Métricas comparativas medidas. Memoria al 50%.
+    </div>
+  </div>
+
+  <div class="block-card">
+    <div class="block-header">
+      <div>
+        <div class="block-num green">BLOQUE 5 · COBERTURA OPERATIVA</div>
+        <div class="block-dates">Semanas 10-11 · 62h · 18 junio — 1 julio</div>
+      </div>
+      <div class="block-hours">~50h</div>
+    </div>
+    <div class="block-title">🎯 3 servlets operativos + OWASP final + CI/CD + despliegue migrado</div>
+    <ul class="block-tasks">
+      <li>3 servlets operativos con refactor básico (agents.md ya validados, Fase 5 verde) → <strong>18h</strong></li>
+      <li>Desplegar versión migrada completa en DigitalOcean → <strong>6h</strong></li>
+      <li>Suite E2E seguridad final (15-20 tests críticos) → <strong>6h</strong></li>
+      <li>Auditoría OWASP final — re-ejecutar scripts de Fase 0 sobre la versión migrada → <strong>8h</strong></li>
+      <li>Tabla comparativa ANTES/DESPUÉS (security-audit-baseline.md vs security-audit-final.md) → <strong>3h</strong></li>
+      <li>CI/CD pipeline básico (GitHub Actions o similar) → <strong>9h</strong></li>
+    </ul>
+    <div class="block-hito">
+      <strong>HITO FIN BLOQUE 5:</strong> 10/10 servlets migrados. URL migrada viva. OWASP comparativa ANTES/DESPUÉS completada. CI/CD ejecutando tests en cada commit. Todo técnicamente cerrado.
+    </div>
+  </div>
+
+  <div class="block-card">
+    <div class="block-header">
+      <div>
+        <div class="block-num yellow">BLOQUE 6 · MEMORIA Y DEFENSA</div>
+        <div class="block-dates">Semana 12 + margen · 31h+ · 2 — 11 julio</div>
+      </div>
+      <div class="block-hours">~45h</div>
+    </div>
+    <div class="block-title">🎯 Memoria terminada + defensa ensayada + todo entregado</div>
+    <ul class="block-tasks">
+      <li>Memoria — Capítulo 4 Caso práctico WebDTE (con seguridad integrada) → <strong>8h</strong></li>
+      <li>Memoria — Capítulo 5 Resultados y métricas (OWASP + arquitectura + tests) → <strong>6h</strong></li>
+      <li>Memoria — Capítulo 6 Análisis crítico y limitaciones → <strong>4h</strong></li>
+      <li>Memoria — Capítulo 7 Conclusiones + líneas futuras → <strong>3h</strong></li>
+      <li>Memoria — Bibliografía formal + Anexos + Maquetación + Revisión → <strong>8h</strong></li>
+      <li>Slides de defensa (15-20 diapositivas) → <strong>5h</strong></li>
+      <li>Demo en vivo guionizada → <strong>3h</strong></li>
+      <li>Ensayos cronometrados (2 ensayos completos) → <strong>4h</strong></li>
+      <li>Buffer final → <strong>4h</strong></li>
+    </ul>
+    <div class="block-hito">
+      <strong>ENTREGA · 11 JUNIO 2026.</strong> Memoria PDF final + URLs legacy y migrada vivas + repositorio con CI/CD verde + slides + demo ensayada.
+    </div>
+  </div>
+
+  <div class="callout green">
+    <strong>La memoria se escribe en paralelo:</strong> Capítulos 1-3 durante bloque 3 (25%), Capítulos 4-5 durante bloque 4 (50%), Capítulo 6-7 + cierre en bloque 6 (100%). Cuando bloqueas con código, escribes. Cuando bloqueas con escritura, supervisas IA. Alternancia productiva.
+  </div>
+
+</div>
+
+<!-- ═══ TAB: FASES 0-5 ═══ -->
+<div id="tab-fases" class="mode-panel">
+
+  <div class="sec-title" data-n="F">DESGLOSE DE HORAS POR FASE — SOBRE 10 SERVLETS</div>
+
+  <table class="vtable">
+    <tr><th>Fase</th><th>Una vez (setup)</th><th>Por servlet (×10)</th><th>Total</th></tr>
+    <tr>
+      <td class="cat">Fase 0 — Logs semánticos</td>
+      <td class="h">2h</td>
+      <td class="h">1.3h × 10 = 13h</td>
+      <td class="h">15h</td>
+    </tr>
+    <tr>
+      <td class="cat">Fase 1 — IA1 intenciones</td>
+      <td class="h">2h (matriz trazabilidad)</td>
+      <td class="h">0.8h × 10 = 8h</td>
+      <td class="h">10h</td>
+    </tr>
+    <tr>
+      <td class="cat">Fase 2 — IA2 cartografía</td>
+      <td class="h">5h (setup Playwright)</td>
+      <td class="h">1.5h × 10 = 15h</td>
+      <td class="h">20h</td>
+    </tr>
+    <tr>
+      <td class="cat">Fase 3 — Ejecución 1ª pasada</td>
+      <td class="h">—</td>
+      <td class="h">0.5h × 10 = 5h</td>
+      <td class="h">5h</td>
+    </tr>
+    <tr>
+      <td class="cat">Fase 4 — Refinamiento 2ª pasada</td>
+      <td class="h">—</td>
+      <td class="h">1h × 10 = 10h</td>
+      <td class="h">10h</td>
+    </tr>
+    <tr>
+      <td class="cat">Fase 5 — Tests validación</td>
+      <td class="h">8h (setup Maven/Vitest)</td>
+      <td class="h">1.5h × 10 = 15h</td>
+      <td class="h">23h</td>
+    </tr>
+    <tr>
+      <td class="cat">OWASP baseline</td>
+      <td class="h">18h</td>
+      <td class="h">—</td>
+      <td class="h">18h</td>
+    </tr>
+    <tr>
+      <td class="cat">Despliegue legacy + setup IA</td>
+      <td class="h">18h</td>
+      <td class="h">—</td>
+      <td class="h">18h</td>
+    </tr>
+    <tfoot>
+      <tr>
+        <td class="cat" style="background:var(--ink);color:var(--bg)" colspan="3">TOTAL FASES 0-5 + BASELINE</td>
+        <td class="h" style="color:var(--bg)">~119h</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="callout blue">
+    <strong>Curva de aprendizaje:</strong> los primeros 2-3 servlets de cada fase tardan más (calibrar prompts, ajustar Playwright, resolver problemas de setup). A partir del 4º servlet, el tiempo por servlet baja ~30%. Los tiempos de la tabla ya incluyen esta media.
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Eficiencia por lotes dentro de cada fase</div>
+    <div class="insight-content">
+      No hagas "todas las fases en un servlet, luego todas en otro". Haz <strong>cada fase en lote</strong>: Fase 0 en los 10 servlets, luego Fase 1 en los 10, etc. Esto aprovecha la inercia (prompts calibrados, Playwright configurado) y reduce cambios de contexto. La excepción: Fase 6 (migración) sí se hace servlet a servlet porque cada refactor es complejo y necesita cerrarse antes de abrir otro.
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ TAB: MIGRAR FASE 6 ═══ -->
+<div id="tab-migrar" class="mode-panel">
+
+  <div class="sec-title" data-n="6">FASE 6 — MIGRAR WEBDTE COMPLETO</div>
+
+  <div class="callout orange">
+    <strong>Fase 6 tiene 3 componentes que van EN ESTE ORDEN:</strong> (1) Infraestructura común: clase padre + filters → middleware (OBLIGATORIO primero). (2) 7 servlets profundos: FMI completo + pirámide tests + OWASP. (3) 3 servlets operativos: refactor básico + tests Fase 5 + OWASP checklist.
+  </div>
+
+  <div class="sec-title" data-n="I">COMPONENTE 1 — INFRAESTRUCTURA COMÚN (~32h)</div>
+
+  <table class="vtable">
+    <tr><th>Tarea</th><th>Horas</th><th>OWASP resuelto</th></tr>
+    <tr><td class="cat">Interfaces Middleware + Chain + Context en domain</td><td class="h">5h</td><td>—</td></tr>
+    <tr><td class="cat">AuthenticationMiddleware</td><td class="h">6h</td><td>A01, A07</td></tr>
+    <tr><td class="cat">AuditLogMiddleware</td><td class="h">4h</td><td>A09</td></tr>
+    <tr><td class="cat">SecurityHeadersMiddleware (NUEVO)</td><td class="h">4h</td><td>A05</td></tr>
+    <tr><td class="cat">CsrfMiddleware (NUEVO)</td><td class="h">5h</td><td>A03</td></tr>
+    <tr><td class="cat">EncodingMiddleware + ErrorHandlerMiddleware</td><td class="h">4h</td><td>A05</td></tr>
+    <tr><td class="cat">DispatcherServlet + Router</td><td class="h">6h</td><td>—</td></tr>
+    <tr><td class="cat">Tests unitarios middleware + tests integración pipeline</td><td class="h">13h</td><td>Verifica todos</td></tr>
+    <tfoot><tr><td class="cat" style="background:var(--ink);color:var(--bg)" colspan="2">TOTAL INFRAESTRUCTURA</td><td class="h" style="color:var(--bg)">~47h</td></tr></tfoot>
+  </table>
+
+  <div class="sec-title" data-n="P">COMPONENTE 2 — 7 SERVLETS PROFUNDOS (~110h)</div>
+
+  <div class="callout green">
+    <strong>Flujo por servlet profundo (9 pasos):</strong> (1) Lectura legacy. (2) agents-refactor.md → 3 capas. (3) Revisar violaciones. (4) Tests Fase 5 verde contra nuevo servlet. (5) Debugging hasta verde. (6) agents-tests.md → nueva pirámide. (7) agents-security-check.md → OWASP verde. (8) Métricas comparativas. (9) ADRs + commit + git tag.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Servlet</th><th>Patrón</th><th>Complejidad</th><th>Horas</th></tr>
+    <tr>
+      <td class="cat">BusquedaServlet</td>
+      <td>Read-only, hoja del grafo</td><td>Baja</td><td class="h green">12h</td>
+    </tr>
+    <tr>
+      <td class="cat">ListadoServlet</td>
+      <td>Read-only, paginación</td><td>Baja</td><td class="h green">12h</td>
+    </tr>
+    <tr>
+      <td class="cat">CuentaServlet</td>
+      <td>Escritura BD, validaciones, duplicados</td><td>Media</td><td class="h blue">16h</td>
+    </tr>
+    <tr>
+      <td class="cat">ContratoServlet</td>
+      <td>Escritura + forward a DocumentoServlet</td><td>Media-Alta</td><td class="h blue">18h</td>
+    </tr>
+    <tr>
+      <td class="cat">DocumentoServlet</td>
+      <td>Generación PDF (XSL-FO / templates)</td><td>Media-Alta</td><td class="h blue">16h</td>
+    </tr>
+    <tr>
+      <td class="cat">FirmaServlet</td>
+      <td>Integración SOAP externa</td><td>Alta</td><td class="h">18h</td>
+    </tr>
+    <tr>
+      <td class="cat">LoginServlet</td>
+      <td>Autenticación, raíz del grafo</td><td>Alta</td><td class="h">18h</td>
+    </tr>
+    <tfoot>
+      <tr>
+        <td class="cat" style="background:var(--ink);color:var(--bg)" colspan="3">TOTAL 7 SERVLETS PROFUNDOS</td>
+        <td class="h" style="color:var(--bg)">~110h</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="sec-title" data-n="O">COMPONENTE 3 — 3 SERVLETS OPERATIVOS (~28h)</div>
+
+  <div class="callout yellow">
+    <strong>Estos servlets se migran con calidad básica:</strong> refactor a 3 capas usando agents.md ya validados, tests Fase 5 verde, checklist OWASP básico. Sin pirámide unit + infra completa, sin ADRs detallados, sin métricas comparativas individuales. El objetivo es cobertura, no exhaustividad.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Servlet</th><th>Horas</th><th>Incluye</th></tr>
+    <tr><td class="cat">Servlet operativo #1</td><td class="h">9h</td><td>Refactor 3 capas + tests Fase 5 verde + OWASP checklist</td></tr>
+    <tr><td class="cat">Servlet operativo #2</td><td class="h">9h</td><td>Idem</td></tr>
+    <tr><td class="cat">Servlet operativo #3</td><td class="h">10h</td><td>Idem + cierre del pipeline completo</td></tr>
+    <tfoot><tr><td class="cat" style="background:var(--ink);color:var(--bg)" colspan="2">TOTAL 3 SERVLETS OPERATIVOS</td><td class="h" style="color:var(--bg)">~28h</td></tr></tfoot>
+  </table>
+
+  <div class="total-row">
+    <span>FASE 6 COMPLETA — INFRAESTRUCTURA + 10 SERVLETS + OWASP</span>
+    <span>~185 HORAS</span>
+  </div>
+
+  <div class="callout purple">
+    <strong>Esto es el 59% del proyecto.</strong> Las Fases 0-5 (cartografía + validación) son el 38%. Memoria y defensa son el 14%. La distribución refleja la realidad: la migración ES el trabajo. Todo lo demás es preparación (antes) o documentación (después).
+  </div>
+
+</div>
+
+<!-- ═══ TAB: MEMORIA ═══ -->
+<div id="tab-memoria" class="mode-panel">
+
+  <div class="sec-title" data-n="M">MEMORIA ACADÉMICA — 60 PÁGINAS · 45H</div>
+
+  <table class="vtable">
+    <tr><th>Capítulo</th><th>Páginas</th><th>Horas</th><th>Cuándo</th></tr>
+    <tr><td class="cat">1. Introducción (problema, objetivos, alcance)</td><td>4</td><td class="h">3h</td><td>Bloque 3</td></tr>
+    <tr><td class="cat">2. Estado del arte (Spolsky, Feathers, Fowler, Martin, IA y legacy)</td><td>8</td><td class="h">5h</td><td>Bloque 3</td></tr>
+    <tr><td class="cat">3. Metodología FMI (7 fases, IA dual, Golden Master, OWASP)</td><td>10</td><td class="h">5h</td><td>Bloque 3-4</td></tr>
+    <tr><td class="cat">4. Caso práctico WebDTE (10 servlets + middleware + seguridad)</td><td>12</td><td class="h">8h</td><td>Bloque 6</td></tr>
+    <tr><td class="cat">5. Resultados (métricas antes/después, OWASP comparativa, cobertura)</td><td>8</td><td class="h">6h</td><td>Bloque 6</td></tr>
+    <tr><td class="cat">6. Análisis crítico (limitaciones FMI, dónde falló la IA, humano-en-el-bucle)</td><td>5</td><td class="h">4h</td><td>Bloque 6</td></tr>
+    <tr><td class="cat">7. Conclusiones + líneas futuras</td><td>3</td><td class="h">3h</td><td>Bloque 6</td></tr>
+    <tr><td class="cat">Bibliografía (≥25 refs, norma APA) + Anexos + Portada + Índice</td><td>~10</td><td class="h">5h</td><td>Bloque 6</td></tr>
+    <tr><td class="cat">Revisión + maquetación + corrección</td><td>—</td><td class="h">6h</td><td>Bloque 6</td></tr>
+    <tfoot><tr><td class="cat" style="background:var(--ink);color:var(--bg)" colspan="2">TOTAL MEMORIA</td><td class="h" style="color:var(--bg)">~45h</td><td style="color:var(--bg)">Bloques 3-6</td></tr></tfoot>
+  </table>
+
+  <div class="callout green">
+    <strong>La memoria tiene 3 puntos fuertes por los que el tribunal dará nota alta:</strong> (1) La tabla OWASP ANTES/DESPUÉS con 6 categorías mejoradas — evidencia empírica verificable. (2) Las métricas de complejidad ciclomática y LOC antes/después por servlet. (3) El análisis honesto de dónde la IA falló y el humano tuvo que intervenir (capítulo 6).
+  </div>
+
+</div>
+
+<!-- ═══ TAB: CONTROL ═══ -->
+<div id="tab-control" class="mode-panel">
+
+  <div class="sec-title" data-n="R">RETROSPECTIVA SEMANAL — 30 MIN CADA DOMINGO</div>
+
+  <div class="callout green">
+    <strong>4 preguntas fijas cada domingo:</strong> (1) ¿He cumplido el hito de este bloque? (2) ¿Cuántas horas reales he dedicado? (3) ¿He caído en la trampa de iteración con IA? (4) ¿Necesito activar alguna alarma?
+  </div>
+
+  <div class="sec-title" data-n="H">HITOS POR BLOQUE — SI NO SE CUMPLE → ALARMA</div>
+
+  <table class="vtable">
+    <tr><th>Fin bloque</th><th>Hito esperado</th><th>Si NO → Alarma</th></tr>
+    <tr><td class="cat">Bloque 1 (s2)</td><td>URL legacy viva + OWASP baseline + Fase 0-1 completas</td><td>ALARMA #1</td></tr>
+    <tr><td class="cat">Bloque 2 (s4)</td><td>Tests Fase 5 verdes sobre los 10 servlets</td><td>ALARMA #2</td></tr>
+    <tr><td class="cat">Bloque 3 (s6)</td><td>Middleware pipeline completo + tests verdes + memoria 25%</td><td>ALARMA #3</td></tr>
+    <tr><td class="cat">Bloque 4 (s9)</td><td>7 servlets profundos migrados + OWASP por servlet</td><td>ALARMA #4</td></tr>
+    <tr><td class="cat">Bloque 5 (s11)</td><td>10/10 servlets + OWASP final + CI/CD + deploy migrado</td><td>ALARMA #5</td></tr>
+    <tr><td class="cat">Bloque 6 (s12)</td><td>Memoria 60 páginas + slides + demo ensayada</td><td>ALARMA #6</td></tr>
+  </table>
+
+</div>
+
+<!-- ═══ TAB: ALARMAS ═══ -->
+<div id="tab-alarmas" class="mode-panel">
+
+  <div class="sec-title" data-n="A">PROTOCOLO DE ALARMAS</div>
+
+  <div class="danger-box">
+    <div class="danger-title">ALARMA #1 — Fin bloque 1 sin URL legacy o sin OWASP baseline</div>
+    <div class="danger-content">
+      <strong>Acción:</strong> Pausar TODO las semanas 3-4 y dedicar exclusivamente a deploy + OWASP. Si el deploy es el problema, cambiar de proveedor (Render, Railway). Si OWASP es el problema, reducir a Top 5 más relevantes para WebDTE (A01, A02, A03, A05, A07). <strong>Sin deploy + OWASP no hay proyecto.</strong>
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">ALARMA #2 — Fin bloque 2 sin tests Fase 5 verdes</div>
+    <div class="danger-content">
+      <strong>Acción:</strong> Reducir servlets cartografiados de 10 a 7 (los profundos). Los 3 operativos se cartografían en bloque 5 de forma ligera. Libera ~15h. Si el problema es Playwright, hacer cartografía manual con cURL + HAR de Chrome DevTools.
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">ALARMA #3 — Fin bloque 3 sin middleware pipeline</div>
+    <div class="danger-content">
+      <strong>Acción:</strong> Simplificar pipeline a 3 middleware esenciales (AuthenticationMiddleware + SecurityHeadersMiddleware + ErrorHandlerMiddleware). Dejar CsrfMiddleware y AuditLogMiddleware como "líneas futuras" en la memoria. Libera ~10h. Los servlets se migran SIN DispatcherServlet/Router — mantienen herencia de BaseServlet con wrapper.
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">ALARMA #4 — Fin bloque 4 sin 7 servlets migrados</div>
+    <div class="danger-content">
+      <strong>Acción:</strong> Reclasificar servlets pendientes como "operativos" (calidad básica). Si tienes 4-5 servlets profundos es suficiente para defender. Mover horas sobrantes a bloque 5 para cerrar cobertura. <strong>5 servlets profundos + 5 operativos sigue siendo un 7-7.5.</strong>
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">ALARMA #5 — Fin bloque 5 sin deploy migrado</div>
+    <div class="danger-content">
+      <strong>Acción:</strong> Desplegar lo que tengas aunque falten 1-2 servlets operativos. La URL migrada debe estar viva para la demo. Un deploy parcial con 7-8 servlets es infinitamente mejor que no tener URL.
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">ALARMA #6 — Fin bloque 6 sin memoria</div>
+    <div class="danger-content">
+      <strong>Acción:</strong> Entregar con memoria de 40 páginas en vez de 60. Quitar capítulo 6 (análisis crítico) y reducir capítulo 2 (estado del arte a 4 páginas). La demo compensa parcialmente la memoria corta. <strong>NO trasladarse a septiembre salvo caso extremo.</strong>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ TAB: CHECKLIST ═══ -->
+<div id="tab-checklist" class="mode-panel">
+
+  <div class="sec-title" data-n="1">BLOQUE 1 · CIMIENTOS (semanas 1-2)</div>
+  <ul class="checklist">
+    <li>WebDTE legacy dockerizado y compilando</li>
+    <li>DigitalOcean Droplet creado + Tomcat + BD PostgreSQL</li>
+    <li>URL legacy accesible públicamente con HTTPS</li>
+    <li>Workspace FMI creado + git tag pre-fmi-baseline</li>
+    <li>Claude Code Opus + Sonnet + Cursor configurados</li>
+    <li>Auditoría OWASP baseline: A01 Broken Access Control verificado</li>
+    <li>Auditoría OWASP baseline: A02 Cryptographic Failures verificado</li>
+    <li>Auditoría OWASP baseline: A03 Injection verificado</li>
+    <li>Auditoría OWASP baseline: A05 Security Misconfiguration verificado</li>
+    <li>Auditoría OWASP baseline: A07 Auth Failures verificado</li>
+    <li>Auditoría OWASP baseline: restantes (A04,A06,A08,A09,A10) verificados</li>
+    <li>security-audit-baseline.md completo y en repositorio</li>
+    <li>Fase 0 — 10 servlets instrumentados con logs semánticos</li>
+    <li>Fase 1 — IA1 intenciones extraídas para 10 servlets</li>
+    <li>Matriz trazabilidad completa (10 endpoints mapeados)</li>
+    <li>_PENDIENTE_VALIDAR resueltos o documentados en unknowns.md</li>
+    <li>2 retrospectivas semanales escritas</li>
+  </ul>
+
+  <div class="sec-title" data-n="2">BLOQUE 2 · CARTOGRAFÍA (semanas 3-4)</div>
+  <ul class="checklist">
+    <li>Playwright configurado + storageState + auth + datos test</li>
+    <li>IA2 baterías cartografía generadas para 10 servlets</li>
+    <li>Ejecución 1ª pasada completada → telemetry/iter-01/</li>
+    <li>Refinamiento iter-02 completado → HARs definitivos</li>
+    <li>contracts.json extraídos para 10 servlets</li>
+    <li>Maven configurado (JUnit + Jersey + H2 + Mockito + ArchUnit)</li>
+    <li>Vitest + jsdom + MSW configurado</li>
+    <li>Tests validación BACK en verde para 10 servlets</li>
+    <li>Tests validación FRONT en verde</li>
+    <li>Cobertura ≥90% de contratos HAR</li>
+    <li>2 retrospectivas semanales escritas</li>
+  </ul>
+
+  <div class="sec-title" data-n="3">BLOQUE 3 · INFRAESTRUCTURA COMÚN (semanas 5-6)</div>
+  <ul class="checklist">
+    <li>Interfaces Middleware + MiddlewareChain + RequestContext en domain</li>
+    <li>AuthenticationMiddleware implementado + tests unitarios verdes</li>
+    <li>SecurityHeadersMiddleware implementado + tests unitarios verdes</li>
+    <li>CsrfMiddleware implementado + tests unitarios verdes</li>
+    <li>AuditLogMiddleware implementado + tests unitarios verdes</li>
+    <li>EncodingMiddleware + ErrorHandlerMiddleware implementados</li>
+    <li>DispatcherServlet + Router implementados</li>
+    <li>Tests integración pipeline completo en verde</li>
+    <li>OWASP transversal resuelto (A01, A03, A05, A07, A09)</li>
+    <li>Memoria — Capítulo 1 Introducción escrito</li>
+    <li>Memoria — Capítulo 2 Estado del arte escrito</li>
+    <li>Memoria — Capítulo 3 Metodología FMI escrito</li>
+    <li>2 retrospectivas semanales escritas</li>
+  </ul>
+
+  <div class="sec-title" data-n="4">BLOQUE 4 · SERVLETS PROFUNDOS (semanas 7-9)</div>
+  <ul class="checklist">
+    <li>BusquedaServlet migrado a 3 capas + tests 5 niveles + OWASP ✓</li>
+    <li>ListadoServlet migrado + tests + OWASP ✓</li>
+    <li>CuentaServlet migrado + tests + OWASP ✓</li>
+    <li>ContratoServlet migrado + tests + OWASP ✓</li>
+    <li>DocumentoServlet migrado + tests + OWASP ✓</li>
+    <li>FirmaServlet migrado + tests + OWASP ✓</li>
+    <li>LoginServlet migrado + tests + OWASP ✓</li>
+    <li>ADRs creados para decisiones de cada servlet</li>
+    <li>Métricas comparativas legacy vs migrado medidas</li>
+    <li>Memoria al 50% (capítulos 1-3 completos + borradores 4-5)</li>
+    <li>3 retrospectivas semanales escritas</li>
+  </ul>
+
+  <div class="sec-title" data-n="5">BLOQUE 5 · COBERTURA OPERATIVA (semanas 10-11)</div>
+  <ul class="checklist">
+    <li>Servlet operativo #1 migrado + tests Fase 5 verde + OWASP checklist</li>
+    <li>Servlet operativo #2 migrado + tests Fase 5 verde + OWASP checklist</li>
+    <li>Servlet operativo #3 migrado + tests Fase 5 verde + OWASP checklist</li>
+    <li>URL migrada desplegada en DigitalOcean con HTTPS</li>
+    <li>Suite E2E seguridad final (15-20 tests) en verde</li>
+    <li>Auditoría OWASP final ejecutada sobre versión migrada</li>
+    <li>security-audit-final.md completo</li>
+    <li>Tabla comparativa ANTES/DESPUÉS verificada</li>
+    <li>CI/CD pipeline configurado y verde en cada commit</li>
+    <li>2 retrospectivas semanales escritas</li>
+  </ul>
+
+  <div class="sec-title" data-n="6">BLOQUE 6 · MEMORIA Y DEFENSA (semana 12)</div>
+  <ul class="checklist">
+    <li>Memoria — Capítulo 4 Caso práctico terminado</li>
+    <li>Memoria — Capítulo 5 Resultados y métricas terminado</li>
+    <li>Memoria — Capítulo 6 Análisis crítico terminado</li>
+    <li>Memoria — Capítulo 7 Conclusiones terminado</li>
+    <li>Bibliografía formal ≥25 referencias</li>
+    <li>Anexos incluidos (HTML FMI, agents.md, ADRs)</li>
+    <li>Memoria revisada + maquetada + portada + índice</li>
+    <li>Memoria PDF final exportada</li>
+    <li>Slides de defensa (15-20 diapositivas)</li>
+    <li>Demo en vivo guionizada: legacy → migrado → test verde → romper → detectar → rollback</li>
+    <li>Ensayo cronometrado #1 completado</li>
+    <li>Ensayo cronometrado #2 completado</li>
+    <li>📅 ENTREGA OFICIAL</li>
+  </ul>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Total: ~80 casillas a marcar en 12 semanas</div>
+    <div class="insight-content">
+      Son ~7 casillas por semana. 1 casilla por día laborable + 2-3 por día de fin de semana. Si un viernes tienes menos de 5 casillas marcadas en la semana, estás atrasado. Si llegas al domingo con las 7, vas en plan.
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
