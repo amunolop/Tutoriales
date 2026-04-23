@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playwright · Manual Completo VSCode</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:32px}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(28px,5vw,52px);font-weight:700;line-height:1.05}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.8}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}
+  .badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}
+  /* TABS */
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:36px;width:100%;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:10px;font-weight:600;padding:9px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  /* SECTIONS */
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  /* CALLOUTS */
+  .callout{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout strong{display:block;margin-bottom:4px}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code,.callout pre{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  /* CODE */
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:14px 0;position:relative}
+  pre .lang{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.nu{color:#7a3acd}.an{color:#1a4a8a;font-weight:600}.hl{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px}
+  /* TABLES */
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:14px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+  .vtable td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td code{background:rgba(0,0,0,.07);padding:1px 6px;border-radius:2px;font-size:11px;white-space:nowrap}
+  .vtable td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+  .vtable td.best{color:var(--accent2);font-weight:700}.vtable td.ok{color:var(--accent3);font-weight:700}.vtable td.bad{color:var(--accent);font-weight:700}
+  /* GRID */
+  .comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:14px 0}
+  .comp-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden}
+  .comp-header{padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .comp-header.good{background:rgba(42,110,78,.1);color:var(--accent2)}.comp-header.alt{background:rgba(26,74,138,.1);color:var(--accent3)}.comp-header.bad{background:rgba(193,68,14,.1);color:var(--accent)}.comp-header.purple{background:rgba(122,58,205,.1);color:var(--purple)}.comp-header.yellow{background:rgba(232,160,32,.1);color:var(--yellow)}
+  .comp-content{padding:14px;font-size:12px;line-height:1.7;color:var(--ink2)}
+  /* INSIGHT / DANGER */
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  /* STEPS */
+  .step-flow{display:flex;flex-direction:column;gap:0;margin:14px 0}
+  .step{display:flex;gap:0;align-items:stretch}
+  .step-num{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .step-circle{width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+  .step-circle.o{background:var(--accent)}.step-circle.g{background:var(--accent2)}.step-circle.b{background:var(--accent3)}.step-circle.p{background:var(--purple)}.step-circle.y{background:var(--yellow);color:var(--ink)}
+  .step-line{width:2px;background:var(--border);flex:1;margin:4px auto}
+  .step:last-child .step-line{display:none}
+  .step-body{padding:0 0 20px 16px;flex:1}
+  .step-title{font-weight:700;font-size:12.5px;margin-bottom:6px}
+  .step-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+  /* SELECTOR CARDS */
+  .sel-card{background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:8px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+  .sel-name{font-weight:700;font-size:12px;margin-bottom:3px}
+  .sel-code{font-size:11px;color:var(--accent3);font-family:var(--mono);margin-bottom:4px}
+  .sel-note{font-size:11px;color:var(--muted);line-height:1.5}
+  .sel-pref{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:3px 8px;border-radius:3px;border:1.5px solid;white-space:nowrap}
+  .sel-pref.best{color:var(--accent2);border-color:var(--accent2)}.sel-pref.ok{color:var(--accent3);border-color:var(--accent3)}.sel-pref.avoid{color:var(--accent);border-color:var(--accent)}
+  /* SHORTCUTS */
+  .shortcut-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin:14px 0}
+  .shortcut-item{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .shortcut-desc{font-size:11.5px;color:var(--ink2);flex:1}
+  .shortcut-key{font-size:11px;font-weight:700;white-space:nowrap;display:flex;gap:3px;align-items:center;flex-shrink:0}
+  .key{display:inline-block;background:var(--ink);color:var(--bg);padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700}
+  /* POM */
+  .pom-box{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;margin:14px 0}
+  .pom-header{background:var(--ink);color:var(--bg);padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .pom-body{padding:0}
+  /* CMD LIST */
+  .cmd-list{list-style:none;margin:14px 0}
+  .cmd-list li{padding:9px 14px;border-bottom:1px dashed var(--border);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;font-size:12px}
+  .cmd-list li:last-child{border-bottom:none}
+  .cmd-list li code{font-size:11px;color:var(--accent3);white-space:nowrap}
+  .cmd-desc{color:var(--ink2);line-height:1.5}
+  @media(max-width:720px){.comp-grid,.shortcut-grid{grid-template-columns:1fr}.mode-btn{flex:0 0 auto}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Manual Completo · VSCode + Playwright</div>
+  <h1>Playwright<br>en <em>VSCode</em></h1>
+  <div class="subtitle">
+    Setup · Extension · Config · Acciones · Selectores · Assertions · Network · Codegen<br>
+    POM · Fixtures · Debug · Trace · CI · Anotaciones · FMI WebDTE
+  </div>
+  <div class="badge-row">
+    <span class="badge o">Playwright 1.42+</span>
+    <span class="badge g">VSCode Extension</span>
+    <span class="badge b">TypeScript</span>
+    <span class="badge p">FMI WebDTE</span>
+    <span class="badge y">OWASP</span>
+  </div>
+</header>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="switchTab('setup')">⚙️ SETUP</button>
+  <button class="mode-btn" onclick="switchTab('extension')">🧩 EXTENSION</button>
+  <button class="mode-btn" onclick="switchTab('config')">🔧 CONFIG</button>
+  <button class="mode-btn" onclick="switchTab('acciones')">🖱️ ACCIONES</button>
+  <button class="mode-btn" onclick="switchTab('selectores')">🎯 SELECTORES</button>
+  <button class="mode-btn" onclick="switchTab('assertions')">✅ ASSERTIONS</button>
+  <button class="mode-btn" onclick="switchTab('network')">🌐 NETWORK</button>
+  <button class="mode-btn" onclick="switchTab('codegen')">🎬 CODEGEN</button>
+  <button class="mode-btn" onclick="switchTab('pom')">🏗️ POM</button>
+  <button class="mode-btn" onclick="switchTab('fixtures')">🔑 FIXTURES</button>
+  <button class="mode-btn" onclick="switchTab('avanzado')">⚡ AVANZADO</button>
+  <button class="mode-btn" onclick="switchTab('debug')">🐞 DEBUG</button>
+  <button class="mode-btn" onclick="switchTab('ci')">🚀 CI/CD</button>
+  <button class="mode-btn" onclick="switchTab('fmi')">🗺️ FMI</button>
+  <button class="mode-btn" onclick="switchTab('atajos')">⌨️ ATAJOS</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: SETUP                                            -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-setup" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">INSTALACIÓN DESDE CERO</div>
+
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-num"><div class="step-circle o">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Verificar Node.js ≥ 18</div>
+<pre>node --version    <span class="cm"># necesario ≥ 18.0.0</span>
+npm --version     <span class="cm"># viene incluido con Node</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle o">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Instalador interactivo (proyecto nuevo)</div>
+<pre>npm init playwright@latest
+<span class="cm"># Respuestas recomendadas para FMI:</span>
+<span class="cm">#  ✔ Language:      TypeScript</span>
+<span class="cm">#  ✔ Tests folder:  tests</span>
+<span class="cm">#  ✔ GitHub Actions: Y (genera workflow.yml)</span>
+<span class="cm">#  ✔ Browsers:       Chromium only</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle o">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">O añadir a proyecto existente</div>
+<pre>npm install -D @playwright/test
+npx playwright install chromium   <span class="cm"># solo chromium para FMI</span>
+npx playwright install-deps       <span class="cm"># dependencias del sistema</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle g">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Instalar extensión VSCode</div>
+<pre>code --install-extension ms-playwright.playwright
+<span class="cm"># O buscar en Marketplace: "Playwright Test for VSCode"</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle g">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Verificar instalación</div>
+<pre>npx playwright --version
+npx playwright test              <span class="cm"># ejecuta el test de ejemplo</span>
+npx playwright show-report       <span class="cm"># abre HTML report en browser</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle b">6</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Estructura completa de carpetas FMI</div>
+<pre>proyecto/
+├── playwright.config.ts
+├── <span class="hl">auth/                              ← .gitignore</span>
+│   ├── admin.json
+│   └── usuario.json
+├── scripts/
+│   └── extract-contracts.mjs          <span class="cm"># HAR → contracts.json</span>
+├── telemetry/
+│   └── har/
+│       ├── iter-01/                   <span class="cm"># 1ª pasada cartografía</span>
+│       └── iter-02/                   <span class="cm"># 2ª pasada (definitiva)</span>
+└── tests/
+    ├── <span class="hl">e2e/                           ← Playwright + navegador real</span>
+    │   ├── legacy-code/               <span class="cm"># ¿funciona el legacy? (una vez)</span>
+    │   │   ├── auth/
+    │   │   │   └── auth.setup.ts
+    │   │   ├── helpers/
+    │   │   │   └── legacy.helpers.ts
+    │   │   ├── pages/
+    │   │   │   └── LoginPage.ts
+    │   │   ├── _00_smoke.spec.ts
+    │   │   ├── busqueda.spec.ts
+    │   │   ├── cuenta.spec.ts
+    │   │   ├── login.spec.ts
+    │   │   └── contrato-doc-firma.spec.ts
+    │   ├── cartografia/               <span class="cm"># ¿qué hace exactamente? (una vez)</span>
+    │   │   ├── helpers/
+    │   │   │   └── cartografia.helpers.ts
+    │   │   ├── busqueda.spec.ts
+    │   │   └── cuenta.spec.ts
+    │   └── validacion/                <span class="cm"># ¿sigue haciéndolo? (SIEMPRE)</span>
+    │       ├── auth/
+    │       │   └── auth.setup.ts
+    │       ├── helpers/
+    │       │   └── validacion.helpers.ts
+    │       ├── pages/
+    │       │   └── CuentasPage.ts
+    │       ├── fixtures/
+    │       │   └── index.ts
+    │       ├── owasp.spec.ts
+    │       └── busqueda.spec.ts
+    └── <span class="hl">integracion/                   ← Sin navegador (JUnit + Vitest)</span>
+        ├── back/
+        │   ├── transport/             <span class="cm"># Servlet + Jersey + H2</span>
+        │   │   └── BusquedaServletIT.java
+        │   └── infra/                 <span class="cm"># DAO + H2, sin HTTP</span>
+        │       └── BusquedaDaoIT.java
+        └── front/
+            └── validacion/            <span class="cm"># jsdom + MSW</span>
+                └── busqueda.spec.ts</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout orange">
+    <strong>auth/ siempre en .gitignore</strong>
+    Los ficheros de storageState contienen cookies y tokens de sesión reales. Añade <code>auth/</code> y <code>playwright-report/</code> al <code>.gitignore</code>.
+  </div>
+
+  <div class="sec-title" data-n="F">CUÁNDO SE EJECUTA CADA SUITE</div>
+
+  <table class="vtable">
+    <tr><th>Suite</th><th>Cuándo</th><th>Frecuencia</th><th>Herramienta</th></tr>
+    <tr>
+      <td class="cat">e2e/legacy-code</td>
+      <td>Antes de empezar la cartografía — confirmar que el legacy está vivo</td>
+      <td class="bad">Una vez</td>
+      <td>Playwright</td>
+    </tr>
+    <tr>
+      <td class="cat">e2e/cartografia</td>
+      <td>Fases 2-4 FMI — capturar el comportamiento real en HARs</td>
+      <td class="bad">1-2 veces por servlet</td>
+      <td>Playwright</td>
+    </tr>
+    <tr>
+      <td class="cat">e2e/validacion</td>
+      <td>Fase 6 y en adelante — garantizar que el migrado preserva contratos</td>
+      <td class="best">Siempre (cada commit)</td>
+      <td>Playwright</td>
+    </tr>
+    <tr>
+      <td class="cat">integracion/back</td>
+      <td>Durante y tras el refactor — DAO + Servlet contra H2, sin Tomcat</td>
+      <td class="best">Siempre (cada commit)</td>
+      <td>JUnit + H2</td>
+    </tr>
+    <tr>
+      <td class="cat">integracion/front</td>
+      <td>Durante y tras la migración del front — componentes contra MSW</td>
+      <td class="best">Siempre (cada commit)</td>
+      <td>Vitest + jsdom</td>
+    </tr>
+  </table>
+
+  <div class="sec-title" data-n="P">PLAYWRIGHT.CONFIG.TS — PROYECTOS ACTUALIZADOS</div>
+
+<pre><span class="kw">export default</span> defineConfig({
+  <span class="cm">// ── Proyectos e2e ────────────────────────────────────────</span>
+  projects: [
+    <span class="cm">// Setup: login → guarda sesión (una vez por suite)</span>
+    {
+      name: <span class="st">'setup'</span>,
+      testMatch: <span class="st">'**/e2e/legacy-code/auth/auth.setup.ts'</span>,
+    },
+
+    <span class="cm">// 1. Tests generados desde el código — ¿funciona el legacy?</span>
+    {
+      name: <span class="st">'legacy-code'</span>,
+      testDir: <span class="st">'./tests/e2e/legacy-code'</span>,
+      testIgnore: <span class="st">'**/auth/**'</span>,
+      dependencies: [<span class="st">'setup'</span>],
+      use: { storageState: <span class="st">'./auth/admin.json'</span>, ...devices[<span class="st">'Desktop Chrome'</span>] },
+    },
+
+    <span class="cm">// 2. Cartografía — ¿qué hace exactamente?</span>
+    {
+      name: <span class="st">'cartografia'</span>,
+      testDir: <span class="st">'./tests/e2e/cartografia'</span>,
+      dependencies: [<span class="st">'setup'</span>],
+      use: {
+        storageState: <span class="st">'./auth/admin.json'</span>,
+        ...devices[<span class="st">'Desktop Chrome'</span>],
+        recordHar: {
+          path: <span class="st">`./telemetry/har/iter-${process.env.ITER||'01'}/session.har`</span>,
+          mode: <span class="st">'full'</span>,
+        },
+      },
+    },
+
+    <span class="cm">// 3. Validación — ¿sigue haciéndolo? (ejecutar SIEMPRE)</span>
+    {
+      name: <span class="st">'validacion'</span>,
+      testDir: <span class="st">'./tests/e2e/validacion'</span>,
+      testIgnore: <span class="st">'**/auth/**'</span>,
+      dependencies: [<span class="st">'setup'</span>],
+      use: { storageState: <span class="st">'./auth/admin.json'</span>, ...devices[<span class="st">'Desktop Chrome'</span>] },
+    },
+  ],
+});</pre>
+
+  <div class="sec-title" data-n="N">NPM SCRIPTS — EJECUTAR POR SUITE</div>
+
+<pre><span class="cm">// package.json — scripts por tipo de test</span>
+{
+  <span class="st">"scripts"</span>: {
+    <span class="cm">// ── E2E (Playwright) ─────────────────────────────────────</span>
+    <span class="st">"test:e2e"</span>:            <span class="st">"playwright test"</span>,
+    <span class="st">"test:e2e:legacy"</span>:    <span class="st">"playwright test --project=legacy-code"</span>,
+    <span class="st">"test:e2e:cart"</span>:      <span class="st">"playwright test --project=cartografia"</span>,
+    <span class="st">"test:e2e:validacion"</span>:<span class="st">"playwright test --project=validacion"</span>,
+    <span class="st">"test:smoke"</span>:         <span class="st">"playwright test --project=validacion --grep @smoke"</span>,
+    <span class="st">"test:owasp"</span>:         <span class="st">"playwright test --project=validacion --grep @owasp"</span>,
+
+    <span class="cm">// ── Integración Back (JUnit + H2) ────────────────────────</span>
+    <span class="st">"test:int:back"</span>:      <span class="st">"mvn verify -Dtest.skip=false"</span>,
+    <span class="st">"test:int:transport"</span>: <span class="st">"mvn verify -Dit.test='*ServletIT'"</span>,
+    <span class="st">"test:int:infra"</span>:     <span class="st">"mvn verify -Dit.test='*DaoIT'"</span>,
+
+    <span class="cm">// ── Integración Front (Vitest + jsdom) ───────────────────</span>
+    <span class="st">"test:int:front"</span>:     <span class="st">"vitest run tests/integracion/front"</span>,
+
+    <span class="cm">// ── CI: solo lo que corre siempre ────────────────────────</span>
+    <span class="st">"test:ci"</span>:            <span class="st">"npm run test:e2e:validacion && npm run test:int:back && npm run test:int:front"</span>
+  }
+}</pre>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 La regla de qué ejecutar y cuándo</div>
+    <div class="insight-content">
+      <strong>Una sola vez:</strong> <code>test:e2e:legacy</code> (confirmar deploy) → <code>test:e2e:cart</code> (capturar HARs).<br>
+      <strong>Durante el refactor:</strong> <code>test:int:back</code> + <code>test:int:front</code> en cada commit para tener feedback rápido sin navegador.<br>
+      <strong>Siempre (CI):</strong> <code>test:ci</code> — validación e2e + integración back + integración front. Si algo aquí falla, el PR no se mergea.
+    </div>
+  </div>
+
+<pre>{
+  <span class="st">"compilerOptions"</span>: {
+    <span class="st">"target"</span>: <span class="st">"ESNext"</span>,
+    <span class="st">"module"</span>: <span class="st">"commonjs"</span>,
+    <span class="st">"moduleResolution"</span>: <span class="st">"node"</span>,
+    <span class="st">"strict"</span>: <span class="kw">true</span>,
+    <span class="st">"esModuleInterop"</span>: <span class="kw">true</span>,
+    <span class="st">"paths"</span>: {
+      <span class="st">"@pages/*"</span>: [<span class="st">"./tests/pages/*"</span>],    <span class="cm">// alias para Page Objects</span>
+      <span class="st">"@fixtures/*"</span>: [<span class="st">"./tests/fixtures/*"</span>]
+    }
+  },
+  <span class="st">"include"</span>: [<span class="st">"tests/**/*.ts"</span>, <span class="st">"playwright.config.ts"</span>]
+}</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: EXTENSION                                        -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-extension" class="mode-panel">
+
+  <div class="sec-title" data-n="E">PANEL TESTING — ANATOMÍA COMPLETA</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header good">▶ Run All Tests</div>
+      <div class="comp-content">Ejecuta toda la suite. Equivale a <code>npx playwright test</code>. Resultados con iconos ✓/✗/⊙ por test.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header alt">▷ Run Test (hover)</div>
+      <div class="comp-content">Al hacer hover sobre un test aparece ▷. Ejecuta solo ese test. Imprescindible mientras desarrollas.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">👁️ Show Browser</div>
+      <div class="comp-content">Muestra el navegador durante la ejecución. Equivale a <code>--headed</code>. Actívalo para entender fallos visuales.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header alt">🎬 Record New</div>
+      <div class="comp-content">Abre Codegen. Graba acciones → genera código TypeScript en tiempo real. Elige el fichero destino antes de grabar.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">📍 Pick Locator</div>
+      <div class="comp-content">Abre navegador en modo "pick". Clic en un elemento → sugiere el locator más robusto en el panel lateral.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header alt">🔁 Record at Cursor</div>
+      <div class="comp-content">Como Record New pero inserta las acciones justo donde está el cursor en el editor. Útil para ampliar un test existente.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header bad">🐞 Debug Test</div>
+      <div class="comp-content">Adjunta el debugger de VSCode. Breakpoints en TypeScript, pausa el navegador en ese punto. Ver variables en tiempo real.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header purple">📁 Reveal in Explorer</div>
+      <div class="comp-content">Navega al fichero del test seleccionado en el explorador. Útil cuando tienes muchos spec files.</div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="S">SETTINGS IMPORTANTES DE LA EXTENSIÓN</div>
+
+  <table class="vtable">
+    <tr><th>Setting</th><th>Recomendado (local)</th><th>Recomendado (CI)</th><th>Por qué importa</th></tr>
+    <tr>
+      <td class="cat">Show Browser</td><td class="best">true</td><td class="bad">false</td>
+      <td>Ver navegador en local acelera debug. En CI es headless obligatorio.</td>
+    </tr>
+    <tr>
+      <td class="cat">Reuse Browser</td><td class="best">true</td><td class="ok">false</td>
+      <td>Mantiene el navegador entre tests. Ahorra 2-3 seg por test en local.</td>
+    </tr>
+    <tr>
+      <td class="cat">Config File</td><td colspan="2"><code>playwright.config.ts</code></td>
+      <td>Si tienes configs múltiples (staging, prod), selecciona cuál usa la extensión.</td>
+    </tr>
+    <tr>
+      <td class="cat">Env Variables</td><td colspan="2"><code>BASE_URL=http://localhost:8080</code></td>
+      <td>Las pasa a los tests. Evita exportar variables en cada terminal.</td>
+    </tr>
+    <tr>
+      <td class="cat">Workers</td><td class="best">auto</td><td class="ok">1</td>
+      <td>En local usa todos los cores. En CI, tests secuenciales para evitar flakiness.</td>
+    </tr>
+  </table>
+
+  <div class="callout yellow">
+    <strong>Cómo abrir los settings</strong>
+    <code>Ctrl+Shift+P</code> → escribe "Playwright: Configure" → Enter. Abre el panel de ajustes de la extensión directamente.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: CONFIG                                           -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-config" class="mode-panel">
+
+  <div class="sec-title" data-n="C">PLAYWRIGHT.CONFIG.TS — REFERENCIA COMPLETA PARA FMI</div>
+
+<pre><span class="cm">// playwright.config.ts — configuración completa WebDTE</span>
+<span class="kw">import</span> { defineConfig, devices } <span class="kw">from</span> <span class="st">'@playwright/test'</span>;
+
+<span class="kw">export default</span> defineConfig({
+
+  <span class="cm">// ── Descubrimiento de tests ──────────────────────────────</span>
+  testDir: <span class="st">'./tests'</span>,
+  testMatch: <span class="st">'**/*.spec.ts'</span>,        <span class="cm">// solo ficheros *.spec.ts</span>
+  testIgnore: <span class="st">'**/disabled/**'</span>,     <span class="cm">// ignorar carpeta disabled</span>
+
+  <span class="cm">// ── Timeouts ─────────────────────────────────────────────</span>
+  timeout: <span class="nu">30_000</span>,                  <span class="cm">// timeout por test (ms)</span>
+  expect: { timeout: <span class="nu">5_000</span> },       <span class="cm">// timeout por expect (ms)</span>
+  globalTimeout: <span class="nu">600_000</span>,           <span class="cm">// timeout de toda la suite</span>
+
+  <span class="cm">// ── Ejecución ─────────────────────────────────────────────</span>
+  retries: process.env.CI ? <span class="nu">2</span> : <span class="nu">0</span>,  <span class="cm">// reintentos en CI</span>
+  workers: process.env.CI ? <span class="nu">1</span> : undefined, <span class="cm">// paralelo en local</span>
+  fullyParallel: <span class="kw">true</span>,              <span class="cm">// tests independientes en paralelo</span>
+  forbidOnly: !!process.env.CI,      <span class="cm">// no permitir test.only en CI</span>
+
+  <span class="cm">// ── Reporters ─────────────────────────────────────────────</span>
+  reporter: [
+    [<span class="st">'html'</span>, { open: <span class="st">'on-failure'</span>, outputFolder: <span class="st">'playwright-report'</span> }],
+    [<span class="st">'list'</span>],                       <span class="cm">// output en terminal</span>
+    [<span class="st">'junit'</span>, { outputFile: <span class="st">'results.xml'</span> }], <span class="cm">// para CI/GitLab</span>
+  ],
+
+  <span class="cm">// ── Setup global ──────────────────────────────────────────</span>
+  globalSetup: <span class="st">'./tests/global-setup.ts'</span>,   <span class="cm">// antes de todo</span>
+  globalTeardown: <span class="st">'./tests/global-teardown.ts'</span>, <span class="cm">// al acabar</span>
+
+  <span class="cm">// ── Opciones compartidas por todos los proyectos ──────────</span>
+  use: {
+    baseURL: process.env.BASE_URL || <span class="st">'http://localhost:8080'</span>,
+
+    <span class="cm">// Capturas en fallo</span>
+    screenshot: <span class="st">'only-on-failure'</span>,
+    video: <span class="st">'retain-on-failure'</span>,
+    trace: <span class="st">'on-first-retry'</span>,
+
+    <span class="cm">// Grabación de HAR (activo solo en cartografía)</span>
+    <span class="cm">// recordHar: { path: './telemetry/har/session.har', mode: 'full' },</span>
+
+    <span class="cm">// Viewport</span>
+    viewport: { width: <span class="nu">1280</span>, height: <span class="nu">720</span> },
+
+    <span class="cm">// Ignorar errores HTTPS en entorno dev</span>
+    ignoreHTTPSErrors: <span class="kw">true</span>,
+
+    <span class="cm">// Locale y timezone</span>
+    locale: <span class="st">'es-ES'</span>,
+    timezoneId: <span class="st">'Europe/Madrid'</span>,
+
+    <span class="cm">// Extra HTTP headers en todos los requests</span>
+    extraHTTPHeaders: {
+      <span class="st">'X-Test-Run'</span>: <span class="st">'playwright'</span>,  <span class="cm">// identificar en logs del servidor</span>
+    },
+  },
+
+  <span class="cm">// ── Proyectos (suites separadas) ──────────────────────────</span>
+  projects: [
+    <span class="cm">// 1. Setup: obtener sesiones autenticadas</span>
+    {
+      name: <span class="st">'setup'</span>,
+      testMatch: <span class="st">'**/auth.setup.ts'</span>,
+    },
+
+    <span class="cm">// 2. Cartografía legacy (Fases 2-4 FMI)</span>
+    {
+      name: <span class="st">'cartografia'</span>,
+      testDir: <span class="st">'./tests/cartografia'</span>,
+      dependencies: [<span class="st">'setup'</span>],
+      use: {
+        storageState: <span class="st">'./auth/admin.json'</span>,
+        ...devices[<span class="st">'Desktop Chrome'</span>],
+        recordHar: {
+          path: <span class="st">`./telemetry/har/iter-${process.env.ITER||'01'}/session.har`</span>,
+          mode: <span class="st">'full'</span>, content: <span class="st">'embed'</span>,
+        },
+      },
+    },
+
+    <span class="cm">// 3. E2E seguridad (Fase 6 FMI)</span>
+    {
+      name: <span class="st">'e2e-seguridad'</span>,
+      testDir: <span class="st">'./tests/e2e-seguridad'</span>,
+      dependencies: [<span class="st">'setup'</span>],
+      use: {
+        storageState: <span class="st">'./auth/admin.json'</span>,
+        ...devices[<span class="st">'Desktop Chrome'</span>],
+      },
+    },
+
+    <span class="cm">// 4. Smoke: comprobación rápida post-deploy</span>
+    {
+      name: <span class="st">'smoke'</span>,
+      grep: /@smoke/,            <span class="cm">// solo tests marcados con @smoke</span>
+      dependencies: [<span class="st">'setup'</span>],
+      use: {
+        storageState: <span class="st">'./auth/admin.json'</span>,
+        ...devices[<span class="st">'Desktop Chrome'</span>],
+      },
+    },
+  ],
+
+  <span class="cm">// ── Output ────────────────────────────────────────────────</span>
+  outputDir: <span class="st">'./test-results'</span>,    <span class="cm">// artefactos de tests fallidos</span>
+});</pre>
+
+  <div class="sec-title" data-n="E">VARIABLES DE ENTORNO — GESTIÓN LIMPIA</div>
+
+<pre><span class="cm"># .env.local (no subir a git)</span>
+BASE_URL=http://localhost:8080
+ADMIN_USER=admin
+ADMIN_PASS=test1234
+ITER=01
+
+<span class="cm"># .env.ci (para el pipeline)</span>
+BASE_URL=https://webdte-migrado.tudominio.com
+ITER=02</pre>
+
+<pre><span class="cm">// playwright.config.ts — leer el .env</span>
+<span class="kw">import</span> { config } <span class="kw">from</span> <span class="st">'dotenv'</span>;
+config({ path: <span class="st">'.env.local'</span> });    <span class="cm">// npm install dotenv</span>
+
+<span class="cm">// En los tests acceder así:</span>
+process.env.ADMIN_USER || <span class="st">'admin'</span>  <span class="cm">// con valor por defecto</span></pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: ACCIONES                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-acciones" class="mode-panel">
+
+  <div class="sec-title" data-n="N">NAVEGACIÓN</div>
+
+<pre><span class="cm">// Navegar a una URL</span>
+<span class="kw">await</span> page.goto(<span class="st">'/'</span>);                          <span class="cm">// relativa al baseURL</span>
+<span class="kw">await</span> page.goto(<span class="st">'/cuentas.html'</span>);
+<span class="kw">await</span> page.goto(<span class="st">'/'</span>, { waitUntil: <span class="st">'networkidle'</span> }); <span class="cm">// esperar red quieta</span>
+
+<span class="cm">// Navegar hacia atrás / adelante</span>
+<span class="kw">await</span> page.goBack();
+<span class="kw">await</span> page.goForward();
+<span class="kw">await</span> page.reload();
+
+<span class="cm">// Esperar a que la página esté lista</span>
+<span class="kw">await</span> page.waitForLoadState(<span class="st">'load'</span>);         <span class="cm">// evento DOMContentLoaded</span>
+<span class="kw">await</span> page.waitForLoadState(<span class="st">'networkidle'</span>);  <span class="cm">// sin requests 500ms</span>
+<span class="kw">await</span> page.waitForURL(<span class="st">/dashboard/</span>);          <span class="cm">// esperar URL concreta</span></pre>
+
+  <div class="sec-title" data-n="F">FORMULARIOS — TODAS LAS ACCIONES</div>
+
+<pre><span class="cm">// Rellenar inputs</span>
+<span class="kw">await</span> page.fill(<span class="st">'#email'</span>, <span class="st">'test@test.com'</span>);     <span class="cm">// limpia y rellena</span>
+<span class="kw">await</span> page.locator(<span class="st">'#nombre'</span>).fill(<span class="st">'Antonio'</span>);  <span class="cm">// equivalente</span>
+<span class="kw">await</span> page.locator(<span class="st">'#bio'</span>).clear();             <span class="cm">// limpiar sin rellenar</span>
+
+<span class="cm">// Typing carácter a carácter (útil para autocompletado)</span>
+<span class="kw">await</span> page.locator(<span class="st">'#buscar'</span>).pressSequentially(<span class="st">'web'</span>, { delay: <span class="nu">80</span> });
+
+<span class="cm">// Selects</span>
+<span class="kw">await</span> page.selectOption(<span class="st">'select[name="tipo"]'</span>, <span class="st">'admin'</span>);      <span class="cm">// por value</span>
+<span class="kw">await</span> page.selectOption(<span class="st">'select[name="tipo"]'</span>, { label: <span class="st">'Administrador'</span> });
+<span class="kw">await</span> page.selectOption(<span class="st">'select[name="roles"]'</span>, [<span class="st">'admin'</span>, <span class="st">'editor'</span>]); <span class="cm">// múltiple</span>
+
+<span class="cm">// Checkboxes y radios</span>
+<span class="kw">await</span> page.check(<span class="st">'input[name="activo"]'</span>);       <span class="cm">// marcar</span>
+<span class="kw">await</span> page.uncheck(<span class="st">'input[name="activo"]'</span>);     <span class="cm">// desmarcar</span>
+<span class="kw">await</span> page.locator(<span class="st">'input[value="admin"]'</span>).check();
+
+<span class="cm">// Subir ficheros</span>
+<span class="kw">await</span> page.setInputFiles(<span class="st">'input[type="file"]'</span>, <span class="st">'./test-files/doc.pdf'</span>);
+<span class="kw">await</span> page.setInputFiles(<span class="st">'input[type="file"]'</span>, [<span class="st">'./a.pdf'</span>, <span class="st">'./b.pdf'</span>]); <span class="cm">// múltiple</span>
+<span class="kw">await</span> page.setInputFiles(<span class="st">'input[type="file"]'</span>, []); <span class="cm">// limpiar</span>
+
+<span class="cm">// Clicks</span>
+<span class="kw">await</span> page.click(<span class="st">'button[type="submit"]'</span>);
+<span class="kw">await</span> page.click(<span class="st">'#menu'</span>, { button: <span class="st">'right'</span> }); <span class="cm">// clic derecho</span>
+<span class="kw">await</span> page.dblclick(<span class="st">'#fila'</span>);                   <span class="cm">// doble clic</span>
+<span class="kw">await</span> page.click(<span class="st">'#item'</span>, { modifiers: [<span class="st">'Shift'</span>] }); <span class="cm">// Shift+clic</span></pre>
+
+  <div class="sec-title" data-n="K">TECLADO</div>
+
+<pre><span class="cm">// Teclas especiales</span>
+<span class="kw">await</span> page.keyboard.press(<span class="st">'Enter'</span>);
+<span class="kw">await</span> page.keyboard.press(<span class="st">'Tab'</span>);
+<span class="kw">await</span> page.keyboard.press(<span class="st">'Escape'</span>);
+<span class="kw">await</span> page.keyboard.press(<span class="st">'Control+a'</span>);         <span class="cm">// seleccionar todo</span>
+<span class="kw">await</span> page.keyboard.press(<span class="st">'Control+c'</span>);         <span class="cm">// copiar</span>
+<span class="kw">await</span> page.keyboard.press(<span class="st">'ArrowDown'</span>);
+
+<span class="cm">// Escritura libre</span>
+<span class="kw">await</span> page.keyboard.type(<span class="st">'hola mundo'</span>);
+<span class="kw">await</span> page.keyboard.insertText(<span class="st">'texto con emojis 🎉'</span>);
+
+<span class="cm">// Atajo en un elemento concreto</span>
+<span class="kw">await</span> page.locator(<span class="st">'#editor'</span>).press(<span class="st">'Control+z'</span>);</pre>
+
+  <div class="sec-title" data-n="M">RATÓN Y GESTOS</div>
+
+<pre><span class="cm">// Hover</span>
+<span class="kw">await</span> page.hover(<span class="st">'#menu-item'</span>);
+<span class="kw">await</span> page.locator(<span class="st">'[data-tooltip]'</span>).hover();
+
+<span class="cm">// Drag and drop</span>
+<span class="kw">await</span> page.dragAndDrop(<span class="st">'#origen'</span>, <span class="st">'#destino'</span>);
+<span class="cm">// Con coordenadas:</span>
+<span class="kw">await</span> page.locator(<span class="st">'#origen'</span>).dragTo(page.locator(<span class="st">'#destino'</span>));
+
+<span class="cm">// Scroll</span>
+<span class="kw">await</span> page.evaluate(() => window.scrollTo(<span class="nu">0</span>, <span class="nu">500</span>));
+<span class="kw">await</span> page.locator(<span class="st">'#tabla'</span>).scrollIntoViewIfNeeded();
+<span class="kw">await</span> page.locator(<span class="st">'#lista'</span>).hover();
+<span class="kw">await</span> page.mouse.wheel(<span class="nu">0</span>, <span class="nu">300</span>);               <span class="cm">// scroll con rueda</span>
+
+<span class="cm">// Posición exacta del ratón</span>
+<span class="kw">await</span> page.mouse.move(<span class="nu">100</span>, <span class="nu">200</span>);
+<span class="kw">await</span> page.mouse.down();
+<span class="kw">await</span> page.mouse.move(<span class="nu">300</span>, <span class="nu">200</span>);
+<span class="kw">await</span> page.mouse.up();</pre>
+
+  <div class="sec-title" data-n="D">DIÁLOGOS — ALERT, CONFIRM, PROMPT</div>
+
+<pre><span class="cm">// Aceptar el diálogo automáticamente</span>
+page.on(<span class="st">'dialog'</span>, dialog => dialog.accept());
+
+<span class="cm">// Rechazar un confirm</span>
+page.on(<span class="st">'dialog'</span>, dialog => dialog.dismiss());
+
+<span class="cm">// Prompt con valor</span>
+page.on(<span class="st">'dialog'</span>, dialog => dialog.accept(<span class="st">'mi respuesta'</span>));
+
+<span class="cm">// Verificar el mensaje del diálogo</span>
+page.once(<span class="st">'dialog'</span>, <span class="kw">async</span> dialog => {
+  expect(dialog.message()).toBe(<span class="st">'¿Confirmar eliminación?'</span>);
+  <span class="kw">await</span> dialog.accept();
+});</pre>
+
+  <div class="sec-title" data-n="P">POPUPS Y NUEVAS PESTAÑAS</div>
+
+<pre><span class="cm">// Capturar una nueva pestaña que abre un enlace</span>
+<span class="kw">const</span> pagePromise = context.waitForEvent(<span class="st">'page'</span>);
+<span class="kw">await</span> page.click(<span class="st">'a[target="_blank"]'</span>);
+<span class="kw">const</span> newPage = <span class="kw">await</span> pagePromise;
+<span class="kw">await</span> newPage.waitForLoadState();
+<span class="kw">await</span> expect(newPage).toHaveURL(<span class="st">/detalle/</span>);
+
+<span class="cm">// Popup con window.open</span>
+<span class="kw">const</span> popup = <span class="kw">await</span> page.waitForEvent(<span class="st">'popup'</span>);
+<span class="kw">await</span> page.click(<span class="st">'#abrir-popup'</span>);
+<span class="kw">await</span> popup.waitForLoadState();
+console.log(<span class="kw">await</span> popup.title());</pre>
+
+  <div class="sec-title" data-n="I">IFRAMES</div>
+
+<pre><span class="cm">// Acceder a un iframe por selector</span>
+<span class="kw">const</span> frame = page.frameLocator(<span class="st">'iframe[name="firma-digital"]'</span>);
+<span class="kw">await</span> frame.locator(<span class="st">'button[type="submit"]'</span>).click();
+<span class="kw">await</span> expect(frame.locator(<span class="st">'#estado'</span>)).toHaveText(<span class="st">'Firmado'</span>);
+
+<span class="cm">// Acceder por URL del src</span>
+<span class="kw">const</span> frame2 = page.frameLocator(<span class="st">'iframe[src*="firma"]'</span>);
+
+<span class="cm">// Objeto Frame (API más completa)</span>
+<span class="kw">const</span> frame3 = page.frame({ name: <span class="st">'firma-digital'</span> });
+<span class="kw">await</span> frame3?.fill(<span class="st">'#pin'</span>, <span class="st">'1234'</span>);</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: SELECTORES                                       -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-selectores" class="mode-panel">
+
+  <div class="sec-title" data-n="P">PRIORIDAD DE SELECTORES — DE MEJOR A PEOR</div>
+
+  <div class="callout green">
+    <strong>Regla de oro: elige el selector que menos cambie cuando cambie el código.</strong>
+    Roles ARIA y labels cambian solo si cambia la semántica de la UI (raramente). Clases CSS cambian con cada refactor de estilos (frecuentemente).
+  </div>
+
+  <div class="sel-card">
+    <div><div class="sel-name">getByRole</div><div class="sel-code">page.getByRole('button', { name: 'Guardar' })</div><div class="sel-note">Rol ARIA + nombre accesible. El más robusto. No se rompe con cambios de CSS ni de posición en el DOM.</div></div>
+    <span class="sel-pref best">MEJOR</span>
+  </div>
+  <div class="sel-card">
+    <div><div class="sel-name">getByLabel</div><div class="sel-code">page.getByLabel('Dirección de email')</div><div class="sel-note">Input asociado a un &lt;label&gt;. Ideal para formularios bien construidos.</div></div>
+    <span class="sel-pref best">MEJOR</span>
+  </div>
+  <div class="sel-card">
+    <div><div class="sel-name">getByText</div><div class="sel-code">page.getByText('Guardar cambios', { exact: true })</div><div class="sel-note">Texto visible. Cuidado con textos dinámicos o i18n. Usa <code>exact:true</code> para evitar coincidencias parciales.</div></div>
+    <span class="sel-pref ok">BUENO</span>
+  </div>
+  <div class="sel-card">
+    <div><div class="sel-name">getByPlaceholder</div><div class="sel-code">page.getByPlaceholder('usuario@email.com')</div><div class="sel-note">Atributo placeholder. Útil cuando no hay label. Menos estable si cambia el copy.</div></div>
+    <span class="sel-pref ok">BUENO</span>
+  </div>
+  <div class="sel-card">
+    <div><div class="sel-name">getByAltText</div><div class="sel-code">page.getByAltText('Logo empresa')</div><div class="sel-note">Atributo alt de imágenes. El único selector semántico para &lt;img&gt;.</div></div>
+    <span class="sel-pref ok">BUENO</span>
+  </div>
+  <div class="sel-card">
+    <div><div class="sel-name">getByTitle</div><div class="sel-code">page.getByTitle('Cerrar modal')</div><div class="sel-note">Atributo title. Menos usado pero estable para iconos y tooltips.</div></div>
+    <span class="sel-pref ok">BUENO</span>
+  </div>
+  <div class="sel-card">
+    <div><div class="sel-name">getByTestId</div><div class="sel-code">page.getByTestId('btn-guardar-cuenta')</div><div class="sel-note">Atributo <code>data-testid</code>. Requiere añadirlo al HTML. El más explícito y estable a largo plazo.</div></div>
+    <span class="sel-pref ok">BUENO</span>
+  </div>
+  <div class="sel-card">
+    <div><div class="sel-name">locator ID</div><div class="sel-code">page.locator('#email')</div><div class="sel-note">ID único. Estable si el ID no cambia, pero en legacy suelen ser técnicos o generados.</div></div>
+    <span class="sel-pref avoid">EVITAR</span>
+  </div>
+  <div class="sel-card">
+    <div><div class="sel-name">locator CSS clase</div><div class="sel-code">page.locator('.btn-primary')</div><div class="sel-note">Frágil. Las clases CSS cambian con cada refactor de estilos. Solo si no hay alternativa.</div></div>
+    <span class="sel-pref avoid">EVITAR</span>
+  </div>
+  <div class="sel-card">
+    <div><div class="sel-name">locator XPath</div><div class="sel-code">page.locator('//div//input[1]')</div><div class="sel-note">Muy frágil. Se rompe con cualquier cambio estructural del HTML. Último recurso absoluto.</div></div>
+    <span class="sel-pref avoid">EVITAR</span>
+  </div>
+
+  <div class="sec-title" data-n="C">COMBINACIONES Y FILTROS</div>
+
+<pre><span class="cm">// Filtrar por texto dentro de un conjunto</span>
+page.locator(<span class="st">'tr'</span>).filter({ hasText: <span class="st">'admin@test.com'</span> })
+
+<span class="cm">// Filtrar por hijo que contenga locator</span>
+page.locator(<span class="st">'.card'</span>).filter({ has: page.locator(<span class="st">'img'</span>) })
+
+<span class="cm">// Negación: sin ese contenido</span>
+page.locator(<span class="st">'.card'</span>).filter({ hasNot: page.locator(<span class="st">'.disabled'</span>) })
+
+<span class="cm">// Primero, último, enésimo (0-indexed)</span>
+page.locator(<span class="st">'tr'</span>).first()
+page.locator(<span class="st">'tr'</span>).last()
+page.locator(<span class="st">'tr'</span>).nth(<span class="nu">2</span>)
+
+<span class="cm">// Dentro de otro locator (scope)</span>
+page.locator(<span class="st">'.modal'</span>).getByRole(<span class="st">'button'</span>, { name: <span class="st">'Confirmar'</span> })
+page.locator(<span class="st">'#form-cuentas'</span>).locator(<span class="st">'input[type="email"]'</span>)
+
+<span class="cm">// Concatenar con and (ambas condiciones)</span>
+page.locator(<span class="st">'input'</span>).and(page.locator(<span class="st">'[required]'</span>))
+
+<span class="cm">// Concatenar con or (una u otra)</span>
+page.locator(<span class="st">'button.guardar'</span>).or(page.locator(<span class="st">'input[type="submit"]'</span>))</pre>
+
+  <div class="sec-title" data-n="L">PARA JSP LEGACY — SIN ARIA NI DATA-TESTID</div>
+
+<pre><span class="cm">// Por atributo name (el más estable en HTML de formularios clásicos)</span>
+page.locator(<span class="st">'input[name="email"]'</span>)
+page.locator(<span class="st">'select[name="tipo_cuenta"]'</span>)
+page.locator(<span class="st">'textarea[name="observaciones"]'</span>)
+
+<span class="cm">// Botón submit sin texto</span>
+page.locator(<span class="st">'input[type="submit"]'</span>)
+page.locator(<span class="st">'button[type="submit"]'</span>)
+
+<span class="cm">// Por type</span>
+page.locator(<span class="st">'input[type="checkbox"]'</span>)
+page.locator(<span class="st">'input[type="radio"][value="admin"]'</span>)
+
+<span class="cm">// Fila de tabla que contiene un email</span>
+page.locator(<span class="st">'table tbody tr'</span>).filter({ hasText: <span class="st">'admin@test.com'</span> })
+
+<span class="cm">// Link por href parcial</span>
+page.locator(<span class="st">'a[href*="/detalle"]'</span>)
+page.locator(<span class="st">'a[href$=".pdf"]'</span>)       <span class="cm">// termina en .pdf</span></pre>
+
+  <div class="sec-title" data-n="A">ACCEDER A LISTAS Y CONTAR ELEMENTOS</div>
+
+<pre><span class="cm">// Contar cuántos elementos hay</span>
+<span class="kw">const</span> count = <span class="kw">await</span> page.locator(<span class="st">'table tbody tr'</span>).count();
+expect(count).toBeGreaterThan(<span class="nu">0</span>);
+
+<span class="cm">// Iterar sobre todos los elementos</span>
+<span class="kw">const</span> filas = page.locator(<span class="st">'table tbody tr'</span>);
+<span class="kw">const</span> emails = <span class="kw">await</span> filas.allTextContents(); <span class="cm">// array de strings</span>
+expect(emails).toContain(<span class="st">'admin@test.com'</span>);
+
+<span class="cm">// Para elementos más complejos: evaluateAll</span>
+<span class="kw">const</span> hrefs = <span class="kw">await</span> page.locator(<span class="st">'a'</span>).evaluateAll(
+  links => links.map((l: HTMLAnchorElement) => l.href)
+);</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: ASSERTIONS                                       -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-assertions" class="mode-panel">
+
+  <div class="sec-title" data-n="E">ASSERTIONS SOBRE ELEMENTOS — AUTO-RETRY</div>
+
+  <div class="callout blue">
+    <strong>Todas las assertions de Playwright sobre locators son asíncronas con auto-retry.</strong>
+    Reintenta hasta que se cumple o expira el timeout (5 seg por defecto). No necesitas waitFor adicionales.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Assertion</th><th>Qué verifica</th><th>Variante negativa</th></tr>
+    <tr><td class="cat"><code>toBeVisible()</code></td><td>Existe y es visible en pantalla</td><td><code>toBeHidden()</code></td></tr>
+    <tr><td class="cat"><code>toBeHidden()</code></td><td>No visible (o no existe)</td><td><code>toBeVisible()</code></td></tr>
+    <tr><td class="cat"><code>toBeEnabled()</code></td><td>No tiene atributo disabled</td><td><code>toBeDisabled()</code></td></tr>
+    <tr><td class="cat"><code>toBeChecked()</code></td><td>Checkbox/radio marcado</td><td><code>toBeChecked({checked:false})</code></td></tr>
+    <tr><td class="cat"><code>toBeEditable()</code></td><td>Input editable (no readonly)</td><td>—</td></tr>
+    <tr><td class="cat"><code>toBeEmpty()</code></td><td>Input vacío o elemento sin contenido</td><td>—</td></tr>
+    <tr><td class="cat"><code>toBeFocused()</code></td><td>Tiene el foco activo</td><td>—</td></tr>
+    <tr><td class="cat"><code>toHaveText(txt)</code></td><td>Texto exacto o regex</td><td><code>not.toHaveText()</code></td></tr>
+    <tr><td class="cat"><code>toContainText(txt)</code></td><td>Contiene ese texto (parcial)</td><td><code>not.toContainText()</code></td></tr>
+    <tr><td class="cat"><code>toHaveValue(val)</code></td><td>Value del input/select</td><td><code>not.toHaveValue()</code></td></tr>
+    <tr><td class="cat"><code>toHaveValues([])</code></td><td>Values seleccionados (select múltiple)</td><td>—</td></tr>
+    <tr><td class="cat"><code>toHaveCount(n)</code></td><td>El locator devuelve N elementos</td><td>—</td></tr>
+    <tr><td class="cat"><code>toHaveAttribute(k,v)</code></td><td>Tiene el atributo con ese valor</td><td><code>not.toHaveAttribute()</code></td></tr>
+    <tr><td class="cat"><code>toHaveClass(cls)</code></td><td>Tiene esa clase CSS</td><td><code>not.toHaveClass()</code></td></tr>
+    <tr><td class="cat"><code>toHaveCSS(prop,val)</code></td><td>Propiedad CSS calculada</td><td>—</td></tr>
+    <tr><td class="cat"><code>toHaveId(id)</code></td><td>Atributo id exacto</td><td>—</td></tr>
+    <tr><td class="cat"><code>toHaveScreenshot()</code></td><td>Screenshot idéntico al guardado</td><td>—</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="P">ASSERTIONS SOBRE LA PÁGINA</div>
+
+<pre><span class="cm">// URL</span>
+<span class="kw">await</span> expect(page).toHaveURL(<span class="st">'/cuentas'</span>);
+<span class="kw">await</span> expect(page).toHaveURL(<span class="st">/dashboard/</span>);
+<span class="kw">await</span> expect(page).not.toHaveURL(<span class="st">/login/</span>);
+
+<span class="cm">// Título</span>
+<span class="kw">await</span> expect(page).toHaveTitle(<span class="st">'WebDTE — Cuentas'</span>);
+<span class="kw">await</span> expect(page).toHaveTitle(<span class="st">/WebDTE/</span>);
+
+<span class="cm">// Screenshot de página completa</span>
+<span class="kw">await</span> expect(page).toHaveScreenshot(<span class="st">'cuentas-page.png'</span>);
+<span class="kw">await</span> expect(page).toHaveScreenshot({ maxDiffPixels: <span class="nu">100</span> }); <span class="cm">// tolerancia</span></pre>
+
+  <div class="sec-title" data-n="R">ASSERTIONS SOBRE RESPONSES HTTP</div>
+
+<pre><span class="cm">// Interceptar una response concreta</span>
+<span class="kw">const</span> res = <span class="kw">await</span> page.waitForResponse(<span class="st">'**/api/cuentas'</span>);
+expect(res.status()).toBe(<span class="nu">201</span>);
+expect(res.ok()).toBe(<span class="kw">true</span>);   <span class="cm">// ok = status 200-299</span>
+
+<span class="cm">// Verificar body JSON</span>
+<span class="kw">const</span> body = <span class="kw">await</span> res.json();
+expect(body.email).toBe(<span class="st">'test@test.com'</span>);
+expect(body).toMatchObject({ status: <span class="st">'creado'</span> });
+
+<span class="cm">// Verificar headers de seguridad (OWASP A05)</span>
+<span class="kw">const</span> headers = res.headers();
+expect(headers[<span class="st">'x-frame-options'</span>]).toBe(<span class="st">'DENY'</span>);
+expect(headers[<span class="st">'content-security-policy'</span>]).toBeDefined();
+
+<span class="cm">// Condición sobre la URL de la response</span>
+<span class="kw">const</span> res2 = <span class="kw">await</span> page.waitForResponse(
+  r => r.url().includes(<span class="st">'/api/'</span>) && r.status() === <span class="nu">201</span>
+);</pre>
+
+  <div class="sec-title" data-n="S">SOFT ASSERTIONS — RECOPILAR TODOS LOS FALLOS</div>
+
+<pre><span class="cm">// Las soft assertions no detienen el test al fallar</span>
+<span class="cm">// Útil para auditorías OWASP: verificar todos los headers de una vez</span>
+
+test(<span class="st">'OWASP A05 — todos los headers de seguridad'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">const</span> res = <span class="kw">await</span> page.goto(<span class="st">'/'</span>);
+  <span class="kw">const</span> h = res!.headers();
+
+  expect.soft(h[<span class="st">'x-content-type-options'</span>]).toBe(<span class="st">'nosniff'</span>);
+  expect.soft(h[<span class="st">'x-frame-options'</span>]).toBe(<span class="st">'DENY'</span>);
+  expect.soft(h[<span class="st">'strict-transport-security'</span>]).toBeDefined();
+  expect.soft(h[<span class="st">'content-security-policy'</span>]).toBeDefined();
+  expect.soft(h[<span class="st">'referrer-policy'</span>]).toBeDefined();
+
+  <span class="cm">// Al final del test se reportan TODOS los fallos juntos</span>
+  <span class="cm">// → sabes exactamente qué headers faltan, no solo el primero</span>
+});</pre>
+
+  <div class="sec-title" data-n="V">VISUAL REGRESSION — SCREENSHOTS COMPARATIVOS</div>
+
+<pre><span class="cm">// La primera vez que se ejecuta: genera el screenshot de referencia</span>
+<span class="cm">// Las siguientes: compara pixel a pixel</span>
+
+<span class="cm">// Screenshot de un elemento concreto</span>
+<span class="kw">await</span> expect(page.locator(<span class="st">'#tabla-cuentas'</span>)).toHaveScreenshot(<span class="st">'tabla.png'</span>);
+
+<span class="cm">// Con tolerancia para diferencias de renderizado</span>
+<span class="kw">await</span> expect(page).toHaveScreenshot(<span class="st">'home.png'</span>, {
+  maxDiffPixels: <span class="nu">200</span>,         <span class="cm">// diferencia máxima en píxeles</span>
+  threshold: <span class="nu">0.2</span>,             <span class="cm">// ratio 0-1 de diferencia</span>
+});
+
+<span class="cm"># Actualizar los screenshots de referencia cuando el diseño cambia:</span>
+npx playwright test --update-snapshots</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: NETWORK                                          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-network" class="mode-panel">
+
+  <div class="sec-title" data-n="I">INTERCEPTAR Y MODIFICAR REQUESTS — page.route()</div>
+
+  <div class="callout purple">
+    <strong>page.route() es una de las funciones más potentes de Playwright.</strong>
+    Permite interceptar cualquier request HTTP del navegador y: modificarla, devolverla desde un mock, abortarla, o dejarla pasar. Imprescindible para simular errores del servidor y para tests aislados que no dependen de la BD.
+  </div>
+
+<pre><span class="cm">// Mockear una respuesta completa</span>
+<span class="kw">await</span> page.route(<span class="st">'**/api/cuentas'</span>, route => route.fulfill({
+  status: <span class="nu">200</span>,
+  contentType: <span class="st">'application/json'</span>,
+  body: JSON.stringify([
+    { email: <span class="st">'mock@test.com'</span>, nombre: <span class="st">'Usuario Mock'</span> }
+  ]),
+}));
+
+<span class="cm">// Simular error del servidor (útil para testar manejo de errores)</span>
+<span class="kw">await</span> page.route(<span class="st">'**/api/cuentas'</span>, route => route.fulfill({
+  status: <span class="nu">500</span>,
+  body: <span class="st">'Internal Server Error'</span>,
+}));
+
+<span class="cm">// Simular timeout de red</span>
+<span class="kw">await</span> page.route(<span class="st">'**/api/contratos'</span>, route => route.abort(<span class="st">'timedout'</span>));
+
+<span class="cm">// Dejar pasar pero modificar la respuesta</span>
+<span class="kw">await</span> page.route(<span class="st">'**/api/cuentas'</span>, <span class="kw">async</span> route => {
+  <span class="kw">const</span> response = <span class="kw">await</span> route.fetch(); <span class="cm">// hacer el request real</span>
+  <span class="kw">const</span> body = <span class="kw">await</span> response.json();
+  body.push({ email: <span class="st">'extra@test.com'</span> }); <span class="cm">// añadir datos</span>
+  <span class="kw">await</span> route.fulfill({ response, body: JSON.stringify(body) });
+});
+
+<span class="cm">// Desactivar el mock después de usarlo</span>
+<span class="kw">await</span> page.unroute(<span class="st">'**/api/cuentas'</span>);
+<span class="kw">await</span> page.unrouteAll();             <span class="cm">// desactivar todos</span></pre>
+
+  <div class="sec-title" data-n="E">ESPERAR REQUESTS ESPECÍFICOS</div>
+
+<pre><span class="cm">// Esperar a que se realice un request concreto</span>
+<span class="kw">const</span> reqPromise = page.waitForRequest(<span class="st">'**/api/cuentas'</span>);
+<span class="kw">await</span> page.click(<span class="st">'#buscar'</span>);
+<span class="kw">const</span> req = <span class="kw">await</span> reqPromise;
+expect(req.method()).toBe(<span class="st">'GET'</span>);
+
+<span class="cm">// Esperar a la response con condición</span>
+<span class="kw">const</span> resPromise = page.waitForResponse(
+  r => r.url().includes(<span class="st">'/api/cuentas'</span>) && r.status() === <span class="nu">200</span>
+);
+<span class="kw">await</span> page.click(<span class="st">'#buscar'</span>);
+<span class="kw">const</span> res = <span class="kw">await</span> resPromise;
+
+<span class="cm">// Esperar a que terminen TODOS los requests</span>
+<span class="kw">await</span> page.waitForLoadState(<span class="st">'networkidle'</span>);</pre>
+
+  <div class="sec-title" data-n="H">GRABAR Y REPRODUCIR HAR</div>
+
+<pre><span class="cm">// ── GRABAR ──────────────────────────────────────────────────</span>
+<span class="cm">// Opción 1: desde el config (recomendado para FMI)</span>
+use: {
+  recordHar: {
+    path: <span class="st">'./telemetry/har/iter-01/sesion.har'</span>,
+    mode: <span class="st">'full'</span>,        <span class="cm">// captura headers + body completo</span>
+    content: <span class="st">'embed'</span>,    <span class="cm">// embebe binarios en el HAR</span>
+    urlFilter: <span class="st">'**/api/**'</span>, <span class="cm">// solo llamadas API (opcional)</span>
+  }
+}
+
+<span class="cm">// Opción 2: desde el test (más control)</span>
+<span class="kw">await</span> context.routeFromHAR(<span class="st">'./telemetry/har/sesion.har'</span>, {
+  update: <span class="kw">true</span>,   <span class="cm">// grabar nuevos requests</span>
+});
+
+<span class="cm">// ── REPRODUCIR ──────────────────────────────────────────────</span>
+<span class="cm">// Los tests usan el HAR guardado como servidor mock</span>
+<span class="cm">// Útil para tests offline o reproducibles</span>
+<span class="kw">await</span> context.routeFromHAR(<span class="st">'./telemetry/har/sesion.har'</span>, {
+  update: <span class="kw">false</span>,          <span class="cm">// no actualizar, solo reproducir</span>
+  notFound: <span class="st">'fallback'</span>,   <span class="cm">// si no está en el HAR: hacer el request real</span>
+});</pre>
+
+  <div class="sec-title" data-n="A">API TESTING — SIN NAVEGADOR</div>
+
+<pre><span class="cm">// Para tests puramente de API (sin UI): APIRequestContext</span>
+<span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="st">'@playwright/test'</span>;
+
+test(<span class="st">'API — crear cuenta'</span>, <span class="kw">async</span> ({ request }) => {
+  <span class="cm">// POST</span>
+  <span class="kw">const</span> res = <span class="kw">await</span> request.post(<span class="st">'/api/cuentas'</span>, {
+    data: { email: <span class="st">'api@test.com'</span>, nombre: <span class="st">'API Test'</span>, password: <span class="st">'Pass1!'</span> },
+    headers: { <span class="st">'Content-Type'</span>: <span class="st">'application/json'</span> },
+  });
+  expect(res.status()).toBe(<span class="nu">201</span>);
+
+  <span class="cm">// GET</span>
+  <span class="kw">const</span> list = <span class="kw">await</span> request.get(<span class="st">'/api/cuentas'</span>);
+  <span class="kw">const</span> body = <span class="kw">await</span> list.json();
+  expect(body.some((c: <span class="kw">any</span>) => c.email === <span class="st">'api@test.com'</span>)).toBe(<span class="kw">true</span>);
+
+  <span class="cm">// DELETE</span>
+  <span class="kw">await</span> request.delete(<span class="st">`/api/cuentas/api@test.com`</span>);
+});
+
+<span class="cm">// Crear un request context global (con auth)</span>
+<span class="kw">const</span> apiContext = <span class="kw">await</span> playwright.request.newContext({
+  baseURL: <span class="st">'http://localhost:8080'</span>,
+  extraHTTPHeaders: {
+    <span class="st">'Authorization'</span>: <span class="st">`Bearer ${token}`</span>,
+  },
+});</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: CODEGEN                                          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-codegen" class="mode-panel">
+
+  <div class="sec-title" data-n="C">CODEGEN — GRABAR TESTS DESDE EL NAVEGADOR</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header good">Desde VSCode (recomendado)</div>
+      <div class="comp-content">Testing Panel → <strong>Record new</strong> (círculo rojo). Elige el fichero destino. El código aparece en tiempo real en el editor mientras navegas.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header alt">Desde terminal</div>
+      <div class="comp-content">
+<pre style="border:none;padding:0;margin:0;font-size:11px">npx playwright codegen http://localhost:8080
+
+<span class="cm"># Con sesión ya iniciada:</span>
+npx playwright codegen \
+  --load-storage=auth/admin.json \
+  http://localhost:8080
+
+<span class="cm"># Guardar directamente:</span>
+npx playwright codegen \
+  --output=tests/nuevo.spec.ts \
+  http://localhost:8080
+
+<span class="cm"># Emular dispositivo móvil:</span>
+npx playwright codegen \
+  --device="iPhone 14" \
+  http://localhost:8080</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="P">PANEL DE CODEGEN — CONTROLES</div>
+
+  <table class="vtable">
+    <tr><th>Elemento del panel</th><th>Qué hace</th></tr>
+    <tr><td class="cat">Botón record (rojo)</td><td>Pausa / reanuda la grabación sin cerrar el navegador</td></tr>
+    <tr><td class="cat">Target selector</td><td>Cambia el lenguaje de salida (TypeScript, JavaScript, Python, Java, C#)</td></tr>
+    <tr><td class="cat">Icono 🔍 (Explore)</td><td>Modo pick: haz clic en un elemento y muestra su locator sin grabar acciones</td></tr>
+    <tr><td class="cat">Icono 🗑️</td><td>Limpia el código generado y empieza de nuevo</td></tr>
+    <tr><td class="cat">Icono 📋 (Copy)</td><td>Copia todo el código al portapapeles</td></tr>
+    <tr><td class="cat">Atajo F8</td><td>Pausa / reanuda grabación (equivalente al botón record)</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="L">LO QUE GENERA CODEGEN VS LO QUE LIMPIAS</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">❌ Lo que genera (en bruto)</div>
+      <div class="comp-content">
+<pre style="border:none;padding:0;margin:0;font-size:11px"><span class="kw">await</span> page.goto(
+  <span class="st">'http://localhost:8080/cuentas.html'</span>
+);
+<span class="kw">await</span> page.locator(<span class="st">'#email'</span>)
+  .fill(<span class="st">'test@test.com'</span>);
+<span class="kw">await</span> page.locator(<span class="st">'#nombre'</span>)
+  .fill(<span class="st">'Test'</span>);
+<span class="kw">await</span> page.locator(<span class="st">'input[type="submit"]'</span>)
+  .click();
+<span class="kw">await</span> page.goto(
+  <span class="st">'http://localhost:8080/cuentas.html'</span>
+);</span></pre>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">✅ Después de limpiar</div>
+      <div class="comp-content">
+<pre style="border:none;padding:0;margin:0;font-size:11px">test(<span class="st">'alta cuenta válida'</span>, <span class="kw">async</span>({ page }) => {
+  <span class="cm">// Dato único para evitar colisiones</span>
+  <span class="kw">const</span> email =
+    <span class="st">`CART_<span class="hl">${Date.now()}</span>@test.com`</span>;
+
+  <span class="cm">// URL relativa (usa baseURL del config)</span>
+  <span class="kw">await</span> page.goto(<span class="st">'/cuentas.html'</span>);
+  <span class="kw">await</span> page.locator(<span class="st">'#email'</span>).fill(email);
+  <span class="kw">await</span> page.locator(<span class="st">'#nombre'</span>).fill(<span class="st">'Test'</span>);
+  <span class="kw">await</span> page.getByRole(<span class="st">'button'</span>,
+    { name: <span class="st">'Guardar'</span> }).click();
+
+  <span class="cm">// Assertion que faltaba</span>
+  <span class="kw">await</span> page.goto(<span class="st">'/cuentas.html'</span>);
+  <span class="kw">await</span> expect(
+    page.getByText(email)
+  ).toBeVisible();
+});</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout orange">
+    <strong>Los 3 errores que codegen SIEMPRE comete</strong>
+    (1) URLs absolutas → cámbialas a relativas para que funcionen con <code>baseURL</code>.
+    (2) Datos literales hardcoded → añade <code>Date.now()</code> o uuid para que sean únicos entre ejecuciones.
+    (3) Sin assertions → el test pasa siempre aunque falle la acción. Añade al menos un <code>expect</code>.
+  </div>
+
+  <div class="sec-title" data-n="R">RECORD AT CURSOR — AMPLIAR TEST EXISTENTE</div>
+
+  <div class="callout blue">
+    <strong>Record at Cursor</strong> inserta las acciones grabadas justo donde está el cursor en el editor. Ideal para añadir pasos a un test que ya tienes a medias sin reescribir todo.
+  </div>
+
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-num"><div class="step-circle b">1</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Posicionar el cursor en el editor</div><div class="step-desc">Haz clic en la línea donde quieres insertar el nuevo código dentro del test existente.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle b">2</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Abrir la paleta de comandos</div><div class="step-desc"><code>Ctrl+Shift+P</code> → buscar "Playwright: Record at cursor".</div></div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle b">3</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Navegar en el navegador</div><div class="step-desc">Las acciones se insertan en el punto exacto del cursor. Pausa con F8 cuando termines.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: POM                                              -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-pom" class="mode-panel">
+
+  <div class="sec-title" data-n="P">PAGE OBJECT MODEL — POR QUÉ ES IMPRESCINDIBLE</div>
+
+  <div class="callout green">
+    <strong>El POM separa los selectores y acciones de las verificaciones.</strong>
+    Cuando el HTML cambia (y en WebDTE cambiará), solo actualizas el Page Object — no cada test que lo usa. Es el equivalente al patrón Repository para los tests E2E.
+  </div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">❌ Sin POM — selector en cada test</div>
+      <div class="comp-content">
+<pre style="border:none;padding:0;margin:0;font-size:11px"><span class="cm">// test1.spec.ts</span>
+<span class="kw">await</span> page.fill(<span class="st">'#email'</span>, email);
+<span class="kw">await</span> page.fill(<span class="st">'#pass'</span>, <span class="st">'1234'</span>);
+<span class="kw">await</span> page.click(<span class="st">'#btn-login'</span>);
+
+<span class="cm">// test2.spec.ts (duplicado)</span>
+<span class="kw">await</span> page.fill(<span class="st">'#email'</span>, email);
+<span class="kw">await</span> page.fill(<span class="st">'#pass'</span>, <span class="st">'1234'</span>);
+<span class="kw">await</span> page.click(<span class="st">'#btn-login'</span>);
+
+<span class="cm">// Si #email cambia a #user-email:
+// hay que cambiar TODOS los tests</span></pre>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">✅ Con POM — un solo punto de cambio</div>
+      <div class="comp-content">
+<pre style="border:none;padding:0;margin:0;font-size:11px"><span class="cm">// LoginPage.ts — un solo fichero</span>
+email = page.locator(<span class="st">'#email'</span>);
+pass  = page.locator(<span class="st">'#pass'</span>);
+login = page.locator(<span class="st">'#btn-login'</span>);
+
+<span class="cm">// test1.spec.ts</span>
+<span class="kw">await</span> loginPage.loginAs(email, <span class="st">'1234'</span>);
+
+<span class="cm">// test2.spec.ts</span>
+<span class="kw">await</span> loginPage.loginAs(email, <span class="st">'1234'</span>);
+
+<span class="cm">// Si #email cambia:
+// solo se cambia LoginPage.ts</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="L">LOGINPAGE — EJEMPLO COMPLETO</div>
+
+<pre><span class="cm">// tests/pages/LoginPage.ts</span>
+<span class="kw">import</span> { Page, Locator, expect } <span class="kw">from</span> <span class="st">'@playwright/test'</span>;
+
+<span class="kw">export class</span> <span class="cl">LoginPage</span> {
+  <span class="kw">private readonly</span> page: Page;
+
+  <span class="cm">// Todos los selectores en un solo lugar</span>
+  <span class="kw">readonly</span> emailInput: Locator;
+  <span class="kw">readonly</span> passwordInput: Locator;
+  <span class="kw">readonly</span> submitButton: Locator;
+  <span class="kw">readonly</span> errorMessage: Locator;
+
+  constructor(page: Page) {
+    <span class="kw">this</span>.page = page;
+    <span class="kw">this</span>.emailInput    = page.locator(<span class="st">'input[name="usuario"]'</span>);
+    <span class="kw">this</span>.passwordInput = page.locator(<span class="st">'input[name="password"]'</span>);
+    <span class="kw">this</span>.submitButton  = page.getByRole(<span class="st">'button'</span>, { name: <span class="st">'Entrar'</span> });
+    <span class="kw">this</span>.errorMessage  = page.locator(<span class="st">'#error-login'</span>);
+  }
+
+  <span class="cm">// Acciones de alto nivel</span>
+  <span class="kw">async</span> <span class="fn">goto</span>() {
+    <span class="kw">await</span> <span class="kw">this</span>.page.goto(<span class="st">'/login.jsp'</span>);
+  }
+
+  <span class="kw">async</span> <span class="fn">loginAs</span>(email: string, password: string) {
+    <span class="kw">await</span> <span class="kw">this</span>.emailInput.fill(email);
+    <span class="kw">await</span> <span class="kw">this</span>.passwordInput.fill(password);
+    <span class="kw">await</span> <span class="kw">this</span>.submitButton.click();
+  }
+
+  <span class="kw">async</span> <span class="fn">expectLoginOk</span>() {
+    <span class="kw">await</span> expect(<span class="kw">this</span>.page).toHaveURL(<span class="st">/dashboard|inicio/</span>);
+  }
+
+  <span class="kw">async</span> <span class="fn">expectLoginError</span>(mensaje: string) {
+    <span class="kw">await</span> expect(<span class="kw">this</span>.errorMessage).toBeVisible();
+    <span class="kw">await</span> expect(<span class="kw">this</span>.errorMessage).toContainText(mensaje);
+  }
+}</pre>
+
+  <div class="sec-title" data-n="C">CUENTASPAGE — PAGE OBJECT CON TABLA</div>
+
+<pre><span class="cm">// tests/pages/CuentasPage.ts</span>
+<span class="kw">import</span> { Page, Locator, expect } <span class="kw">from</span> <span class="st">'@playwright/test'</span>;
+
+<span class="kw">export class</span> <span class="cl">CuentasPage</span> {
+  <span class="kw">private readonly</span> page: Page;
+  <span class="kw">readonly</span> emailInput: Locator;
+  <span class="kw">readonly</span> nombreInput: Locator;
+  <span class="kw">readonly</span> passwordInput: Locator;
+  <span class="kw">readonly</span> guardarBtn: Locator;
+  <span class="kw">readonly</span> tablaCuentas: Locator;
+
+  constructor(page: Page) {
+    <span class="kw">this</span>.page          = page;
+    <span class="kw">this</span>.emailInput    = page.locator(<span class="st">'input[name="email"]'</span>);
+    <span class="kw">this</span>.nombreInput   = page.locator(<span class="st">'input[name="nombre"]'</span>);
+    <span class="kw">this</span>.passwordInput = page.locator(<span class="st">'input[name="password"]'</span>);
+    <span class="kw">this</span>.guardarBtn    = page.getByRole(<span class="st">'button'</span>, { name: <span class="st">'Guardar'</span> });
+    <span class="kw">this</span>.tablaCuentas  = page.locator(<span class="st">'#tabla-cuentas tbody'</span>);
+  }
+
+  <span class="kw">async</span> <span class="fn">goto</span>() { <span class="kw">await</span> <span class="kw">this</span>.page.goto(<span class="st">'/cuentas.html'</span>); }
+
+  <span class="kw">async</span> <span class="fn">crearCuenta</span>(email: string, nombre: string, password: string) {
+    <span class="kw">await</span> <span class="kw">this</span>.emailInput.fill(email);
+    <span class="kw">await</span> <span class="kw">this</span>.nombreInput.fill(nombre);
+    <span class="kw">await</span> <span class="kw">this</span>.passwordInput.fill(password);
+    <span class="kw">await</span> <span class="kw">this</span>.guardarBtn.click();
+  }
+
+  <span class="kw">async</span> <span class="fn">buscarCuenta</span>(email: string): Promise&lt;Locator&gt; {
+    <span class="kw">return</span> <span class="kw">this</span>.tablaCuentas.locator(<span class="st">'tr'</span>)
+      .filter({ hasText: email });
+  }
+
+  <span class="kw">async</span> <span class="fn">expectCuentaVisible</span>(email: string) {
+    <span class="kw">const</span> fila = <span class="kw">await</span> <span class="kw">this</span>.buscarCuenta(email);
+    <span class="kw">await</span> expect(fila).toBeVisible();
+  }
+}
+
+<span class="cm">// Uso en un test:</span>
+test(<span class="st">'alta de cuenta'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">const</span> cuentasPage = <span class="kw">new</span> CuentasPage(page);
+  <span class="kw">const</span> email = <span class="st">`CART_<span class="hl">${Date.now()}</span>@test.com`</span>;
+  <span class="kw">await</span> cuentasPage.goto();
+  <span class="kw">await</span> cuentasPage.crearCuenta(email, <span class="st">'Test'</span>, <span class="st">'Pass1234!'</span>);
+  <span class="kw">await</span> cuentasPage.goto();
+  <span class="kw">await</span> cuentasPage.expectCuentaVisible(email);
+});</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: FIXTURES                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-fixtures" class="mode-panel">
+
+  <div class="sec-title" data-n="F">FIXTURES — SETUP Y TEARDOWN REUTILIZABLE</div>
+
+  <div class="callout blue">
+    <strong>Los fixtures son la alternativa correcta a beforeEach con lógica compleja.</strong>
+    Encapsulan el setup, lo inyectan en el test, y ejecutan el teardown automáticamente cuando el test termina (incluso si falla).
+  </div>
+
+  <div class="sec-title" data-n="S">AUTH — STORAGESTATE EN EL CONFIG</div>
+
+<pre><span class="cm">// tests/auth.setup.ts — se ejecuta UNA VEZ por suite</span>
+<span class="kw">import</span> { test <span class="kw">as</span> setup, expect } <span class="kw">from</span> <span class="st">'@playwright/test'</span>;
+<span class="kw">import</span> path <span class="kw">from</span> <span class="st">'path'</span>;
+
+setup(<span class="st">'autenticar admin'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">await</span> page.goto(<span class="st">'/login.jsp'</span>);
+  <span class="kw">await</span> page.fill(<span class="st">'input[name="usuario"]'</span>, process.env.ADMIN_USER || <span class="st">'admin'</span>);
+  <span class="kw">await</span> page.fill(<span class="st">'input[name="password"]'</span>, process.env.ADMIN_PASS || <span class="st">'test1234'</span>);
+  <span class="kw">await</span> page.click(<span class="st">'button[type="submit"]'</span>);
+  <span class="kw">await</span> expect(page).toHaveURL(<span class="st">/dashboard|inicio/</span>);
+  <span class="kw">await</span> page.context().storageState({ path: <span class="st">'auth/admin.json'</span> });
+});
+
+<span class="cm">// Los tests reciben la sesión vía storageState en el config</span>
+<span class="cm">// No necesitan código de login → arrancan ya autenticados</span></pre>
+
+  <div class="sec-title" data-n="C">CUSTOM FIXTURES — DATOS DE PRUEBA</div>
+
+<pre><span class="cm">// tests/fixtures/index.ts — punto de entrada de todos los fixtures</span>
+<span class="kw">import</span> { test <span class="kw">as</span> base, Page } <span class="kw">from</span> <span class="st">'@playwright/test'</span>;
+<span class="kw">import</span> { LoginPage } <span class="kw">from</span> <span class="st">'@pages/LoginPage'</span>;
+<span class="kw">import</span> { CuentasPage } <span class="kw">from</span> <span class="st">'@pages/CuentasPage'</span>;
+
+type Fixtures = {
+  loginPage:    LoginPage;
+  cuentasPage:  CuentasPage;
+  cuentaEmail:  string;       <span class="cm">// cuenta precreada, lista para usar</span>
+};
+
+<span class="kw">export const</span> test = base.extend&lt;Fixtures&gt;({
+
+  <span class="cm">// Page Objects como fixtures</span>
+  loginPage: <span class="kw">async</span> ({ page }, use) => {
+    <span class="kw">await</span> use(<span class="kw">new</span> LoginPage(page));
+  },
+  cuentasPage: <span class="kw">async</span> ({ page }, use) => {
+    <span class="kw">await</span> use(<span class="kw">new</span> CuentasPage(page));
+  },
+
+  <span class="cm">// Cuenta precreada en BD — disponible en el test</span>
+  cuentaEmail: <span class="kw">async</span> ({ page, request }, use) => {
+    <span class="kw">const</span> email = <span class="st">`CART_fix_<span class="hl">${Date.now()}</span>@test.com`</span>;
+
+    <span class="cm">// Setup: crear via API (más rápido que via UI)</span>
+    <span class="kw">await</span> request.post(<span class="st">'/api/cuentas'</span>, {
+      data: { email, nombre: <span class="st">'Fixture'</span>, password: <span class="st">'Pass1234!'</span> }
+    });
+
+    <span class="cm">// Pasar al test</span>
+    <span class="kw">await</span> use(email);
+
+    <span class="cm">// Teardown automático al finalizar (aunque el test falle)</span>
+    <span class="kw">await</span> request.delete(<span class="st">`/api/cuentas/${encodeURIComponent(email)}`</span>)
+      .catch(() => {}); <span class="cm">// ignorar si ya fue eliminada por el test</span>
+  },
+});
+
+<span class="kw">export</span> { expect } <span class="kw">from</span> <span class="st">'@playwright/test'</span>;</pre>
+
+<pre><span class="cm">// tests/e2e-seguridad/cuenta.spec.ts — usando los fixtures</span>
+<span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="st">'../fixtures'</span>;
+
+test(<span class="st">'editar cuenta precreada'</span>, <span class="kw">async</span> ({ cuentasPage, cuentaEmail }) => {
+  <span class="cm">// cuentaEmail ya existe en BD gracias al fixture</span>
+  <span class="kw">await</span> cuentasPage.goto();
+  <span class="kw">await</span> cuentasPage.expectCuentaVisible(cuentaEmail);
+  <span class="cm">// ... el test</span>
+  <span class="cm">// Al terminar, el fixture borra la cuenta automáticamente</span>
+});
+
+test(<span class="st">'detalle de cuenta precreada'</span>, <span class="kw">async</span> ({ page, cuentaEmail, cuentasPage }) => {
+  <span class="kw">await</span> cuentasPage.goto();
+  <span class="kw">const</span> fila = <span class="kw">await</span> cuentasPage.buscarCuenta(cuentaEmail);
+  <span class="kw">await</span> fila.getByRole(<span class="st">'link'</span>, { name: <span class="st">'Ver'</span> }).click();
+  <span class="kw">await</span> expect(page.getByText(cuentaEmail)).toBeVisible();
+});</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: AVANZADO                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-avanzado" class="mode-panel">
+
+  <div class="sec-title" data-n="A">ANOTACIONES Y ETIQUETAS</div>
+
+<pre><span class="cm">// test.skip — saltar un test</span>
+test.skip(<span class="st">'aún no implementado'</span>, <span class="kw">async</span> () => { ... });
+test.skip(process.env.CI === <span class="st">'true'</span>, <span class="st">'skip en CI'</span>); <span class="cm">// condicional</span>
+
+<span class="cm">// test.only — ejecutar solo este test (NO subir a git)</span>
+test.only(<span class="st">'debug temporal'</span>, <span class="kw">async</span> () => { ... });
+
+<span class="cm">// test.fixme — marcar como roto, pendiente de arreglar</span>
+test.fixme(<span class="st">'bug abierto #123'</span>, <span class="kw">async</span> () => { ... });
+
+<span class="cm">// test.slow — triplicar el timeout para tests lentos</span>
+test.slow();   <span class="cm">// dentro del test</span>
+test.slow(<span class="st">'subida de fichero grande'</span>, <span class="kw">async</span> ({ page }) => {
+  test.slow(); <span class="cm">// timeout × 3</span>
+  ...
+});
+
+<span class="cm">// Etiquetas para filtrar desde la terminal</span>
+test(<span class="st">'login @smoke @critical'</span>, <span class="kw">async</span> () => { ... });
+test(<span class="st">'busqueda @regression'</span>, <span class="kw">async</span> () => { ... });</pre>
+
+<pre><span class="cm"># Ejecutar solo tests con cierta etiqueta</span>
+npx playwright test --grep @smoke
+npx playwright test --grep @critical
+npx playwright test --grep-invert @slow   <span class="cm"># excluir lentos</span></pre>
+
+  <div class="sec-title" data-n="P">PARAMETRIZAR TESTS</div>
+
+<pre><span class="cm">// Ejecutar el mismo test con múltiples conjuntos de datos</span>
+<span class="kw">const</span> casosDNI = [
+  { dni: <span class="st">'12345678Z'</span>, esperado: <span class="st">'válido'</span> },
+  { dni: <span class="st">'00000000T'</span>, esperado: <span class="st">'inválido'</span> },
+  { dni: <span class="st">'X1234567Z'</span>, esperado: <span class="st">'NIE válido'</span> },
+  { dni: <span class="st">''</span>,          esperado: <span class="st">'requerido'</span> },
+];
+
+<span class="kw">for</span> (<span class="kw">const</span> { dni, esperado } <span class="kw">of</span> casosDNI) {
+  test(<span class="st">`validación DNI: <span class="hl">${dni || '(vacío)'}</span> → <span class="hl">${esperado}</span>`</span>, <span class="kw">async</span> ({ page }) => {
+    <span class="kw">await</span> page.goto(<span class="st">'/cuentas.html'</span>);
+    <span class="kw">await</span> page.fill(<span class="st">'[name="dni"]'</span>, dni);
+    <span class="kw">await</span> page.click(<span class="st">'button[type="submit"]'</span>);
+    <span class="kw">await</span> expect(page.locator(<span class="st">'.mensaje'</span>)).toContainText(esperado);
+  });
+}</pre>
+
+  <div class="sec-title" data-n="E">EXECUTE JAVASCRIPT — CUANDO NO HAY ALTERNATIVA</div>
+
+<pre><span class="cm">// Ejecutar JS en el contexto del navegador</span>
+<span class="kw">const</span> titulo = <span class="kw">await</span> page.evaluate(() => document.title);
+<span class="kw">const</span> items  = <span class="kw">await</span> page.evaluate(() =>
+  [...document.querySelectorAll(<span class="st">'li'</span>)].map(el => el.textContent)
+);
+
+<span class="cm">// Pasar valores al contexto del navegador</span>
+<span class="kw">const</span> resultado = <span class="kw">await</span> page.evaluate((valor) => valor * <span class="nu">2</span>, <span class="nu">21</span>);
+
+<span class="cm">// evaluateHandle: mantener referencia al objeto del navegador</span>
+<span class="kw">const</span> body = <span class="kw">await</span> page.evaluateHandle(() => document.body);
+<span class="kw">await</span> body.asElement()?.scrollIntoViewIfNeeded();
+
+<span class="cm">// Inyectar script en la página (para instrumentación)</span>
+<span class="kw">await</span> page.addScriptTag({
+  content: <span class="st">'window.MY_TEST_FLAG = true;'</span>
+});
+
+<span class="cm">// Modificar localStorage directamente</span>
+<span class="kw">await</span> page.evaluate(() => {
+  localStorage.setItem(<span class="st">'token'</span>, <span class="st">'test-token'</span>);
+});</pre>
+
+  <div class="sec-title" data-n="C">CONTEXTOS MÚLTIPLES — SIMULAR VARIOS USUARIOS</div>
+
+<pre><span class="cm">// Dos usuarios trabajando al mismo tiempo en el mismo recurso</span>
+test(<span class="st">'edición simultánea — conflicto detectado'</span>, <span class="kw">async</span> ({ browser }) => {
+  <span class="cm">// Usuario A (admin)</span>
+  <span class="kw">const</span> contextA = <span class="kw">await</span> browser.newContext({
+    storageState: <span class="st">'auth/admin.json'</span>
+  });
+  <span class="kw">const</span> pageA = <span class="kw">await</span> contextA.newPage();
+  <span class="kw">await</span> pageA.goto(<span class="st">'/contratos/1'</span>);
+
+  <span class="cm">// Usuario B (editor) — contexto separado, sesión separada</span>
+  <span class="kw">const</span> contextB = <span class="kw">await</span> browser.newContext({
+    storageState: <span class="st">'auth/usuario.json'</span>
+  });
+  <span class="kw">const</span> pageB = <span class="kw">await</span> contextB.newPage();
+  <span class="kw">await</span> pageB.goto(<span class="st">'/contratos/1'</span>);
+
+  <span class="cm">// A guarda primero</span>
+  <span class="kw">await</span> pageA.fill(<span class="st">'#titulo'</span>, <span class="st">'Versión A'</span>);
+  <span class="kw">await</span> pageA.click(<span class="st">'#guardar'</span>);
+  <span class="kw">await</span> expect(pageA.locator(<span class="st">'.success'</span>)).toBeVisible();
+
+  <span class="cm">// B intenta guardar con datos desactualizados</span>
+  <span class="kw">await</span> pageB.click(<span class="st">'#guardar'</span>);
+  <span class="kw">await</span> expect(pageB.locator(<span class="st">'.conflict-warning'</span>)).toBeVisible();
+
+  <span class="kw">await</span> contextA.close();
+  <span class="kw">await</span> contextB.close();
+});</pre>
+
+  <div class="sec-title" data-n="M">EMULACIÓN DE DISPOSITIVOS</div>
+
+<pre><span class="cm">// En el config — proyecto para mobile</span>
+{
+  name: <span class="st">'mobile-chrome'</span>,
+  use: { ...devices[<span class="st">'Pixel 7'</span>] },
+},
+{
+  name: <span class="st">'mobile-safari'</span>,
+  use: { ...devices[<span class="st">'iPhone 14'</span>] },
+},
+
+<span class="cm">// En un test específico</span>
+test.use({ viewport: { width: <span class="nu">375</span>, height: <span class="nu">667</span> } });
+
+<span class="cm">// Codegen con emulación de dispositivo</span>
+npx playwright codegen --device=<span class="st">"Pixel 7"</span> http://localhost:8080
+
+<span class="cm">// Dispositivos disponibles</span>
+npx playwright devices    <span class="cm"># lista completa</span></pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: DEBUG                                            -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-debug" class="mode-panel">
+
+  <div class="sec-title" data-n="D">MODOS DE DEBUG — CUÁNDO USAR CADA UNO</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header good">🐞 Debugger VSCode</div>
+      <div class="comp-content">
+        <strong>Cuándo:</strong> el test lanza una excepción TypeScript o quieres inspeccionar variables.<br><br>
+        <strong>Cómo:</strong> Click derecho en el test → Debug Test. Breakpoints con F9. F10 para step over, F11 para step into, F5 para continuar.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header alt">🔍 Playwright Inspector</div>
+      <div class="comp-content">
+        <strong>Cuándo:</strong> el selector no encuentra el elemento o el test hace algo inesperado visualmente.<br><br>
+        <strong>Cómo:</strong> <code>PWDEBUG=1 npx playwright test</code>. Panel visual con paso a paso, DOM, y prueba de locators en vivo.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header purple">🎬 Trace Viewer</div>
+      <div class="comp-content">
+        <strong>Cuándo:</strong> el test falla en CI y no puedes reproducirlo en local. Análisis post-mortem.<br><br>
+        <strong>Cómo:</strong> Con <code>trace: 'on-first-retry'</code> en config. <code>npx playwright show-report</code> → clic en test → Trace.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header yellow">👁️ Headed + Show Browser</div>
+      <div class="comp-content">
+        <strong>Cuándo:</strong> quieres ver qué hace el test sin pausarlo. Más rápido que el Inspector.<br><br>
+        <strong>Cómo:</strong> Testing Panel → activar Show Browser. O <code>npx playwright test --headed</code>.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="T">TÉCNICAS EN EL CÓDIGO</div>
+
+<pre><span class="cm">// 1. page.pause() — abre el Inspector en ese punto exacto</span>
+<span class="kw">await</span> page.pause();  <span class="cm">// ← QUITAR antes del commit</span>
+
+<span class="cm">// 2. Screenshot manual para ver el estado en un momento concreto</span>
+<span class="kw">await</span> page.screenshot({ path: <span class="st">'debug/step-01.png'</span>, fullPage: <span class="kw">true</span> });
+
+<span class="cm">// 3. Leer el textContent de un elemento para diagnosticar</span>
+<span class="kw">const</span> msg = <span class="kw">await</span> page.locator(<span class="st">'#error'</span>).textContent();
+console.log(<span class="st">'[DEBUG] Mensaje de error:'</span>, msg);
+
+<span class="cm">// 4. Volcar el HTML del DOM para ver la estructura</span>
+<span class="kw">const</span> html = <span class="kw">await</span> page.content();
+console.log(html.substring(<span class="nu">0</span>, <span class="nu">2000</span>));
+
+<span class="cm">// 5. Esperar explícitamente en vez de confiar en auto-retry</span>
+<span class="kw">await</span> page.waitForSelector(<span class="st">'#resultados'</span>, { state: <span class="st">'visible'</span> });
+<span class="kw">await</span> page.waitForFunction(() => document.querySelectorAll(<span class="st">'tr'</span>).length > <span class="nu">0</span>);
+<span class="kw">await</span> page.waitForTimeout(<span class="nu">1000</span>); <span class="cm">// último recurso: espera fija</span>
+
+<span class="cm">// 6. Aumentar timeout solo para un assertion concreto</span>
+<span class="kw">await</span> expect(page.locator(<span class="st">'#lento'</span>)).toBeVisible({ timeout: <span class="nu">15_000</span> });</pre>
+
+  <div class="sec-title" data-n="F">FALLOS FRECUENTES Y SOLUCIONES</div>
+
+  <table class="vtable">
+    <tr><th>Error</th><th>Causa más probable</th><th>Solución</th></tr>
+    <tr>
+      <td class="cat">Timeout waiting for locator</td>
+      <td>El selector no encuentra el elemento en el timeout</td>
+      <td>Usar Pick Locator para verificar el selector. Activar Show Browser para ver qué hay en pantalla.</td>
+    </tr>
+    <tr>
+      <td class="cat">strict mode violation (2+ elements)</td>
+      <td>El locator devuelve más de un elemento</td>
+      <td>Añadir <code>.first()</code>, <code>.nth(0)</code>, o refinar con <code>.filter()</code>.</td>
+    </tr>
+    <tr>
+      <td class="cat">Element is not visible</td>
+      <td>Existe en DOM pero hidden o fuera del viewport</td>
+      <td><code>locator.scrollIntoViewIfNeeded()</code>. Verificar <code>display/visibility</code> en DevTools.</td>
+    </tr>
+    <tr>
+      <td class="cat">Navigation failed / ERR_CONNECTION</td>
+      <td>El servidor no está corriendo o la URL es incorrecta</td>
+      <td>Verificar que el servidor arrancó. Comprobar <code>baseURL</code> en el config.</td>
+    </tr>
+    <tr>
+      <td class="cat">storageState expired</td>
+      <td>La sesión guardada expiró (token caducado)</td>
+      <td>Borrar <code>auth/admin.json</code> y ejecutar <code>npx playwright test tests/auth.setup.ts</code>.</td>
+    </tr>
+    <tr>
+      <td class="cat">Falla en CI, pasa en local</td>
+      <td>Timings, headless vs headed, resolución diferente</td>
+      <td>Añadir <code>retries: 2</code> en CI. Usar <code>waitForSelector</code> explícito. Revisar la traza con Trace Viewer.</td>
+    </tr>
+    <tr>
+      <td class="cat">intercept no funciona</td>
+      <td>La URL del route no coincide con el patrón</td>
+      <td>Loguear las URLs reales: <code>page.on('request', r => console.log(r.url()))</code>.</td>
+    </tr>
+    <tr>
+      <td class="cat">Test flaky (falla 1 de 10 veces)</td>
+      <td>Race condition: el test actúa antes de que la UI esté lista</td>
+      <td>Añadir <code>waitForResponse</code> o <code>waitForSelector</code> antes de la acción que falla.</td>
+    </tr>
+  </table>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: CI/CD                                            -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-ci" class="mode-panel">
+
+  <div class="sec-title" data-n="G">GITHUB ACTIONS — WORKFLOW COMPLETO PARA FMI</div>
+
+<pre><span class="cm"># .github/workflows/playwright.yml</span>
+<span class="an">name</span>: Playwright Tests
+
+<span class="an">on</span>:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+<span class="an">jobs</span>:
+  test:
+    <span class="an">timeout-minutes</span>: 30
+    <span class="an">runs-on</span>: ubuntu-latest
+
+    <span class="an">strategy</span>:
+      <span class="an">matrix</span>:
+        <span class="cm"># Paralelizar por proyecto</span>
+        project: [e2e-seguridad, cartografia]
+
+    <span class="an">steps</span>:
+      - <span class="an">uses</span>: actions/checkout@v4
+
+      - <span class="an">name</span>: Setup Node.js
+        <span class="an">uses</span>: actions/setup-node@v4
+        <span class="an">with</span>:
+          node-version: <span class="st">'20'</span>
+          cache: <span class="st">'npm'</span>
+
+      - <span class="an">name</span>: Instalar dependencias
+        <span class="an">run</span>: npm ci
+
+      - <span class="an">name</span>: Instalar navegadores Playwright
+        <span class="an">run</span>: npx playwright install --with-deps chromium
+
+      - <span class="an">name</span>: Ejecutar tests
+        <span class="an">run</span>: npx playwright test --project=${{ matrix.project }}
+        <span class="an">env</span>:
+          BASE_URL: ${{ secrets.WEBDTE_BASE_URL }}
+          ADMIN_USER: ${{ secrets.ADMIN_USER }}
+          ADMIN_PASS: ${{ secrets.ADMIN_PASS }}
+          CI: <span class="st">'true'</span>
+
+      - <span class="an">name</span>: Subir artefactos (siempre)
+        <span class="an">if</span>: always()
+        <span class="an">uses</span>: actions/upload-artifact@v4
+        <span class="an">with</span>:
+          name: playwright-report-${{ matrix.project }}
+          path: playwright-report/
+          retention-days: <span class="nu">30</span>
+
+      - <span class="an">name</span>: Subir HARs de cartografía
+        <span class="an">if</span>: matrix.project == 'cartografia'
+        <span class="an">uses</span>: actions/upload-artifact@v4
+        <span class="an">with</span>:
+          name: telemetry-har
+          path: telemetry/har/</pre>
+
+  <div class="sec-title" data-n="O">OWASP DEPENDENCY CHECK EN CI</div>
+
+<pre><span class="cm"># Añadir al workflow para detectar dependencias vulnerables (OWASP A06)</span>
+      - <span class="an">name</span>: OWASP Dependency Check (back)
+        <span class="an">run</span>: |
+          mvn org.owasp:dependency-check-maven:check \
+            -DfailBuildOnCVSS=7 \
+            -DsuppressionFile=owasp-suppressions.xml
+
+      - <span class="an">name</span>: OWASP Dependency Check (front)
+        <span class="an">run</span>: npx audit-ci --high</pre>
+
+  <div class="sec-title" data-n="S">SMOKE TEST POST-DEPLOY</div>
+
+<pre><span class="cm"># Workflow separado: se ejecuta tras cada deploy</span>
+<span class="an">name</span>: Smoke Tests Post-Deploy
+
+<span class="an">on</span>:
+  workflow_dispatch:     <span class="cm"># lanzar manualmente</span>
+  deployment:            <span class="cm"># o tras cada deploy automático</span>
+
+<span class="an">jobs</span>:
+  smoke:
+    <span class="an">runs-on</span>: ubuntu-latest
+    <span class="an">steps</span>:
+      - <span class="an">uses</span>: actions/checkout@v4
+      - <span class="an">run</span>: npm ci
+      - <span class="an">run</span>: npx playwright install chromium
+      - <span class="an">name</span>: Solo tests @smoke
+        <span class="an">run</span>: npx playwright test --grep @smoke
+        <span class="an">env</span>:
+          BASE_URL: ${{ secrets.WEBDTE_MIGRADO_URL }}</pre>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Estrategia de tests por velocidad en CI</div>
+    <div class="insight-content">
+      <strong>En cada commit:</strong> solo los @smoke (30-60 seg). Detecta los errores más graves sin bloquear el pipeline mucho tiempo.
+      <strong>En cada PR:</strong> e2e-seguridad completo (5-10 min). Verifica todos los contratos críticos antes de mergear.
+      <strong>Nightly:</strong> cartografía + OWASP audit completo (puede tardar 30+ min). Detecta regresiones y nuevas vulnerabilidades.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: FMI                                              -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-fmi" class="mode-panel">
+
+  <div class="sec-title" data-n="F">PLAYWRIGHT EN EL FMI — DOS ROLES DISTINTOS</div>
+
+  <table class="vtable">
+    <tr><th></th><th>Fases 2-4 · Cartografía</th><th>Fase 6 · E2E Seguridad</th></tr>
+    <tr><td class="cat">Objetivo</td><td>Descubrir comportamiento real del legacy</td><td>Proteger contratos del sistema migrado</td></tr>
+    <tr><td class="cat">Cantidad</td><td>Muchos tests (exhaustivo)</td><td>Pocos (10-20 críticos)</td></tr>
+    <tr><td class="cat">Cuándo</td><td>1-2 veces por servlet</td><td>Cada commit/PR</td></tr>
+    <tr><td class="cat">Output</td><td>HAR + screenshots + logs semánticos</td><td>PASS / FAIL</td></tr>
+    <tr><td class="cat">Datos</td><td>Prefijo <code>CART_</code></td><td>Prefijo <code>CART_seg_</code></td></tr>
+    <tr><td class="cat">Se borran</td><td>Se archivan en <code>telemetry/</code></td><td>Viven en el repo para siempre</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="C">FLUJO COMPLETO — CARTOGRAFÍA DE UN SERVLET</div>
+
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-num"><div class="step-circle o">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Configurar storageState (auth.setup.ts)</div>
+        <div class="step-desc">Login una vez → guarda sesión. Todos los tests arrancan autenticados.</div>
+<pre>npx playwright test tests/auth.setup.ts --project=setup</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle o">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">IA2 genera batería de cartografía</div>
+        <div class="step-desc">Opus analiza las intenciones de Fase 1. Sonnet genera los tests de Playwright en <code>tests/cartografia/busqueda.spec.ts</code>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle y">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Ejecutar iter-01 y capturar HAR</div>
+<pre>ITER=01 SERVLET=busqueda \
+  npx playwright test --project=cartografia \
+  tests/cartografia/busqueda.spec.ts</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle y">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Extraer contracts.json del HAR</div>
+<pre>node scripts/extract-contracts.mjs \
+  telemetry/har/iter-01/busqueda.har</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle g">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Opus analiza gaps → Sonnet genera delta</div>
+        <div class="step-desc">¿Qué casos faltan? Sonnet añade tests para los gaps detectados.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle g">6</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Ejecutar iter-02 → HAR definitivo</div>
+<pre>ITER=02 SERVLET=busqueda \
+  npx playwright test --project=cartografia</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="S">SCRIPT COMPLETO — EXTRACT CONTRACTS.MJS</div>
+
+<pre><span class="cm">// scripts/extract-contracts.mjs</span>
+<span class="cm">// Uso: node extract-contracts.mjs telemetry/har/iter-02/busqueda.har</span>
+<span class="kw">import</span> fs <span class="kw">from</span> <span class="st">'fs'</span>;
+<span class="kw">import</span> path <span class="kw">from</span> <span class="st">'path'</span>;
+
+<span class="kw">const</span> harFile = process.argv[<span class="nu">2</span>];
+<span class="kw">if</span> (!harFile) { console.error(<span class="st">'Uso: node extract-contracts.mjs fichero.har'</span>); process.exit(<span class="nu">1</span>); }
+
+<span class="kw">const</span> har = JSON.parse(fs.readFileSync(harFile, <span class="st">'utf-8'</span>));
+
+<span class="kw">const</span> contracts = har.log.entries
+  .filter(e => {
+    <span class="kw">const</span> url = e.request.url;
+    <span class="kw">return</span> url.includes(<span class="st">'/api/'</span>) || url.includes(<span class="st">'.jsp'</span>);
+  })
+  .map(e => ({
+    endpoint:        <span class="kw">new</span> URL(e.request.url).pathname,
+    method:          e.request.method,
+    queryString:     e.request.queryString || [],
+    requestBody:     e.request.postData?.text || <span class="kw">null</span>,
+    responseStatus:  e.response.status,
+    responseHeaders: e.response.headers
+      .filter(h => [<span class="st">'content-type'</span>,<span class="st">'location'</span>,<span class="st">'set-cookie'</span>,<span class="st">'x-frame-options'</span>]
+        .includes(h.name.toLowerCase()))
+      .reduce((acc, h) => ({ ...acc, [h.name]: h.value }), {}),
+    responseBody:    e.response.content?.text || <span class="kw">null</span>,
+    timingMs:        Math.round(e.time),
+  }));
+
+<span class="cm">// Deduplicar por endpoint + método + responseStatus</span>
+<span class="kw">const</span> seen = <span class="kw">new</span> Set&lt;string&gt;();
+<span class="kw">const</span> unique = contracts.filter(c => {
+  <span class="kw">const</span> key = <span class="st">`<span class="hl">${c.method}:${c.endpoint}:${c.responseStatus}</span>`</span>;
+  <span class="kw">if</span> (seen.has(key)) <span class="kw">return false</span>;
+  seen.add(key); <span class="kw">return true</span>;
+});
+
+<span class="kw">const</span> output = harFile.replace(<span class="st">'.har'</span>, <span class="st">'-contracts.json'</span>);
+fs.writeFileSync(output, JSON.stringify(unique, <span class="kw">null</span>, <span class="nu">2</span>));
+console.log(<span class="st">`✓ <span class="hl">${unique.length}</span> contratos únicos → <span class="hl">${output}</span>`</span>);</pre>
+
+  <div class="sec-title" data-n="O">E2E SEGURIDAD OWASP — TEMPLATE COMPLETO</div>
+
+<pre><span class="cm">// tests/e2e-seguridad/owasp.spec.ts</span>
+<span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="st">'@playwright/test'</span>;
+
+test.describe(<span class="st">'OWASP Top 10 — post-migración @smoke'</span>, () => {
+
+  test(<span class="st">'A01 — endpoint sin sesión → 401/403/302'</span>, <span class="kw">async</span> ({ request }) => {
+    <span class="kw">const</span> res = <span class="kw">await</span> request.get(<span class="st">'/api/cuentas'</span>, { headers: { Cookie: <span class="st">''</span> } });
+    expect([<span class="nu">401</span>, <span class="nu">403</span>, <span class="nu">302</span>]).toContain(res.status());
+  });
+
+  test(<span class="st">'A03 — SQL injection rechazado sin filtrar datos'</span>, <span class="kw">async</span> ({ request }) => {
+    <span class="kw">const</span> res = <span class="kw">await</span> request.get(<span class="st">"/api/cuentas?email=' OR '1'='1"</span>);
+    <span class="kw">const</span> body = <span class="kw">await</span> res.text();
+    expect(body).not.toContain(<span class="st">'admin@'</span>);
+    expect(res.status()).not.toBe(<span class="nu">500</span>); <span class="cm">// no revienta la BD</span>
+  });
+
+  test(<span class="st">'A05 — todos los security headers presentes'</span>, <span class="kw">async</span> ({ request }) => {
+    <span class="kw">const</span> res = <span class="kw">await</span> request.get(<span class="st">'/'</span>);
+    <span class="kw">const</span> h = res.headers();
+    expect.soft(h[<span class="st">'x-content-type-options'</span>]).toBe(<span class="st">'nosniff'</span>);
+    expect.soft(h[<span class="st">'x-frame-options'</span>]).toBe(<span class="st">'DENY'</span>);
+    expect.soft(h[<span class="st">'strict-transport-security'</span>]).toBeDefined();
+    expect.soft(h[<span class="st">'content-security-policy'</span>]).toBeDefined();
+    expect.soft(h[<span class="st">'referrer-policy'</span>]).toBeDefined();
+  });
+
+  test(<span class="st">'A05 — errores no exponen stack traces'</span>, <span class="kw">async</span> ({ request }) => {
+    <span class="kw">const</span> res = <span class="kw">await</span> request.get(<span class="st">'/api/no-existe'</span>);
+    <span class="kw">const</span> body = <span class="kw">await</span> res.text();
+    expect(body).not.toContain(<span class="st">'at java.'</span>);
+    expect(body).not.toContain(<span class="st">'Exception'</span>);
+    expect(body).not.toContain(<span class="st">'NullPointer'</span>);
+  });
+
+  test(<span class="st">'A07 — cookie tiene Secure + HttpOnly'</span>, <span class="kw">async</span> ({ request }) => {
+    <span class="kw">const</span> res = <span class="kw">await</span> request.post(<span class="st">'/login'</span>, {
+      data: { usuario: <span class="st">'admin'</span>, password: <span class="st">'test1234'</span> }
+    });
+    <span class="kw">const</span> cookie = (res.headers()[<span class="st">'set-cookie'</span>] || <span class="st">''</span>).toLowerCase();
+    expect.soft(cookie).toContain(<span class="st">'httponly'</span>);
+    expect.soft(cookie).toContain(<span class="st">'secure'</span>);
+    expect.soft(cookie).toContain(<span class="st">'samesite'</span>);
+  });
+
+  test(<span class="st">'A02 — password no aparece en ninguna response'</span>, <span class="kw">async</span> ({ page }) => {
+    <span class="kw">const</span> responses: string[] = [];
+    page.on(<span class="st">'response'</span>, <span class="kw">async</span> res => {
+      <span class="kw">if</span> (res.url().includes(<span class="st">'/api/'</span>)) {
+        <span class="kw">const</span> body = <span class="kw">await</span> res.text().catch(() => <span class="st">''</span>);
+        responses.push(body);
+      }
+    });
+    <span class="kw">await</span> page.goto(<span class="st">'/'</span>);
+    <span class="kw">await</span> page.waitForLoadState(<span class="st">'networkidle'</span>);
+    <span class="kw">const</span> joined = responses.join(<span class="st">' '</span>);
+    expect(joined).not.toContain(<span class="st">'"password":'</span>);
+    expect(joined).not.toContain(<span class="st">'"passwordHash":'</span>);
+  });
+});</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: ATAJOS                                           -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-atajos" class="mode-panel">
+
+  <div class="sec-title" data-n="V">VSCODE — PANEL TESTING</div>
+
+  <div class="shortcut-grid">
+    <div class="shortcut-item"><span class="shortcut-desc">Abrir Testing Panel</span><span class="shortcut-key"><span class="key">Ctrl</span>+<span class="key">Shift</span>+<span class="key">T</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Ejecutar test bajo el cursor</span><span class="shortcut-key"><span class="key">Ctrl</span>+<span class="key">;</span>&nbsp;<span class="key">R</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Debug test bajo el cursor</span><span class="shortcut-key"><span class="key">Ctrl</span>+<span class="key">;</span>&nbsp;<span class="key">D</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Ejecutar todos los tests</span><span class="shortcut-key"><span class="key">Ctrl</span>+<span class="key">;</span>&nbsp;<span class="key">A</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Paleta → Playwright commands</span><span class="shortcut-key"><span class="key">Ctrl</span>+<span class="key">Shift</span>+<span class="key">P</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Toggle Show Browser</span><span class="shortcut-key">Testing Panel → 👁️</span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Añadir breakpoint</span><span class="shortcut-key"><span class="key">F9</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Step over (debug)</span><span class="shortcut-key"><span class="key">F10</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Step into (debug)</span><span class="shortcut-key"><span class="key">F11</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Continuar ejecución (debug)</span><span class="shortcut-key"><span class="key">F5</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Ir a definición</span><span class="shortcut-key"><span class="key">F12</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Ir a archivo</span><span class="shortcut-key"><span class="key">Ctrl</span>+<span class="key">P</span></span></div>
+  </div>
+
+  <div class="sec-title" data-n="C">CODEGEN / INSPECTOR — EN EL NAVEGADOR</div>
+
+  <div class="shortcut-grid">
+    <div class="shortcut-item"><span class="shortcut-desc">Pausar / reanudar grabación</span><span class="shortcut-key"><span class="key">F8</span></span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Paso a paso (Inspector)</span><span class="shortcut-key">Botón Step ↷</span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Continuar (Inspector)</span><span class="shortcut-key">Botón Resume ▶</span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Copiar código generado</span><span class="shortcut-key"><span class="key">Ctrl</span>+<span class="key">C</span> en panel</span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Limpiar código generado</span><span class="shortcut-key">Botón 🗑️</span></div>
+    <div class="shortcut-item"><span class="shortcut-desc">Explorar DOM con locator</span><span class="shortcut-key">Barra de locator Inspector</span></div>
+  </div>
+
+  <div class="sec-title" data-n="T">TERMINAL — COMANDOS COMPLETOS</div>
+
+  <ul class="cmd-list">
+    <li><span class="cmd-desc">Ejecutar todos los tests</span><code>npx playwright test</code></li>
+    <li><span class="cmd-desc">Solo un fichero</span><code>npx playwright test tests/e2e/owasp.spec.ts</code></li>
+    <li><span class="cmd-desc">Solo un proyecto</span><code>npx playwright test --project=e2e-seguridad</code></li>
+    <li><span class="cmd-desc">Solo tests con etiqueta</span><code>npx playwright test --grep @smoke</code></li>
+    <li><span class="cmd-desc">Excluir tests lentos</span><code>npx playwright test --grep-invert @slow</code></li>
+    <li><span class="cmd-desc">Con navegador visible</span><code>npx playwright test --headed</code></li>
+    <li><span class="cmd-desc">Con Inspector Playwright</span><code>PWDEBUG=1 npx playwright test</code></li>
+    <li><span class="cmd-desc">Debug un test concreto</span><code>PWDEBUG=1 npx playwright test -g "login válido"</code></li>
+    <li><span class="cmd-desc">Ver HTML report</span><code>npx playwright show-report</code></li>
+    <li><span class="cmd-desc">Abrir Trace Viewer</span><code>npx playwright show-trace trace.zip</code></li>
+    <li><span class="cmd-desc">Lanzar Codegen</span><code>npx playwright codegen http://localhost:8080</code></li>
+    <li><span class="cmd-desc">Codegen con sesión</span><code>npx playwright codegen --load-storage=auth/admin.json http://localhost:8080</code></li>
+    <li><span class="cmd-desc">Codegen en móvil</span><code>npx playwright codegen --device="iPhone 14" http://localhost:8080</code></li>
+    <li><span class="cmd-desc">Regenerar sesión expirada</span><code>npx playwright test tests/auth.setup.ts --project=setup</code></li>
+    <li><span class="cmd-desc">Actualizar screenshots</span><code>npx playwright test --update-snapshots</code></li>
+    <li><span class="cmd-desc">Cartografía iter-01</span><code>ITER=01 SERVLET=busqueda npx playwright test --project=cartografia</code></li>
+    <li><span class="cmd-desc">Extraer contracts.json</span><code>node scripts/extract-contracts.mjs telemetry/har/iter-01/busqueda.har</code></li>
+    <li><span class="cmd-desc">Solo tests de un describe</span><code>npx playwright test -g "OWASP"</code></li>
+    <li><span class="cmd-desc">Listar dispositivos</span><code>npx playwright devices</code></li>
+    <li><span class="cmd-desc">Actualizar Playwright</span><code>npm install @playwright/test@latest && npx playwright install</code></li>
+    <li><span class="cmd-desc">Instalar solo Chromium</span><code>npx playwright install chromium</code></li>
+    <li><span class="cmd-desc">Workers paralelos</span><code>npx playwright test --workers=4</code></li>
+    <li><span class="cmd-desc">Con reintentos</span><code>npx playwright test --retries=2</code></li>
+    <li><span class="cmd-desc">Output JUnit para CI</span><code>npx playwright test --reporter=junit</code></li>
+  </ul>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Flujo diario recomendado en FMI</div>
+    <div class="insight-content">
+      <strong>Antes de empezar a trabajar:</strong> <code>Ctrl+Shift+T</code> → Run All. Si algo falla, es regresión de ayer — arréglalo primero.<br>
+      <strong>Al desarrollar un test nuevo:</strong> Testing Panel → Record New → navegar → limpiar código → <code>Ctrl+;R</code> para ejecutar solo ese test.<br>
+      <strong>Cuando un test falla y no entiendes por qué:</strong> activar Show Browser → volver a ejecutar → ver qué hay en pantalla. Si sigue sin entender: <code>PWDEBUG=1</code> + Inspector.<br>
+      <strong>Antes de hacer commit:</strong> <code>npx playwright test --project=e2e-seguridad</code>. Si falla alguno → no commitear hasta arreglar.
+    </div>
+  </div>
+
+</div>
+
+</div><!-- .container -->
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
