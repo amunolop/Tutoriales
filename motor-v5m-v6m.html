@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V5M / V6M · Motor Multi-Agente de Migración</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:32px}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(28px,5vw,52px);font-weight:700;line-height:1.05}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.8}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}
+  .badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:36px;width:100%;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:10px;font-weight:600;padding:9px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout strong{display:block;margin-bottom:4px}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:14px 0;position:relative}
+  pre .lang{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.nu{color:#7a3acd}.an{color:#1a4a8a;font-weight:600}.hl{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:14px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+  .vtable td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td code{background:rgba(0,0,0,.07);padding:1px 6px;border-radius:2px;font-size:11px;white-space:nowrap}
+  .vtable td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+  .comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:14px 0}
+  .comp-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden}
+  .comp-header{padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .comp-header.good{background:rgba(42,110,78,.1);color:var(--accent2)}.comp-header.alt{background:rgba(26,74,138,.1);color:var(--accent3)}.comp-header.bad{background:rgba(193,68,14,.1);color:var(--accent)}.comp-header.purple{background:rgba(122,58,205,.1);color:var(--purple)}.comp-header.yellow{background:rgba(232,160,32,.1);color:var(--yellow)}
+  .comp-content{padding:14px;font-size:12px;line-height:1.7;color:var(--ink2)}
+  .comp-content code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .step-flow{display:flex;flex-direction:column;gap:0;margin:14px 0}
+  .step{display:flex;gap:0;align-items:stretch}
+  .step-num{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .step-circle{width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+  .step-circle.o{background:var(--accent)}.step-circle.g{background:var(--accent2)}.step-circle.b{background:var(--accent3)}.step-circle.p{background:var(--purple)}.step-circle.y{background:var(--yellow);color:var(--ink)}
+  .step-line{width:2px;background:var(--border);flex:1;margin:4px auto}
+  .step:last-child .step-line{display:none}
+  .step-body{padding:0 0 20px 16px;flex:1}
+  .step-title{font-weight:700;font-size:12.5px;margin-bottom:6px}
+  .step-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:14px 0}
+  .stat-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+  .stat-num{font-family:var(--display);font-size:32px;font-weight:700;line-height:1}
+  .stat-num.o{color:var(--accent)}.stat-num.g{color:var(--accent2)}.stat-num.b{color:var(--accent3)}.stat-num.p{color:var(--purple)}.stat-num.y{color:var(--yellow)}
+  .stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  p{font-size:12px;line-height:1.7;color:var(--ink2);margin:10px 0}
+  .diagram-wrapper{margin:20px 0;overflow-x:auto}
+  .diagram-wrapper svg{display:block;margin:0 auto}
+  @media(max-width:720px){.comp-grid{grid-template-columns:1fr}.mode-btn{flex:0 0 auto}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Motor Multi-Agente · Migración FMI</div>
+  <h1>V5M / <em>V6M</em><br>Agentes Paralelos</h1>
+  <div class="subtitle">
+    Meta-Architect · SCAN · Blueprint · DIGEST · SHARED CONTRACTS · TEST SPECS<br>
+    Oleada 1 (Tests) · GATE Bloqueante · Oleada 2 (Código) · SMOKE · Certificación
+  </div>
+  <div class="badge-row">
+    <span class="badge o">Opus (Architect)</span>
+    <span class="badge g">Sonnet (Workers)</span>
+    <span class="badge b">Haiku (Smoke)</span>
+    <span class="badge p">Caveman Lite</span>
+    <span class="badge y">TDD-as-Spec</span>
+  </div>
+</header>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="switchTab('vision')">🔭 VISIÓN</button>
+  <button class="mode-btn" onclick="switchTab('v6m')">🧠 V6M CEREBRO</button>
+  <button class="mode-btn" onclick="switchTab('v5m')">⚙️ V5M MOTOR</button>
+  <button class="mode-btn" onclick="switchTab('architect')">📐 ARCHITECT</button>
+  <button class="mode-btn" onclick="switchTab('gate')">🚧 GATE</button>
+  <button class="mode-btn" onclick="switchTab('workers')">👷 WORKERS</button>
+  <button class="mode-btn" onclick="switchTab('smoke')">🧪 SMOKE</button>
+  <button class="mode-btn" onclick="switchTab('ejemplo')">📦 EJEMPLO REAL</button>
+  <button class="mode-btn" onclick="switchTab('costes')">💰 COSTES</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: VISIÓN GENERAL                                   -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-vision" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">DOS SISTEMAS, UN PROPÓSITO</div>
+
+  <p>El sistema de migración FMI se compone de dos piezas que operan en niveles diferentes. <strong>V6M</strong> es el cerebro: un orquestador que planifica toda la migración en N fases y decide el orden, los contratos y la estrategia. <strong>V5M</strong> es el brazo: un motor de ejecución que recibe instrucciones de V6M y genera código en paralelo con tests-first. V6M llama a V5M una vez por cada fase.</p>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header purple">V6M — Orquestador (Cerebro)</div>
+      <div class="comp-content">
+        <strong>Meta-Architect</strong> (Opus) planifica la migración completa. SCAN del legacy → decide fases → define contratos entre fases → ejecuta V5M por fase → certifica resultado final. Estrategia: <strong>Consumer-Driven Contract</strong> (frontend primero, backend después).
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">V5M — Motor de Ejecución (Brazo)</div>
+      <div class="comp-content">
+        <strong>Architect</strong> (Opus) genera Blueprint + DIGEST + TEST SPECS → <strong>Oleada 1</strong> de Test Workers escribe tests a disco → <strong>GATE</strong> bloqueante verifica coherencia → <strong>Oleada 2</strong> de Code Workers lee tests y escribe código → <strong>Smoke</strong> (Haiku) verifica mecánicamente.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">ARQUITECTURA GENERAL</div>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 920 620" xmlns="http://www.w3.org/2000/svg" style="max-width:920px;width:100%;font-family:'IBM Plex Mono',monospace">
+      <defs>
+        <marker id="ah" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#1a1410"/></marker>
+        <marker id="aho" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#c1440e"/></marker>
+        <marker id="ahg" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#2a6e4e"/></marker>
+        <marker id="ahb" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#1a4a8a"/></marker>
+        <marker id="ahp" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#7a3acd"/></marker>
+      </defs>
+
+      <!-- FASE 0: SCAN -->
+      <rect x="10" y="10" width="900" height="85" rx="8" fill="rgba(122,58,205,.06)" stroke="#7a3acd" stroke-width="2"/>
+      <text x="30" y="35" font-size="10" font-weight="700" fill="#7a3acd" letter-spacing="2">FASE 0 — SCAN LEGACY (V6M)</text>
+
+      <rect x="30" y="48" width="130" height="36" rx="5" fill="#fff" stroke="#d4c9b0" stroke-width="1.5"/>
+      <text x="95" y="70" font-size="10" text-anchor="middle" fill="#4a3f30">📄 Código Legacy</text>
+
+      <line x1="160" y1="66" x2="210" y2="66" stroke="#7a3acd" stroke-width="2" marker-end="url(#ahp)"/>
+
+      <rect x="215" y="48" width="160" height="36" rx="5" fill="rgba(122,58,205,.1)" stroke="#7a3acd" stroke-width="1.5"/>
+      <text x="295" y="70" font-size="10" text-anchor="middle" fill="#7a3acd" font-weight="600">SCAN Workers (Sonnet)</text>
+
+      <line x1="375" y1="66" x2="425" y2="66" stroke="#7a3acd" stroke-width="2" marker-end="url(#ahp)"/>
+
+      <rect x="430" y="48" width="130" height="36" rx="5" fill="#fff" stroke="#d4c9b0" stroke-width="1.5"/>
+      <text x="495" y="70" font-size="10" text-anchor="middle" fill="#4a3f30">📋 Inventario</text>
+
+      <line x1="560" y1="66" x2="610" y2="66" stroke="#7a3acd" stroke-width="2" marker-end="url(#ahp)"/>
+
+      <rect x="615" y="48" width="170" height="36" rx="5" fill="rgba(122,58,205,.15)" stroke="#7a3acd" stroke-width="2"/>
+      <text x="700" y="70" font-size="10" text-anchor="middle" fill="#7a3acd" font-weight="700">Meta-Architect (Opus)</text>
+
+      <text x="840" y="70" font-size="9" fill="#8a7a65">→ Plan Fases</text>
+
+      <!-- FLECHA VERTICAL V6M → V5M -->
+      <line x1="460" y1="95" x2="460" y2="130" stroke="#1a1410" stroke-width="2" marker-end="url(#ah)" stroke-dasharray="6,3"/>
+      <text x="470" y="120" font-size="9" fill="#8a7a65" font-style="italic">por cada fase</text>
+
+      <!-- V5M BOX -->
+      <rect x="10" y="135" width="900" height="475" rx="8" fill="rgba(42,110,78,.03)" stroke="#2a6e4e" stroke-width="2"/>
+      <text x="30" y="160" font-size="10" font-weight="700" fill="#2a6e4e" letter-spacing="2">V5M — MOTOR DE EJECUCIÓN (1 instancia por fase)</text>
+
+      <!-- ARCHITECT -->
+      <rect x="30" y="175" width="260" height="70" rx="6" fill="rgba(193,68,14,.08)" stroke="#c1440e" stroke-width="2"/>
+      <text x="45" y="198" font-size="11" font-weight="700" fill="#c1440e">ARCHITECT (Opus)</text>
+      <text x="45" y="215" font-size="9.5" fill="#4a3f30">Lee referencia → clasifica → genera:</text>
+      <text x="45" y="230" font-size="9" fill="#8a7a65">Blueprint · DIGEST · SHARED CONTRACTS · TEST SPECS</text>
+
+      <!-- Arrow from Architect to TW -->
+      <line x1="290" y1="210" x2="340" y2="210" stroke="#c1440e" stroke-width="2" marker-end="url(#aho)"/>
+
+      <!-- OLEADA 1: Test Workers -->
+      <rect x="345" y="175" width="250" height="70" rx="6" fill="rgba(26,74,138,.08)" stroke="#1a4a8a" stroke-width="2"/>
+      <text x="360" y="198" font-size="11" font-weight="700" fill="#1a4a8a">OLEADA 1 · Test Workers</text>
+      <text x="360" y="215" font-size="9.5" fill="#4a3f30">Sonnet × N en paralelo</text>
+      <text x="360" y="230" font-size="9" fill="#8a7a65">TEST SPEC + DIGEST → tests reales a disco</text>
+
+      <!-- CAPATAZ label -->
+      <rect x="640" y="175" width="250" height="70" rx="6" fill="rgba(232,160,32,.08)" stroke="#e8a020" stroke-width="2"/>
+      <text x="655" y="198" font-size="11" font-weight="700" fill="#e8a020">CAPATAZ (Sonnet)</text>
+      <text x="655" y="215" font-size="9.5" fill="#4a3f30">Coordina oleadas, lanza workers</text>
+      <text x="655" y="230" font-size="9" fill="#8a7a65">Recibe Blueprint → ejecuta → consolida</text>
+
+      <!-- Arrow from TW down to GATE -->
+      <line x1="470" y1="245" x2="470" y2="280" stroke="#1a4a8a" stroke-width="2" marker-end="url(#ahb)"/>
+      <text x="480" y="268" font-size="9" fill="#1a4a8a" font-weight="600">tests/ a disco</text>
+
+      <!-- GATE -->
+      <rect x="310" y="285" width="320" height="65" rx="6" fill="rgba(193,68,14,.1)" stroke="#c1440e" stroke-width="2.5"/>
+      <text x="470" y="307" font-size="12" font-weight="700" fill="#c1440e" text-anchor="middle">🚧 GATE BLOQUEANTE</text>
+      <text x="470" y="325" font-size="9" fill="#4a3f30" text-anchor="middle">Coherencia imports · Optional · DTOs · Constructors · Métodos</text>
+      <text x="470" y="340" font-size="9" fill="#c1440e" text-anchor="middle" font-weight="600">FALLA → ABORT (no se gastan tokens en code workers)</text>
+
+      <!-- Gate PASS arrow -->
+      <line x1="470" y1="350" x2="470" y2="385" stroke="#2a6e4e" stroke-width="2" marker-end="url(#ahg)"/>
+      <text x="480" y="375" font-size="9" fill="#2a6e4e" font-weight="700">PASS ✓</text>
+
+      <!-- Gate FAIL arrow -->
+      <line x1="630" y1="317" x2="700" y2="317" stroke="#c1440e" stroke-width="2" marker-end="url(#aho)"/>
+      <text x="710" y="312" font-size="9" fill="#c1440e" font-weight="700">FAIL ✗</text>
+      <rect x="700" y="300" width="80" height="30" rx="4" fill="rgba(193,68,14,.15)" stroke="#c1440e" stroke-width="1.5"/>
+      <text x="740" y="320" font-size="10" text-anchor="middle" fill="#c1440e" font-weight="700">ABORT</text>
+
+      <!-- OLEADA 2: Code Workers -->
+      <rect x="310" y="390" width="320" height="70" rx="6" fill="rgba(42,110,78,.08)" stroke="#2a6e4e" stroke-width="2"/>
+      <text x="325" y="413" font-size="11" font-weight="700" fill="#2a6e4e">OLEADA 2 · Code Workers</text>
+      <text x="325" y="430" font-size="9.5" fill="#4a3f30">Sonnet × N en paralelo</text>
+      <text x="325" y="447" font-size="9" fill="#8a7a65">Lee tests de su grupo → escribe código que los satisfaga</text>
+
+      <!-- Arrow CW down to Smoke -->
+      <line x1="470" y1="460" x2="470" y2="495" stroke="#2a6e4e" stroke-width="2" marker-end="url(#ahg)"/>
+
+      <!-- SMOKE -->
+      <rect x="310" y="500" width="320" height="55" rx="6" fill="rgba(232,160,32,.08)" stroke="#e8a020" stroke-width="2"/>
+      <text x="470" y="523" font-size="11" font-weight="700" fill="#e8a020" text-anchor="middle">🧪 SMOKE (Haiku)</text>
+      <text x="470" y="540" font-size="9" fill="#4a3f30" text-anchor="middle">28 checks mecánicos · grep · count · exists</text>
+
+      <!-- Arrow Smoke to Result -->
+      <line x1="470" y1="555" x2="470" y2="585" stroke="#2a6e4e" stroke-width="2" marker-end="url(#ahg)"/>
+
+      <!-- Result -->
+      <rect x="380" y="585" width="180" height="30" rx="5" fill="rgba(42,110,78,.15)" stroke="#2a6e4e" stroke-width="2"/>
+      <text x="470" y="605" font-size="10" text-anchor="middle" fill="#2a6e4e" font-weight="700">✅ CÓDIGO FINAL OK</text>
+
+      <!-- Communication arrows -->
+      <path d="M765,245 L765,400 L630,400" stroke="#e8a020" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+      <text x="770" y="330" font-size="8" fill="#e8a020" transform="rotate(90,770,330)">coordina</text>
+
+      <!-- Worker isolation boxes -->
+      <rect x="30" y="395" width="265" height="55" rx="5" fill="#fff" stroke="#d4c9b0" stroke-width="1"/>
+      <text x="45" y="415" font-size="9" font-weight="700" fill="#8a7a65">AISLAMIENTO DE WORKERS</text>
+      <text x="45" y="430" font-size="9" fill="#4a3f30">Cada worker SOLO escribe en SU carpeta</text>
+      <text x="45" y="442" font-size="9" fill="#c1440e">Violación = corrupción cross-worker</text>
+
+      <!-- Caveman lite -->
+      <rect x="30" y="280" width="265" height="45" rx="5" fill="rgba(122,58,205,.06)" stroke="#7a3acd" stroke-width="1"/>
+      <text x="45" y="300" font-size="9" font-weight="700" fill="#7a3acd">CAVEMAN LITE — Global</text>
+      <text x="45" y="315" font-size="9" fill="#4a3f30">Contexto mínimo · Tokens optimizados · Sin ruido</text>
+
+      <!-- Telemetry -->
+      <rect x="30" y="460" width="265" height="55" rx="5" fill="#fff" stroke="#d4c9b0" stroke-width="1"/>
+      <text x="45" y="480" font-size="9" font-weight="700" fill="#8a7a65">TELEMETRÍA → _logs/</text>
+      <text x="45" y="495" font-size="9" fill="#4a3f30">00_config · 01_blueprint · 02_workers/</text>
+      <text x="45" y="507" font-size="9" fill="#4a3f30">03_smoke_check · 05_resumen</text>
+
+      <!-- DIGEST label between architect and TW -->
+      <rect x="292" y="193" width="50" height="18" rx="3" fill="#c1440e"/>
+      <text x="317" y="206" font-size="8" text-anchor="middle" fill="#f5f0e8" font-weight="700">DIGEST</text>
+    </svg>
+  </div>
+
+  <div class="sec-title" data-n="3">PRINCIPIOS CLAVE</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">TDD-as-Spec</div>
+      <div class="comp-content">Tests se escriben ANTES del código. Actúan como especificación ejecutable. Los tests son la verdad: si el código no los satisface, el código está mal, nunca el test.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header alt">Consumer-Driven Contract</div>
+      <div class="comp-content">Frontend primero → SCAN extrae contratos API → Backend implementa exactamente esos contratos. Elimina el bug clásico de JSON shape mismatch.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">SHARED CONTRACTS</div>
+      <div class="comp-content">Un vocabulario cerrado que TODOS los workers respetan: nombres de entidades, firmas de constructores, paquetes canónicos, mutabilidad de DTOs. Libertad total dentro, contratos fuera.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header yellow">Knowledge Injection</div>
+      <div class="comp-content">Bugs conocidos del legacy inyectados como reglas: <code>nombreProfesor</code> (no <code>getFormatos</code>), <code>titulacion</code> (no <code>especialidad</code>), <code>"year"</code> entrecomillado en SQL. Previenen errores antes de que ocurran.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: V6M CEREBRO                                      -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-v6m" class="mode-panel">
+
+  <div class="sec-title" data-n="1">V6M: ORQUESTADOR MULTI-FASE</div>
+
+  <p>V6M es el nivel superior. El Meta-Architect (Opus) recibe un objetivo de migración y decide <strong>cuántas fases</strong>, en qué <strong>orden</strong>, y qué <strong>contratos</strong> fluyen entre ellas. Cada fase se ejecuta como una instancia independiente de V5M.</p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 880 400" xmlns="http://www.w3.org/2000/svg" style="max-width:880px;width:100%;font-family:'IBM Plex Mono',monospace">
+      <defs>
+        <marker id="a2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#1a1410"/></marker>
+        <marker id="a2g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#2a6e4e"/></marker>
+        <marker id="a2p" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#7a3acd"/></marker>
+      </defs>
+
+      <!-- SCAN -->
+      <rect x="20" y="20" width="140" height="80" rx="8" fill="rgba(122,58,205,.1)" stroke="#7a3acd" stroke-width="2"/>
+      <text x="90" y="50" font-size="10" text-anchor="middle" fill="#7a3acd" font-weight="700">SCAN</text>
+      <text x="90" y="65" font-size="9" text-anchor="middle" fill="#4a3f30">Legacy</text>
+      <text x="90" y="80" font-size="8" text-anchor="middle" fill="#8a7a65">Sonnet × N</text>
+
+      <line x1="160" y1="60" x2="200" y2="60" stroke="#7a3acd" stroke-width="2" marker-end="url(#a2p)"/>
+
+      <!-- META-ARCHITECT -->
+      <rect x="205" y="15" width="170" height="90" rx="8" fill="rgba(193,68,14,.08)" stroke="#c1440e" stroke-width="2"/>
+      <text x="290" y="42" font-size="11" text-anchor="middle" fill="#c1440e" font-weight="700">META-ARCHITECT</text>
+      <text x="290" y="58" font-size="9" text-anchor="middle" fill="#4a3f30">Opus · Planifica</text>
+      <text x="290" y="73" font-size="8" text-anchor="middle" fill="#8a7a65">Decide fases, orden,</text>
+      <text x="290" y="85" font-size="8" text-anchor="middle" fill="#8a7a65">contratos entre fases</text>
+
+      <!-- Arrow to phases -->
+      <line x1="375" y1="60" x2="420" y2="60" stroke="#1a1410" stroke-width="2" marker-end="url(#a2)"/>
+
+      <!-- FASE 1 -->
+      <rect x="425" y="15" width="130" height="55" rx="6" fill="rgba(26,74,138,.1)" stroke="#1a4a8a" stroke-width="2"/>
+      <text x="490" y="38" font-size="10" text-anchor="middle" fill="#1a4a8a" font-weight="700">FASE 1</text>
+      <text x="490" y="55" font-size="8" text-anchor="middle" fill="#4a3f30">Frontend Auth</text>
+      <rect x="445" y="58" width="90" height="10" rx="2" fill="rgba(42,110,78,.2)"/>
+      <text x="490" y="66" font-size="7" text-anchor="middle" fill="#2a6e4e" font-weight="600">V5M ██████</text>
+
+      <line x1="490" y1="72" x2="490" y2="100" stroke="#1a4a8a" stroke-width="1.5" marker-end="url(#a2)"/>
+      <text x="504" y="92" font-size="7" fill="#8a7a65">contratos ↓</text>
+
+      <!-- FASE 2 -->
+      <rect x="425" y="105" width="130" height="55" rx="6" fill="rgba(26,74,138,.1)" stroke="#1a4a8a" stroke-width="2"/>
+      <text x="490" y="128" font-size="10" text-anchor="middle" fill="#1a4a8a" font-weight="700">FASE 2</text>
+      <text x="490" y="145" font-size="8" text-anchor="middle" fill="#4a3f30">Frontend Features</text>
+
+      <line x1="490" y1="162" x2="490" y2="190" stroke="#e8a020" stroke-width="2" stroke-dasharray="5,3"/>
+
+      <!-- SCAN INTERMEDIO -->
+      <rect x="425" y="195" width="130" height="40" rx="6" fill="rgba(232,160,32,.1)" stroke="#e8a020" stroke-width="2"/>
+      <text x="490" y="215" font-size="9" text-anchor="middle" fill="#e8a020" font-weight="700">SCAN Intermedio</text>
+      <text x="490" y="228" font-size="7" text-anchor="middle" fill="#4a3f30">→ Contratos API</text>
+
+      <line x1="490" y1="235" x2="490" y2="260" stroke="#e8a020" stroke-width="2" marker-end="url(#a2)"/>
+
+      <!-- FASE 3 -->
+      <rect x="425" y="265" width="130" height="55" rx="6" fill="rgba(42,110,78,.1)" stroke="#2a6e4e" stroke-width="2"/>
+      <text x="490" y="288" font-size="10" text-anchor="middle" fill="#2a6e4e" font-weight="700">FASE 3</text>
+      <text x="490" y="305" font-size="8" text-anchor="middle" fill="#4a3f30">Backend 3 Capas</text>
+
+      <line x1="490" y1="322" x2="490" y2="345" stroke="#2a6e4e" stroke-width="1.5" marker-end="url(#a2g)"/>
+
+      <!-- FASE 4 -->
+      <rect x="425" y="348" width="130" height="40" rx="6" fill="rgba(122,58,205,.1)" stroke="#7a3acd" stroke-width="2"/>
+      <text x="490" y="372" font-size="10" text-anchor="middle" fill="#7a3acd" font-weight="700">FASE 4 · Tests E2E</text>
+
+      <!-- CERTIFICACIÓN -->
+      <line x1="555" y1="368" x2="620" y2="368" stroke="#2a6e4e" stroke-width="2" marker-end="url(#a2g)"/>
+
+      <rect x="625" y="345" width="160" height="50" rx="8" fill="rgba(42,110,78,.12)" stroke="#2a6e4e" stroke-width="2"/>
+      <text x="705" y="368" font-size="10" text-anchor="middle" fill="#2a6e4e" font-weight="700">✅ CERTIFICACIÓN</text>
+      <text x="705" y="383" font-size="8" text-anchor="middle" fill="#4a3f30">Contratos · Tests · Cobertura</text>
+
+      <!-- Feedback loop from Meta-Architect -->
+      <path d="M290,105 L290,290 L420,290" stroke="#c1440e" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#a2)"/>
+      <text x="310" y="200" font-size="8" fill="#c1440e" transform="rotate(90,310,200)">feedback loop</text>
+
+      <!-- Right side: CDC explanation -->
+      <rect x="600" y="15" width="260" height="150" rx="8" fill="#fff" stroke="#d4c9b0" stroke-width="1.5"/>
+      <text x="620" y="40" font-size="10" font-weight="700" fill="#c1440e">CONSUMER-DRIVEN CONTRACT</text>
+      <text x="620" y="60" font-size="9" fill="#4a3f30">Front define qué necesita →</text>
+      <text x="620" y="75" font-size="9" fill="#4a3f30">SCAN extrae contratos API →</text>
+      <text x="620" y="90" font-size="9" fill="#4a3f30">Back implementa exactamente eso</text>
+      <line x1="620" y1="100" x2="840" y2="100" stroke="#d4c9b0" stroke-width="1"/>
+      <text x="620" y="118" font-size="9" fill="#c1440e" font-weight="600">Sin CDC (M16 bug):</text>
+      <text x="620" y="133" font-size="8" fill="#8a7a65">Backend: {"success":true}</text>
+      <text x="620" y="148" font-size="8" fill="#8a7a65">Frontend esperaba: {ok:true} → BUG</text>
+
+      <!-- Right side: Genericidad -->
+      <rect x="600" y="180" width="260" height="120" rx="8" fill="#fff" stroke="#d4c9b0" stroke-width="1.5"/>
+      <text x="620" y="203" font-size="10" font-weight="700" fill="#1a4a8a">GENERICIDAD</text>
+      <text x="620" y="222" font-size="8.5" fill="#4a3f30">Meta-Architect NO tiene lógica hardcoded.</text>
+      <text x="620" y="237" font-size="8.5" fill="#4a3f30">Fases salen del SCAN:</text>
+      <text x="620" y="258" font-size="8" fill="#8a7a65">• WebDTE → Front→SCAN→Back→Tests</text>
+      <text x="620" y="273" font-size="8" fill="#8a7a65">• CRM Express → API→React→Tests</text>
+      <text x="620" y="288" font-size="8" fill="#8a7a65">• WP Plugin → Models→Ctrl→Views→Tests</text>
+    </svg>
+  </div>
+
+  <div class="sec-title" data-n="2">FLUJO DETALLADO V6M</div>
+
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-num"><div class="step-circle p">0</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">SCAN Legacy (NO cuenta como fase V5M)</div>
+        <div class="step-desc">Sonnet workers leen código fuente en paralelo. Reportan: ficheros, tipos, SQL, dependencias, complejidad. Output: INVENTARIO estructurado. <strong>6 ficheros/worker</strong> (lectura es más rápida que escritura). Coste: ~$1.17 · ~3 min.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle o">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Meta-Architect (Opus) — Planificación</div>
+        <div class="step-desc">Lee inventario + objetivo + constraints. Decide cuántas fases (≤4 recomendado), scope de cada una, orden por dependencias, contratos entre fases, y knowledge injection específico por fase. Output: PLAN DE FASES.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle g">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Loop de Fases (secuencial)</div>
+        <div class="step-desc">Para cada fase: Meta-Architect pasa instrucciones a V5M (objetivo, archivos, contratos, KI) → V5M ejecuta fase completa (Architect→TW→GATE→CW→Smoke) → V5M reporta resultado → Meta-Architect ajusta siguiente fase si necesario.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle y">⊕</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">SCAN Intermedio (si Front→Back)</div>
+        <div class="step-desc">Entre fase frontend y backend. Sonnet workers leen <code>services/*.js</code> generados, extraen endpoints exactos: method, path, request body, response fields. Output: contratos API que el backend implementa tal cual. Coste: ~$0.30 · ~1 min.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle g">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Certificación</div>
+        <div class="step-desc">Meta-Architect consolida: contratos alineados (13/13 endpoints), tests generados (50 ficheros), smoke totales (28/28), coste real vs estimado, coherencia test↔code.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <strong>Regla: Front antes que Back</strong>
+    La evidencia empírica (PoC ServletIdentificacion) demostró que Back→Front produce bugs de integración: el backend inventa un JSON shape y el frontend tiene que adivinar. Front→Back con SCAN intermedio hace esto imposible.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: V5M MOTOR                                        -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-v5m" class="mode-panel">
+
+  <div class="sec-title" data-n="1">V5M: MOTOR DE EJECUCIÓN PARALELO</div>
+
+  <p>V5M recibe instrucciones de V6M (o de un humano) y ejecuta una fase completa de generación de código. Su innovación es el flujo de <strong>dos oleadas</strong>: primero tests, después código. El GATE entre ambas oleadas es la pieza crítica que garantiza coherencia.</p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 880 530" xmlns="http://www.w3.org/2000/svg" style="max-width:880px;width:100%;font-family:'IBM Plex Mono',monospace">
+      <defs>
+        <marker id="a3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#1a1410"/></marker>
+      </defs>
+
+      <!-- PRE-FLIGHT -->
+      <rect x="20" y="10" width="840" height="45" rx="6" fill="rgba(122,58,205,.06)" stroke="#7a3acd" stroke-width="1.5"/>
+      <text x="40" y="37" font-size="10" fill="#7a3acd" font-weight="700">PRE-FLIGHT</text>
+      <text x="150" y="37" font-size="9" fill="#4a3f30">Validar source dir · Crear scaffold _logs/ · 00_config.json</text>
+
+      <!-- ARCHITECT -->
+      <rect x="20" y="65" width="840" height="65" rx="6" fill="rgba(193,68,14,.06)" stroke="#c1440e" stroke-width="2"/>
+      <text x="40" y="90" font-size="11" fill="#c1440e" font-weight="700">ARCHITECT (Opus)</text>
+      <text x="220" y="90" font-size="9" fill="#4a3f30">Lee referencia → Clasifica por afinidad → Genera 4 artefactos:</text>
+
+      <rect x="40" y="100" width="100" height="22" rx="3" fill="#c1440e"/>
+      <text x="90" y="115" font-size="8" text-anchor="middle" fill="#f5f0e8" font-weight="700">BLUEPRINT</text>
+      <rect x="150" y="100" width="80" height="22" rx="3" fill="#c1440e"/>
+      <text x="190" y="115" font-size="8" text-anchor="middle" fill="#f5f0e8" font-weight="700">DIGEST</text>
+      <rect x="240" y="100" width="155" height="22" rx="3" fill="#c1440e"/>
+      <text x="317" y="115" font-size="8" text-anchor="middle" fill="#f5f0e8" font-weight="700">SHARED CONTRACTS</text>
+      <rect x="405" y="100" width="110" height="22" rx="3" fill="#c1440e"/>
+      <text x="460" y="115" font-size="8" text-anchor="middle" fill="#f5f0e8" font-weight="700">TEST SPECS</text>
+
+      <!-- Arrow down -->
+      <line x1="440" y1="130" x2="440" y2="150" stroke="#1a1410" stroke-width="2" marker-end="url(#a3)"/>
+
+      <!-- OLEADA 1 -->
+      <rect x="20" y="155" width="840" height="100" rx="6" fill="rgba(26,74,138,.06)" stroke="#1a4a8a" stroke-width="2"/>
+      <text x="40" y="178" font-size="11" fill="#1a4a8a" font-weight="700">OLEADA 1 — TEST WORKERS (Sonnet × N, paralelo)</text>
+      <text x="40" y="195" font-size="9" fill="#4a3f30">Cada worker recibe: TEST SPEC de su grupo + DIGEST (incluye SHARED CONTRACTS)</text>
+
+      <!-- Worker boxes -->
+      <rect x="40" y="207" width="95" height="38" rx="4" fill="rgba(26,74,138,.1)" stroke="#1a4a8a" stroke-width="1"/>
+      <text x="87" y="222" font-size="8" text-anchor="middle" fill="#1a4a8a" font-weight="600">TW1</text>
+      <text x="87" y="237" font-size="7" text-anchor="middle" fill="#4a3f30">entities (5)</text>
+
+      <rect x="145" y="207" width="95" height="38" rx="4" fill="rgba(26,74,138,.1)" stroke="#1a4a8a" stroke-width="1"/>
+      <text x="192" y="222" font-size="8" text-anchor="middle" fill="#1a4a8a" font-weight="600">TW2</text>
+      <text x="192" y="237" font-size="7" text-anchor="middle" fill="#4a3f30">interfaces (6)</text>
+
+      <rect x="250" y="207" width="95" height="38" rx="4" fill="rgba(26,74,138,.1)" stroke="#1a4a8a" stroke-width="1"/>
+      <text x="297" y="222" font-size="8" text-anchor="middle" fill="#1a4a8a" font-weight="600">TW3</text>
+      <text x="297" y="237" font-size="7" text-anchor="middle" fill="#4a3f30">dtos (14)</text>
+
+      <rect x="355" y="207" width="95" height="38" rx="4" fill="rgba(26,74,138,.1)" stroke="#1a4a8a" stroke-width="1"/>
+      <text x="402" y="222" font-size="8" text-anchor="middle" fill="#1a4a8a" font-weight="600">TW4</text>
+      <text x="402" y="237" font-size="7" text-anchor="middle" fill="#4a3f30">usecases (11)</text>
+
+      <rect x="460" y="207" width="95" height="38" rx="4" fill="rgba(26,74,138,.1)" stroke="#1a4a8a" stroke-width="1"/>
+      <text x="507" y="222" font-size="8" text-anchor="middle" fill="#1a4a8a" font-weight="600">TW5</text>
+      <text x="507" y="237" font-size="7" text-anchor="middle" fill="#4a3f30">e2e (6)</text>
+
+      <rect x="565" y="207" width="95" height="38" rx="4" fill="rgba(26,74,138,.1)" stroke="#1a4a8a" stroke-width="1"/>
+      <text x="612" y="222" font-size="8" text-anchor="middle" fill="#1a4a8a" font-weight="600">TW6</text>
+      <text x="612" y="237" font-size="7" text-anchor="middle" fill="#4a3f30">svc tests (4)</text>
+
+      <rect x="670" y="207" width="95" height="38" rx="4" fill="rgba(26,74,138,.1)" stroke="#1a4a8a" stroke-width="1"/>
+      <text x="717" y="222" font-size="8" text-anchor="middle" fill="#1a4a8a" font-weight="600">TW7</text>
+      <text x="717" y="237" font-size="7" text-anchor="middle" fill="#4a3f30">cmp tests (4)</text>
+
+      <!-- All write to tests/ -->
+      <text x="795" y="230" font-size="9" fill="#1a4a8a" font-weight="600">→ tests/</text>
+
+      <!-- Arrow down -->
+      <line x1="440" y1="255" x2="440" y2="275" stroke="#1a1410" stroke-width="2" marker-end="url(#a3)"/>
+
+      <!-- GATE -->
+      <rect x="130" y="280" width="620" height="60" rx="6" fill="rgba(193,68,14,.1)" stroke="#c1440e" stroke-width="2.5"/>
+      <text x="440" y="302" font-size="12" font-weight="700" fill="#c1440e" text-anchor="middle">🚧 GATE BLOQUEANTE — 7 CHECKS</text>
+      <text x="440" y="320" font-size="9" fill="#4a3f30" text-anchor="middle">≥N archivos · imports domain.interfaces · Optional.of() · DTOs no-arg + setters · constructors consistentes</text>
+      <text x="440" y="332" font-size="9" fill="#c1440e" text-anchor="middle" font-weight="600">FALLA → ABORT — NUNCA se lanzan code workers con tests incoherentes</text>
+
+      <!-- Arrow down -->
+      <line x1="440" y1="340" x2="440" y2="360" stroke="#2a6e4e" stroke-width="2" marker-end="url(#a3)"/>
+      <text x="455" y="355" font-size="8" fill="#2a6e4e" font-weight="700">PASS</text>
+
+      <!-- OLEADA 2 -->
+      <rect x="20" y="365" width="840" height="100" rx="6" fill="rgba(42,110,78,.06)" stroke="#2a6e4e" stroke-width="2"/>
+      <text x="40" y="388" font-size="11" fill="#2a6e4e" font-weight="700">OLEADA 2 — CODE WORKERS (Sonnet × N, paralelo)</text>
+      <text x="40" y="405" font-size="9" fill="#4a3f30">Cada worker LEE los tests de su grupo PRIMERO → escribe código que los satisfaga</text>
+
+      <rect x="40" y="415" width="95" height="38" rx="4" fill="rgba(42,110,78,.1)" stroke="#2a6e4e" stroke-width="1"/>
+      <text x="87" y="430" font-size="8" text-anchor="middle" fill="#2a6e4e" font-weight="600">CW1</text>
+      <text x="87" y="445" font-size="7" text-anchor="middle" fill="#4a3f30">entities (5)</text>
+
+      <rect x="145" y="415" width="95" height="38" rx="4" fill="rgba(42,110,78,.1)" stroke="#2a6e4e" stroke-width="1"/>
+      <text x="192" y="430" font-size="8" text-anchor="middle" fill="#2a6e4e" font-weight="600">CW2</text>
+      <text x="192" y="445" font-size="7" text-anchor="middle" fill="#4a3f30">interfaces (11)</text>
+
+      <rect x="250" y="415" width="95" height="38" rx="4" fill="rgba(42,110,78,.1)" stroke="#2a6e4e" stroke-width="1"/>
+      <text x="297" y="430" font-size="8" text-anchor="middle" fill="#2a6e4e" font-weight="600">CW3</text>
+      <text x="297" y="445" font-size="7" text-anchor="middle" fill="#4a3f30">dtos (15)</text>
+
+      <rect x="355" y="415" width="95" height="38" rx="4" fill="rgba(42,110,78,.1)" stroke="#2a6e4e" stroke-width="1"/>
+      <text x="402" y="430" font-size="8" text-anchor="middle" fill="#2a6e4e" font-weight="600">CW4</text>
+      <text x="402" y="445" font-size="7" text-anchor="middle" fill="#4a3f30">usecases (10)</text>
+
+      <rect x="460" y="415" width="95" height="38" rx="4" fill="rgba(42,110,78,.1)" stroke="#2a6e4e" stroke-width="1"/>
+      <text x="507" y="430" font-size="8" text-anchor="middle" fill="#2a6e4e" font-weight="600">CW5</text>
+      <text x="507" y="445" font-size="7" text-anchor="middle" fill="#4a3f30">infra (16)</text>
+
+      <rect x="565" y="415" width="95" height="38" rx="4" fill="rgba(42,110,78,.1)" stroke="#2a6e4e" stroke-width="1"/>
+      <text x="612" y="430" font-size="8" text-anchor="middle" fill="#2a6e4e" font-weight="600">CW6</text>
+      <text x="612" y="445" font-size="7" text-anchor="middle" fill="#4a3f30">transport (10)</text>
+
+      <rect x="670" y="415" width="50" height="38" rx="4" fill="rgba(42,110,78,.1)" stroke="#2a6e4e" stroke-width="1"/>
+      <text x="695" y="437" font-size="7" text-anchor="middle" fill="#2a6e4e" font-weight="600">CW7</text>
+
+      <rect x="728" y="415" width="80" height="38" rx="4" fill="rgba(42,110,78,.1)" stroke="#2a6e4e" stroke-width="1"/>
+      <text x="768" y="430" font-size="8" text-anchor="middle" fill="#2a6e4e" font-weight="600">CW8</text>
+      <text x="768" y="445" font-size="7" text-anchor="middle" fill="#4a3f30">frontend (20)</text>
+
+      <!-- Arrow down -->
+      <line x1="440" y1="465" x2="440" y2="485" stroke="#1a1410" stroke-width="2" marker-end="url(#a3)"/>
+
+      <!-- SMOKE -->
+      <rect x="200" y="490" width="480" height="35" rx="6" fill="rgba(232,160,32,.1)" stroke="#e8a020" stroke-width="2"/>
+      <text x="440" y="513" font-size="11" font-weight="700" fill="#e8a020" text-anchor="middle">🧪 SMOKE (Haiku) — 28 checks · grep · count · exists</text>
+    </svg>
+  </div>
+
+  <div class="sec-title" data-n="2">ROLES Y MODELOS</div>
+
+  <table class="vtable">
+    <tr><th>Rol</th><th>Modelo</th><th>Caveman</th><th>Función</th></tr>
+    <tr><td><code>Architect</code></td><td style="color:var(--accent);font-weight:700">Opus</td><td>lite</td><td>Piensa. Lee código, clasifica, genera Blueprint + DIGEST + SHARED CONTRACTS + TEST SPECS</td></tr>
+    <tr><td><code>Capataz</code></td><td style="color:var(--accent3);font-weight:700">Sonnet</td><td>lite</td><td>Coordina. Lanza 2 oleadas de workers, verifica GATE, consolida resultados</td></tr>
+    <tr><td><code>Test Worker</code></td><td style="color:var(--accent3);font-weight:700">Sonnet</td><td>lite + telemetría</td><td>Materializa TEST SPECS como archivos .java/.js reales en tests/</td></tr>
+    <tr><td><code>Code Worker</code></td><td style="color:var(--accent3);font-weight:700">Sonnet</td><td>lite + telemetría</td><td>Lee test de su grupo → escribe código que lo satisfaga</td></tr>
+    <tr><td><code>Smoke</code></td><td style="color:var(--accent2);font-weight:700">Haiku</td><td>lite</td><td>Verifica mecánicamente (grep, count, exists). Escala a Sonnet si falla</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">TIER ADAPTATIVO — FILES PER WORKER</div>
+
+  <table class="vtable">
+    <tr><th>Líneas/archivo (media)</th><th>Files/Worker</th><th>Bugs</th><th>Coste</th></tr>
+    <tr><td>&gt; 500 (complejo)</td><td style="font-weight:700">2</td><td>0</td><td>+15%</td></tr>
+    <tr><td style="color:var(--accent2);font-weight:700">200–500 (sweet spot)</td><td style="color:var(--accent2);font-weight:700">3</td><td style="color:var(--accent2);font-weight:700">0</td><td style="color:var(--accent2);font-weight:700">baseline</td></tr>
+    <tr><td>&lt; 200 (trivial)</td><td style="font-weight:700">4</td><td>0</td><td>-10%</td></tr>
+    <tr><td style="color:var(--accent)">cualquier (5+)</td><td style="color:var(--accent)">5+</td><td style="color:var(--accent);font-weight:700">1+</td><td style="color:var(--accent)">saturación</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: ARCHITECT                                        -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-architect" class="mode-panel">
+
+  <div class="sec-title" data-n="1">LOS 4 ARTEFACTOS DEL ARCHITECT</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">Blueprint</div>
+      <div class="comp-content">Agrupación por afinidad funcional. Cada worker tiene columna <strong>ESCRIBE</strong> con carpetas que le pertenecen exclusivamente. Split si grupo > FILES_PER_WORKER. Merge si grupo = 1 trivial.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header alt">DIGEST (~2K tokens)</div>
+      <div class="comp-content">Patrones extraídos de la referencia: arquitectura, seguridad, API contract, frontend. Workers reciben DIGEST, NO leen referencia directamente. Ahorro: ~15% tokens.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header purple">SHARED CONTRACTS</div>
+      <div class="comp-content">Sección dentro del DIGEST obligatoria para TODOS los workers. Entity names, constructor signatures, mutabilidad, repos, DTOs, paquetes. Libertad total en implementación interna.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header yellow">TEST SPECS (~500 tok/grupo)</div>
+      <div class="comp-content">Contratos compactos por grupo. NO archivos reales — solo specs que los Test Workers materializan como JUnit/Jest. Constructors, method sigs, return types, field names.</div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">SHARED CONTRACTS — EJEMPLO REAL (M19)</div>
+
+<pre><span class="lang">Architect Output · SHARED CONTRACTS</span>
+<span class="cm">// Entity Names Exactos — NUNCA alias</span>
+<span class="cl">Usuario</span>, <span class="cl">RevisionExamen</span>, <span class="cl">SelladoAsignaturas</span>, <span class="cl">Proyecto</span>, <span class="cl">TemaProyecto</span>
+ALL: <span class="kw">final class</span>, <span class="kw">final fields</span>, constructor only, NO setters
+
+<span class="cm">// Constructor Signatures</span>
+<span class="cl">Usuario</span>(<span class="nu">12</span> args): id, expediente, nombre, apellidos, direccion,
+  email, telefono, <span class="hl">titulacion</span>, curso, proyectoEnCurso, login, clave
+
+<span class="cl">RevisionExamen</span>(<span class="nu">7</span> args): id, idRegistro, asignatura,
+  fechaExamen, calificacion, <span class="hl">nombreProfesor</span>, comentarios
+
+<span class="cm">// Paquetes — EXACTOS</span>
+<span class="cl">domain.entities</span> · <span class="cl">domain.interfaces</span> · <span class="cl">domain.dto</span> · <span class="cl">domain.usecases</span>
+<span class="kw">NUNCA:</span> domain.model · domain.repositories · domain.services
+
+<span class="cm">// DTOs — TODOS mutables: new Dto() + setters</span>
+<span class="cl">LoginRequest</span>     { login, password }
+<span class="cl">ApiResponse</span>      <span class="kw">ESPECIAL</span>: static factory ok()/error(). NO constructor.
+
+<span class="cm">// DB Column → Entity Field → DTO Field</span>
+registro.<span class="st">numero_expediente</span> → <span class="fn">expediente</span> → <span class="fn">expediente</span>
+registro.<span class="st">titulacion</span>        → <span class="fn">titulacion</span> → <span class="fn">titulacion</span>     <span class="cm">// KI-3: NUNCA especialidad</span>
+temas_proyectos.<span class="st">"year"</span>    → <span class="fn">year</span>       → <span class="fn">year</span>           <span class="cm">// KI-15: entrecomillado en SQL</span></pre>
+
+  <div class="sec-title" data-n="3">TEST SPEC — EJEMPLO</div>
+
+<pre><span class="lang">TEST SPEC · TW1 entity-tests</span>
+<span class="kw">GROUP:</span> entity-tests
+<span class="kw">FILES:</span> UsuarioEntityTest, RevisionExamenEntityTest, ProyectoEntityTest,
+       SelladoAsignaturasEntityTest, TemaProyectoEntityTest
+<span class="kw">CONTRACTS:</span>
+  ALL entities:
+    - <span class="kw">final class</span> (verify: <span class="fn">Modifier.isFinal</span>)
+    - ALL fields <span class="kw">final</span> (verify: reflection)
+    - NO no-arg constructor (verify: <span class="fn">getDeclaredConstructors().length == 1</span>)
+    - NO setter methods (verify: no method starts with "<span class="st">set</span>")
+
+  <span class="cl">Usuario</span>(<span class="nu">12</span> args): id, expediente, nombre, apellidos, ...
+    - field "<span class="hl">titulacion</span>" NOT "especialidad"
+
+  <span class="cl">RevisionExamen</span>(<span class="nu">7</span> args): id, idRegistro, asignatura, ...
+    - <span class="fn">getNombreProfesor()</span> → String  <span class="cm">// KI-1: NOT getFormatos</span></pre>
+
+  <div class="callout orange">
+    <strong>El Architect genera, los workers respetan</strong>
+    SHARED CONTRACTS es el contrato social entre 15+ agentes que trabajan en paralelo sin verse entre sí. Si TW1 dice "final class, no setters" y TW4 usa <code>new Entity() + setters</code>, el GATE detecta la divergencia y aborta. El Architect es responsable de que los contratos sean coherentes; los workers son responsables de seguirlos.
+  </div>
+
+  <div class="sec-title" data-n="4">KNOWLEDGE INJECTION — 17 REGLAS M19</div>
+
+  <table class="vtable">
+    <tr><th>KI</th><th>Bug Prevenido</th><th>Regla</th></tr>
+    <tr><td><code>KI-1</code></td><td>Campo inexistente</td><td><code>nombreProfesor</code> en RevisionRequest (nunca <code>getFormatos</code>)</td></tr>
+    <tr><td><code>KI-3</code></td><td>Naming inconsistente</td><td><code>titulacion</code> EVERYWHERE (nunca <code>especialidad</code>)</td></tr>
+    <tr><td><code>KI-5</code></td><td>Parser roto</td><td>JSON parsing correcto (no <code>indexOf</code>)</td></tr>
+    <tr><td><code>KI-6</code></td><td>Servicios falsos</td><td>ALL services real fetch, zero stubs</td></tr>
+    <tr><td><code>KI-10</code></td><td>Cookies inseguras</td><td>HttpOnly; Secure; SameSite=Lax</td></tr>
+    <tr><td><code>KI-11</code></td><td>API rota</td><td>ApiResponse exactamente <code>ok()</code> / <code>error()</code></td></tr>
+    <tr><td><code>KI-12</code></td><td>ID perdido</td><td><code>INSERT RETURNING id</code> en todos los save()</td></tr>
+    <tr><td><code>KI-15</code></td><td>SQL error</td><td><code>"year"</code> entrecomillado (palabra reservada PostgreSQL)</td></tr>
+    <tr><td><code>KI-17</code></td><td>Bypass hexagonal</td><td>AdminController via ListUsuariosUseCase, nunca repo directo</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: GATE                                             -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-gate" class="mode-panel">
+
+  <div class="sec-title" data-n="1">POR QUÉ EXISTE EL GATE</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">Sin GATE (M2, 2026-04-21)</div>
+      <div class="comp-content">
+        Architect generó DIGEST pero NO tests. Workers sin spec formal. Tests escritos DESPUÉS como documentación. Resultado: TDD-as-spec no se cumplió. Knowledge injection salvó, pero fue suerte.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">Con GATE (M16+)</div>
+      <div class="comp-content">
+        Test Workers escriben tests a disco → GATE verifica coherencia → Code Workers los leen. Si tests no existen o son incoherentes → ABORT. Imposible gastar tokens en código basado en tests rotos.
+      </div>
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠️ Post-Mortem M16 — Errores que motivaron el GATE</div>
+    <div class="danger-content">
+      <strong>11 usecase tests</strong> importaban <code>domain.repositories.*</code> — paquete inexistente → 0/11 compilaban.<br>
+      <strong>5 tests</strong> devolvían <code>thenReturn(entity)</code> en vez de <code>thenReturn(Optional.of(entity))</code> → type mismatch.<br>
+      <strong>DTOs:</strong> <code>LoginRequest(2 args)</code> y <code>SolicitudFilter(1 arg)</code> — constructores all-args inventados que no existían.<br>
+      <strong>Métodos:</strong> <code>ListSolicitudesTest</code> llamaba <code>findAll()</code> en repos que solo tienen <code>findByFilters</code>/<code>findByDateRange</code>.<br>
+      Todos estos errores habrían propagado a los Code Workers, multiplicando el daño.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">LOS 7 CHECKS DEL GATE</div>
+
+  <table class="vtable">
+    <tr><th>#</th><th>Check</th><th>Qué detecta</th><th>Origen</th></tr>
+    <tr><td style="font-weight:700">G1</td><td>tests/ tiene ≥ N archivos</td><td>Workers que no escribieron nada</td><td>Pre-M16</td></tr>
+    <tr><td style="font-weight:700">G2</td><td>TODOS importan <code>domain.interfaces.*</code></td><td>Import a <code>domain.repositories.*</code> (inexistente)</td><td>Post-mortem M16</td></tr>
+    <tr><td style="font-weight:700">G3</td><td>TODOS importan <code>domain.entities.*</code></td><td>Import a <code>domain.model.*</code> (inexistente)</td><td>Post-mortem M16</td></tr>
+    <tr><td style="font-weight:700">G4</td><td>Constructor signatures consistentes entre TWs</td><td>TW1 dice "final, no setters" pero TW4 usa setters</td><td>Post-mortem M16</td></tr>
+    <tr><td style="font-weight:700">G5</td><td><code>Optional.of(x)</code> donde interface retorna Optional</td><td><code>thenReturn(entity)</code> directo → type mismatch</td><td>Post-mortem M16</td></tr>
+    <tr><td style="font-weight:700">G6</td><td>DTOs mutables usan <code>new Dto() + setters</code></td><td>Constructores all-args inventados</td><td>Post-mortem M16</td></tr>
+    <tr><td style="font-weight:700">G7</td><td>Tests SOLO llaman métodos de SHARED CONTRACTS</td><td>Llamar <code>findAll()</code> cuando solo existe <code>findByFilters()</code></td><td>Post-mortem M16</td></tr>
+  </table>
+
+  <div class="callout green">
+    <strong>El GATE es tu firewall de tokens</strong>
+    Sin GATE, 8 Code Workers gastarían ~$3.00 generando código basado en tests rotos. El código no compilaría, y habría que repetir toda la oleada. El GATE cuesta ~10 segundos de verificación y ahorra horas de debug.
+  </div>
+
+  <div class="sec-title" data-n="3">RESULTADO GATE EN M19</div>
+
+<pre><span class="lang">GATE · M19 · 8/8 PASS</span>
+✓ tests/ tiene <span class="nu">50</span> archivos (esperados ≥ <span class="nu">39</span>)
+✓ ALL test imports use <span class="cl">domain.interfaces.*</span>
+✓ ALL test imports use <span class="cl">domain.entities.*</span>
+✓ Constructor args consistentes entre TW1/TW4/TW5
+✓ <span class="fn">Optional.of()</span> usage: <span class="nu">10</span> Optional.of() + <span class="nu">6</span> Optional.empty(), <span class="nu">0</span> thenReturn(null)
+✓ DTOs: <span class="nu">0</span> all-args constructors inventados
+✓ Métodos: SOLO llamadas a SHARED CONTRACTS
+
+<span class="cm">// Fixes automáticos pre-GATE (no manuales):</span>
+<span class="kw">19</span> imports: domain.responses/* → <span class="cl">domain.dto</span>  <span class="cm">// TW4 package error</span>
+<span class="kw">3</span>  methods: getDelegado() → <span class="fn">getProyectoEnCurso()</span>
+<span class="kw">2</span>  methods: getAlumnoNombre() → <span class="fn">getAlumno()</span></pre>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: WORKERS                                          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-workers" class="mode-panel">
+
+  <div class="sec-title" data-n="1">PROMPT — TEST WORKER</div>
+
+<pre><span class="lang">Prompt · Test Worker</span>
+Genera tests JUnit 4 / Jest que especifiquen los contratos de tu grupo.
+Recibes <span class="kw">TEST SPEC</span> + <span class="kw">DIGEST</span> (incluye SHARED CONTRACTS).
+Output: archivos reales en <span class="cl">tests/{tipo}/</span>
+
+<span class="kw">Constraints:</span>
+- Java 8: no records, no var, no List.of()
+- JUnit 4: @Test, assertEquals, assertNotNull
+- Mockito 1.x: mock(), when(), verify()
+- Reflection para verificar ausencia de métodos prohibidos
+- Tests DEBEN compilar (no se ejecutan ahora)
+- Si tu test necesita instanciar una entity de OTRO grupo,
+  usa <span class="hl">EXACTAMENTE el constructor de SHARED CONTRACTS</span>. No inventes otro.
+
+<span class="kw">REGLAS DE COHERENCIA (obligatorias):</span>
+- Imports: <span class="cl">domain.interfaces.*</span> para repos
+  (<span class="kw">NUNCA</span> domain.repositories.*)
+- Optional: si repo retorna Optional&lt;T&gt;,
+  mockear con <span class="fn">thenReturn(Optional.of(x))</span>
+  Caso "no encontrado": <span class="fn">thenReturn(Optional.empty())</span>
+  (<span class="kw">NUNCA</span> thenReturn(null))
+- DTOs mutables: <span class="fn">new Dto() + setters</span>
+  (<span class="kw">NO</span> inventar constructores all-args)
+- Métodos repo: <span class="kw">SOLO</span> llamar métodos listados en SHARED CONTRACTS
+  (<span class="kw">NO</span> asumir findAll() si interface solo declara findByFilters())</pre>
+
+  <div class="sec-title" data-n="2">PROMPT — CODE WORKER</div>
+
+<pre><span class="lang">Prompt · Code Worker</span>
+<span class="kw">ANTES</span> de escribir cualquier archivo, <span class="kw">LEE</span> los tests de tu grupo:
+  tests/{tipo}/{NombreTest}.java
+
+Contratos EXACTOS que tu código debe cumplir:
+  - Constructors: argumentos en orden exacto
+  - Method signatures: nombre, parámetros, return type
+  - Field names: EXACTAMENTE los del test
+  - Exceptions: las que el test captura
+<span class="hl">Si tu código no satisface el test, ESTÁ MAL. El test es la verdad.</span>
+
+<span class="kw">REGLA DE AISLAMIENTO (obligatoria):</span>
+  - <span class="kw">SOLO</span> escribe archivos en <span class="kw">TU</span> carpeta asignada por el Blueprint
+  - <span class="kw">NUNCA</span> sobreescribas archivos de otros workers
+  - Si un test referencia una clase que NO es tuya,
+    ADÁPTATE al contrato que el test define — NO reescribas la clase
+
+<span class="cm">// Post-mortem pruebaMigracionCompleto15:</span>
+<span class="cm">// CW4 sobreescribió 28+ archivos de otros workers → 9 fixes manuales</span>
+<span class="cm">// Violación de aislamiento = corrupción cross-worker</span></pre>
+
+  <div class="sec-title" data-n="3">BLUEPRINT DE WORKERS — M19</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header alt">OLEADA 1 — Test Workers (TW1–TW7)</div>
+      <div class="comp-content">
+        <strong>TW1</strong> entity-tests → tests/entities/ (5 tests)<br>
+        <strong>TW2</strong> interface-tests → tests/interfaces/ (6 tests)<br>
+        <strong>TW3</strong> dto-tests → tests/dto/ (14 tests)<br>
+        <strong>TW4</strong> usecase-tests → tests/usecases/ (11 tests)<br>
+        <strong>TW5</strong> e2e-tests → tests/e2e/ (6 tests)<br>
+        <strong>TW6</strong> frontend-back-tests → tests/frontend/ (4 svc tests)<br>
+        <strong>TW7</strong> frontend-front-tests → tests/frontend/ (4 cmp tests)
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">OLEADA 2 — Code Workers (CW1–CW8)</div>
+      <div class="comp-content">
+        <strong>CW1</strong> domain-entities → backend/domain/entities/ (5)<br>
+        <strong>CW2</strong> domain-interfaces+exceptions → backend/domain/interfaces/ + exceptions/ (11)<br>
+        <strong>CW3</strong> domain-dto → backend/domain/dto/ (15)<br>
+        <strong>CW4</strong> domain-usecases → backend/domain/usecases/ (10)<br>
+        <strong>CW5</strong> infrastructure → backend/infrastructure/ (16)<br>
+        <strong>CW6</strong> transport → backend/transport/ (10)<br>
+        <strong>CW7</strong> wiring → backend/AppWiring.java (1)<br>
+        <strong>CW8</strong> frontend → frontend/ (~20)
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">TELEMETRÍA — FORMATO WORKER LOG</div>
+
+<pre><span class="lang">Markdown · _logs/02_workers/w01_domain-entities.md</span>
+# V5M-WORKER w01_domain-entities
+- Inicio: <span class="nu">14:31:02</span>
+- Fin: <span class="nu">14:32:45</span>
+- Archivos: Usuario.java(<span class="nu">105</span>L), Proyecto.java(<span class="nu">88</span>L)
+- Total: <span class="nu">193</span> líneas
+- Tests leídos: UsuarioEntityTest.java, ProyectoEntityTest.java
+- Estado: <span class="cl">DONE</span></pre>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: SMOKE                                            -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-smoke" class="mode-panel">
+
+  <div class="sec-title" data-n="1">28 SMOKE CHECKS — M19</div>
+
+  <p>Smoke (Haiku) ejecuta verificaciones mecánicas post-Oleada 2. Son grep, count, exists — no requieren compilar ni ejecutar código. Si falla, escala a Sonnet para fix automático.</p>
+
+  <table class="vtable">
+    <tr><th>#</th><th>Check</th><th>Resultado M19</th></tr>
+    <tr><td class="cat">S1</td><td>Zero imports domain → infra/transport</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">S2</td><td>Todas las interfaces tienen implementación</td><td style="color:var(--accent2);font-weight:700">PASS — 6 impls para 6 interfaces</td></tr>
+    <tr><td class="cat">S3</td><td>Constructor injection only (no <code>new Jdbc</code> en usecases)</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">S4</td><td>100% PreparedStatement en repos</td><td style="color:var(--accent2);font-weight:700">PASS — 30 statements, 0 concat</td></tr>
+    <tr><td class="cat">S5</td><td>try-with-resources en todos los repos</td><td style="color:var(--accent2);font-weight:700">PASS — 25 try( across 5 repos</td></tr>
+    <tr><td class="cat">S6</td><td>Entidades inmutables (final class, final fields)</td><td style="color:var(--accent2);font-weight:700">PASS — 5/5</td></tr>
+    <tr><td class="cat">S7</td><td>Naming: <code>titulacion</code> (nunca <code>especialidad</code>)</td><td style="color:var(--accent2);font-weight:700">PASS — 0 "especialidad"</td></tr>
+    <tr><td class="cat">S8</td><td>ApiResponse: exactamente ok() / error()</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">S9</td><td><code>"year"</code> entrecomillado en SQL</td><td style="color:var(--accent2);font-weight:700">PASS — 2 ocurrencias</td></tr>
+    <tr><td class="cat">S10</td><td>INSERT RETURNING id en todos los save()</td><td style="color:var(--accent2);font-weight:700">PASS — 4 repos</td></tr>
+    <tr><td class="cat">S11</td><td>Controllers delegan a usecases (no repos)</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">S12</td><td>AdminController usa ListUsuariosUseCase</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">S13</td><td>UserProfileResponse incluye proyectoEnCurso</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">S14</td><td>RevisionRequest tiene nombreProfesor</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">S15</td><td>ListSolicitudes SQL con JOIN</td><td style="color:var(--accent2);font-weight:700">PASS — 4 JOINs</td></tr>
+    <tr><td class="cat">S16</td><td>Entity constructor arg counts (12,7,3,10,8)</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">F1</td><td>Zero stubs en frontend services</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">F2</td><td>All fetch() check resp.ok</td><td style="color:var(--accent2);font-weight:700">PASS — 13 checks</td></tr>
+    <tr><td class="cat">F3</td><td>All fetch() use credentials:'include'</td><td style="color:var(--accent2);font-weight:700">PASS — 13 credentials</td></tr>
+    <tr><td class="cat">X1</td><td>13 endpoints tienen controller method</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">X2</td><td>Controllers delegan a usecases</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">X3</td><td>SessionFilter valida ConcurrentHashMap</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">X4</td><td>Cookie HttpOnly + Secure + SameSite=Lax</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">X5</td><td>Components importan services, nunca fetch()</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">SEC1</td><td>IDOR check en UserController</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">SEC2</td><td>CorsFilter sin wildcard *</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">TC1</td><td>Usecase test imports domain.interfaces</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+    <tr><td class="cat">TC2</td><td>Usecase tests usan Optional.of()</td><td style="color:var(--accent2);font-weight:700">PASS</td></tr>
+  </table>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Checks adaptativos al proyecto</div>
+    <div class="insight-content">
+      La lista de 28 checks es específica de WebDTE. Para un proyecto Express.js/MongoDB, los checks serían diferentes: validar middleware chain, verificar ObjectId usage, comprobar async/await error handling, etc. El Architect genera la lista de checks junto con el Blueprint.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: EJEMPLO REAL                                     -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-ejemplo" class="mode-panel">
+
+  <div class="sec-title" data-n="1">pruebaMigracionCompleto19 — CASO REAL</div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-num o">139</div><div class="stat-label">Archivos</div></div>
+    <div class="stat-card"><div class="stat-num g">11,458</div><div class="stat-label">Líneas</div></div>
+    <div class="stat-card"><div class="stat-num b">28/28</div><div class="stat-label">Smoke Pass</div></div>
+    <div class="stat-card"><div class="stat-num p">8/8</div><div class="stat-label">Gate Pass</div></div>
+    <div class="stat-card"><div class="stat-num y">0</div><div class="stat-label">Fixes Manuales</div></div>
+    <div class="stat-card"><div class="stat-num o">15</div><div class="stat-label">Workers</div></div>
+  </div>
+
+  <div class="sec-title" data-n="2">INPUT → LEGACY</div>
+
+  <table class="vtable">
+    <tr><th>Fuente</th><th>Contenido</th><th>Cantidad</th></tr>
+    <tr><td><code>src/main/java/WebDTE/</code></td><td>13 Servlets (god classes con SQL inline)</td><td>~4,500 líneas</td></tr>
+    <tr><td><code>src/main/webapp/</code></td><td>18 HTML/JSP + 15 JS legacy</td><td>~3,200 líneas</td></tr>
+    <tr><td>Total legacy</td><td></td><td style="font-weight:700">7,719 líneas</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">OUTPUT → CÓDIGO GENERADO</div>
+
+  <table class="vtable">
+    <tr><th>Capa</th><th>Archivos</th><th>Líneas</th><th>Worker</th></tr>
+    <tr><td><code>domain/entities/</code></td><td>5 entities inmutables</td><td>~500</td><td>CW1</td></tr>
+    <tr><td><code>domain/interfaces/</code></td><td>6 interfaces</td><td>~120</td><td>CW2</td></tr>
+    <tr><td><code>domain/exceptions/</code></td><td>5 custom exceptions</td><td>~50</td><td>CW2</td></tr>
+    <tr><td><code>domain/dto/</code></td><td>14 DTOs + ApiResponse</td><td>~600</td><td>CW3</td></tr>
+    <tr><td><code>domain/usecases/</code></td><td>11 use cases</td><td>~800</td><td>CW4</td></tr>
+    <tr><td><code>infrastructure/persistence/</code></td><td>5 Jdbc + 5 models + 5 mappers</td><td>~1,200</td><td>CW5</td></tr>
+    <tr><td><code>infrastructure/messaging/</code></td><td>1 SmtpAdapter</td><td>~80</td><td>CW5</td></tr>
+    <tr><td><code>transport/controllers/</code></td><td>5 controllers + AppWiring</td><td>~700</td><td>CW6+CW7</td></tr>
+    <tr><td><code>transport/mappers/</code></td><td>4 mappers + JsonHelper</td><td>~250</td><td>CW6</td></tr>
+    <tr><td><code>transport/middleware/</code></td><td>SessionFilter + CorsFilter</td><td>~200</td><td>CW6</td></tr>
+    <tr><td><code>frontend/</code></td><td>12 Web Components + 4 services + config + router</td><td>~1,967</td><td>CW8</td></tr>
+    <tr><td><code>tests/</code></td><td>50 test files (Java + JS)</td><td>~5,704</td><td>TW1–TW7</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="4">EJECUCIÓN V5M</div>
+
+  <table class="vtable">
+    <tr><th>Fase</th><th>Workers</th><th>Resultado</th></tr>
+    <tr><td>SCAN</td><td>2 Explore agents</td><td>Inventario: 13 servlets, 18 HTML, 15 JS</td></tr>
+    <tr><td>ARCHITECT</td><td>1 Opus</td><td>Blueprint + DIGEST + SHARED CONTRACTS + TEST SPECS</td></tr>
+    <tr><td>Oleada 1 (tests)</td><td>7 Sonnet (TW1–TW7)</td><td>50 test files escritos a disco</td></tr>
+    <tr><td>GATE</td><td>—</td><td>8/8 PASS (24 fixes automáticos pre-gate)</td></tr>
+    <tr><td>Oleada 2 (código)</td><td>8 Sonnet (CW1–CW8)</td><td>89 code files escritos a disco</td></tr>
+    <tr><td>SMOKE</td><td>Haiku</td><td>28/28 PASS · 0 fixes requeridos</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="5">EVOLUCIÓN M17 → M18 → M19</div>
+
+  <table class="vtable">
+    <tr><th>Aspecto</th><th>M17</th><th>M18</th><th>M19</th></tr>
+    <tr><td>Frontend</td><td>Copiado de pruebaMigracionFront</td><td>Copiado de pruebaMigracionFront</td><td style="color:var(--accent2);font-weight:700">FROM SCRATCH (JSP analysis)</td></tr>
+    <tr><td>SMOKE</td><td>28/28</td><td>28/28</td><td style="color:var(--accent2);font-weight:700">28/28</td></tr>
+    <tr><td>Fixes manuales</td><td>0</td><td>2</td><td style="color:var(--accent2);font-weight:700">0</td></tr>
+    <tr><td>Total archivos</td><td>143</td><td>142</td><td>139</td></tr>
+    <tr><td>Total líneas</td><td>~14,889</td><td>~14,889</td><td>11,458</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: COSTES                                           -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-costes" class="mode-panel">
+
+  <div class="sec-title" data-n="1">COSTE V5M — UNA FASE (~70 archivos, 16 workers)</div>
+
+  <table class="vtable">
+    <tr><th>Concepto</th><th>Tokens</th><th>Coste</th></tr>
+    <tr><td>Architect (Blueprint + DIGEST + TEST SPECS)</td><td>~30K Opus</td><td>~$1.55</td></tr>
+    <tr><td>Test Workers oleada 1 (Sonnet × 16)</td><td>~40K</td><td>~$0.25</td></tr>
+    <tr><td>Code Workers oleada 2 (Sonnet × 16)</td><td>~480K</td><td>~$3.00</td></tr>
+    <tr><td>Smoke (Haiku)</td><td>~5K</td><td>~$0.02</td></tr>
+    <tr><td style="font-weight:700">Total V5M</td><td style="font-weight:700">~555K</td><td style="font-weight:700;color:var(--accent)">~$4.82</td></tr>
+  </table>
+
+  <p>Tiempo estimado: ~14 min (architect 3 + oleada1 1 + gate &lt;1 + oleada2 8 + smoke 2)</p>
+
+  <div class="sec-title" data-n="2">COSTE V6M — PROYECTO COMPLETO (4 fases)</div>
+
+  <table class="vtable">
+    <tr><th>Paso</th><th>Tokens</th><th>Coste</th><th>Tiempo</th></tr>
+    <tr><td>SCAN legacy (13 workers Sonnet)</td><td>~220K</td><td>~$1.17</td><td>~3 min</td></tr>
+    <tr><td>Meta-Architect (Opus)</td><td>~40K</td><td>~$1.20</td><td>~2 min</td></tr>
+    <tr><td>SCAN intermedio (2 workers Sonnet)</td><td>~30K</td><td>~$0.30</td><td>~1 min</td></tr>
+    <tr><td>4 × V5M (~$4.82/fase promedio)</td><td>~2,200K</td><td>~$19.28</td><td>~56 min</td></tr>
+    <tr><td style="font-weight:700">Total V6M</td><td style="font-weight:700">~2,490K</td><td style="font-weight:700;color:var(--accent)">~$21.95</td><td style="font-weight:700">~62 min</td></tr>
+  </table>
+
+  <div class="callout yellow">
+    <strong>Proyecto de 1 sola fase V5M</strong>
+    Si el proyecto es pequeño y solo necesita una fase: ~$6.30 total (scan $1.17 + meta $1.20 + v5m $4.82). Tiempo: ~20 min.
+  </div>
+
+  <div class="sec-title" data-n="3">ROI — SIN GATE vs CON GATE</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">Sin GATE (M2–M15)</div>
+      <div class="comp-content">
+        Code Workers generan sobre tests rotos. Código no compila. Requiere 1–2 oleadas extra de fix (~$6–10 extra). Tiempo de debug humano: 30–60 min. Fixes manuales: 2–9.<br><br>
+        <strong>Coste real: $12–$22</strong> por fase.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">Con GATE (M16+)</div>
+      <div class="comp-content">
+        GATE detecta incoherencias en &lt;10 seg. Fixes automáticos pre-oleada2. Code Workers generan sobre tests coherentes. Código compila al primer intento. Fixes manuales: 0.<br><br>
+        <strong>Coste real: $4.82</strong> por fase.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">LOGS EN DISCO</div>
+
+<pre><span class="lang">Estructura</span>
+<span class="cl">_logs/</span>
+└── <span class="cl">v5m_2026-04-28_2000_run01/</span>
+    ├── <span class="fn">00_config.json</span>         <span class="cm">← Modelos, constraints, KI (17 reglas)</span>
+    ├── <span class="fn">01_architect_blueprint.md</span> <span class="cm">← Blueprint + DIGEST + SHARED CONTRACTS + TEST SPECS</span>
+    ├── <span class="cl">02_workers/</span>             <span class="cm">← Telemetría por worker (inicio, fin, archivos, líneas)</span>
+    │   ├── w01_domain-entities.md
+    │   └── ...
+    ├── <span class="fn">03_smoke_check.md</span>       <span class="cm">← 28/28 PASS con evidencias</span>
+    └── <span class="fn">05_resumen.md</span>           <span class="cm">← Consolidado: 139 archivos, 11,458 líneas, 0 fixes</span>
+
+<span class="cm">// Re-ejecución: nuevo run lee 05_resumen.md anterior</span>
+<span class="cm">// 00_config.json incluye basado_en: "run01"</span>
+<span class="cm">// Architect solo regenera archivos afectados</span></pre>
+</div>
+
+</div><!-- .container -->
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
