@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angular 18 → 19 · Guía de Migración</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5}
+  .container{max-width:1160px;margin:0 auto;padding:48px 28px 100px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ── HEADER ── */
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:32px}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-0.8deg)}
+  h1{font-family:var(--display);font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.0;letter-spacing:-1px}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.8}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}
+  .badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}
+
+  /* ── TABS ── */
+  .mode-toggle{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:36px;width:100%}
+  .mode-btn{font-family:var(--mono);font-size:9.5px;font-weight:700;padding:10px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+
+  /* ── SECTIONS ── */
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+
+  /* ── CALLOUTS ── */
+  .callout{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout strong{display:block;margin-bottom:4px}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+
+  /* ── CODE ── */
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:14px 0;position:relative}
+  pre .lang{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.nu{color:#7a3acd}.an{color:#1a4a8a;font-weight:600}.hl{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px}.hl2{background:rgba(42,110,78,.15);border-radius:2px;padding:0 3px}.del{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px;text-decoration:line-through;color:var(--muted)}
+
+  /* ── TABLES ── */
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:14px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+  .vtable td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px;white-space:nowrap}
+  .vtable td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+  .vtable td.ok{color:var(--accent2);font-weight:700}.vtable td.bad{color:var(--accent);font-weight:700}
+
+  /* ── DIFF GRID ── */
+  .diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+  .diff-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden}
+  .diff-hd{padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .diff-hd.old{background:rgba(193,68,14,.1);color:var(--accent)}
+  .diff-hd.new{background:rgba(42,110,78,.1);color:var(--accent2)}
+  .diff-hd.old::before{content:'Angular 18 · '}
+  .diff-hd.new::before{content:'Angular 19 · '}
+  .diff-body{padding:0}
+  .diff-body pre{border:none;border-radius:0;margin:0;font-size:11px}
+
+  /* ── INSIGHT / DANGER ── */
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+
+  /* ── STEP FLOW ── */
+  .step-flow{display:flex;flex-direction:column;gap:0;margin:14px 0}
+  .step{display:flex;gap:0;align-items:stretch}
+  .step-num{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;color:var(--bg)}
+  .step-circle.o{background:var(--accent)}.step-circle.g{background:var(--accent2)}.step-circle.b{background:var(--accent3)}.step-circle.p{background:var(--purple)}.step-circle.y{background:var(--yellow);color:var(--ink)}
+  .step-line{width:2px;background:var(--border);flex:1;margin:4px auto}
+  .step:last-child .step-line{display:none}
+  .step-body{padding:0 0 20px 16px;flex:1}
+  .step-title{font-weight:700;font-size:12.5px;margin-bottom:6px}
+  .step-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+
+  /* ── METRICS ── */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:18px 0}
+  .metric{background:linear-gradient(135deg,#faf8f4,var(--surface2));border:2px solid var(--border);border-radius:6px;padding:18px;text-align:center}
+  .metric-v{font-family:var(--display);font-size:32px;font-weight:800;color:var(--accent)}
+  .metric-v.g{color:var(--accent2)}.metric-v.b{color:var(--accent3)}.metric-v.p{color:var(--purple)}
+  .metric-l{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-top:5px}
+  .metric-s{font-size:10.5px;color:var(--ink2);margin-top:4px}
+
+  @media(max-width:720px){.diff-grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Guía de migración · 2026</div>
+  <h1>Angular <em>18 → 19</em></h1>
+  <div class="subtitle">
+    NgModules → Standalone · Routing · Guards · Providers · Interceptors · Migración progresiva<br>
+    Ejemplos completos lado a lado — todo lo que cambia y por qué
+  </div>
+  <div class="badge-row">
+    <span class="badge o">NgModules → Standalone</span>
+    <span class="badge g">Routing completo</span>
+    <span class="badge b">Guards + Resolvers</span>
+    <span class="badge p">HTTP + Interceptors</span>
+    <span class="badge y">Migración progresiva</span>
+  </div>
+</header>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="switchTab('panorama')">🎯 PANORAMA</button>
+  <button class="mode-btn" onclick="switchTab('modulos')">🏗️ MÓDULOS→CONFIG</button>
+  <button class="mode-btn" onclick="switchTab('routing')">🛣️ ROUTING</button>
+  <button class="mode-btn" onclick="switchTab('lazy')">🔄 LAZY LOADING</button>
+  <button class="mode-btn" onclick="switchTab('componentes')">🧩 COMPONENTES</button>
+  <button class="mode-btn" onclick="switchTab('guards')">🛡️ GUARDS</button>
+  <button class="mode-btn" onclick="switchTab('providers')">🔧 PROVIDERS</button>
+  <button class="mode-btn" onclick="switchTab('mixto')">🔀 MIXTO</button>
+  <button class="mode-btn" onclick="switchTab('caso')">📋 CASO COMPLETO</button>
+  <button class="mode-btn" onclick="switchTab('referencia')">⚡ REFERENCIA</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: PANORAMA                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-panorama" class="mode-panel active">
+
+  <div class="sec-title" data-n="★">EL CAMBIO CONCEPTUAL</div>
+
+  <div class="callout green">
+    <strong>De "el módulo define el contexto" a "el componente se define a sí mismo"</strong>
+    En Angular 18, cada componente pertenecía a un NgModule que declaraba qué conocía y qué importaba. En Angular 19, cada componente es standalone — sabe por sí mismo qué necesita. El módulo como unidad de compilación desaparece.
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-v">6</div>
+      <div class="metric-l">Archivos fontanería</div>
+      <div class="metric-s">Angular 18</div>
+    </div>
+    <div class="metric">
+      <div class="metric-v g">3</div>
+      <div class="metric-l">Archivos fontanería</div>
+      <div class="metric-s">Angular 19</div>
+    </div>
+    <div class="metric">
+      <div class="metric-v b">0</div>
+      <div class="metric-l">NgModules</div>
+      <div class="metric-s">en proyectos nuevos</div>
+    </div>
+    <div class="metric">
+      <div class="metric-v p">∞</div>
+      <div class="metric-l">Lazy loading</div>
+      <div class="metric-s">por componente</div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="Q">QUÉ DESAPARECE — QUÉ APARECE</div>
+
+  <table class="vtable">
+    <tr><th>Angular 18 (NgModules)</th><th>Angular 19 (Standalone)</th><th>Nota</th></tr>
+    <tr>
+      <td><code>@NgModule({ declarations, imports, exports })</code></td>
+      <td><code>@Component({ imports: [...] })</code></td>
+      <td>El componente importa directamente lo que usa</td>
+    </tr>
+    <tr>
+      <td><code>AppModule</code> con <code>bootstrap: [AppComponent]</code></td>
+      <td><code>app.config.ts</code> con <code>providers: []</code></td>
+      <td>La configuración global es un objeto, no un módulo</td>
+    </tr>
+    <tr>
+      <td><code>AppRoutingModule</code> con <code>@NgModule</code></td>
+      <td><code>app.routes.ts</code> — solo un array <code>Routes</code></td>
+      <td>Las rutas son datos, no un módulo</td>
+    </tr>
+    <tr>
+      <td><code>RouterModule.forRoot(routes)</code></td>
+      <td><code>provideRouter(routes)</code></td>
+      <td>Provider funcional, sin NgModule</td>
+    </tr>
+    <tr>
+      <td><code>RouterModule.forChild(routes)</code></td>
+      <td>Desaparece — ya no hace falta</td>
+      <td>Las rutas hijas son simples arrays de Routes</td>
+    </tr>
+    <tr>
+      <td><code>loadChildren: () => import(...).then(m => m.AdminModule)</code></td>
+      <td><code>loadChildren: () => import(...).then(r => r.ADMIN_ROUTES)</code></td>
+      <td>Lazy loading de rutas, no de módulos</td>
+    </tr>
+    <tr>
+      <td><code>CommonModule</code> (para ngIf, ngFor)</td>
+      <td>Innecesario — usar <code>@if</code> y <code>@for</code> nativos</td>
+      <td>Nueva sintaxis de control de flujo</td>
+    </tr>
+    <tr>
+      <td><code>platformBrowserDynamic().bootstrapModule(AppModule)</code></td>
+      <td><code>bootstrapApplication(AppComponent, appConfig)</code></td>
+      <td>Bootstrap directo del componente raíz</td>
+    </tr>
+    <tr>
+      <td><code>RouterLink</code> global (por RouterModule en AppModule)</td>
+      <td><code>imports: [RouterLink]</code> en cada componente que lo use</td>
+      <td>Cada componente importa lo que necesita</td>
+    </tr>
+    <tr>
+      <td><code>HttpClientModule</code> en imports</td>
+      <td><code>provideHttpClient()</code> en providers</td>
+      <td>Provider funcional</td>
+    </tr>
+    <tr>
+      <td><code>HTTP_INTERCEPTORS</code> multi-provider</td>
+      <td><code>withInterceptors([fn])</code> funcional</td>
+      <td>Interceptores como funciones puras</td>
+    </tr>
+    <tr>
+      <td><code>standalone: false</code> (implícito)</td>
+      <td><code>standalone: true</code> (implícito en v19)</td>
+      <td>En v19 todos son standalone por defecto</td>
+    </tr>
+  </table>
+
+  <div class="sec-title" data-n="P">POR QUÉ VALE LA PENA MIGRAR</div>
+
+  <table class="vtable">
+    <tr><th>Beneficio</th><th>Angular 18</th><th>Angular 19</th></tr>
+    <tr>
+      <td class="cat">Bundle inicial</td>
+      <td>Todo el módulo se carga junto aunque no se use</td>
+      <td class="ok">Cada componente se carga cuando se necesita (<code>loadComponent</code>)</td>
+    </tr>
+    <tr>
+      <td class="cat">Tree-shaking</td>
+      <td>El compilador ve el módulo completo</td>
+      <td class="ok">El compilador ve solo lo que cada componente importa</td>
+    </tr>
+    <tr>
+      <td class="cat">Testing</td>
+      <td>Necesitas montar el módulo completo para testear un componente</td>
+      <td class="ok">El componente es autónomo — se testea solo con sus imports</td>
+    </tr>
+    <tr>
+      <td class="cat">Legibilidad</td>
+      <td>Para saber qué usa un componente, busca en su módulo</td>
+      <td class="ok">El componente dice exactamente qué usa en su propio decorador</td>
+    </tr>
+    <tr>
+      <td class="cat">Reutilización</td>
+      <td>Hay que exportar del módulo para usar en otro módulo</td>
+      <td class="ok">Cualquier componente standalone se importa directamente</td>
+    </tr>
+  </table>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: MÓDULOS → CONFIG                                 -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-modulos" class="mode-panel">
+
+  <div class="sec-title" data-n="1">APPMÓDULE → APP.CONFIG.TS</div>
+
+  <div class="callout blue">
+    <strong>AppModule desaparece completamente.</strong>
+    Su trabajo se divide en dos: la configuración global va a <code>app.config.ts</code> y el bootstrap va a <code>main.ts</code>. El <code>@NgModule</code> no existe en Angular 19.
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">app.module.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { NgModule } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { BrowserModule } <span class="kw">from</span> <span class="st">'@angular/platform-browser'</span>;
+<span class="kw">import</span> { HttpClientModule } <span class="kw">from</span> <span class="st">'@angular/common/http'</span>;
+<span class="kw">import</span> { AppRoutingModule } <span class="kw">from</span> <span class="st">'./app-routing.module'</span>;
+<span class="kw">import</span> { AppComponent } <span class="kw">from</span> <span class="st">'./app.component'</span>;
+<span class="kw">import</span> { HomeComponent } <span class="kw">from</span> <span class="st">'./pages/home/home.component'</span>;
+
+<span class="an">@NgModule</span>({
+  declarations: [
+    AppComponent,
+    HomeComponent,     <span class="cm">// declarado aquí</span>
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,  <span class="cm">// HTTP global</span>
+    AppRoutingModule,  <span class="cm">// routing</span>
+  ],
+  bootstrap: [AppComponent]
+})
+<span class="kw">export class</span> <span class="cl">AppModule</span> { }</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">app.config.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { ApplicationConfig } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { provideRouter } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="kw">import</span> { provideHttpClient } <span class="kw">from</span> <span class="st">'@angular/common/http'</span>;
+<span class="kw">import</span> { routes } <span class="kw">from</span> <span class="st">'./app.routes'</span>;
+
+<span class="kw">export const</span> appConfig: ApplicationConfig = {
+  providers: [
+    <span class="fn">provideRouter</span>(routes),  <span class="cm">// routing</span>
+    <span class="fn">provideHttpClient</span>(),    <span class="cm">// HTTP global</span>
+  ]
+};
+<span class="cm">// Sin @NgModule. Sin declarations. Sin bootstrap aquí.</span>
+<span class="cm">// HomeComponent ya no se declara en ningún sitio central.</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">MAIN.TS — BOOTSTRAP DIRECTO</div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">main.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { platformBrowserDynamic }
+  <span class="kw">from</span> <span class="st">'@angular/platform-browser-dynamic'</span>;
+<span class="kw">import</span> { AppModule } <span class="kw">from</span> <span class="st">'./app/app.module'</span>;
+
+platformBrowserDynamic()
+  .bootstrapModule(AppModule)
+  .catch(err => console.error(err));</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">main.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { bootstrapApplication }
+  <span class="kw">from</span> <span class="st">'@angular/platform-browser'</span>;
+<span class="kw">import</span> { AppComponent } <span class="kw">from</span> <span class="st">'./app/app.component'</span>;
+<span class="kw">import</span> { appConfig } <span class="kw">from</span> <span class="st">'./app/app.config'</span>;
+
+<span class="fn">bootstrapApplication</span>(AppComponent, appConfig)
+  .catch(err => console.error(err));</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">APPCOMPONENT — TAMBIÉN CAMBIA</div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">app.component.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Component } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="cm">// Sin imports: RouterOutlet viene del AppRoutingModule</span>
+
+<span class="an">@Component</span>({
+  <span class="cm">// standalone: false (implícito en v18)</span>
+  selector: <span class="st">'app-root'</span>,
+  template: <span class="st">`&lt;router-outlet&gt;&lt;/router-outlet&gt;`</span>
+})
+<span class="kw">export class</span> <span class="cl">AppComponent</span> { }</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">app.component.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Component } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { RouterOutlet } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="an">@Component</span>({
+  <span class="cm">// standalone: true (implícito en v19)</span>
+  <span class="hl">imports</span>: [RouterOutlet], <span class="cm">// ← importa lo que usa</span>
+  selector: <span class="st">'app-root'</span>,
+  template: <span class="st">`&lt;router-outlet&gt;&lt;/router-outlet&gt;`</span>
+})
+<span class="kw">export class</span> <span class="cl">AppComponent</span> { }</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 La regla de los imports en standalone</div>
+    <div class="insight-content">
+      Si un template usa <code>&lt;router-outlet&gt;</code> → importar <code>RouterOutlet</code>.<br>
+      Si usa <code>routerLink</code> → importar <code>RouterLink</code>.<br>
+      Si usa <code>routerLinkActive</code> → importar <code>RouterLinkActive</code>.<br>
+      Si usa <code>@if</code> / <code>@for</code> → <strong>no importar nada</strong> (son nativos del compilador desde v17).<br>
+      Si usa <code>*ngIf</code> / <code>*ngFor</code> → importar <code>NgIf</code> / <code>NgFor</code> directamente (o migrar a <code>@if</code>/<code>@for</code>).
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: ROUTING                                          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-routing" class="mode-panel">
+
+  <div class="sec-title" data-n="R">APPROUTINGMODULE → APP.ROUTES.TS</div>
+
+  <div class="callout blue">
+    <strong><code>RouterModule.forRoot()</code> desaparece.</strong>
+    En su lugar, <code>provideRouter(routes)</code> en el <code>app.config.ts</code>. Las rutas son un array de <code>Routes</code> puro — sin <code>@NgModule</code>, sin <code>RouterModule</code>, sin <code>exports</code>.
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">app-routing.module.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { NgModule } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { RouterModule, Routes } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="kw">import</span> { HomeComponent } <span class="kw">from</span> <span class="st">'./pages/home/home.component'</span>;
+
+<span class="kw">const</span> routes: Routes = [
+  { path: <span class="st">''</span>, component: <span class="cl">HomeComponent</span> },
+];
+
+<span class="an">@NgModule</span>({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]   <span class="cm">// ← necesario para el template</span>
+})
+<span class="kw">export class</span> <span class="cl">AppRoutingModule</span> { }</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">app.routes.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Routes } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="kw">export const</span> routes: Routes = [
+  {
+    path: <span class="st">''</span>,
+    <span class="cm">// loadComponent en lugar de component</span>
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/home/home.component'</span>)
+        .then(c => c.<span class="cl">HomeComponent</span>)
+  },
+];
+<span class="cm">// Sin @NgModule. Sin RouterModule. Sin exports.</span>
+<span class="cm">// Es solo un array de Routes exportado.</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="O">OPCIONES DE PROVIDEROUTER</div>
+
+  <div class="callout yellow">
+    <strong>Las opciones que antes iban en <code>RouterModule.forRoot(routes, options)</code> ahora son funciones que se pasan a <code>provideRouter()</code>.</strong>
+  </div>
+
+<pre><span class="cm">// app.config.ts — con todas las opciones</span>
+<span class="kw">import</span> {
+  provideRouter,
+  withComponentInputBinding,   <span class="cm">// parámetros de ruta como @Input</span>
+  withDebugTracing,            <span class="cm">// logs de navegación en consola</span>
+  withHashLocation,            <span class="cm">// URLs con #hash</span>
+  withInMemoryScrolling,       <span class="cm">// scroll al cambiar de ruta</span>
+  withPreloading,              <span class="cm">// estrategia de precarga</span>
+  withRouterConfig,            <span class="cm">// configuración avanzada</span>
+  PreloadAllModules,
+} <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="kw">export const</span> appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(
+      routes,
+      <span class="fn">withComponentInputBinding</span>(),        <span class="cm">// ruta :id → @Input() id</span>
+      <span class="fn">withInMemoryScrolling</span>({
+        scrollPositionRestoration: <span class="st">'top'</span>  <span class="cm">// scroll arriba al navegar</span>
+      }),
+      <span class="fn">withPreloading</span>(PreloadAllModules),  <span class="cm">// precarga lazy routes</span>
+      <span class="fn">withRouterConfig</span>({
+        onSameUrlNavigation: <span class="st">'reload'</span>    <span class="cm">// recargar si misma URL</span>
+      }),
+    )
+  ]
+};</pre>
+
+  <div class="sec-title" data-n="I">WITHCOMPONENTINPUTBINDING — PARÁMETROS COMO @INPUT</div>
+
+  <div class="callout green">
+    <strong>Una de las mejoras más cómodas de Angular 19.</strong>
+    Con <code>withComponentInputBinding()</code>, los parámetros de la ruta (<code>:id</code>), query params y datos del resolver llegan automáticamente como <code>@Input()</code> al componente — sin inyectar <code>ActivatedRoute</code>.
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">sin withComponentInputBinding</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Component, OnInit } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { ActivatedRoute } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="an">@Component</span>({ ... })
+<span class="kw">export class</span> <span class="cl">UserDetailComponent</span>
+    <span class="kw">implements</span> OnInit {
+
+  userId: string;
+
+  constructor(<span class="kw">private</span> route: ActivatedRoute) {}
+
+  ngOnInit() {
+    <span class="cm">// Hay que suscribirse o usar snapshot</span>
+    this.userId = this.route
+      .snapshot.params[<span class="st">'id'</span>];
+  }
+}</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">con withComponentInputBinding</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Component, Input } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="cm">// Sin ActivatedRoute</span>
+
+<span class="an">@Component</span>({ ... })
+<span class="kw">export class</span> <span class="cl">UserDetailComponent</span> {
+
+  <span class="cm">// El router lo inyecta automáticamente</span>
+  <span class="an">@Input</span>() id!: string;  <span class="cm">// de /users/:id</span>
+  <span class="an">@Input</span>() q?: string;  <span class="cm">// de ?q=búsqueda</span>
+
+  <span class="cm">// También los datos del resolver:</span>
+  <span class="an">@Input</span>() user?: User; <span class="cm">// resolve: { user: userResolver }</span>
+}</pre>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: LAZY LOADING                                     -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-lazy" class="mode-panel">
+
+  <div class="sec-title" data-n="L">LAS TRES FORMAS DE LAZY LOADING</div>
+
+  <div class="callout purple">
+    <strong>Angular 19 añade <code>loadComponent</code> al ya existente <code>loadChildren</code>.</strong>
+    Ahora puedes hacer lazy loading de un componente individual — no solo de un módulo o grupo de rutas. Esto es la diferencia más importante para el bundle size.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Forma</th><th>Cuándo usar</th><th>Angular 18</th><th>Angular 19</th></tr>
+    <tr>
+      <td class="cat">Módulo completo</td>
+      <td>Grupo de rutas con su propio contexto</td>
+      <td><code>loadChildren: () => import(...Module)</code></td>
+      <td class="bad">Desaconsejado (sigue funcionando)</td>
+    </tr>
+    <tr>
+      <td class="cat">Grupo de rutas</td>
+      <td>Sección con sub-rutas (admin, panel)</td>
+      <td>No existe</td>
+      <td class="ok"><code>loadChildren: () => import(...routes)</code></td>
+    </tr>
+    <tr>
+      <td class="cat">Componente individual</td>
+      <td>Una ruta = un componente</td>
+      <td>No existe</td>
+      <td class="ok"><code>loadComponent: () => import(...Component)</code></td>
+    </tr>
+  </table>
+
+  <div class="sec-title" data-n="1">LOADCHILDREN — MÓDULO (v18) → RUTAS (v19)</div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">app-routing.module.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">const</span> routes: Routes = [
+  {
+    path: <span class="st">'admin'</span>,
+    <span class="cm">// Carga el MÓDULO completo</span>
+    loadChildren: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/admin/admin.module'</span>)
+        .then(m => m.<span class="cl">AdminModule</span>)
+  }
+];</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">app.routes.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">export const</span> routes: Routes = [
+  {
+    path: <span class="st">'admin'</span>,
+    <span class="cm">// Carga el ARRAY de rutas</span>
+    loadChildren: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/admin/admin.routes'</span>)
+        .then(r => r.<span class="cl">ADMIN_ROUTES</span>)
+  }
+];</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">LOADCOMPONENT — NUEVO EN V19</div>
+
+<pre><span class="cm">// app.routes.ts — lazy loading por componente</span>
+<span class="kw">export const</span> routes: Routes = [
+  {
+    path: <span class="st">''</span>,
+    <span class="cm">// Carga SOLO HomeComponent — el JS del resto no se descarga</span>
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/home/home.component'</span>)
+        .then(c => c.<span class="cl">HomeComponent</span>)
+  },
+  {
+    path: <span class="st">'about'</span>,
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/about/about.component'</span>)
+        .then(c => c.<span class="cl">AboutComponent</span>)
+  },
+  {
+    path: <span class="st">'admin'</span>,
+    <span class="cm">// loadChildren para grupos de rutas</span>
+    loadChildren: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/admin/admin.routes'</span>)
+        .then(r => r.<span class="cl">ADMIN_ROUTES</span>)
+  },
+  {
+    path: <span class="st">'users/:id'</span>,
+    <span class="cm">// También puede tener guard, resolver, title...</span>
+    canActivate: [authGuard],
+    resolve: { user: userResolver },
+    title: <span class="st">'Detalle de usuario'</span>,
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/users/user-detail.component'</span>)
+        .then(c => c.<span class="cl">UserDetailComponent</span>)
+  },
+];</pre>
+
+  <div class="sec-title" data-n="3">ADMIN.ROUTES.TS — REEMPLAZA ADMINMODULE + ADMINROUTINGMODULE</div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">admin.module.ts + admin-routing.module.ts</div>
+      <div class="diff-body">
+<pre><span class="cm">// admin.module.ts</span>
+<span class="an">@NgModule</span>({
+  declarations: [
+    DashboardComponent,
+    UsersComponent
+  ],
+  imports: [
+    CommonModule,
+    AdminRoutingModule
+  ]
+})
+<span class="kw">export class</span> <span class="cl">AdminModule</span> { }
+
+<span class="cm">// admin-routing.module.ts</span>
+<span class="kw">const</span> routes: Routes = [
+  { path: <span class="st">''</span>, component: DashboardComponent },
+  { path: <span class="st">'users'</span>, component: UsersComponent },
+];
+<span class="an">@NgModule</span>({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+<span class="kw">export class</span> <span class="cl">AdminRoutingModule</span> { }
+<span class="cm">// 2 archivos · ~30 líneas de fontanería</span></pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">admin.routes.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Routes } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="kw">export const</span> <span class="cl">ADMIN_ROUTES</span>: Routes = [
+  {
+    path: <span class="st">''</span>,
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./dashboard/dashboard.component'</span>)
+        .then(c => c.<span class="cl">DashboardComponent</span>)
+  },
+  {
+    path: <span class="st">'users'</span>,
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./users/users.component'</span>)
+        .then(c => c.<span class="cl">UsersComponent</span>)
+  },
+];
+<span class="cm">// 1 archivo · 14 líneas · mismo resultado</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">RUTAS CON LAYOUT — COMPONENTE PADRE + HIJOS</div>
+
+<pre><span class="cm">// admin.routes.ts — con layout component</span>
+<span class="kw">export const</span> <span class="cl">ADMIN_ROUTES</span>: Routes = [
+  {
+    path: <span class="st">''</span>,
+    <span class="cm">// AdminLayoutComponent actúa como shell con router-outlet</span>
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./admin-layout/admin-layout.component'</span>)
+        .then(c => c.<span class="cl">AdminLayoutComponent</span>),
+    children: [
+      {
+        path: <span class="st">''</span>,
+        loadComponent: () =>
+          <span class="kw">import</span>(<span class="st">'./dashboard/dashboard.component'</span>)
+            .then(c => c.<span class="cl">DashboardComponent</span>)
+      },
+      {
+        path: <span class="st">'users'</span>,
+        loadComponent: () =>
+          <span class="kw">import</span>(<span class="st">'./users/users.component'</span>)
+            .then(c => c.<span class="cl">UsersComponent</span>)
+      },
+      {
+        path: <span class="st">'settings'</span>,
+        loadChildren: () =>
+          <span class="kw">import</span>(<span class="st">'./settings/settings.routes'</span>)
+            .then(r => r.<span class="cl">SETTINGS_ROUTES</span>)
+      },
+    ]
+  }
+];</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: COMPONENTES                                      -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-componentes" class="mode-panel">
+
+  <div class="sec-title" data-n="C">COMPONENTE DECLARADO → COMPONENTE STANDALONE</div>
+
+  <div class="callout orange">
+    <strong>En Angular 18, el componente era "ciudadano de segunda" del módulo.</strong>
+    El módulo declaraba qué componentes conocía. En Angular 19, cada componente es autónomo — importa explícitamente lo que necesita en su propio <code>@Component</code>.
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">componente en NgModule</div>
+      <div class="diff-body">
+<pre><span class="cm">// home.component.ts — Angular 18</span>
+<span class="kw">import</span> { Component } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="cm">// No importa nada — lo recibe del módulo</span>
+
+<span class="an">@Component</span>({
+  <span class="cm">// standalone: false (implícito)</span>
+  selector: <span class="st">'app-home'</span>,
+  template: <span class="st">`
+    &lt;ul&gt;
+      &lt;li *ngFor="let i of items"&gt;{{i}}&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;a routerLink="/about"&gt;About&lt;/a&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="cl">HomeComponent</span> {
+  items = [<span class="st">'a'</span>, <span class="st">'b'</span>, <span class="st">'c'</span>];
+}
+<span class="cm">// CommonModule y RouterModule vienen del AppModule</span></pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">componente standalone</div>
+      <div class="diff-body">
+<pre><span class="cm">// home.component.ts — Angular 19</span>
+<span class="kw">import</span> { Component } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { RouterLink } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="cm">// NgFor no se importa: @for es nativo</span>
+
+<span class="an">@Component</span>({
+  <span class="cm">// standalone: true (implícito en v19)</span>
+  imports: [RouterLink], <span class="cm">// solo lo que usa</span>
+  selector: <span class="st">'app-home'</span>,
+  template: <span class="st">`
+    &lt;ul&gt;
+      @for (i of items; track i) {
+        &lt;li&gt;{{ i }}&lt;/li&gt;
+      }
+    &lt;/ul&gt;
+    &lt;a routerLink="/about"&gt;About&lt;/a&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="cl">HomeComponent</span> {
+  items = [<span class="st">'a'</span>, <span class="st">'b'</span>, <span class="st">'c'</span>];
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="S">NUEVA SINTAXIS DE CONTROL DE FLUJO</div>
+
+  <div class="callout green">
+    <strong>Desde Angular 17, <code>@if</code>, <code>@for</code> y <code>@switch</code> son nativos del compilador.</strong>
+    En Angular 19, con componentes standalone ya no hay razón para usar las directivas de <code>CommonModule</code>. La nueva sintaxis es más legible y más eficiente.
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">sintaxis de directivas</div>
+      <div class="diff-body">
+<pre><span class="cm">&lt;!-- Requiere CommonModule en el módulo --&gt;</span>
+&lt;ul *ngIf="items.length &gt; 0"&gt;
+  &lt;li *ngFor="let item of items;
+              trackBy: trackById"&gt;
+    {{ item.name }}
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div [ngSwitch]="status"&gt;
+  &lt;span *ngSwitchCase="'active'"&gt;Activo&lt;/span&gt;
+  &lt;span *ngSwitchCase="'inactive'"&gt;Inactivo&lt;/span&gt;
+  &lt;span *ngSwitchDefault&gt;Desconocido&lt;/span&gt;
+&lt;/div&gt;</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">sintaxis nativa @if / @for</div>
+      <div class="diff-body">
+<pre><span class="cm">&lt;!-- Sin importar nada — nativo del compilador --&gt;</span>
+@if (items.length &gt; 0) {
+  &lt;ul&gt;
+    @for (item of items; track item.id) {
+      &lt;li&gt;{{ item.name }}&lt;/li&gt;
+    }
+    @empty {
+      &lt;li&gt;Sin elementos&lt;/li&gt;
+    }
+  &lt;/ul&gt;
+}
+
+@switch (status) {
+  @case ('active') { &lt;span&gt;Activo&lt;/span&gt; }
+  @case ('inactive') { &lt;span&gt;Inactivo&lt;/span&gt; }
+  @default { &lt;span&gt;Desconocido&lt;/span&gt; }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="U">USAR UN COMPONENTE STANDALONE EN OTRO</div>
+
+<pre><span class="cm">// En Angular 18: hay que exportar del módulo + importar el módulo</span>
+<span class="cm">// En Angular 19: se importa el componente directamente</span>
+
+<span class="kw">import</span> { Component } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { UserCardComponent } <span class="kw">from</span> <span class="st">'./user-card/user-card.component'</span>;
+<span class="kw">import</span> { RouterLink } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="kw">import</span> { AsyncPipe } <span class="kw">from</span> <span class="st">'@angular/common'</span>;
+
+<span class="an">@Component</span>({
+  imports: [
+    UserCardComponent,  <span class="cm">// componente importado directamente</span>
+    RouterLink,
+    AsyncPipe,          <span class="cm">// pipes también se importan individualmente</span>
+  ],
+  template: <span class="st">`
+    @for (user of users$ | async; track user.id) {
+      &lt;app-user-card [user]="user" /&gt;
+    }
+  `</span>
+})
+<span class="kw">export class</span> <span class="cl">UsersListComponent</span> { ... }</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: GUARDS                                           -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-guards" class="mode-panel">
+
+  <div class="sec-title" data-n="G">GUARDS — DE CLASES A FUNCIONES</div>
+
+  <div class="callout purple">
+    <strong>Los guards de clase con <code>implements CanActivate</code> se reemplazan por funciones puras.</strong>
+    Las funciones son más simples, más fáciles de testear y no necesitan ser registradas como providers en ningún módulo. Pueden inyectar servicios con <code>inject()</code>.
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">Guard como clase (v18)</div>
+      <div class="diff-body">
+<pre><span class="cm">// auth.guard.ts</span>
+<span class="kw">import</span> { Injectable } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { CanActivate, Router } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="kw">import</span> { AuthService } <span class="kw">from</span> <span class="st">'./auth.service'</span>;
+
+<span class="an">@Injectable</span>({ providedIn: <span class="st">'root'</span> })
+<span class="kw">export class</span> <span class="cl">AuthGuard</span> <span class="kw">implements</span> CanActivate {
+
+  constructor(
+    <span class="kw">private</span> auth: AuthService,
+    <span class="kw">private</span> router: Router
+  ) {}
+
+  canActivate(): boolean {
+    <span class="kw">if</span> (this.auth.isLoggedIn()) {
+      <span class="kw">return true</span>;
+    }
+    this.router.navigate([<span class="st">'/login'</span>]);
+    <span class="kw">return false</span>;
+  }
+}
+
+<span class="cm">// En la ruta:</span>
+{ path: <span class="st">'admin'</span>, canActivate: [AuthGuard], ... }</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">Guard como función (v19)</div>
+      <div class="diff-body">
+<pre><span class="cm">// auth.guard.ts</span>
+<span class="kw">import</span> { inject } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { CanActivateFn, Router } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="kw">import</span> { AuthService } <span class="kw">from</span> <span class="st">'./auth.service'</span>;
+
+<span class="kw">export const</span> authGuard: CanActivateFn = () => {
+  <span class="kw">const</span> auth = inject(AuthService);
+  <span class="kw">const</span> router = inject(Router);
+
+  <span class="kw">if</span> (auth.isLoggedIn()) {
+    <span class="kw">return true</span>;
+  }
+  <span class="kw">return</span> router.createUrlTree([<span class="st">'/login'</span>]);
+};
+
+<span class="cm">// En la ruta:</span>
+{ path: <span class="st">'admin'</span>, canActivate: [authGuard], ... }</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="T">TIPOS DE GUARD — TODOS FUNCIONALIZAN</div>
+
+<pre><span class="cm">// guards/index.ts — todos los guards como funciones</span>
+<span class="kw">import</span> {
+  CanActivateFn,
+  CanActivateChildFn,
+  CanDeactivateFn,
+  CanMatchFn,
+  ResolveFn,
+} <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="kw">import</span> { inject } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+
+<span class="cm">// CanActivate — controla si se puede activar la ruta</span>
+<span class="kw">export const</span> authGuard: CanActivateFn = (route, state) => {
+  <span class="kw">const</span> auth = inject(AuthService);
+  <span class="kw">return</span> auth.isLoggedIn() || inject(Router).createUrlTree([<span class="st">'/login'</span>]);
+};
+
+<span class="cm">// CanActivateChild — controla acceso a rutas hijas</span>
+<span class="kw">export const</span> adminChildGuard: CanActivateChildFn = (childRoute) => {
+  <span class="kw">return</span> inject(AuthService).hasRole(<span class="st">'admin'</span>);
+};
+
+<span class="cm">// CanDeactivate — confirmar antes de salir</span>
+<span class="kw">export const</span> unsavedChangesGuard: CanDeactivateFn&lt;EditComponent&gt; =
+  (component) => {
+    <span class="kw">if</span> (component.hasUnsavedChanges()) {
+      <span class="kw">return</span> confirm(<span class="st">'¿Salir sin guardar?'</span>);
+    }
+    <span class="kw">return true</span>;
+  };
+
+<span class="cm">// CanMatch — controla si la ruta se evalúa (más eficiente que canActivate)</span>
+<span class="kw">export const</span> featureFlagGuard: CanMatchFn = () => {
+  <span class="kw">return</span> inject(FeatureService).isEnabled(<span class="st">'new-dashboard'</span>);
+};
+
+<span class="cm">// Resolve — carga datos antes de activar el componente</span>
+<span class="kw">export const</span> userResolver: ResolveFn&lt;User&gt; = (route) => {
+  <span class="kw">return</span> inject(UserService).getById(route.params[<span class="st">'id'</span>]);
+};</pre>
+
+  <div class="sec-title" data-n="R">RESOLVER — DATOS ANTES DE ACTIVAR</div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">Resolver clase (v18)</div>
+      <div class="diff-body">
+<pre><span class="an">@Injectable</span>({ providedIn: <span class="st">'root'</span> })
+<span class="kw">export class</span> <span class="cl">UserResolver</span>
+    <span class="kw">implements</span> Resolve&lt;User&gt; {
+
+  constructor(<span class="kw">private</span> svc: UserService) {}
+
+  resolve(route: ActivatedRouteSnapshot) {
+    <span class="kw">return</span> this.svc.getById(
+      route.params[<span class="st">'id'</span>]
+    );
+  }
+}
+
+<span class="cm">// En la ruta:</span>
+{ resolve: { user: UserResolver } }</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">Resolver función (v19)</div>
+      <div class="diff-body">
+<pre><span class="kw">export const</span> userResolver: ResolveFn&lt;User&gt; =
+  (route) => inject(UserService)
+               .getById(route.params[<span class="st">'id'</span>']);
+
+<span class="cm">// En la ruta:</span>
+{ resolve: { user: userResolver } }
+
+<span class="cm">// En el componente (con withComponentInputBinding):</span>
+<span class="an">@Input</span>() user!: User; <span class="cm">// sin ActivatedRoute</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="U">USO DE GUARDS EN LAS RUTAS</div>
+
+<pre><span class="cm">// app.routes.ts — usando todos los tipos de guard</span>
+<span class="kw">export const</span> routes: Routes = [
+  {
+    path: <span class="st">'admin'</span>,
+    canMatch: [featureFlagGuard],        <span class="cm">// ¿se evalúa esta ruta?</span>
+    canActivate: [authGuard],            <span class="cm">// ¿se puede activar?</span>
+    canActivateChild: [adminChildGuard], <span class="cm">// ¿se puede activar hija?</span>
+    resolve: { config: adminResolver },  <span class="cm">// datos antes de activar</span>
+    loadChildren: () =>
+      <span class="kw">import</span>(<span class="st">'./admin/admin.routes'</span>)
+        .then(r => r.ADMIN_ROUTES)
+  },
+  {
+    path: <span class="st">'profile/edit'</span>,
+    canDeactivate: [unsavedChangesGuard], <span class="cm">// ¿se puede salir?</span>
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./profile/edit/edit.component'</span>)
+        .then(c => c.EditComponent)
+  }
+];</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: PROVIDERS                                        -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-providers" class="mode-panel">
+
+  <div class="sec-title" data-n="H">HTTP — HTTPCLIENTMODULE → PROVIDEHTTPCLIENT</div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">Angular 18 — HttpClientModule</div>
+      <div class="diff-body">
+<pre><span class="cm">// app.module.ts</span>
+<span class="an">@NgModule</span>({
+  imports: [
+    BrowserModule,
+    HttpClientModule,  <span class="cm">// ← módulo completo</span>
+  ]
+})
+<span class="kw">export class</span> <span class="cl">AppModule</span> { }</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">Angular 19 — provideHttpClient</div>
+      <div class="diff-body">
+<pre><span class="cm">// app.config.ts</span>
+<span class="kw">export const</span> appConfig: ApplicationConfig = {
+  providers: [
+    provideHttpClient(
+      withInterceptorsFromDi() <span class="cm">// si usas interceptores DI</span>
+    )
+  ]
+};</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="I">INTERCEPTORES — MULTI-PROVIDER → FUNCIONES</div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">Interceptor clase (v18)</div>
+      <div class="diff-body">
+<pre><span class="cm">// auth.interceptor.ts</span>
+<span class="an">@Injectable</span>()
+<span class="kw">export class</span> <span class="cl">AuthInterceptor</span>
+    <span class="kw">implements</span> HttpInterceptor {
+
+  constructor(<span class="kw">private</span> auth: AuthService) {}
+
+  intercept(
+    req: HttpRequest&lt;<span class="kw">any</span>&gt;,
+    next: HttpHandler
+  ) {
+    <span class="kw">const</span> token = this.auth.getToken();
+    <span class="kw">const</span> cloned = req.clone({
+      setHeaders: { Authorization: <span class="st">`Bearer ${token}`</span> }
+    });
+    <span class="kw">return</span> next.handle(cloned);
+  }
+}
+
+<span class="cm">// app.module.ts</span>
+providers: [{
+  provide: HTTP_INTERCEPTORS,
+  useClass: AuthInterceptor,
+  multi: true               <span class="cm">// ← obligatorio</span>
+}]</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">Interceptor función (v19)</div>
+      <div class="diff-body">
+<pre><span class="cm">// auth.interceptor.ts</span>
+<span class="kw">import</span> { HttpInterceptorFn } <span class="kw">from</span> <span class="st">'@angular/common/http'</span>;
+<span class="kw">import</span> { inject } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+
+<span class="kw">export const</span> authInterceptor: HttpInterceptorFn =
+  (req, next) => {
+    <span class="kw">const</span> token = inject(AuthService).getToken();
+    <span class="kw">const</span> cloned = req.clone({
+      setHeaders: { Authorization: <span class="st">`Bearer ${token}`</span> }
+    });
+    <span class="kw">return</span> next(cloned);
+  };
+
+<span class="cm">// app.config.ts</span>
+providers: [
+  provideHttpClient(
+    withInterceptors([authInterceptor])
+  )
+]</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="M">MÚLTIPLES INTERCEPTORES EN CADENA</div>
+
+<pre><span class="cm">// app.config.ts — varios interceptores en orden</span>
+<span class="kw">import</span> {
+  provideHttpClient,
+  withInterceptors
+} <span class="kw">from</span> <span class="st">'@angular/common/http'</span>;
+
+<span class="kw">export const</span> appConfig: ApplicationConfig = {
+  providers: [
+    provideHttpClient(
+      withInterceptors([
+        authInterceptor,     <span class="cm">// 1º — añade token</span>
+        loggingInterceptor,  <span class="cm">// 2º — loguea la petición</span>
+        retryInterceptor,    <span class="cm">// 3º — reintenta en error</span>
+        errorInterceptor,    <span class="cm">// 4º — maneja errores globales</span>
+      ])
+    )
+  ]
+};</pre>
+
+  <div class="sec-title" data-n="S">SERVICES Y PROVIDERS — SIN CAMBIOS</div>
+
+  <div class="callout green">
+    <strong>Los servicios no cambian.</strong>
+    Un servicio con <code>@Injectable({ providedIn: 'root' })</code> funciona exactamente igual en Angular 18 y 19. No necesitas migrarlo. Solo cambia cómo se registran los providers a nivel de app.
+  </div>
+
+<pre><span class="cm">// Esto NO cambia entre v18 y v19</span>
+<span class="an">@Injectable</span>({ providedIn: <span class="st">'root'</span> })
+<span class="kw">export class</span> <span class="cl">UserService</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> http: HttpClient) {}
+
+  getById(id: string) {
+    <span class="kw">return</span> this.http.get&lt;User&gt;(<span class="st">`/api/users/${id}`</span>);
+  }
+}
+
+<span class="cm">// Lo que sí cambia: providers de módulo → providers de config</span>
+
+<span class="cm">// ANTES (app.module.ts):</span>
+providers: [{ provide: MY_TOKEN, useValue: config }]
+
+<span class="cm">// AHORA (app.config.ts):</span>
+providers: [
+  { provide: MY_TOKEN, useValue: config },
+  <span class="cm">// o con InjectionToken:</span>
+  provideEnvironmentInitializer(() => {
+    inject(AnalyticsService).init();  <span class="cm">// init al arrancar</span>
+  })
+]</pre>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: MIXTO                                            -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-mixto" class="mode-panel">
+
+  <div class="sec-title" data-n="M">MIGRACIÓN PROGRESIVA — MODO MIXTO</div>
+
+  <div class="callout yellow">
+    <strong>No tienes que migrarlo todo a la vez.</strong>
+    Angular 18 ya soporta componentes standalone. Angular 19 soporta NgModules legados. Puedes migrar módulo por módulo, o incluso componente por componente dentro del mismo proyecto.
+  </div>
+
+  <div class="sec-title" data-n="1">ESCENARIO A — PROYECTO V18 CON COMPONENTES STANDALONE</div>
+
+  <div class="callout blue">
+    <strong>Puedes tener componentes standalone en un proyecto v18 con NgModules.</strong>
+    Un componente standalone se importa en un NgModule como si fuera un módulo externo.
+  </div>
+
+<pre><span class="cm">// nuevo-componente.component.ts — standalone en proyecto v18</span>
+<span class="an">@Component</span>({
+  <span class="hl">standalone: true</span>,       <span class="cm">// ← explícito en v18</span>
+  imports: [RouterLink],
+  selector: <span class="st">'app-nuevo'</span>,
+  template: <span class="st">`&lt;a routerLink="/"&gt;Inicio&lt;/a&gt;`</span>
+})
+<span class="kw">export class</span> <span class="cl">NuevoComponent</span> { }
+
+<span class="cm">// app.module.ts — importa el componente standalone como si fuera un módulo</span>
+<span class="an">@NgModule</span>({
+  declarations: [AppComponent, HomeComponent],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    <span class="hl">NuevoComponent</span>,   <span class="cm">// ← standalone se importa, no se declara</span>
+  ],
+  bootstrap: [AppComponent]
+})
+<span class="kw">export class</span> <span class="cl">AppModule</span> { }</pre>
+
+  <div class="sec-title" data-n="2">ESCENARIO B — PROYECTO V19 CON NGMODULES LEGADOS</div>
+
+  <div class="callout orange">
+    <strong>Si tienes un NgModule de una librería de terceros que no ha migrado todavía.</strong>
+    Puedes importarlo en el <code>app.config.ts</code> usando <code>importProvidersFrom()</code>.
+  </div>
+
+<pre><span class="cm">// app.config.ts — importar NgModule legado en proyecto v19</span>
+<span class="kw">import</span> { importProvidersFrom } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { BrowserAnimationsModule } <span class="kw">from</span> <span class="st">'@angular/platform-browser/animations'</span>;
+<span class="kw">import</span> { StoreModule } <span class="kw">from</span> <span class="st">'@ngrx/store'</span>;   <span class="cm">// librería con NgModule</span>
+<span class="kw">import</span> { SomeLibraryModule } <span class="kw">from</span> <span class="st">'some-legacy-library'</span>;
+
+<span class="kw">export const</span> appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(),
+    <span class="cm">// importProvidersFrom convierte NgModules en providers funcionales</span>
+    <span class="fn">importProvidersFrom</span>(
+      BrowserAnimationsModule,   <span class="cm">// necesario para Angular Material</span>
+      StoreModule.forRoot(reducers), <span class="cm">// NgRx todavía en transición</span>
+      SomeLibraryModule,             <span class="cm">// librería legacy</span>
+    )
+  ]
+};</pre>
+
+  <div class="sec-title" data-n="3">PLAN DE MIGRACIÓN RECOMENDADO</div>
+
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-num"><div class="step-circle o">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Actualizar Angular a v19</div>
+        <div class="step-desc">Ejecutar <code>ng update @angular/core @angular/cli</code>. El proyecto sigue funcionando — los NgModules son compatibles en v19.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle o">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Usar el migration schematics de Angular</div>
+        <div class="step-desc"><code>ng generate @angular/core:standalone</code> convierte automáticamente componentes, directivas y pipes a standalone. Ejecutar en modo <code>--mode=convert-to-standalone</code> primero para ver los cambios.</div>
+<pre style="margin-top:8px"><span class="cm"># Convertir componentes a standalone</span>
+ng generate @angular/core:standalone \
+  --mode=convert-to-standalone
+
+<span class="cm"># Eliminar NgModules innecesarios</span>
+ng generate @angular/core:standalone \
+  --mode=prune-ng-modules
+
+<span class="cm"># Convertir el bootstrap (AppModule → app.config.ts)</span>
+ng generate @angular/core:standalone \
+  --mode=standalone-bootstrap</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle g">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Migrar guards y resolvers a funciones</div>
+        <div class="step-desc">Convertir las clases que implementan <code>CanActivate</code>, <code>Resolve</code>, etc. a funciones con <code>CanActivateFn</code>, <code>ResolveFn</code>. El schematics no hace esto automáticamente.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle g">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Migrar interceptores HTTP</div>
+        <div class="step-desc">Convertir clases con <code>implements HttpInterceptor</code> a <code>HttpInterceptorFn</code>. Cambiar <code>HttpClientModule</code> por <code>provideHttpClient(withInterceptors([...]))</code> en el <code>app.config.ts</code>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle b">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Migrar NgFor/NgIf a @for/@if</div>
+        <div class="step-desc">Opcional pero recomendado. Mejor rendimiento, sin necesitar <code>CommonModule</code>. El schematics <code>ng generate @angular/core:control-flow</code> hace la migración automáticamente.</div>
+<pre style="margin-top:8px">ng generate @angular/core:control-flow</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle b">6</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Migrar loadChildren de módulo a loadComponent/rutas</div>
+        <div class="step-desc">Reemplazar <code>loadChildren: () => import(...Module)</code> por <code>loadChildren: () => import(...routes)</code> o <code>loadComponent</code> donde sea posible. El lazy loading por componente mejora el bundle size.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠️ Cuidado con los NgModules de terceros</div>
+    <div class="danger-content">
+      Librerías como Angular Material, NgRx, PrimeNG pueden estar en transición. Antes de migrar, verifica que la versión de la librería que usas tenga soporte standalone. Si no: usar <code>importProvidersFrom()</code> como puente mientras la librería actualiza.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: CASO COMPLETO                                    -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-caso" class="mode-panel">
+
+  <div class="sec-title" data-n="C">APP CON HOME, ABOUT Y ADMIN CON LAZY LOADING</div>
+
+  <div class="callout blue">
+    <strong>Ejemplo completo lado a lado:</strong> la misma app con Home, About y módulo Admin (con Dashboard y Users) en Angular 18 con NgModules y en Angular 19 con Standalone.
+  </div>
+
+  <div class="sec-title" data-n="E">ESTRUCTURA DE ARCHIVOS</div>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">Angular 18 — 6 archivos de fontanería</div>
+      <div class="diff-body">
+<pre>src/app/
+├── app.module.ts            <span class="cm">← módulo raíz</span>
+├── app-routing.module.ts    <span class="cm">← routing raíz</span>
+├── app.component.ts
+├── pages/
+│   ├── home/
+│   │   └── home.component.ts
+│   ├── about/
+│   │   └── about.component.ts
+│   └── admin/
+│       ├── admin.module.ts         <span class="cm">← feature module</span>
+│       ├── admin-routing.module.ts <span class="cm">← sub-routing</span>
+│       ├── dashboard/
+│       │   └── dashboard.component.ts
+│       └── users/
+│           └── users.component.ts
+└── main.ts
+
+<span class="cm">Archivos de fontanería: 5 (3 módulos + 2 routing modules)</span></pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">Angular 19 — 3 archivos de fontanería</div>
+      <div class="diff-body">
+<pre>src/app/
+├── app.config.ts    <span class="cm">← reemplaza app.module.ts</span>
+├── app.routes.ts    <span class="cm">← reemplaza app-routing.module.ts</span>
+├── app.component.ts
+├── pages/
+│   ├── home/
+│   │   └── home.component.ts
+│   ├── about/
+│   │   └── about.component.ts
+│   └── admin/
+│       ├── admin.routes.ts  <span class="cm">← reemplaza admin.module + routing</span>
+│       ├── dashboard/
+│       │   └── dashboard.component.ts
+│       └── users/
+│           └── users.component.ts
+└── main.ts
+
+<span class="cm">Archivos de fontanería: 3 (config + 2 routes)</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="1">APP.CONFIG.TS / APP.MODULE.TS</div>
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">app.module.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { NgModule } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { BrowserModule } <span class="kw">from</span> <span class="st">'@angular/platform-browser'</span>;
+<span class="kw">import</span> { AppRoutingModule } <span class="kw">from</span> <span class="st">'./app-routing.module'</span>;
+<span class="kw">import</span> { AppComponent } <span class="kw">from</span> <span class="st">'./app.component'</span>;
+<span class="kw">import</span> { HomeComponent } <span class="kw">from</span> <span class="st">'./pages/home/home.component'</span>;
+<span class="kw">import</span> { AboutComponent } <span class="kw">from</span> <span class="st">'./pages/about/about.component'</span>;
+
+<span class="an">@NgModule</span>({
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    AboutComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule
+  ],
+  bootstrap: [AppComponent]
+})
+<span class="kw">export class</span> <span class="cl">AppModule</span> { }</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">app.config.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { ApplicationConfig } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { provideRouter,
+         withComponentInputBinding }
+  <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="kw">import</span> { routes } <span class="kw">from</span> <span class="st">'./app.routes'</span>;
+
+<span class="kw">export const</span> appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(
+      routes,
+      withComponentInputBinding()
+    )
+  ]
+};
+<span class="cm">// Sin @NgModule. Sin declarations.</span>
+<span class="cm">// Home y About ya no se registran aquí.</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">APP.ROUTES.TS / APP-ROUTING.MODULE.TS</div>
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">app-routing.module.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { NgModule } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { RouterModule, Routes }
+  <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="kw">import</span> { HomeComponent }
+  <span class="kw">from</span> <span class="st">'./pages/home/home.component'</span>;
+<span class="kw">import</span> { AboutComponent }
+  <span class="kw">from</span> <span class="st">'./pages/about/about.component'</span>;
+
+<span class="kw">const</span> routes: Routes = [
+  { path: <span class="st">''</span>, component: HomeComponent },
+  { path: <span class="st">'about'</span>, component: AboutComponent },
+  {
+    path: <span class="st">'admin'</span>,
+    loadChildren: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/admin/admin.module'</span>)
+        .then(m => m.AdminModule)
+  }
+];
+
+<span class="an">@NgModule</span>({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+<span class="kw">export class</span> <span class="cl">AppRoutingModule</span> { }</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">app.routes.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Routes } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="kw">export const</span> routes: Routes = [
+  {
+    path: <span class="st">''</span>,
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/home/home.component'</span>)
+        .then(c => c.HomeComponent)
+  },
+  {
+    path: <span class="st">'about'</span>,
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/about/about.component'</span>)
+        .then(c => c.AboutComponent)
+  },
+  {
+    path: <span class="st">'admin'</span>,
+    loadChildren: () =>
+      <span class="kw">import</span>(<span class="st">'./pages/admin/admin.routes'</span>)
+        .then(r => r.ADMIN_ROUTES)
+  }
+];</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">HOME Y ABOUT COMPONENT</div>
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">home.component.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Component } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="cm">// RouterLink viene del AppRoutingModule</span>
+
+<span class="an">@Component</span>({
+  selector: <span class="st">'app-home'</span>,
+  template: <span class="st">`
+    &lt;h1&gt;Home&lt;/h1&gt;
+    &lt;p&gt;Bienvenido&lt;/p&gt;
+    &lt;a routerLink="/about"&gt;About&lt;/a&gt;
+    &lt;a routerLink="/admin"&gt;Admin&lt;/a&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="cl">HomeComponent</span> { }</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">home.component.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Component } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { RouterLink } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="an">@Component</span>({
+  imports: [RouterLink], <span class="cm">// ← importa lo que usa</span>
+  selector: <span class="st">'app-home'</span>,
+  template: <span class="st">`
+    &lt;h1&gt;Home&lt;/h1&gt;
+    &lt;p&gt;Bienvenido&lt;/p&gt;
+    &lt;a routerLink="/about"&gt;About&lt;/a&gt;
+    &lt;a routerLink="/admin"&gt;Admin&lt;/a&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="cl">HomeComponent</span> { }</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">ADMIN MODULE / ADMIN ROUTES</div>
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">admin.module.ts + admin-routing.module.ts</div>
+      <div class="diff-body">
+<pre><span class="cm">// admin.module.ts</span>
+<span class="an">@NgModule</span>({
+  declarations: [
+    DashboardComponent,
+    UsersComponent
+  ],
+  imports: [
+    CommonModule,
+    AdminRoutingModule
+  ]
+})
+<span class="kw">export class</span> <span class="cl">AdminModule</span> { }
+
+<span class="cm">// admin-routing.module.ts</span>
+<span class="kw">const</span> routes: Routes = [
+  { path: <span class="st">''</span>,      component: DashboardComponent },
+  { path: <span class="st">'users'</span>, component: UsersComponent },
+];
+<span class="an">@NgModule</span>({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+<span class="kw">export class</span> <span class="cl">AdminRoutingModule</span> { }</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">admin.routes.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Routes } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="kw">export const</span> <span class="cl">ADMIN_ROUTES</span>: Routes = [
+  {
+    path: <span class="st">''</span>,
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./dashboard/dashboard.component'</span>)
+        .then(c => c.DashboardComponent)
+  },
+  {
+    path: <span class="st">'users'</span>,
+    loadComponent: () =>
+      <span class="kw">import</span>(<span class="st">'./users/users.component'</span>)
+        .then(c => c.UsersComponent)
+  },
+];
+<span class="cm">// 2 archivos eliminados · mismo resultado</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="5">DASHBOARD COMPONENT — @FOR VS *NGFOR</div>
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">dashboard.component.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Component } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="cm">// NgFor y RouterLink vienen del AdminModule</span>
+
+<span class="an">@Component</span>({
+  selector: <span class="st">'app-dashboard'</span>,
+  template: <span class="st">`
+    &lt;h1&gt;Dashboard&lt;/h1&gt;
+    &lt;ul&gt;
+      &lt;li *ngFor="let item of items"&gt;
+        {{ item }}
+      &lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;a routerLink="users"&gt;Usuarios&lt;/a&gt;
+    &lt;a routerLink="/"&gt;Home&lt;/a&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="cl">DashboardComponent</span> {
+  items = [<span class="st">'Ventas'</span>, <span class="st">'Informes'</span>, <span class="st">'Config'</span>];
+}</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">dashboard.component.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { Component } <span class="kw">from</span> <span class="st">'@angular/core'</span>;
+<span class="kw">import</span> { RouterLink } <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+<span class="cm">// NgFor no se importa: @for es nativo</span>
+
+<span class="an">@Component</span>({
+  imports: [RouterLink],
+  selector: <span class="st">'app-dashboard'</span>,
+  template: <span class="st">`
+    &lt;h1&gt;Dashboard&lt;/h1&gt;
+    &lt;ul&gt;
+      @for (item of items; track item) {
+        &lt;li&gt;{{ item }}&lt;/li&gt;
+      }
+    &lt;/ul&gt;
+    &lt;a routerLink="users"&gt;Usuarios&lt;/a&gt;
+    &lt;a routerLink="/"&gt;Home&lt;/a&gt;
+  `</span>
+})
+<span class="kw">export class</span> <span class="cl">DashboardComponent</span> {
+  items = [<span class="st">'Ventas'</span>, <span class="st">'Informes'</span>, <span class="st">'Config'</span>];
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="6">MAIN.TS</div>
+  <div class="diff-grid">
+    <div class="diff-card">
+      <div class="diff-hd old">main.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { platformBrowserDynamic }
+  <span class="kw">from</span> <span class="st">'@angular/platform-browser-dynamic'</span>;
+<span class="kw">import</span> { AppModule }
+  <span class="kw">from</span> <span class="st">'./app/app.module'</span>;
+
+platformBrowserDynamic()
+  .bootstrapModule(AppModule)
+  .catch(err => console.error(err));</pre>
+      </div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-hd new">main.ts</div>
+      <div class="diff-body">
+<pre><span class="kw">import</span> { bootstrapApplication }
+  <span class="kw">from</span> <span class="st">'@angular/platform-browser'</span>;
+<span class="kw">import</span> { AppComponent }
+  <span class="kw">from</span> <span class="st">'./app/app.component'</span>;
+<span class="kw">import</span> { appConfig }
+  <span class="kw">from</span> <span class="st">'./app/app.config'</span>;
+
+bootstrapApplication(AppComponent, appConfig)
+  .catch(err => console.error(err));</pre>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: REFERENCIA                                       -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-referencia" class="mode-panel">
+
+  <div class="sec-title" data-n="R">TABLA DE EQUIVALENCIAS RÁPIDA</div>
+
+  <table class="vtable">
+    <tr><th>Angular 18</th><th>Angular 19</th></tr>
+    <tr><td><code>AppModule + BrowserModule</code></td><td><code>app.config.ts + bootstrapApplication()</code></td></tr>
+    <tr><td><code>RouterModule.forRoot(routes)</code></td><td><code>provideRouter(routes)</code></td></tr>
+    <tr><td><code>RouterModule.forChild(routes)</code></td><td>Desaparece — usar array de <code>Routes</code></td></tr>
+    <tr><td><code>loadChildren: () => import(...Module)</code></td><td><code>loadChildren: () => import(...routes)</code></td></tr>
+    <tr><td>No existe</td><td><code>loadComponent: () => import(...Component)</code></td></tr>
+    <tr><td><code>declarations: [HomeComponent]</code></td><td>Desaparece — el componente es standalone</td></tr>
+    <tr><td><code>imports: [CommonModule]</code></td><td>Innecesario con <code>@if</code>/<code>@for</code> nativos</td></tr>
+    <tr><td><code>imports: [RouterModule]</code> en módulo</td><td><code>imports: [RouterLink, RouterOutlet]</code> en componente</td></tr>
+    <tr><td><code>HttpClientModule</code></td><td><code>provideHttpClient()</code></td></tr>
+    <tr><td><code>HTTP_INTERCEPTORS</code> multi-provider</td><td><code>withInterceptors([fn])</code></td></tr>
+    <tr><td><code>CanActivate</code> clase</td><td><code>CanActivateFn</code> función</td></tr>
+    <tr><td><code>Resolve&lt;T&gt;</code> clase</td><td><code>ResolveFn&lt;T&gt;</code> función</td></tr>
+    <tr><td><code>HttpInterceptor</code> clase</td><td><code>HttpInterceptorFn</code> función</td></tr>
+    <tr><td><code>*ngIf</code> / <code>*ngFor</code></td><td><code>@if</code> / <code>@for</code> nativos</td></tr>
+    <tr><td><code>platformBrowserDynamic().bootstrapModule()</code></td><td><code>bootstrapApplication()</code></td></tr>
+    <tr><td><code>standalone: false</code> (implícito v18)</td><td><code>standalone: true</code> (implícito v19)</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="I">IMPORTS MÁS COMUNES EN COMPONENTES STANDALONE</div>
+
+<pre><span class="cm">// Los imports que más se usan en componentes standalone v19</span>
+
+<span class="cm">// Router</span>
+<span class="kw">import</span> { RouterLink, RouterLinkActive, RouterOutlet }
+  <span class="kw">from</span> <span class="st">'@angular/router'</span>;
+
+<span class="cm">// Formularios reactivos</span>
+<span class="kw">import</span> { ReactiveFormsModule, FormBuilder, Validators }
+  <span class="kw">from</span> <span class="st">'@angular/forms'</span>;
+
+<span class="cm">// Formularios template</span>
+<span class="kw">import</span> { FormsModule }
+  <span class="kw">from</span> <span class="st">'@angular/forms'</span>;
+
+<span class="cm">// Pipes de common (los ngIf/ngFor son nativos — no se importan)</span>
+<span class="kw">import</span> { AsyncPipe, DatePipe, CurrencyPipe, DecimalPipe }
+  <span class="kw">from</span> <span class="st">'@angular/common'</span>;
+
+<span class="cm">// Si aún usas directivas de estructura del CommonModule:</span>
+<span class="kw">import</span> { NgIf, NgFor, NgClass, NgStyle }
+  <span class="kw">from</span> <span class="st">'@angular/common'</span>;
+
+<span class="cm">// Componentes Angular Material (ejemplo)</span>
+<span class="kw">import</span> { MatButtonModule } <span class="kw">from</span> <span class="st">'@angular/material/button'</span>;
+<span class="kw">import</span> { MatInputModule }  <span class="kw">from</span> <span class="st">'@angular/material/input'</span>;
+<span class="kw">import</span> { MatTableModule }  <span class="kw">from</span> <span class="st">'@angular/material/table'</span>;</pre>
+
+  <div class="sec-title" data-n="C">COMANDOS DE MIGRACIÓN</div>
+
+<pre><span class="cm"># Actualizar Angular a v19</span>
+ng update @angular/core@19 @angular/cli@19
+
+<span class="cm"># Convertir componentes a standalone</span>
+ng generate @angular/core:standalone \
+  --mode=convert-to-standalone
+
+<span class="cm"># Eliminar NgModules que ya no son necesarios</span>
+ng generate @angular/core:standalone \
+  --mode=prune-ng-modules
+
+<span class="cm"># Migrar bootstrap a standalone</span>
+ng generate @angular/core:standalone \
+  --mode=standalone-bootstrap
+
+<span class="cm"># Migrar *ngIf/*ngFor a @if/@for</span>
+ng generate @angular/core:control-flow
+
+<span class="cm"># Ver todos los schematic disponibles</span>
+ng generate @angular/core: --help</pre>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Verificar si un componente es standalone</div>
+    <div class="insight-content">
+      En Angular 19, todos los componentes son standalone por defecto. Si tienes un componente legado con <code>standalone: false</code> explícito, seguirá siendo de módulo. Si no tiene <code>standalone</code>, es standalone. Para saberlo rápido: si el componente tiene <code>imports: [...]</code> en el decorador → es standalone.
+    </div>
+  </div>
+
+</div>
+
+</div><!-- container -->
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
