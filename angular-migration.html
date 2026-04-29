@@ -140,6 +140,66 @@
 <!-- ══════════════════════════════════════════════════════ -->
 <div id="tab-panorama" class="mode-panel active">
 
+  <div class="sec-title" data-n="0">PRECONDICIÓN — DOCUMENTAR ANTES DE MIGRAR</div>
+
+  <div class="callout green">
+    <strong>Antes de tocar una sola línea de código, genera documentación completa de tu app Angular 18.</strong>
+    Si la migración rompe algo y la app no arranca, tendrás una referencia exacta del estado anterior. Es el mismo principio que el HAR en el FMI — capturar el comportamiento conocido antes de cambiar nada.
+  </div>
+
+  <div class="sec-title" data-n="P">PROMPT PARA COPILOT / OPUS ANTES DE MIGRAR</div>
+
+<pre><span class="cm">// Ejecutar en Copilot Chat con acceso al workspace completo</span>
+<span class="cm">// ANTES de ejecutar ng update o cualquier cambio</span>
+
+Analiza el código fuente completo de esta aplicación Angular 18.
+Genera documentación técnica en /docs siguiendo esta estructura:
+
+docs/
+├── arquitectura/
+│   ├── modulos.md          <span class="cm"># NgModules, sus dependencias entre sí</span>
+│   ├── routing.md          <span class="cm"># árbol de rutas completo con guards y resolvers</span>
+│   └── providers.md        <span class="cm"># services, interceptores, tokens de DI</span>
+├── componentes/
+│   ├── inventario.md       <span class="cm"># lista de todos los componentes con su módulo</span>
+│   ├── [componente].md     <span class="cm"># uno por componente complejo</span>
+│   └── dependencias.md     <span class="cm"># qué importa cada componente de quién</span>
+├── flujos/
+│   ├── autenticacion.md    <span class="cm"># flujo de login, guards, tokens</span>
+│   ├── http.md             <span class="cm"># interceptores, manejo de errores HTTP</span>
+│   └── [flujo-negocio].md  <span class="cm"># uno por flujo crítico detectado</span>
+└── migracion/
+    ├── estado-previo.md    <span class="cm"># snapshot del estado antes de migrar</span>
+    └── riesgos.md          <span class="cm"># qué puede romperse y por qué</span>
+
+Para cada documento sé exhaustivo y específico — no generes descripciones
+genéricas. Cada componente, ruta, guard e interceptor debe estar nombrado
+con su ruta exacta en el repositorio.
+
+Para flujos/, identifica tú los flujos críticos de negocio de esta
+aplicación y crea un .md por cada uno.
+
+El objetivo es que un desarrollador pueda reconstruir el comportamiento
+de la app solo leyendo estos docs, sin acceso al código original.</pre>
+
+  <div class="callout yellow">
+    <strong>Después de generar los docs — hacer commit</strong>
+    <code>git add docs/ && git commit -m "docs: snapshot pre-migración Angular 18→19"</code><br>
+    Así tienes el estado documentado en el historial de Git. Si la migración va mal, <code>git diff</code> entre el estado actual y el commit anterior te dice exactamente qué cambió.
+  </div>
+
+  <div class="callout blue">
+    <strong>Si algo falla tras la migración — cómo usar los docs</strong>
+    Abre Copilot Chat y dile: <em>"La app no arranca tras migrar a Angular 19. Revisa /docs/migracion/estado-previo.md y /docs/arquitectura/routing.md y compáralos con el estado actual del código. Identifica qué ha cambiado que pueda estar causando el problema."</em>
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Por qué funciona mejor que confiar en la memoria del modelo</div>
+    <div class="insight-content">
+      Copilot no tiene memoria entre sesiones. Si abres una sesión nueva para diagnosticar el problema post-migración, el modelo no recuerda cómo estaba la app antes. Los ficheros <code>.md</code> en <code>/docs</code> son la memoria persistente — el modelo los lee y tiene contexto exacto del estado previo sin depender de suposiciones.
+    </div>
+  </div>
+
   <div class="sec-title" data-n="★">EL CAMBIO CONCEPTUAL</div>
 
   <div class="callout green">
