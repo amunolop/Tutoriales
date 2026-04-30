@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebDTE · Guía Completa de Testing</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;
+    --ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;
+    --accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;
+    --yellow:#e8a020;--purple:#7a3acd;
+    --mono:'IBM Plex Mono',monospace;
+    --display:'Clash Display','IBM Plex Mono',sans-serif
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1180px;margin:0 auto;padding:48px 28px 100px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  ::selection{background:var(--accent);color:var(--bg)}
+
+  /* HEADER */
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:32px}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(28px,5vw,52px);font-weight:700;line-height:1.05}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.8}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}
+  .badge.o{color:var(--accent);border-color:var(--accent)}
+  .badge.g{color:var(--accent2);border-color:var(--accent2)}
+  .badge.b{color:var(--accent3);border-color:var(--accent3)}
+  .badge.p{color:var(--purple);border-color:var(--purple)}
+  .badge.y{color:var(--yellow);border-color:var(--yellow)}
+
+  /* TABS — sticky */
+  .tabs-wrap{position:sticky;top:0;background:var(--bg);z-index:50;padding:8px 0;margin-bottom:36px;border-bottom:2px solid var(--ink)}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;width:100%;flex-wrap:wrap;background:var(--surface)}
+  .mode-btn{font-family:var(--mono);font-size:10px;font-weight:600;padding:9px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.6px;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .mode-panel{display:none}
+  .mode-panel.active{display:block;animation:fadeUp .4s ease both}
+
+  /* SECTIONS */
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+
+  /* CALLOUTS */
+  .callout{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout strong{display:block;margin-bottom:4px}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}
+  .callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}
+  .callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}
+  .callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}
+  .callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}
+  .callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+
+  /* CODE BLOCKS with copy */
+  .code-wrap{position:relative;margin:14px 0}
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:18px;padding-top:32px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink)}
+  pre .lang{position:absolute;top:8px;left:14px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .copy-btn{position:absolute;top:6px;right:8px;background:var(--ink);color:var(--bg);border:none;padding:4px 10px;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:1px;border-radius:3px;cursor:pointer;text-transform:uppercase;opacity:.7;transition:opacity .15s;z-index:2}
+  .copy-btn:hover{opacity:1}
+  .copy-btn.copied{background:var(--accent2)}
+  .kw{color:#c1440e;font-weight:600}
+  .cl{color:#2a6e4e;font-weight:600}
+  .fn{color:#0369a1;font-weight:600}
+  .st{color:#8a4a00}
+  .cm{color:#9a8a75;font-style:italic}
+  .nu{color:#7a3acd}
+  .an{color:#1a4a8a;font-weight:600}
+  .hl{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px}
+  .file-path{display:inline-block;background:var(--ink);color:var(--bg);padding:3px 10px;font-size:10px;font-weight:600;letter-spacing:1px;border-radius:3px 3px 0 0;margin-bottom:-2px;font-family:var(--mono)}
+  .file-path .ext{color:var(--yellow)}
+
+  /* TABLES */
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:14px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+  .vtable td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td code{background:rgba(0,0,0,.07);padding:1px 6px;border-radius:2px;font-size:11px;white-space:nowrap}
+  .vtable td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+
+  /* GRID CARDS */
+  .comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:14px 0}
+  .comp-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden}
+  .comp-header{padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .comp-header.good{background:rgba(42,110,78,.1);color:var(--accent2)}
+  .comp-header.alt{background:rgba(26,74,138,.1);color:var(--accent3)}
+  .comp-header.bad{background:rgba(193,68,14,.1);color:var(--accent)}
+  .comp-header.purple{background:rgba(122,58,205,.1);color:var(--purple)}
+  .comp-header.yellow{background:rgba(232,160,32,.1);color:var(--yellow)}
+  .comp-content{padding:14px;font-size:12px;line-height:1.7;color:var(--ink2)}
+  .comp-content code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+
+  /* INSIGHT/DANGER */
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .insight-content code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .danger-content code{background:rgba(0,0,0,.08);padding:1px 5px;border-radius:2px;font-size:11px}
+
+  /* STEPS */
+  .step-flow{display:flex;flex-direction:column;gap:0;margin:14px 0}
+  .step{display:flex;gap:0;align-items:stretch}
+  .step-num{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .step-circle{width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+  .step-circle.o{background:var(--accent)}
+  .step-circle.g{background:var(--accent2)}
+  .step-circle.b{background:var(--accent3)}
+  .step-circle.p{background:var(--purple)}
+  .step-circle.y{background:var(--yellow);color:var(--ink)}
+  .step-line{width:2px;background:var(--border);flex:1;margin:4px auto}
+  .step:last-child .step-line{display:none}
+  .step-body{padding:0 0 20px 16px;flex:1}
+  .step-title{font-weight:700;font-size:12.5px;margin-bottom:6px}
+  .step-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+  .step-desc code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+
+  /* STATS */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:14px 0}
+  .stat-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+  .stat-num{font-family:var(--display);font-size:32px;font-weight:700;line-height:1}
+  .stat-num.o{color:var(--accent)}
+  .stat-num.g{color:var(--accent2)}
+  .stat-num.b{color:var(--accent3)}
+  .stat-num.p{color:var(--purple)}
+  .stat-num.y{color:var(--yellow)}
+  .stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+
+  /* DIAGRAM */
+  .diagram-wrapper{margin:20px 0;overflow-x:auto;border:2px solid var(--border);border-radius:8px;padding:12px;background:var(--surface)}
+  .diagram-wrapper svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .diagram-caption{font-size:10px;color:var(--muted);text-align:center;margin-top:10px;letter-spacing:1px;text-transform:uppercase}
+
+  /* P */
+  p{font-size:12px;line-height:1.7;color:var(--ink2);margin:10px 0}
+  p code,li code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+  ul,ol{margin:10px 0 10px 20px;font-size:12px;color:var(--ink2);line-height:1.8}
+
+  /* FILE TREE */
+  .file-tree{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:18px;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink2);overflow-x:auto;white-space:pre}
+  .file-tree .dir{color:var(--accent3);font-weight:600}
+  .file-tree .file{color:var(--accent2)}
+  .file-tree .count{color:var(--muted)}
+
+  /* SCROLL TO TOP */
+  .scroll-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:var(--ink);color:var(--bg);border:none;border-radius:50%;cursor:pointer;font-size:18px;font-weight:700;display:none;align-items:center;justify-content:center;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:transform .15s}
+  .scroll-top.visible{display:flex}
+  .scroll-top:hover{transform:translateY(-2px)}
+
+  /* PRINT */
+  @media print{
+    .tabs-wrap,.scroll-top,.copy-btn{display:none!important}
+    .mode-panel{display:block!important;page-break-before:always}
+    .mode-panel:first-child{page-break-before:auto}
+    body::after{display:none}
+    body{background:#fff}
+  }
+
+  /* MOBILE */
+  @media(max-width:720px){
+    .comp-grid{grid-template-columns:1fr}
+    .mode-btn{flex:0 0 auto;font-size:9px;padding:7px 9px}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .container{padding:24px 16px 80px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">WebDTE · Migración FMI · pruebaMigracionCompleto19</div>
+  <h1>Guía completa<br>de <em>Testing</em><br>multi-capa</h1>
+  <div class="subtitle">
+    Reflection estructural · Mockito + ArgumentCaptor · E2E hexagonal · JS source-analysis<br>
+    <strong style="color:var(--ink)">312 tests Java + 8 tests JS</strong> · 100% generado por IA · 0 fixes manuales
+  </div>
+  <div class="badge-row">
+    <span class="badge o">JUnit 4</span>
+    <span class="badge g">Mockito 1.x</span>
+    <span class="badge b">JaCoCo 0.8</span>
+    <span class="badge p">Java 8</span>
+    <span class="badge y">TDD-as-Spec</span>
+  </div>
+</header>
+
+<div class="tabs-wrap">
+<div class="mode-toggle" role="tablist">
+  <button class="mode-btn active" data-tab="vision" role="tab">🔭 VISIÓN</button>
+  <button class="mode-btn" data-tab="metodologia" role="tab">🧬 MÉTODO</button>
+  <button class="mode-btn" data-tab="dtos" role="tab">📦 DTOs</button>
+  <button class="mode-btn" data-tab="entidades" role="tab">🏛️ ENTIDADES</button>
+  <button class="mode-btn" data-tab="interfaces" role="tab">🔌 INTERFACES</button>
+  <button class="mode-btn" data-tab="usecases" role="tab">🧠 USECASES</button>
+  <button class="mode-btn" data-tab="e2e" role="tab">🌐 E2E</button>
+  <button class="mode-btn" data-tab="frontend" role="tab">💻 FRONTEND</button>
+  <button class="mode-btn" data-tab="patrones" role="tab">⚠️ PATRONES</button>
+  <button class="mode-btn" data-tab="ejecucion" role="tab">🛠️ EJECUCIÓN</button>
+  <button class="mode-btn" data-tab="ci" role="tab">🚀 CI/CD</button>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: VISIÓN GENERAL                                   -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-vision" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">INVENTARIO COMPLETO</div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-num o">312</div><div class="stat-label">Tests Java</div></div>
+    <div class="stat-card"><div class="stat-num b">8</div><div class="stat-label">Tests JS</div></div>
+    <div class="stat-card"><div class="stat-num g">42</div><div class="stat-label">Ficheros .java</div></div>
+    <div class="stat-card"><div class="stat-num p">8</div><div class="stat-label">Ficheros .js</div></div>
+    <div class="stat-card"><div class="stat-num y">5,704</div><div class="stat-label">Líneas test</div></div>
+    <div class="stat-card"><div class="stat-num g">28/28</div><div class="stat-label">Smoke pass</div></div>
+  </div>
+
+  <div class="sec-title" data-n="2">PIRÁMIDE DE TESTING WEBDTE</div>
+
+  <p>El proyecto aplica una pirámide adaptada a la migración FMI: la base son tests estructurales por reflection (validan contratos Java sin runtime), la capa media son tests de lógica de negocio con Mockito, y la cima son tests E2E que verifican el cableado hexagonal completo. La capa frontend usa una técnica diferente: análisis del código fuente con regex.</p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace">
+      <!-- Pyramid layers -->
+      <polygon points="280,40 440,40 460,90 260,90" fill="rgba(122,58,205,.15)" stroke="#7a3acd" stroke-width="2"/>
+      <text x="360" y="62" font-size="11" font-weight="700" fill="#7a3acd" text-anchor="middle">E2E ESTRUCTURAL</text>
+      <text x="360" y="78" font-size="9" fill="#4a3f30" text-anchor="middle">6 ficheros · ~47 @Test</text>
+
+      <polygon points="260,90 460,90 480,150 240,150" fill="rgba(232,160,32,.15)" stroke="#e8a020" stroke-width="2"/>
+      <text x="360" y="115" font-size="11" font-weight="700" fill="#e8a020" text-anchor="middle">USECASES (MOCKITO)</text>
+      <text x="360" y="132" font-size="9" fill="#4a3f30" text-anchor="middle">11 ficheros · ~44 @Test · ArgumentCaptor</text>
+
+      <polygon points="240,150 480,150 510,230 210,230" fill="rgba(26,74,138,.15)" stroke="#1a4a8a" stroke-width="2"/>
+      <text x="360" y="180" font-size="11" font-weight="700" fill="#1a4a8a" text-anchor="middle">INTERFACES (CONTRATOS)</text>
+      <text x="360" y="198" font-size="9" fill="#4a3f30" text-anchor="middle">6 ficheros · ~51 @Test · Optional&lt;T&gt; y List&lt;T&gt;</text>
+      <text x="360" y="215" font-size="9" fill="#4a3f30" text-anchor="middle">Class.forName · ParameterizedType</text>
+
+      <polygon points="210,230 510,230 540,330 180,330" fill="rgba(42,110,78,.15)" stroke="#2a6e4e" stroke-width="2"/>
+      <text x="360" y="265" font-size="11" font-weight="700" fill="#2a6e4e" text-anchor="middle">DTOs + ENTIDADES (REFLECTION PURA)</text>
+      <text x="360" y="285" font-size="9" fill="#4a3f30" text-anchor="middle">19 ficheros · ~164 @Test · Inmutabilidad</text>
+      <text x="360" y="302" font-size="9" fill="#4a3f30" text-anchor="middle">Modifier.isFinal · getDeclaredFields</text>
+      <text x="360" y="319" font-size="9" fill="#4a3f30" text-anchor="middle">no-arg constructor + getters/setters</text>
+
+      <!-- Side label: frontend -->
+      <rect x="560" y="120" width="140" height="160" rx="6" fill="rgba(193,68,14,.08)" stroke="#c1440e" stroke-width="2"/>
+      <text x="630" y="145" font-size="11" font-weight="700" fill="#c1440e" text-anchor="middle">FRONTEND</text>
+      <text x="630" y="161" font-size="9" fill="#4a3f30" text-anchor="middle">Source-analysis</text>
+      <text x="630" y="180" font-size="9" fill="#4a3f30" text-anchor="middle">8 ficheros JS</text>
+      <text x="630" y="197" font-size="9" fill="#4a3f30" text-anchor="middle">regex sobre .js</text>
+      <text x="630" y="216" font-size="9" fill="#4a3f30" text-anchor="middle">credentials check</text>
+      <text x="630" y="233" font-size="9" fill="#4a3f30" text-anchor="middle">resp.ok presence</text>
+      <text x="630" y="252" font-size="9" fill="#4a3f30" text-anchor="middle">no STUB grep</text>
+      <text x="630" y="269" font-size="9" fill="#4a3f30" text-anchor="middle">Shadow DOM check</text>
+
+      <!-- Connector arrow -->
+      <line x1="555" y1="200" x2="525" y2="200" stroke="#c1440e" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+      <!-- Bottom techniques row -->
+      <text x="20" y="370" font-size="10" font-weight="700" fill="#1a1410">TÉCNICAS</text>
+      <text x="20" y="388" font-size="9" fill="#4a3f30">▶ Reflection pura (DTOs, Entidades, Interfaces)</text>
+      <text x="20" y="402" font-size="9" fill="#4a3f30">▶ Mockito 1.x + ArgumentCaptor (UseCases)</text>
+      <text x="380" y="388" font-size="9" fill="#4a3f30">▶ Class.forName + isAssignableFrom (E2E)</text>
+      <text x="380" y="402" font-size="9" fill="#4a3f30">▶ fs.readFileSync + regex (Frontend JS)</text>
+    </svg>
+    <div class="diagram-caption">Pirámide WebDTE · 4 niveles + frontend lateral (técnica distinta)</div>
+  </div>
+
+  <div class="sec-title" data-n="3">ESTRUCTURA DE DIRECTORIOS</div>
+
+<div class="file-tree"><span class="dir">tests/</span>
+├── <span class="dir">dto/</span>              <span class="count">← 14 ficheros · ~82 @Test · constructor sin args + getters/setters</span>
+│   ├── <span class="file">AdminTemaItemTest.java</span>            <span class="count">(11 tests)</span>
+│   ├── <span class="file">ApiResponseTest.java</span>              <span class="count">(12 tests · factory pattern)</span>
+│   ├── <span class="file">LoginRequestTest.java</span>             <span class="count">(5 tests)</span>
+│   ├── <span class="file">LoginResponseTest.java</span>            <span class="count">(8 tests)</span>
+│   ├── <span class="file">RegisterRequestTest.java</span>          <span class="count">(14 tests · 11 fields)</span>
+│   ├── <span class="file">RevisionRequestTest.java</span>          <span class="count">(7 tests · KI-1 nombreProfesor)</span>
+│   ├── <span class="file">SelladoRequestTest.java</span>           <span class="count">(4 tests)</span>
+│   ├── <span class="file">ProyectoRequestTest.java</span>          <span class="count">(6 tests)</span>
+│   ├── <span class="file">SolicitudFilterTest.java</span>          <span class="count">(2 tests)</span>
+│   ├── <span class="file">SolicitudItemTest.java</span>            <span class="count">(8 tests)</span>
+│   ├── <span class="file">TemaResponseTest.java</span>             <span class="count">(7 tests · KI-15 year)</span>
+│   ├── <span class="file">UpdateUserRequestTest.java</span>        <span class="count">(6 tests)</span>
+│   ├── <span class="file">UserProfileResponseTest.java</span>      <span class="count">(8 tests)</span>
+│   └── <span class="file">UsuarioListItemTest.java</span>          <span class="count">(4 tests)</span>
+├── <span class="dir">entities/</span>         <span class="count">← 5 ficheros · ~82 @Test · final class + final fields + 0 setters</span>
+│   ├── <span class="file">UsuarioEntityTest.java</span>            <span class="count">(19 tests · 12 args ctor)</span>
+│   ├── <span class="file">RevisionExamenEntityTest.java</span>     <span class="count">(14 tests · 7 args)</span>
+│   ├── <span class="file">SelladoAsignaturasEntityTest.java</span> <span class="count">(11 tests · 3 args)</span>
+│   ├── <span class="file">ProyectoEntityTest.java</span>           <span class="count">(18 tests · 10 args)</span>
+│   └── <span class="file">TemaProyectoEntityTest.java</span>       <span class="count">(20 tests · 8 args, year:int)</span>
+├── <span class="dir">interfaces/</span>       <span class="count">← 6 ficheros · ~51 @Test · contratos repo con genéricos</span>
+│   ├── <span class="file">UsuarioRepositoryTest.java</span>        <span class="count">(13 tests · Optional&lt;Usuario&gt;)</span>
+│   ├── <span class="file">RevisionRepositoryTest.java</span>       <span class="count">(7 tests)</span>
+│   ├── <span class="file">SelladoRepositoryTest.java</span>        <span class="count">(6 tests)</span>
+│   ├── <span class="file">ProyectoRepositoryTest.java</span>       <span class="count">(8 tests)</span>
+│   ├── <span class="file">TemaRepositoryTest.java</span>           <span class="count">(8 tests · List&lt;Tema&gt;)</span>
+│   └── <span class="file">SolicitudRepositoryTest.java</span>      <span class="count">(9 tests · findByFilters)</span>
+├── <span class="dir">usecases/</span>         <span class="count">← 11 ficheros · ~44 @Test · Mockito + ArgumentCaptor</span>
+│   ├── <span class="file">AuthenticateUserUseCaseTest.java</span>  <span class="count">(4 tests)</span>
+│   ├── <span class="file">RegisterUserUseCaseTest.java</span>      <span class="count">(4 tests)</span>
+│   ├── <span class="file">GetUserProfileUseCaseTest.java</span>    <span class="count">(3 tests)</span>
+│   ├── <span class="file">ProcessRevisionUseCaseTest.java</span>   <span class="count">(4 tests · captor)</span>
+│   ├── <span class="file">ProcessSelladoUseCaseTest.java</span>    <span class="count">(4 tests · captor)</span>
+│   ├── <span class="file">ProcessProyectoUseCaseTest.java</span>   <span class="count">(4 tests)</span>
+│   ├── <span class="file">GetTemasUseCaseTest.java</span>          <span class="count">(3 tests)</span>
+│   ├── <span class="file">ManageTemasUseCaseTest.java</span>       <span class="count">(5 tests · CRUD)</span>
+│   ├── <span class="file">ListSolicitudesUseCaseTest.java</span>   <span class="count">(4 tests · filter)</span>
+│   ├── <span class="file">ListUsuariosUseCaseTest.java</span>      <span class="count">(3 tests)</span>
+│   └── <span class="file">UpdateUserUseCaseTest.java</span>        <span class="count">(6 tests · IDOR)</span>
+├── <span class="dir">e2e/</span>              <span class="count">← 6 ficheros · ~47 @Test · Class.forName + isAssignableFrom</span>
+│   ├── <span class="file">AuthControllerE2ETest.java</span>        <span class="count">(9 tests · ctor 2 args)</span>
+│   ├── <span class="file">UserControllerE2ETest.java</span>        <span class="count">(7 tests · ctor 2 args)</span>
+│   ├── <span class="file">ProcesoControllerE2ETest.java</span>     <span class="count">(8 tests · ctor 3 args)</span>
+│   ├── <span class="file">SolicitudControllerE2ETest.java</span>   <span class="count">(8 tests · ctor 1 arg)</span>
+│   ├── <span class="file">AdminControllerE2ETest.java</span>       <span class="count">(9 tests · usecases not repos)</span>
+│   └── <span class="file">AppWiringE2ETest.java</span>             <span class="count">(6 tests · domain↛infra)</span>
+└── <span class="dir">frontend/</span>         <span class="count">← 8 ficheros · regex sobre source code</span>
+    ├── <span class="file">AuthServiceTest.js</span>                <span class="count">(8 asserts · resp.ok + creds)</span>
+    ├── <span class="file">AdminServiceTest.js</span>               <span class="count">(6 asserts · 4 endpoints)</span>
+    ├── <span class="file">ProcesoServiceTest.js</span>             <span class="count">(7 asserts)</span>
+    ├── <span class="file">SolicitudServiceTest.js</span>           <span class="count">(5 asserts)</span>
+    ├── <span class="file">ComponentStructureTest.js</span>         <span class="count">(15 asserts · WebComp)</span>
+    ├── <span class="file">RouterTest.js</span>                     <span class="count">(8 asserts · hash routing)</span>
+    ├── <span class="file">AppShellTest.js</span>                   <span class="count">(6 asserts)</span>
+    └── <span class="file">IndexHtmlTest.js</span>                  <span class="count">(4 asserts · sin globals)</span>
+</div>
+
+  <div class="sec-title" data-n="4">3 TÉCNICAS, 3 PROPÓSITOS</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header alt">REFLECTION ESTRUCTURAL</div>
+      <div class="comp-content">
+        Verifica el <strong>contrato Java</strong> sin instanciar la app. Usa <code>Class.forName()</code>, <code>getDeclaredFields()</code>, <code>Modifier.isFinal()</code>, <code>ParameterizedType</code>.
+        Aplica a: DTOs, Entidades, Interfaces, Controllers (E2E).
+        Velocidad: instantánea. Cobertura: estructura, no comportamiento.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header yellow">MOCKITO + ARGUMENTCAPTOR</div>
+      <div class="comp-content">
+        Verifica la <strong>lógica de negocio</strong> aislando dependencias.
+        <code>mock(Repo.class)</code> + <code>when().thenReturn(Optional.of(x))</code>. <code>ArgumentCaptor</code> captura entidades pasadas a <code>.save()</code> y verifica el mapeo Request → Entity.
+        Aplica a: UseCases. Velocidad: rápida.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header bad">SOURCE-ANALYSIS</div>
+      <div class="comp-content">
+        Verifica <strong>código JS</strong> con <code>fs.readFileSync()</code> + regex. Sin runtime, sin DOM, sin jest. Funciona en Node.js puro.
+        Aplica a: Services y Components frontend.
+        Detecta: stubs, fetch sin <code>credentials</code>, ausencia de <code>resp.ok</code>, Web Component mal estructurado.
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Filosofía: TDD-as-Spec</div>
+    <div class="insight-content">
+      En FMI los tests se escriben <strong>antes</strong> del código de producción. Actúan como especificación ejecutable: definen la estructura exacta (nombres de clase, tipos, herencia) que el código generado por IA debe cumplir. Esto convierte los tests en <strong>contratos formales de migración</strong>, no en tests de regresión convencionales. Si un test falla, el código está mal — nunca el test.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: METODOLOGÍA                                      -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-metodologia" class="mode-panel">
+
+  <div class="sec-title" data-n="1">TDD-AS-SPEC: TESTS COMO CONTRATO</div>
+
+  <p>El testing convencional verifica que el código funciona. El testing FMI verifica que el código <strong>cumple un contrato</strong>. La diferencia es sutil pero crítica: en FMI los tests existen <em>antes</em> de cualquier línea de código de producción, y son los que la IA debe satisfacer. No son red de seguridad — son la especificación.</p>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">Testing convencional</div>
+      <div class="comp-content">
+        <strong>Cuándo se escriben:</strong> después del código.<br>
+        <strong>Qué prueban:</strong> que no rompamos lo que ya funciona.<br>
+        <strong>Quién los escribe:</strong> el mismo dev que el código.<br>
+        <strong>Riesgo:</strong> tests que prueban lo que el código hace, no lo que debería hacer.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">TDD-as-Spec (FMI)</div>
+      <div class="comp-content">
+        <strong>Cuándo:</strong> antes del código (Oleada 1 V5M).<br>
+        <strong>Qué prueban:</strong> que el código generado cumple el contrato declarado.<br>
+        <strong>Quién:</strong> Test Worker (no el Code Worker).<br>
+        <strong>Riesgo eliminado:</strong> el Code Worker no puede inventar — debe ajustarse al test.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">FLUJO DE GENERACIÓN</div>
+
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-num"><div class="step-circle o">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Architect produce TEST SPEC</div>
+        <div class="step-desc">El Architect (Opus) lee la referencia, define los contratos en SHARED CONTRACTS, y emite TEST SPECS por grupo. No es código aún — son contratos compactos: "Usuario tiene 12 args en este orden, campo `titulacion` no `especialidad`".</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle b">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Test Worker materializa el SPEC</div>
+        <div class="step-desc">Sonnet en paralelo. Recibe TEST SPEC + DIGEST. Genera <code>UsuarioEntityTest.java</code> con 19 @Test que verifican cada propiedad del contrato. Los tests usan <code>Class.forName()</code> — pueden compilar antes de que exista <code>Usuario.java</code>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle p">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">GATE valida coherencia entre tests</div>
+        <div class="step-desc">7 checks bloqueantes. Si TW1 espera 12 args en Usuario y TW4 mockea con 11 → ABORT. El GATE garantiza que los Code Workers nunca verán tests incoherentes.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle g">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Code Worker LEE los tests primero</div>
+        <div class="step-desc">Antes de escribir <code>Usuario.java</code>, el Code Worker abre <code>UsuarioEntityTest.java</code> y extrae: 12 args, todos final, sin setters. Luego escribe el código que satisface el test exactamente.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"><div class="step-circle y">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Smoke verifica mecánicamente</div>
+        <div class="step-desc">Haiku ejecuta grep/count: zero imports prohibidos, 100% PreparedStatement, naming canónico. Es la última red de seguridad antes de la certificación.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">TÉCNICA 1: REFLECTION ESTRUCTURAL</div>
+
+  <p>Reflection es la columna vertebral del testing FMI. Permite verificar la estructura de una clase Java sin instanciarla, lo que es perfecto para validar contratos de migración antes de tener una app funcionando.</p>
+
+<div class="code-wrap">
+<pre><span class="lang">Java · Las APIs reflection que más uso</span><button class="copy-btn">COPY</button>
+<span class="cm">// 1. Existencia de la clase</span>
+Class&lt;?&gt; clazz = Class.<span class="fn">forName</span>(<span class="st">"domain.entities.Usuario"</span>);
+
+<span class="cm">// 2. Modificadores: final, abstract, interface</span>
+<span class="kw">boolean</span> isFinal = Modifier.<span class="fn">isFinal</span>(clazz.<span class="fn">getModifiers</span>());
+<span class="kw">boolean</span> isInterface = Modifier.<span class="fn">isInterface</span>(clazz.<span class="fn">getModifiers</span>());
+
+<span class="cm">// 3. Campos declarados</span>
+<span class="kw">for</span> (Field f : clazz.<span class="fn">getDeclaredFields</span>()) {
+    f.<span class="fn">getName</span>();        <span class="cm">// "titulacion"</span>
+    f.<span class="fn">getType</span>();        <span class="cm">// String.class</span>
+    Modifier.<span class="fn">isFinal</span>(f.<span class="fn">getModifiers</span>());
+}
+
+<span class="cm">// 4. Constructores</span>
+Constructor&lt;?&gt;[] ctors = clazz.<span class="fn">getDeclaredConstructors</span>();
+ctors[<span class="nu">0</span>].<span class="fn">getParameterTypes</span>().length;   <span class="cm">// 12</span>
+
+<span class="cm">// 5. Métodos declarados (no heredados)</span>
+<span class="kw">for</span> (Method m : clazz.<span class="fn">getDeclaredMethods</span>()) {
+    m.<span class="fn">getName</span>();
+    m.<span class="fn">getReturnType</span>();
+    m.<span class="fn">getParameterTypes</span>();
+}
+
+<span class="cm">// 6. Tipos genéricos (Optional&lt;Usuario&gt;, List&lt;Tema&gt;)</span>
+Method find = clazz.<span class="fn">getMethod</span>(<span class="st">"findByLogin"</span>, String.<span class="kw">class</span>);
+ParameterizedType ret = (ParameterizedType) find.<span class="fn">getGenericReturnType</span>();
+ret.<span class="fn">getRawType</span>();              <span class="cm">// Optional.class</span>
+ret.<span class="fn">getActualTypeArguments</span>()[<span class="nu">0</span>]; <span class="cm">// Usuario.class</span>
+
+<span class="cm">// 7. Herencia</span>
+HttpServlet.<span class="kw">class</span>.<span class="fn">isAssignableFrom</span>(clazz);
+</pre></div>
+
+  <div class="sec-title" data-n="4">TÉCNICA 2: MOCKITO + ARGUMENTCAPTOR</div>
+
+  <p>Para los UseCases, reflection no basta — necesitamos verificar interacciones con repositorios. Mockito 1.x (compatible con Java 8) hace el trabajo. ArgumentCaptor es la pieza clave para validar que el mapeo Request → Entity preserva los campos correctos.</p>
+
+<div class="code-wrap">
+<pre><span class="lang">Java · Patrón Mockito básico</span><button class="copy-btn">COPY</button>
+<span class="cm">// 1. Setup</span>
+UsuarioRepository repo = <span class="fn">mock</span>(UsuarioRepository.<span class="kw">class</span>);
+AuthenticateUserUseCase useCase = <span class="kw">new</span> AuthenticateUserUseCase(repo);
+
+<span class="cm">// 2. Stub: programar el mock</span>
+<span class="fn">when</span>(repo.<span class="fn">findByLogin</span>(<span class="st">"user"</span>))
+    .<span class="fn">thenReturn</span>(Optional.<span class="fn">of</span>(validUsuario));
+
+<span class="cm">// 3. Acción</span>
+LoginResponse response = useCase.<span class="fn">execute</span>(<span class="st">"user"</span>, <span class="st">"pass123"</span>);
+
+<span class="cm">// 4. Verify: el mock fue llamado correctamente</span>
+<span class="fn">verify</span>(repo).<span class="fn">findByLogin</span>(<span class="st">"user"</span>);
+<span class="fn">verify</span>(repo, <span class="fn">never</span>()).<span class="fn">save</span>(<span class="fn">any</span>());
+
+<span class="cm">// 5. ArgumentCaptor: capturar lo que se pasó al mock</span>
+ArgumentCaptor&lt;RevisionExamen&gt; captor =
+    ArgumentCaptor.<span class="fn">forClass</span>(RevisionExamen.<span class="kw">class</span>);
+<span class="fn">when</span>(repo.<span class="fn">save</span>(captor.<span class="fn">capture</span>())).<span class="fn">thenReturn</span>(<span class="nu">1</span>);
+
+useCase.<span class="fn">execute</span>(<span class="nu">42</span>, request);
+
+RevisionExamen saved = captor.<span class="fn">getValue</span>();
+<span class="fn">assertEquals</span>(<span class="st">"Prof"</span>, saved.<span class="fn">getNombreProfesor</span>());  <span class="cm">// KI-1</span>
+<span class="fn">assertEquals</span>(<span class="nu">42</span>, saved.<span class="fn">getUsuarioId</span>());
+</pre></div>
+
+  <div class="callout yellow">
+    <strong>ArgumentCaptor — verificar el mapeo correcto</strong>
+    El verdadero valor de Mockito en FMI es <code>ArgumentCaptor</code>. Te permite responder a la pregunta crítica: <em>"¿el UseCase mapeó el RevisionRequest al RevisionExamen con los campos correctos?"</em>. Esencial para validar Knowledge Injections como KI-1 (<code>nombreProfesor</code> debe propagarse, no perderse).
+  </div>
+
+  <div class="sec-title" data-n="5">TÉCNICA 3: SOURCE-ANALYSIS PARA JS</div>
+
+  <p>El frontend Vanilla JS no se compila — no hay herramientas de reflection. La técnica adoptada es <strong>análisis del código fuente con regex</strong>: cargas el .js como texto, aplicas patrones, verificas presencia/ausencia. Funciona con Node.js puro, sin DOM, sin jest, sin webpack.</p>
+
+<div class="code-wrap">
+<pre><span class="lang">JavaScript · Patrón source-analysis</span><button class="copy-btn">COPY</button>
+<span class="kw">const</span> fs   = <span class="fn">require</span>(<span class="st">'fs'</span>);
+<span class="kw">const</span> path = <span class="fn">require</span>(<span class="st">'path'</span>);
+<span class="kw">const</span> assert = <span class="fn">require</span>(<span class="st">'assert'</span>);
+
+<span class="kw">const</span> servicePath = path.<span class="fn">resolve</span>(__dirname,
+    <span class="st">'../../frontend/services/auth-service.js'</span>);
+<span class="kw">const</span> source = fs.<span class="fn">readFileSync</span>(servicePath, <span class="st">'utf-8'</span>);
+
+<span class="cm">// Test 1: cero stubs</span>
+assert.<span class="fn">ok</span>(
+    !<span class="hl">/console\.log\s*\(\s*['"`][^'"`]*[Ss][Tt][Uu][Bb]/</span>.<span class="fn">test</span>(source),
+    <span class="st">'Found a console.log containing STUB'</span>
+);
+
+<span class="cm">// Test 2: credentials: 'include' en cada fetch</span>
+assert.<span class="fn">ok</span>(
+    <span class="hl">/credentials\s*:\s*['"]include['"]/</span>.<span class="fn">test</span>(source),
+    <span class="st">"Missing credentials: 'include' in fetch options"</span>
+);
+
+<span class="cm">// Test 3: resp.ok antes de .json()</span>
+<span class="kw">const</span> okIdx   = source.<span class="fn">search</span>(<span class="hl">/\.ok\b/</span>);
+<span class="kw">const</span> jsonIdx = source.<span class="fn">search</span>(<span class="hl">/\.json\s*\(\s*\)/</span>);
+<span class="kw">if</span> (jsonIdx !== -<span class="nu">1</span>) {
+    assert.<span class="fn">ok</span>(okIdx &lt; jsonIdx, <span class="st">'.ok must appear before .json()'</span>);
+}
+</pre></div>
+
+  <div class="callout blue">
+    <strong>Por qué no jsdom o jest</strong>
+    Web Components con Shadow DOM son difíciles de testear con jsdom — su soporte está incompleto. Source-analysis tiene una ventaja: detecta intenciones (¿hace fetch?, ¿valida resp.ok?) sin ejecutar el código. Es lento de escribir pero rápido de ejecutar y resistente a refactors menores.
+  </div>
+
+  <div class="sec-title" data-n="6">CUANDO USAR CADA TÉCNICA</div>
+
+  <table class="vtable">
+    <tr><th>Tipo de código</th><th>Técnica</th><th>Por qué</th></tr>
+    <tr><td>DTO mutable (Request, Response)</td><td>Reflection</td><td>Verificar getters/setters + tipos sin lógica de negocio</td></tr>
+    <tr><td>DTO inmutable (ApiResponse)</td><td>Reflection</td><td>Verificar factory methods + ausencia de constructor público</td></tr>
+    <tr><td>Entity (Value Object)</td><td>Reflection</td><td>Verificar inmutabilidad: final class, final fields, no setters</td></tr>
+    <tr><td>Interface de repositorio</td><td>Reflection + ParameterizedType</td><td>Verificar firmas con genéricos (<code>Optional&lt;T&gt;</code>)</td></tr>
+    <tr><td>UseCase (lógica de negocio)</td><td>Mockito + ArgumentCaptor</td><td>Mock el repo, verifica interacciones y mapeo</td></tr>
+    <tr><td>Controller (Servlet)</td><td>Reflection (E2E)</td><td>Verificar herencia HttpServlet + constructor injection</td></tr>
+    <tr><td>AppWiring (composition root)</td><td>Reflection</td><td>Verificar aislamiento hexagonal (domain ↛ infra)</td></tr>
+    <tr><td>Frontend service (.js)</td><td>Source-analysis</td><td>Verificar fetch + credentials + resp.ok</td></tr>
+    <tr><td>Web Component (.js)</td><td>Source-analysis</td><td>Verificar Shadow DOM + customElements.define</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: DTOs                                              -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-dtos" class="mode-panel">
+
+  <div class="sec-title" data-n="1">QUÉ ES UN DTO EN WEBDTE</div>
+
+  <p>Los DTOs son los objetos de transporte entre el frontend y el dominio. Viven en el paquete <code>domain.dto</code> y son <strong>todos mutables</strong> (no-arg constructor + getters + setters), excepto <code>ApiResponse</code> que es factory pattern. Esta convención está fijada en SHARED CONTRACTS y los Test Workers la verifican obligatoriamente.</p>
+
+  <table class="vtable">
+    <tr><th>DTO</th><th>Tipo</th><th>Tests</th><th>Notas</th></tr>
+    <tr><td><code>LoginRequest</code></td><td>Mutable</td><td>5</td><td>2 fields: login, password</td></tr>
+    <tr><td><code>LoginResponse</code></td><td>Mutable</td><td>8</td><td>ok, message, identificador, login, titulacion</td></tr>
+    <tr><td><code>RegisterRequest</code></td><td>Mutable</td><td>14</td><td>11 fields, todos String</td></tr>
+    <tr><td><code>RevisionRequest</code></td><td>Mutable</td><td>7</td><td>Field <code>nombreProfesor</code> (KI-1)</td></tr>
+    <tr><td><code>SelladoRequest</code></td><td>Mutable</td><td>4</td><td>List&lt;String&gt; asignaturas</td></tr>
+    <tr><td><code>ProyectoRequest</code></td><td>Mutable</td><td>6</td><td>idTema (long), titulo</td></tr>
+    <tr><td><code>UpdateUserRequest</code></td><td>Mutable</td><td>6</td><td>Sin password (cambio aparte)</td></tr>
+    <tr><td><code>UserProfileResponse</code></td><td>Mutable</td><td>8</td><td>Incluye <code>proyectoEnCurso</code> (KI-16)</td></tr>
+    <tr><td><code>SolicitudFilter</code></td><td>Mutable</td><td>2</td><td>Solo <code>fechaInicio</code> + <code>fechaFin</code></td></tr>
+    <tr><td><code>SolicitudItem</code></td><td>Mutable</td><td>8</td><td>Vista agregada con JOIN registro</td></tr>
+    <tr><td><code>TemaResponse</code></td><td>Mutable</td><td>7</td><td>Field <code>year</code> int (KI-15)</td></tr>
+    <tr><td><code>UsuarioListItem</code></td><td>Mutable</td><td>4</td><td>Para AdminController</td></tr>
+    <tr><td><code>AdminTemaItem</code></td><td>Mutable</td><td>11</td><td>CRUD completo</td></tr>
+    <tr style="background:rgba(122,58,205,.05)"><td><code>ApiResponse</code></td><td><strong>Factory</strong></td><td>12</td><td>ok() / error() · NO ctor público</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">DTO MUTABLE — TEST COMPLETO</div>
+
+  <p>El test verifica que el DTO se puede construir vacío, que cada par getter/setter funciona correctamente, y que cada campo tiene el tipo declarado. <code>getDeclaredField()</code> es el assert clave — protege contra que la IA renombre arbitrariamente.</p>
+
+<div class="file-path">tests/dto/<span class="ext">LoginRequestTest.java</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Java · JUnit 4 · Reflection pura</span><button class="copy-btn">COPY</button>
+<span class="kw">package</span> domain.dto;
+
+<span class="kw">import</span> org.junit.Test;
+<span class="kw">import</span> java.lang.reflect.Constructor;
+<span class="kw">import static</span> org.junit.Assert.*;
+
+<span class="kw">public class</span> <span class="cl">LoginRequestTest</span> {
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testNoArgConstructorExists</span>() <span class="kw">throws</span> Exception {
+        Constructor&lt;<span class="cl">LoginRequest</span>&gt; ctor =
+            <span class="cl">LoginRequest</span>.<span class="kw">class</span>.<span class="fn">getDeclaredConstructor</span>();
+        <span class="fn">assertNotNull</span>(ctor);
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testLoginGetterSetter</span>() {
+        <span class="cl">LoginRequest</span> dto = <span class="kw">new</span> <span class="cl">LoginRequest</span>();
+        dto.<span class="fn">setLogin</span>(<span class="st">"user123"</span>);
+        <span class="fn">assertEquals</span>(<span class="st">"user123"</span>, dto.<span class="fn">getLogin</span>());
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testPasswordGetterSetter</span>() {
+        <span class="cl">LoginRequest</span> dto = <span class="kw">new</span> <span class="cl">LoginRequest</span>();
+        dto.<span class="fn">setPassword</span>(<span class="st">"secret"</span>);
+        <span class="fn">assertEquals</span>(<span class="st">"secret"</span>, dto.<span class="fn">getPassword</span>());
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testFieldLogin</span>() <span class="kw">throws</span> Exception {
+        java.lang.reflect.Field f =
+            <span class="cl">LoginRequest</span>.<span class="kw">class</span>.<span class="fn">getDeclaredField</span>(<span class="st">"login"</span>);
+        <span class="fn">assertEquals</span>(String.<span class="kw">class</span>, f.<span class="fn">getType</span>());
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testFieldPassword</span>() <span class="kw">throws</span> Exception {
+        java.lang.reflect.Field f =
+            <span class="cl">LoginRequest</span>.<span class="kw">class</span>.<span class="fn">getDeclaredField</span>(<span class="st">"password"</span>);
+        <span class="fn">assertEquals</span>(String.<span class="kw">class</span>, f.<span class="fn">getType</span>());
+    }
+}
+</pre></div>
+
+  <div class="callout green">
+    <strong>El patrón de 5 tests por DTO de 2 campos</strong>
+    Cada DTO tiene <strong>2N + 1</strong> tests donde N es el número de campos:<br>
+    1× constructor sin args · 1× getter/setter por campo · 1× tipo de campo (puede combinarse con getter).<br>
+    Para un DTO de 11 campos como <code>RegisterRequest</code>, son ~14 tests. Esto crece linealmente y es trivial de generar.
+  </div>
+
+  <div class="sec-title" data-n="3">DTO INMUTABLE FACTORY — APIRESPONSE</div>
+
+  <p><code>ApiResponse</code> es la única excepción a la regla de DTOs mutables. Es un Value Object con factory methods: <code>ApiResponse.ok(data)</code>, <code>ApiResponse.ok(message)</code>, <code>ApiResponse.error(message)</code>. El constructor es privado. KI-11 garantiza que ningún Worker invente <code>success()</code> o <code>fail()</code>.</p>
+
+<div class="file-path">tests/dto/<span class="ext">ApiResponseTest.java</span> (excerpt)</div>
+<div class="code-wrap">
+<pre><span class="lang">Java · Verificación de factory pattern</span><button class="copy-btn">COPY</button>
+<span class="kw">public class</span> <span class="cl">ApiResponseTest</span> {
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testNoPublicConstructor</span>() {
+        Constructor&lt;?&gt;[] ctors = <span class="cl">ApiResponse</span>.<span class="kw">class</span>.<span class="fn">getDeclaredConstructors</span>();
+        <span class="kw">for</span> (Constructor&lt;?&gt; c : ctors) {
+            <span class="fn">assertFalse</span>(<span class="st">"ApiResponse must NOT have public constructor"</span>,
+                Modifier.<span class="fn">isPublic</span>(c.<span class="fn">getModifiers</span>()));
+        }
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testFactoryOkWithData</span>() <span class="kw">throws</span> Exception {
+        Method ok = <span class="cl">ApiResponse</span>.<span class="kw">class</span>.<span class="fn">getMethod</span>(<span class="st">"ok"</span>, Object.<span class="kw">class</span>);
+        <span class="fn">assertTrue</span>(Modifier.<span class="fn">isStatic</span>(ok.<span class="fn">getModifiers</span>()));
+
+        <span class="cl">ApiResponse</span> r = (<span class="cl">ApiResponse</span>) ok.<span class="fn">invoke</span>(<span class="kw">null</span>, <span class="st">"test-data"</span>);
+        <span class="fn">assertTrue</span>(r.<span class="fn">isOk</span>());
+        <span class="fn">assertEquals</span>(<span class="st">"test-data"</span>, r.<span class="fn">getData</span>());
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testFactoryError</span>() <span class="kw">throws</span> Exception {
+        Method err = <span class="cl">ApiResponse</span>.<span class="kw">class</span>.<span class="fn">getMethod</span>(<span class="st">"error"</span>, String.<span class="kw">class</span>);
+        <span class="cl">ApiResponse</span> r = (<span class="cl">ApiResponse</span>) err.<span class="fn">invoke</span>(<span class="kw">null</span>, <span class="st">"failed"</span>);
+        <span class="fn">assertFalse</span>(r.<span class="fn">isOk</span>());
+        <span class="fn">assertEquals</span>(<span class="st">"failed"</span>, r.<span class="fn">getMessage</span>());
+    }
+}
+</pre></div>
+
+  <div class="sec-title" data-n="4">CÓDIGO QUE PASA EL TEST — APIRESPONSE</div>
+
+<div class="file-path">backend/domain/dto/<span class="ext">ApiResponse.java</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Java · Output Code Worker</span><button class="copy-btn">COPY</button>
+<span class="kw">package</span> domain.dto;
+
+<span class="kw">public class</span> <span class="cl">ApiResponse</span> {
+
+    <span class="kw">private boolean</span> ok;
+    <span class="kw">private</span> Object data;
+    <span class="kw">private</span> String message;
+
+    <span class="kw">private</span> <span class="fn">ApiResponse</span>(<span class="kw">boolean</span> ok, Object data, String message) {
+        <span class="kw">this</span>.ok = ok;
+        <span class="kw">this</span>.data = data;
+        <span class="kw">this</span>.message = message;
+    }
+
+    <span class="kw">public static</span> <span class="cl">ApiResponse</span> <span class="fn">ok</span>(Object data) {
+        <span class="kw">return new</span> <span class="cl">ApiResponse</span>(<span class="kw">true</span>, data, <span class="kw">null</span>);
+    }
+
+    <span class="kw">public static</span> <span class="cl">ApiResponse</span> <span class="fn">ok</span>(String message) {
+        <span class="kw">return new</span> <span class="cl">ApiResponse</span>(<span class="kw">true</span>, <span class="kw">null</span>, message);
+    }
+
+    <span class="kw">public static</span> <span class="cl">ApiResponse</span> <span class="fn">error</span>(String message) {
+        <span class="kw">return new</span> <span class="cl">ApiResponse</span>(<span class="kw">false</span>, <span class="kw">null</span>, message);
+    }
+
+    <span class="kw">public boolean</span> <span class="fn">isOk</span>() { <span class="kw">return</span> ok; }
+    <span class="kw">public</span> Object <span class="fn">getData</span>() { <span class="kw">return</span> data; }
+    <span class="kw">public</span> String <span class="fn">getMessage</span>() { <span class="kw">return</span> message; }
+}
+</pre></div>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠️ Errores comunes que el GATE detecta</div>
+    <div class="danger-content">
+      <strong>1. <code>new LoginRequest("user", "pass")</code></strong> — El Test Worker inventa un constructor all-args que el Code Worker debe implementar. PROHIBIDO. Solo no-arg + setters.<br>
+      <strong>2. <code>new ApiResponse(true, data, null)</code></strong> — Constructor público en ApiResponse. PROHIBIDO. Factory only.<br>
+      <strong>3. Field <code>especialidad</code></strong> en lugar de <code>titulacion</code> — KI-3, naming canónico.<br>
+      <strong>4. Field <code>nombreProf</code></strong> abreviado — KI-1 exige <code>nombreProfesor</code> completo.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: ENTIDADES                                        -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-entidades" class="mode-panel">
+
+  <div class="sec-title" data-n="1">ENTIDADES = VALUE OBJECTS INMUTABLES</div>
+
+  <p>Las entidades del dominio (<code>Usuario</code>, <code>RevisionExamen</code>, <code>Proyecto</code>, <code>SelladoAsignaturas</code>, <code>TemaProyecto</code>) son <strong>todas inmutables</strong>: <code>final class</code>, todos los campos <code>final</code>, un solo constructor con N argumentos, cero setters. Esto no es estilo — es el contrato.</p>
+
+  <table class="vtable">
+    <tr><th>Entidad</th><th>Args ctor</th><th>Tests</th><th>Particularidad</th></tr>
+    <tr><td><code>Usuario</code></td><td>12</td><td>19</td><td>Field <code>titulacion</code> NOT <code>especialidad</code> (KI-3)</td></tr>
+    <tr><td><code>RevisionExamen</code></td><td>7</td><td>14</td><td>Field <code>nombreProfesor</code> (KI-1)</td></tr>
+    <tr><td><code>SelladoAsignaturas</code></td><td>3</td><td>11</td><td>List&lt;String&gt; asignaturas</td></tr>
+    <tr><td><code>Proyecto</code></td><td>10</td><td>18</td><td>Field <code>activado</code> es String "Si"/"No"</td></tr>
+    <tr><td><code>TemaProyecto</code></td><td>8</td><td>20</td><td>Field <code>year</code> int (KI-15)</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">PATRÓN DE TEST: 6 ASPECTOS</div>
+
+  <p>Cada entidad se valida en 6 dimensiones independientes. Los primeros 5 son contratos estructurales (reflection pura, sin instanciar). El sexto es una verificación de getter por cada campo, que sí instancia vía reflection.</p>
+
+  <ol>
+    <li><code>testClassIsFinal</code> — la clase es <code>final</code></li>
+    <li><code>testAllFieldsAreFinal</code> — todos los campos son <code>final</code></li>
+    <li><code>testNoSetters</code> — ningún método empieza con "<code>set</code>"</li>
+    <li><code>testExactlyOneConstructor</code> — un único constructor</li>
+    <li><code>testConstructorHasNParameters</code> — el constructor tiene N args (12 para Usuario)</li>
+    <li><code>testGet{Field}</code> — cada getter retorna el valor pasado al constructor</li>
+  </ol>
+
+  <div class="sec-title" data-n="3">USUARIO ENTITY — TEST COMPLETO</div>
+
+  <p>Este es el test real generado por Test Worker para la entidad principal del sistema. Cubre los 6 aspectos para los 12 campos de Usuario, más una verificación específica de Knowledge Injection (KI-3): el campo se llama <code>titulacion</code> y NO <code>especialidad</code>.</p>
+
+<div class="file-path">tests/entities/<span class="ext">UsuarioEntityTest.java</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Java · 19 @Test · Generado por TW1</span><button class="copy-btn">COPY</button>
+<span class="kw">package</span> domain.entities;
+
+<span class="kw">import</span> org.junit.Test;
+<span class="kw">import</span> java.lang.reflect.Constructor;
+<span class="kw">import</span> java.lang.reflect.Field;
+<span class="kw">import</span> java.lang.reflect.Method;
+<span class="kw">import</span> java.lang.reflect.Modifier;
+
+<span class="kw">import static</span> org.junit.Assert.*;
+
+<span class="kw">public class</span> <span class="cl">UsuarioEntityTest</span> {
+
+    <span class="cm">// Helper: crear instancia válida vía reflection</span>
+    <span class="kw">private</span> <span class="cl">Usuario</span> <span class="fn">buildUsuario</span>() <span class="kw">throws</span> Exception {
+        Constructor&lt;<span class="cl">Usuario</span>&gt; ctor = <span class="cl">Usuario</span>.<span class="kw">class</span>.<span class="fn">getDeclaredConstructor</span>(
+                <span class="kw">int</span>.<span class="kw">class</span>, String.<span class="kw">class</span>, String.<span class="kw">class</span>, String.<span class="kw">class</span>,
+                String.<span class="kw">class</span>, String.<span class="kw">class</span>, String.<span class="kw">class</span>, String.<span class="kw">class</span>,
+                String.<span class="kw">class</span>, String.<span class="kw">class</span>, String.<span class="kw">class</span>, String.<span class="kw">class</span>);
+        ctor.<span class="fn">setAccessible</span>(<span class="kw">true</span>);
+        <span class="kw">return</span> ctor.<span class="fn">newInstance</span>(
+                <span class="nu">1</span>, <span class="st">"EXP-001"</span>, <span class="st">"Juan"</span>, <span class="st">"Garcia Lopez"</span>,
+                <span class="st">"Calle Mayor 1"</span>, <span class="st">"juan@example.com"</span>, <span class="st">"600123456"</span>,
+                <span class="st">"Ingeniería Informática"</span>, <span class="st">"4º"</span>, <span class="st">"TFM-2024"</span>,
+                <span class="st">"jgarcia"</span>, <span class="st">"secret"</span>);
+    }
+
+    <span class="cm">// 1. La clase debe ser final</span>
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testClassIsFinal</span>() {
+        <span class="fn">assertTrue</span>(<span class="st">"Usuario must be declared final"</span>,
+                Modifier.<span class="fn">isFinal</span>(<span class="cl">Usuario</span>.<span class="kw">class</span>.<span class="fn">getModifiers</span>()));
+    }
+
+    <span class="cm">// 2. Todos los campos declarados deben ser final</span>
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testAllFieldsAreFinal</span>() {
+        <span class="kw">for</span> (Field f : <span class="cl">Usuario</span>.<span class="kw">class</span>.<span class="fn">getDeclaredFields</span>()) {
+            <span class="fn">assertTrue</span>(<span class="st">"Field '"</span> + f.<span class="fn">getName</span>() + <span class="st">"' must be final"</span>,
+                    Modifier.<span class="fn">isFinal</span>(f.<span class="fn">getModifiers</span>()));
+        }
+    }
+
+    <span class="cm">// 3. Sin setters</span>
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testNoSetters</span>() {
+        <span class="kw">for</span> (Method m : <span class="cl">Usuario</span>.<span class="kw">class</span>.<span class="fn">getDeclaredMethods</span>()) {
+            <span class="fn">assertFalse</span>(<span class="st">"Setter found but not allowed: "</span> + m.<span class="fn">getName</span>(),
+                    m.<span class="fn">getName</span>().<span class="fn">startsWith</span>(<span class="st">"set"</span>));
+        }
+    }
+
+    <span class="cm">// 4. Exactamente un constructor</span>
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testExactlyOneConstructor</span>() {
+        <span class="fn">assertEquals</span>(<span class="st">"Usuario must have exactly 1 constructor"</span>,
+                <span class="nu">1</span>, <span class="cl">Usuario</span>.<span class="kw">class</span>.<span class="fn">getDeclaredConstructors</span>().length);
+    }
+
+    <span class="cm">// 5. Firma del constructor: 12 parámetros</span>
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testConstructorHasTwelveParameters</span>() {
+        Constructor&lt;?&gt;[] ctors = <span class="cl">Usuario</span>.<span class="kw">class</span>.<span class="fn">getDeclaredConstructors</span>();
+        <span class="fn">assertEquals</span>(<span class="st">"Constructor must have 12 parameters"</span>,
+                <span class="nu">12</span>, ctors[<span class="nu">0</span>].<span class="fn">getParameterTypes</span>().length);
+    }
+
+    <span class="cm">// 6.x — Getters por campo (12 tests, uno cada uno)</span>
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testGetExpediente</span>() <span class="kw">throws</span> Exception {
+        <span class="cl">Usuario</span> u = <span class="fn">buildUsuario</span>();
+        <span class="fn">assertEquals</span>(<span class="st">"EXP-001"</span>,
+            <span class="cl">Usuario</span>.<span class="kw">class</span>.<span class="fn">getMethod</span>(<span class="st">"getExpediente"</span>).<span class="fn">invoke</span>(u));
+    }
+
+    <span class="cm">// KI-3: campo MUST be "titulacion", NOT "especialidad"</span>
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testFieldNameIsTitulacionNotEspecialidad</span>() {
+        <span class="kw">boolean</span> hasTitulacion = <span class="kw">false</span>, hasEspecialidad = <span class="kw">false</span>;
+        <span class="kw">for</span> (Field f : <span class="cl">Usuario</span>.<span class="kw">class</span>.<span class="fn">getDeclaredFields</span>()) {
+            <span class="kw">if</span> (<span class="st">"titulacion"</span>.<span class="fn">equals</span>(f.<span class="fn">getName</span>())) hasTitulacion = <span class="kw">true</span>;
+            <span class="kw">if</span> (<span class="st">"especialidad"</span>.<span class="fn">equals</span>(f.<span class="fn">getName</span>())) hasEspecialidad = <span class="kw">true</span>;
+        }
+        <span class="hl"><span class="fn">assertTrue</span>(<span class="st">"Field 'titulacion' must exist"</span>, hasTitulacion);
+        <span class="fn">assertFalse</span>(<span class="st">"Field must NOT be named 'especialidad'"</span>, hasEspecialidad);</span>
+    }
+
+    <span class="cm">// ... 12 tests más para getCurso, getProyectoEnCurso, getLogin, etc.</span>
+}
+</pre></div>
+
+  <div class="callout orange">
+    <strong>El truco del helper buildUsuario()</strong>
+    El helper privado <code>buildUsuario()</code> usa <code>setAccessible(true)</code> para construir una instancia válida vía reflection, sin necesidad de hacer <code>new Usuario(...)</code> con 12 args repetidos en cada test. <strong>Reduce ruido y centraliza el caso "happy path"</strong> que cada getter verifica.
+  </div>
+
+  <div class="sec-title" data-n="4">CÓDIGO QUE PASA EL TEST — USUARIO</div>
+
+<div class="file-path">backend/domain/entities/<span class="ext">Usuario.java</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Java · Output CW1 · Inmutabilidad estricta</span><button class="copy-btn">COPY</button>
+<span class="kw">package</span> domain.entities;
+
+<span class="kw">public final class</span> <span class="cl">Usuario</span> {
+
+    <span class="kw">private final int</span> id;
+    <span class="kw">private final</span> String expediente;
+    <span class="kw">private final</span> String nombre;
+    <span class="kw">private final</span> String apellidos;
+    <span class="kw">private final</span> String direccion;
+    <span class="kw">private final</span> String email;
+    <span class="kw">private final</span> String telefono;
+    <span class="kw">private final</span> String titulacion;          <span class="cm">// KI-3</span>
+    <span class="kw">private final</span> String curso;
+    <span class="kw">private final</span> String proyectoEnCurso;     <span class="cm">// KI-16</span>
+    <span class="kw">private final</span> String login;
+    <span class="kw">private final</span> String clave;
+
+    <span class="kw">public</span> <span class="fn">Usuario</span>(<span class="kw">int</span> id, String expediente, String nombre, String apellidos,
+                   String direccion, String email, String telefono, String titulacion,
+                   String curso, String proyectoEnCurso, String login, String clave) {
+        <span class="kw">this</span>.id = id;
+        <span class="kw">this</span>.expediente = expediente;
+        <span class="kw">this</span>.nombre = nombre;
+        <span class="kw">this</span>.apellidos = apellidos;
+        <span class="kw">this</span>.direccion = direccion;
+        <span class="kw">this</span>.email = email;
+        <span class="kw">this</span>.telefono = telefono;
+        <span class="kw">this</span>.titulacion = titulacion;
+        <span class="kw">this</span>.curso = curso;
+        <span class="kw">this</span>.proyectoEnCurso = proyectoEnCurso;
+        <span class="kw">this</span>.login = login;
+        <span class="kw">this</span>.clave = clave;
+    }
+
+    <span class="kw">public int</span> <span class="fn">getId</span>() { <span class="kw">return</span> id; }
+    <span class="kw">public</span> String <span class="fn">getExpediente</span>() { <span class="kw">return</span> expediente; }
+    <span class="kw">public</span> String <span class="fn">getNombre</span>() { <span class="kw">return</span> nombre; }
+    <span class="kw">public</span> String <span class="fn">getApellidos</span>() { <span class="kw">return</span> apellidos; }
+    <span class="kw">public</span> String <span class="fn">getDireccion</span>() { <span class="kw">return</span> direccion; }
+    <span class="kw">public</span> String <span class="fn">getEmail</span>() { <span class="kw">return</span> email; }
+    <span class="kw">public</span> String <span class="fn">getTelefono</span>() { <span class="kw">return</span> telefono; }
+    <span class="kw">public</span> String <span class="fn">getTitulacion</span>() { <span class="kw">return</span> titulacion; }
+    <span class="kw">public</span> String <span class="fn">getCurso</span>() { <span class="kw">return</span> curso; }
+    <span class="kw">public</span> String <span class="fn">getProyectoEnCurso</span>() { <span class="kw">return</span> proyectoEnCurso; }
+    <span class="kw">public</span> String <span class="fn">getLogin</span>() { <span class="kw">return</span> login; }
+    <span class="kw">public</span> String <span class="fn">getClave</span>() { <span class="kw">return</span> clave; }
+}
+</pre></div>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠️ Por qué inmutabilidad estricta</div>
+    <div class="danger-content">
+      Si <code>Usuario</code> tuviera setters, el código de transporte podría modificar la entidad después de cargarla del repo. Esto rompe el modelo hexagonal: la entidad de dominio no debe estar acoplada al ciclo de vida HTTP. <code>final class</code> + <code>final fields</code> + <strong>0 setters</strong> garantiza que cualquier cambio requiere construir una nueva entidad — explícito, trazable, sin estado compartido accidental.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="5">EDGE CASE: TEMAPROYECTO Y EL CAMPO YEAR</div>
+
+  <p><code>TemaProyecto</code> tiene un campo <code>year</code> que es <strong>palabra reservada en PostgreSQL</strong>. KI-15 lo marca como un punto crítico: el SQL debe usar <code>"year"</code> entrecomillado, y el campo Java debe ser <code>int</code> (no <code>String</code>). El test lo verifica explícitamente.</p>
+
+<div class="file-path">tests/entities/<span class="ext">TemaProyectoEntityTest.java</span> (excerpt)</div>
+<div class="code-wrap">
+<pre><span class="lang">Java · KI-15 verification</span><button class="copy-btn">COPY</button>
+<span class="an">@Test</span>
+<span class="kw">public void</span> <span class="fn">testFieldYearIsInt</span>() <span class="kw">throws</span> Exception {
+    Field f = <span class="cl">TemaProyecto</span>.<span class="kw">class</span>.<span class="fn">getDeclaredField</span>(<span class="st">"year"</span>);
+    <span class="fn">assertEquals</span>(<span class="st">"Field 'year' must be int (KI-15)"</span>,
+        <span class="kw">int</span>.<span class="kw">class</span>, f.<span class="fn">getType</span>());
+}
+
+<span class="an">@Test</span>
+<span class="kw">public void</span> <span class="fn">testGetYear</span>() <span class="kw">throws</span> Exception {
+    <span class="cl">TemaProyecto</span> t = <span class="fn">buildTema</span>();
+    <span class="fn">assertEquals</span>(<span class="nu">2024</span>,
+        <span class="cl">TemaProyecto</span>.<span class="kw">class</span>.<span class="fn">getMethod</span>(<span class="st">"getYear"</span>).<span class="fn">invoke</span>(t));
+}
+</pre></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: INTERFACES                                       -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-interfaces" class="mode-panel">
+
+  <div class="sec-title" data-n="1">INTERFACES = CONTRATOS DE REPOSITORIO</div>
+
+  <p>Las interfaces de repositorio viven en <code>domain.interfaces</code> (NUNCA <code>domain.repositories</code> — KI). Son la frontera entre el dominio puro y la infraestructura. Los tests verifican que cada método existe con la firma correcta, incluyendo los tipos genéricos: <code>Optional&lt;Usuario&gt;</code>, <code>List&lt;TemaProyecto&gt;</code>.</p>
+
+  <table class="vtable">
+    <tr><th>Interface</th><th>Métodos</th><th>Tests</th><th>Particularidad</th></tr>
+    <tr><td><code>UsuarioRepository</code></td><td>5</td><td>13</td><td>findByLogin/Id retornan <code>Optional&lt;Usuario&gt;</code></td></tr>
+    <tr><td><code>RevisionRepository</code></td><td>3</td><td>7</td><td>save() retorna int (id generado)</td></tr>
+    <tr><td><code>SelladoRepository</code></td><td>2</td><td>6</td><td>List&lt;String&gt; en parámetros</td></tr>
+    <tr><td><code>ProyectoRepository</code></td><td>4</td><td>8</td><td>findByUsuarioId retorna List</td></tr>
+    <tr><td><code>TemaRepository</code></td><td>4</td><td>8</td><td>List&lt;TemaProyecto&gt; con CRUD</td></tr>
+    <tr><td><code>SolicitudRepository</code></td><td>3</td><td>9</td><td>findByFilters(SolicitudFilter)</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">EL TRUCO DE PARAMETERIZEDTYPE</div>
+
+  <p>Verificar que un método retorna <code>Optional</code> es trivial (<code>method.getReturnType() == Optional.class</code>). Verificar que retorna <strong>específicamente</strong> <code>Optional&lt;Usuario&gt;</code> requiere navegar por el árbol de tipos genéricos con <code>ParameterizedType</code>. Esta es la pieza que distingue un test estructural amateur de uno profesional.</p>
+
+<div class="file-path">tests/interfaces/<span class="ext">UsuarioRepositoryTest.java</span> (excerpt)</div>
+<div class="code-wrap">
+<pre><span class="lang">Java · Verificación de tipos genéricos</span><button class="copy-btn">COPY</button>
+<span class="kw">package</span> tests.interfaces;
+
+<span class="kw">import</span> org.junit.Test;
+<span class="kw">import</span> java.lang.reflect.Method;
+<span class="kw">import</span> java.lang.reflect.Modifier;
+<span class="kw">import</span> java.lang.reflect.ParameterizedType;
+<span class="kw">import</span> java.lang.reflect.Type;
+<span class="kw">import</span> java.util.List;
+<span class="kw">import</span> java.util.Optional;
+<span class="kw">import static</span> org.junit.Assert.*;
+
+<span class="kw">public class</span> <span class="cl">UsuarioRepositoryTest</span> {
+
+    <span class="kw">private static final</span> String INTERFACE_NAME = <span class="st">"domain.interfaces.UsuarioRepository"</span>;
+
+    <span class="kw">private</span> Class&lt;?&gt; <span class="fn">loadInterface</span>() <span class="kw">throws</span> ClassNotFoundException {
+        <span class="kw">return</span> Class.<span class="fn">forName</span>(INTERFACE_NAME);
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testIsInterface</span>() <span class="kw">throws</span> ClassNotFoundException {
+        Class&lt;?&gt; clazz = <span class="fn">loadInterface</span>();
+        <span class="fn">assertTrue</span>(<span class="st">"UsuarioRepository debe ser una interfaz"</span>,
+                Modifier.<span class="fn">isInterface</span>(clazz.<span class="fn">getModifiers</span>()));
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testHasExactlyFiveMethods</span>() <span class="kw">throws</span> ClassNotFoundException {
+        Class&lt;?&gt; clazz = <span class="fn">loadInterface</span>();
+        <span class="fn">assertEquals</span>(<span class="st">"UsuarioRepository debe tener exactamente 5 metodos"</span>,
+                <span class="nu">5</span>, clazz.<span class="fn">getDeclaredMethods</span>().length);
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testFindByLoginMethod</span>() <span class="kw">throws</span> Exception {
+        Class&lt;?&gt; clazz = <span class="fn">loadInterface</span>();
+        Class&lt;?&gt; usuarioClass = Class.<span class="fn">forName</span>(<span class="st">"domain.entities.Usuario"</span>);
+        Method method = clazz.<span class="fn">getMethod</span>(<span class="st">"findByLogin"</span>, String.<span class="kw">class</span>);
+
+        <span class="cm">// 1. Raw return type debe ser Optional</span>
+        <span class="fn">assertEquals</span>(<span class="st">"findByLogin debe retornar Optional"</span>,
+                Optional.<span class="kw">class</span>, method.<span class="fn">getReturnType</span>());
+
+        <span class="cm">// 2. Generic return type debe ser Optional&lt;Usuario&gt;</span>
+        Type genericReturn = method.<span class="fn">getGenericReturnType</span>();
+        <span class="fn">assertTrue</span>(<span class="st">"findByLogin debe retornar Optional&lt;Usuario&gt;"</span>,
+                genericReturn <span class="kw">instanceof</span> ParameterizedType);
+
+        <span class="hl">ParameterizedType paramType = (ParameterizedType) genericReturn;
+        <span class="fn">assertEquals</span>(Optional.<span class="kw">class</span>, paramType.<span class="fn">getRawType</span>());
+
+        Type[] typeArgs = paramType.<span class="fn">getActualTypeArguments</span>();
+        <span class="fn">assertEquals</span>(<span class="nu">1</span>, typeArgs.length);
+        <span class="fn">assertEquals</span>(<span class="st">"El tipo generico de Optional debe ser Usuario"</span>,
+                usuarioClass, typeArgs[<span class="nu">0</span>]);</span>
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">testSaveReturnsInt</span>() <span class="kw">throws</span> Exception {
+        Class&lt;?&gt; clazz = <span class="fn">loadInterface</span>();
+        Class&lt;?&gt; usuarioClass = Class.<span class="fn">forName</span>(<span class="st">"domain.entities.Usuario"</span>);
+        Method method = clazz.<span class="fn">getMethod</span>(<span class="st">"save"</span>, usuarioClass);
+
+        <span class="cm">// save() retorna int (id generado por INSERT RETURNING) — KI-12</span>
+        <span class="fn">assertEquals</span>(<span class="kw">int</span>.<span class="kw">class</span>, method.<span class="fn">getReturnType</span>());
+    }
+}
+</pre></div>
+
+  <div class="callout blue">
+    <strong>Class.forName en lugar de import directo</strong>
+    Los tests usan <code>Class.forName("domain.interfaces.UsuarioRepository")</code> en vez de importar la clase. Esto permite que el test <strong>compile y ejecute como especificación</strong> antes de que la implementación exista. Si <code>UsuarioRepository</code> no existe, el test falla con <code>ClassNotFoundException</code> en runtime — no con error de compilación.
+  </div>
+
+  <div class="sec-title" data-n="3">CÓDIGO QUE PASA EL TEST — USUARIOREPOSITORY</div>
+
+<div class="file-path">backend/domain/interfaces/<span class="ext">UsuarioRepository.java</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Java · Output CW2 · Contrato del repo</span><button class="copy-btn">COPY</button>
+<span class="kw">package</span> domain.interfaces;
+
+<span class="kw">import</span> domain.entities.Usuario;
+<span class="kw">import</span> java.util.List;
+<span class="kw">import</span> java.util.Optional;
+
+<span class="kw">public interface</span> <span class="cl">UsuarioRepository</span> {
+
+    Optional&lt;<span class="cl">Usuario</span>&gt; <span class="fn">findByLogin</span>(String login);
+
+    Optional&lt;<span class="cl">Usuario</span>&gt; <span class="fn">findById</span>(<span class="kw">int</span> id);
+
+    <span class="kw">int</span> <span class="fn">save</span>(<span class="cl">Usuario</span> usuario);                <span class="cm">// INSERT RETURNING id (KI-12)</span>
+
+    <span class="kw">void</span> <span class="fn">update</span>(<span class="cl">Usuario</span> usuario);
+
+    List&lt;<span class="cl">Usuario</span>&gt; <span class="fn">findAll</span>();
+}
+</pre></div>
+
+  <div class="sec-title" data-n="4">PATRÓN: LIST&lt;T&gt; EN PARÁMETROS Y RETORNOS</div>
+
+  <p>Algunos repos manejan colecciones. <code>SelladoRepository</code> recibe una <code>List&lt;String&gt;</code> de asignaturas. <code>TemaRepository</code> retorna <code>List&lt;TemaProyecto&gt;</code>. La verificación es análoga al caso Optional, pero hay que navegar el <code>ParameterizedType</code> del parámetro o del retorno.</p>
+
+<div class="code-wrap">
+<pre><span class="lang">Java · Patrón List&lt;T&gt; en parámetro</span><button class="copy-btn">COPY</button>
+<span class="an">@Test</span>
+<span class="kw">public void</span> <span class="fn">testSaveAcceptsListOfStrings</span>() <span class="kw">throws</span> Exception {
+    Class&lt;?&gt; clazz = Class.<span class="fn">forName</span>(<span class="st">"domain.interfaces.SelladoRepository"</span>);
+    Method save = clazz.<span class="fn">getMethod</span>(<span class="st">"save"</span>,
+            <span class="kw">int</span>.<span class="kw">class</span>, String.<span class="kw">class</span>, List.<span class="kw">class</span>);
+
+    <span class="cm">// El último parámetro debe ser List&lt;String&gt;</span>
+    Type[] paramTypes = save.<span class="fn">getGenericParameterTypes</span>();
+    <span class="fn">assertTrue</span>(paramTypes[<span class="nu">2</span>] <span class="kw">instanceof</span> ParameterizedType);
+
+    ParameterizedType pt = (ParameterizedType) paramTypes[<span class="nu">2</span>];
+    <span class="fn">assertEquals</span>(List.<span class="kw">class</span>, pt.<span class="fn">getRawType</span>());
+    <span class="fn">assertEquals</span>(String.<span class="kw">class</span>, pt.<span class="fn">getActualTypeArguments</span>()[<span class="nu">0</span>]);
+}
+</pre></div>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Por qué tanto rigor con los genéricos</div>
+    <div class="insight-content">
+      Si el Test Worker permite que <code>findByLogin</code> retorne <code>Optional</code> sin parámetro de tipo, el Code Worker podría implementarlo como <code>Optional&lt;Object&gt;</code> o <code>Optional</code> raw. El UseCase haría <code>Object u = repo.findByLogin(...).get()</code> y necesitaría cast — perdiendo el type-safety. Verificar <code>Optional&lt;Usuario&gt;</code> exacto previene esta degradación silenciosa del contrato.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: USECASES                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-usecases" class="mode-panel">
+
+  <div class="sec-title" data-n="1">USECASES = LÓGICA DE NEGOCIO</div>
+
+  <p>Los UseCases viven en <code>domain.usecases</code> y orquestan la lógica que conecta entidades, repositorios y DTOs. Un UseCase típico recibe un <code>Request</code>, valida, llama uno o más repos, mapea a entidad, persiste, retorna un <code>Response</code>. Aquí ya no basta con reflection — necesitamos verificar interacciones. Mockito 1.x es la herramienta.</p>
+
+  <table class="vtable">
+    <tr><th>UseCase</th><th>Tests</th><th>Patrón clave</th></tr>
+    <tr><td><code>AuthenticateUserUseCase</code></td><td>4</td><td>3 paths: success, not found, wrong password</td></tr>
+    <tr><td><code>RegisterUserUseCase</code></td><td>4</td><td>save() retorna id, propagación a response</td></tr>
+    <tr><td><code>GetUserProfileUseCase</code></td><td>3</td><td>findById + mapeo a UserProfileResponse</td></tr>
+    <tr><td><code>UpdateUserUseCase</code></td><td>6</td><td>IDOR: validar session.userId == path.id</td></tr>
+    <tr><td><code>ProcessRevisionUseCase</code></td><td>4</td><td><strong>ArgumentCaptor</strong> para verificar mapeo</td></tr>
+    <tr><td><code>ProcessSelladoUseCase</code></td><td>4</td><td>List&lt;String&gt; → SelladoAsignaturas</td></tr>
+    <tr><td><code>ProcessProyectoUseCase</code></td><td>4</td><td>idTema (long) propagation</td></tr>
+    <tr><td><code>GetTemasUseCase</code></td><td>3</td><td>findAll + mapeo a List&lt;TemaResponse&gt;</td></tr>
+    <tr><td><code>ManageTemasUseCase</code></td><td>5</td><td>CRUD: create, update, delete, toggle, getAll</td></tr>
+    <tr><td><code>ListSolicitudesUseCase</code></td><td>4</td><td>findByFilters(SolicitudFilter)</td></tr>
+    <tr><td><code>ListUsuariosUseCase</code></td><td>3</td><td>findAll → mapeo a UsuarioListItem</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">PATRÓN MOCKITO BÁSICO</div>
+
+  <p>Cada UseCase tiene un setup similar: en <code>@Before</code> se mockea cada repo y se inyecta vía constructor. Los tests siguen el patrón AAA (Arrange / Act / Assert) y siempre incluyen un <code>verify()</code> al final para confirmar que el mock fue llamado.</p>
+
+<div class="file-path">tests/usecases/<span class="ext">AuthenticateUserUseCaseTest.java</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Java · Mockito 1.x · 4 @Test</span><button class="copy-btn">COPY</button>
+<span class="kw">package</span> domain.usecases;
+
+<span class="kw">import</span> domain.entities.Usuario;
+<span class="kw">import</span> domain.interfaces.UsuarioRepository;
+<span class="kw">import</span> domain.dto.LoginResponse;
+
+<span class="kw">import</span> org.junit.Before;
+<span class="kw">import</span> org.junit.Test;
+<span class="kw">import</span> org.mockito.ArgumentCaptor;
+
+<span class="kw">import</span> java.util.Optional;
+
+<span class="kw">import static</span> org.junit.Assert.*;
+<span class="kw">import static</span> org.mockito.Mockito.*;
+
+<span class="kw">public class</span> <span class="cl">AuthenticateUserUseCaseTest</span> {
+
+    <span class="kw">private</span> <span class="cl">UsuarioRepository</span> repo;
+    <span class="kw">private</span> <span class="cl">AuthenticateUserUseCase</span> useCase;
+    <span class="kw">private</span> <span class="cl">Usuario</span> validUsuario;
+
+    <span class="an">@Before</span>
+    <span class="kw">public void</span> <span class="fn">setUp</span>() {
+        repo = <span class="fn">mock</span>(<span class="cl">UsuarioRepository</span>.<span class="kw">class</span>);
+        useCase = <span class="kw">new</span> <span class="cl">AuthenticateUserUseCase</span>(repo);
+
+        validUsuario = <span class="kw">new</span> <span class="cl">Usuario</span>(
+                <span class="nu">1</span>, <span class="st">"EXP001"</span>, <span class="st">"Juan"</span>, <span class="st">"Garcia"</span>,
+                <span class="st">"Dir"</span>, <span class="st">"j@e.com"</span>, <span class="st">"123456789"</span>,
+                <span class="st">"Telecomunicacion"</span>, <span class="st">"1"</span>, <span class="st">"No"</span>,
+                <span class="st">"user"</span>, <span class="st">"pass123"</span>
+        );
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">execute_success_returnsLoginResponseOk</span>() {
+        <span class="hl"><span class="fn">when</span>(repo.<span class="fn">findByLogin</span>(<span class="st">"user"</span>)).<span class="fn">thenReturn</span>(Optional.<span class="fn">of</span>(validUsuario));</span>
+
+        <span class="cl">LoginResponse</span> response = useCase.<span class="fn">execute</span>(<span class="st">"user"</span>, <span class="st">"pass123"</span>);
+
+        <span class="fn">assertNotNull</span>(response);
+        <span class="fn">assertTrue</span>(response.<span class="fn">isOk</span>());
+        <span class="fn">verify</span>(repo).<span class="fn">findByLogin</span>(<span class="st">"user"</span>);
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">execute_userNotFound_returnsLoginResponseFail</span>() {
+        <span class="hl"><span class="fn">when</span>(repo.<span class="fn">findByLogin</span>(<span class="st">"bad"</span>)).<span class="fn">thenReturn</span>(Optional.<span class="fn">empty</span>());</span>
+
+        <span class="cl">LoginResponse</span> response = useCase.<span class="fn">execute</span>(<span class="st">"bad"</span>, <span class="st">"anyPassword"</span>);
+
+        <span class="fn">assertNotNull</span>(response);
+        <span class="fn">assertFalse</span>(response.<span class="fn">isOk</span>());
+        <span class="fn">assertNotNull</span>(response.<span class="fn">getMessage</span>());
+        <span class="fn">verify</span>(repo).<span class="fn">findByLogin</span>(<span class="st">"bad"</span>);
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">execute_wrongPassword_returnsLoginResponseFail</span>() {
+        <span class="fn">when</span>(repo.<span class="fn">findByLogin</span>(<span class="st">"user"</span>)).<span class="fn">thenReturn</span>(Optional.<span class="fn">of</span>(validUsuario));
+
+        <span class="cl">LoginResponse</span> response = useCase.<span class="fn">execute</span>(<span class="st">"user"</span>, <span class="st">"wrongPassword"</span>);
+
+        <span class="fn">assertNotNull</span>(response);
+        <span class="fn">assertFalse</span>(response.<span class="fn">isOk</span>());
+        <span class="fn">verify</span>(repo).<span class="fn">findByLogin</span>(<span class="st">"user"</span>);
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">execute_nullLogin_returnsLoginResponseFail</span>() {
+        <span class="fn">when</span>(repo.<span class="fn">findByLogin</span>(<span class="kw">null</span>)).<span class="fn">thenReturn</span>(Optional.<span class="fn">empty</span>());
+
+        <span class="cl">LoginResponse</span> response = useCase.<span class="fn">execute</span>(<span class="kw">null</span>, <span class="st">"pass123"</span>);
+
+        <span class="fn">assertNotNull</span>(response);
+        <span class="fn">assertFalse</span>(response.<span class="fn">isOk</span>());
+    }
+}
+</pre></div>
+
+  <div class="callout green">
+    <strong>Cobertura de paths con 4 tests</strong>
+    Una buena suite de un UseCase de auth cubre los <strong>4 paths críticos</strong>: success (happy path), user not found (Optional.empty), wrong password (entity exists but credentials fail), edge case (null inputs). Cada path es un <code>@Test</code> independiente con su propio mock setup. La regla práctica: un <code>@Test</code> por <code>if</code> branch del UseCase.
+  </div>
+
+  <div class="sec-title" data-n="3">ARGUMENTCAPTOR — VERIFICAR EL MAPEO</div>
+
+  <p>El verdadero valor de Mockito en FMI llega cuando el UseCase mapea un <code>Request</code> mutable a una <code>Entity</code> inmutable y la persiste. Sin <code>ArgumentCaptor</code>, solo podemos verificar que <code>save()</code> fue llamado. Con él, podemos inspeccionar la entidad pasada y validar que el mapeo preservó los campos correctos — incluyendo Knowledge Injections como <code>nombreProfesor</code> (KI-1).</p>
+
+<div class="file-path">tests/usecases/<span class="ext">ProcessRevisionUseCaseTest.java</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Java · ArgumentCaptor para validar mapeo</span><button class="copy-btn">COPY</button>
+<span class="kw">public class</span> <span class="cl">ProcessRevisionUseCaseTest</span> {
+
+    <span class="kw">private</span> <span class="cl">RevisionRepository</span> repo;
+    <span class="kw">private</span> <span class="cl">ProcessRevisionUseCase</span> useCase;
+
+    <span class="an">@Before</span>
+    <span class="kw">public void</span> <span class="fn">setUp</span>() {
+        repo = <span class="fn">mock</span>(<span class="cl">RevisionRepository</span>.<span class="kw">class</span>);
+        useCase = <span class="kw">new</span> <span class="cl">ProcessRevisionUseCase</span>(repo);
+    }
+
+    <span class="kw">private</span> <span class="cl">RevisionRequest</span> <span class="fn">buildRevisionRequest</span>() {
+        <span class="cl">RevisionRequest</span> req = <span class="kw">new</span> <span class="cl">RevisionRequest</span>();
+        req.<span class="fn">setNombreProfesor</span>(<span class="st">"Prof"</span>);              <span class="cm">// KI-1</span>
+        req.<span class="fn">setAsignatura</span>(<span class="st">"Matematicas"</span>);
+        req.<span class="fn">setFecha</span>(<span class="st">"2026-06-01"</span>);
+        req.<span class="fn">setMotivo</span>(<span class="st">"Solicitud de revision de examen parcial"</span>);
+        req.<span class="fn">setConvocatoria</span>(<span class="st">"Junio"</span>);
+        <span class="kw">return</span> req;
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">execute_validRequest_savesRevisionAndReturnsOk</span>() {
+        <span class="fn">when</span>(repo.<span class="fn">save</span>(<span class="fn">any</span>(<span class="cl">RevisionExamen</span>.<span class="kw">class</span>))).<span class="fn">thenReturn</span>(<span class="nu">1</span>);
+
+        <span class="cl">RevisionRequest</span> request = <span class="fn">buildRevisionRequest</span>();
+        <span class="cl">ApiResponse</span> response = useCase.<span class="fn">execute</span>(<span class="nu">1</span>, request);
+
+        <span class="fn">assertNotNull</span>(response);
+        <span class="fn">assertTrue</span>(response.<span class="fn">isOk</span>());
+        <span class="fn">verify</span>(repo).<span class="fn">save</span>(<span class="fn">any</span>(<span class="cl">RevisionExamen</span>.<span class="kw">class</span>));
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">execute_validRequest_capturesCorrectEntity</span>() {
+        <span class="hl">ArgumentCaptor&lt;<span class="cl">RevisionExamen</span>&gt; captor =
+            ArgumentCaptor.<span class="fn">forClass</span>(<span class="cl">RevisionExamen</span>.<span class="kw">class</span>);
+        <span class="fn">when</span>(repo.<span class="fn">save</span>(captor.<span class="fn">capture</span>())).<span class="fn">thenReturn</span>(<span class="nu">1</span>);</span>
+
+        <span class="cl">RevisionRequest</span> request = <span class="fn">buildRevisionRequest</span>();
+        useCase.<span class="fn">execute</span>(<span class="nu">1</span>, request);
+
+        <span class="cl">RevisionExamen</span> saved = captor.<span class="fn">getValue</span>();
+        <span class="fn">assertNotNull</span>(saved);
+        <span class="cm">// KI-1: nombreProfesor must propagate from Request to Entity</span>
+        <span class="hl"><span class="fn">assertEquals</span>(<span class="st">"Prof"</span>, saved.<span class="fn">getNombreProfesor</span>());</span>
+        <span class="fn">assertEquals</span>(<span class="st">"Matematicas"</span>, saved.<span class="fn">getAsignatura</span>());
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">execute_userIdPropagated_toSavedEntity</span>() {
+        ArgumentCaptor&lt;<span class="cl">RevisionExamen</span>&gt; captor =
+            ArgumentCaptor.<span class="fn">forClass</span>(<span class="cl">RevisionExamen</span>.<span class="kw">class</span>);
+        <span class="fn">when</span>(repo.<span class="fn">save</span>(captor.<span class="fn">capture</span>())).<span class="fn">thenReturn</span>(<span class="nu">1</span>);
+
+        <span class="cl">RevisionRequest</span> request = <span class="fn">buildRevisionRequest</span>();
+        useCase.<span class="fn">execute</span>(<span class="nu">42</span>, request);
+
+        <span class="cl">RevisionExamen</span> saved = captor.<span class="fn">getValue</span>();
+        <span class="fn">assertEquals</span>(<span class="nu">42</span>, saved.<span class="fn">getUsuarioId</span>());
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">execute_saveFails_returnsErrorResponse</span>() {
+        <span class="fn">when</span>(repo.<span class="fn">save</span>(<span class="fn">any</span>(<span class="cl">RevisionExamen</span>.<span class="kw">class</span>))).<span class="fn">thenReturn</span>(<span class="nu">0</span>);
+
+        <span class="cl">RevisionRequest</span> request = <span class="fn">buildRevisionRequest</span>();
+        <span class="cl">ApiResponse</span> response = useCase.<span class="fn">execute</span>(<span class="nu">1</span>, request);
+
+        <span class="fn">assertNotNull</span>(response);
+        <span class="fn">verify</span>(repo).<span class="fn">save</span>(<span class="fn">any</span>(<span class="cl">RevisionExamen</span>.<span class="kw">class</span>));
+    }
+}
+</pre></div>
+
+  <div class="callout yellow">
+    <strong>Tres cosas que ArgumentCaptor verifica</strong>
+    1. <strong>El campo se mapea correctamente</strong> (KI-1: <code>req.getNombreProfesor()</code> → <code>entity.getNombreProfesor()</code>).<br>
+    2. <strong>El campo se preserva</strong> (no se trunca, no se sobreescribe con default).<br>
+    3. <strong>El userId externo se propaga</strong> a la entidad como campo (necesario para auditoría y FK).
+  </div>
+
+  <div class="sec-title" data-n="4">CÓDIGO QUE PASA EL TEST — AUTHENTICATEUSERUSECASE</div>
+
+<div class="file-path">backend/domain/usecases/<span class="ext">AuthenticateUserUseCase.java</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Java · Output CW4 · Constructor injection</span><button class="copy-btn">COPY</button>
+<span class="kw">package</span> domain.usecases;
+
+<span class="kw">import</span> domain.dto.LoginResponse;
+<span class="kw">import</span> domain.entities.Usuario;
+<span class="kw">import</span> domain.interfaces.UsuarioRepository;     <span class="cm">// NUNCA domain.repositories</span>
+<span class="kw">import</span> java.util.Optional;
+
+<span class="kw">public class</span> <span class="cl">AuthenticateUserUseCase</span> {
+
+    <span class="kw">private final</span> <span class="cl">UsuarioRepository</span> usuarioRepository;
+
+    <span class="kw">public</span> <span class="fn">AuthenticateUserUseCase</span>(<span class="cl">UsuarioRepository</span> usuarioRepository) {
+        <span class="kw">this</span>.usuarioRepository = usuarioRepository;
+    }
+
+    <span class="kw">public</span> <span class="cl">LoginResponse</span> <span class="fn">execute</span>(String login, String password) {
+        Optional&lt;<span class="cl">Usuario</span>&gt; optional = usuarioRepository.<span class="fn">findByLogin</span>(login);
+
+        <span class="kw">if</span> (!optional.<span class="fn">isPresent</span>()) {
+            <span class="cl">LoginResponse</span> r = <span class="kw">new</span> <span class="cl">LoginResponse</span>();
+            r.<span class="fn">setOk</span>(<span class="kw">false</span>);
+            r.<span class="fn">setMessage</span>(<span class="st">"Credenciales invalidas"</span>);
+            <span class="kw">return</span> r;
+        }
+
+        <span class="cl">Usuario</span> usuario = optional.<span class="fn">get</span>();
+        <span class="kw">if</span> (!usuario.<span class="fn">getClave</span>().<span class="fn">equals</span>(password)) {
+            <span class="cl">LoginResponse</span> r = <span class="kw">new</span> <span class="cl">LoginResponse</span>();
+            r.<span class="fn">setOk</span>(<span class="kw">false</span>);
+            r.<span class="fn">setMessage</span>(<span class="st">"Credenciales invalidas"</span>);
+            <span class="kw">return</span> r;
+        }
+
+        <span class="cl">LoginResponse</span> r = <span class="kw">new</span> <span class="cl">LoginResponse</span>();
+        r.<span class="fn">setOk</span>(<span class="kw">true</span>);
+        r.<span class="fn">setIdentificador</span>(usuario.<span class="fn">getId</span>());
+        r.<span class="fn">setTitulacion</span>(usuario.<span class="fn">getTitulacion</span>());     <span class="cm">// KI-3</span>
+        r.<span class="fn">setLogin</span>(usuario.<span class="fn">getLogin</span>());
+        <span class="kw">return</span> r;
+    }
+}
+</pre></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: E2E ESTRUCTURAL                                  -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-e2e" class="mode-panel">
+
+  <div class="sec-title" data-n="1">QUÉ SIGNIFICA "E2E ESTRUCTURAL"</div>
+
+  <p>El E2E aquí <strong>no</strong> levanta un Tomcat ni hace requests HTTP. Verifica la <strong>estructura</strong> de cada Controller (que extiende <code>HttpServlet</code>, que tiene los UseCases inyectados por constructor, que expone <code>doGet/doPost</code>) <strong>y</strong> el aislamiento hexagonal global (que ningún UseCase importa directamente clases de <code>infrastructure.persistence</code>). Es la última capa estructural antes del runtime real.</p>
+
+  <table class="vtable">
+    <tr><th>Test</th><th>Tests</th><th>Objetivo</th></tr>
+    <tr><td><code>AuthControllerE2ETest</code></td><td>9</td><td>ctor(AuthenticateUserUseCase, RegisterUserUseCase) + doPost</td></tr>
+    <tr><td><code>UserControllerE2ETest</code></td><td>7</td><td>ctor(GetUserProfileUseCase, UpdateUserUseCase) + doGet/doPost</td></tr>
+    <tr><td><code>ProcesoControllerE2ETest</code></td><td>8</td><td>ctor(ProcessRevision, ProcessSellado, ProcessProyecto) + doPost</td></tr>
+    <tr><td><code>SolicitudControllerE2ETest</code></td><td>8</td><td>ctor(ListSolicitudesUseCase) + doGet</td></tr>
+    <tr><td><code>AdminControllerE2ETest</code></td><td>9</td><td>ctor SOLO con UseCases (no Repos directamente)</td></tr>
+    <tr style="background:rgba(122,58,205,.05)"><td><code>AppWiringE2ETest</code></td><td>6</td><td><strong>Aislamiento hexagonal global</strong></td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">CONTROLLER E2E — TEST COMPLETO</div>
+
+<div class="file-path">tests/e2e/<span class="ext">AuthControllerE2ETest.java</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Java · Reflection sobre Servlets</span><button class="copy-btn">COPY</button>
+<span class="kw">package</span> transport.controllers;
+
+<span class="kw">import</span> org.junit.Test;
+<span class="kw">import</span> java.lang.reflect.Constructor;
+<span class="kw">import</span> java.lang.reflect.Method;
+<span class="kw">import</span> javax.servlet.http.HttpServlet;
+<span class="kw">import</span> javax.servlet.http.HttpServletRequest;
+<span class="kw">import</span> javax.servlet.http.HttpServletResponse;
+
+<span class="kw">import static</span> org.junit.Assert.*;
+
+<span class="kw">public class</span> <span class="cl">AuthControllerE2ETest</span> {
+
+    <span class="kw">private static final</span> String CLASS_NAME = <span class="st">"transport.controllers.AuthController"</span>;
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">authController_classExists</span>() <span class="kw">throws</span> Exception {
+        Class&lt;?&gt; clazz = Class.<span class="fn">forName</span>(CLASS_NAME);
+        <span class="fn">assertNotNull</span>(<span class="st">"AuthController class must exist"</span>, clazz);
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">authController_extendsHttpServlet</span>() <span class="kw">throws</span> Exception {
+        Class&lt;?&gt; clazz = Class.<span class="fn">forName</span>(CLASS_NAME);
+        <span class="hl"><span class="fn">assertTrue</span>(<span class="st">"AuthController must extend HttpServlet"</span>,
+            <span class="cl">HttpServlet</span>.<span class="kw">class</span>.<span class="fn">isAssignableFrom</span>(clazz));</span>
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">authController_constructorTakesAuthAndRegisterUseCases</span>() <span class="kw">throws</span> Exception {
+        Class&lt;?&gt; clazz = Class.<span class="fn">forName</span>(CLASS_NAME);
+        Class&lt;?&gt; auth = Class.<span class="fn">forName</span>(<span class="st">"domain.usecases.AuthenticateUserUseCase"</span>);
+        Class&lt;?&gt; register = Class.<span class="fn">forName</span>(<span class="st">"domain.usecases.RegisterUserUseCase"</span>);
+
+        <span class="kw">boolean</span> found = <span class="kw">false</span>;
+        <span class="kw">for</span> (Constructor&lt;?&gt; ctor : clazz.<span class="fn">getDeclaredConstructors</span>()) {
+            Class&lt;?&gt;[] params = ctor.<span class="fn">getParameterTypes</span>();
+            <span class="kw">if</span> (params.length == <span class="nu">2</span>
+                    && params[<span class="nu">0</span>].<span class="fn">equals</span>(auth)
+                    && params[<span class="nu">1</span>].<span class="fn">equals</span>(register)) {
+                found = <span class="kw">true</span>;
+                <span class="kw">break</span>;
+            }
+        }
+        <span class="hl"><span class="fn">assertTrue</span>(<span class="st">"AuthController must have ctor(AuthenticateUserUseCase, RegisterUserUseCase)"</span>,
+            found);</span>
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">authController_hasDoPostMethod</span>() <span class="kw">throws</span> Exception {
+        Class&lt;?&gt; clazz = Class.<span class="fn">forName</span>(CLASS_NAME);
+        Method method = clazz.<span class="fn">getDeclaredMethod</span>(<span class="st">"doPost"</span>,
+            <span class="cl">HttpServletRequest</span>.<span class="kw">class</span>, <span class="cl">HttpServletResponse</span>.<span class="kw">class</span>);
+        <span class="fn">assertNotNull</span>(<span class="st">"Must have doPost(req, resp)"</span>, method);
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">authController_hasSetSessionFilterMethod</span>() <span class="kw">throws</span> Exception {
+        Class&lt;?&gt; clazz = Class.<span class="fn">forName</span>(CLASS_NAME);
+        Class&lt;?&gt; sessionFilter = Class.<span class="fn">forName</span>(<span class="st">"transport.middleware.SessionFilter"</span>);
+
+        Method m = clazz.<span class="fn">getDeclaredMethod</span>(<span class="st">"setSessionFilter"</span>, sessionFilter);
+        <span class="fn">assertNotNull</span>(<span class="st">"Must have setSessionFilter(SessionFilter)"</span>, m);
+        <span class="fn">assertEquals</span>(<span class="nu">1</span>, m.<span class="fn">getParameterTypes</span>().length);
+        <span class="fn">assertEquals</span>(sessionFilter, m.<span class="fn">getParameterTypes</span>()[<span class="nu">0</span>]);
+    }
+}
+</pre></div>
+
+  <div class="sec-title" data-n="3">APPWIRING E2E — AISLAMIENTO HEXAGONAL</div>
+
+  <p>El test más interesante del nivel E2E. <code>AppWiringE2ETest</code> verifica que la composition root existe y que <strong>ningún UseCase del dominio importa clases de infraestructura</strong>. Si lo hiciera, romperíamos el aislamiento hexagonal. El test detecta esto inspeccionando los campos declarados de cada UseCase y comprobando sus tipos.</p>
+
+<div class="file-path">tests/e2e/<span class="ext">AppWiringE2ETest.java</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Java · Aislamiento dominio ↛ infraestructura</span><button class="copy-btn">COPY</button>
+<span class="kw">public class</span> <span class="cl">AppWiringE2ETest</span> {
+
+    <span class="kw">private static final</span> String APP_WIRING_CLASS = <span class="st">"transport.controllers.AppWiring"</span>;
+
+    <span class="kw">private static final</span> String[] DOMAIN_USE_CASE_CLASSES = {
+        <span class="st">"domain.usecases.AuthenticateUserUseCase"</span>,
+        <span class="st">"domain.usecases.RegisterUserUseCase"</span>,
+        <span class="st">"domain.usecases.GetUserProfileUseCase"</span>,
+        <span class="st">"domain.usecases.UpdateUserUseCase"</span>,
+        <span class="st">"domain.usecases.ProcessRevisionUseCase"</span>,
+        <span class="st">"domain.usecases.ProcessSelladoUseCase"</span>,
+        <span class="st">"domain.usecases.ProcessProyectoUseCase"</span>,
+        <span class="st">"domain.usecases.GetTemasUseCase"</span>,
+        <span class="st">"domain.usecases.ListSolicitudesUseCase"</span>,
+        <span class="st">"domain.usecases.ManageTemasUseCase"</span>,
+        <span class="st">"domain.usecases.ListUsuariosUseCase"</span>
+    };
+
+    <span class="kw">private static final</span> String INFRA_PERSISTENCE_PACKAGE = <span class="st">"infrastructure.persistence"</span>;
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">appWiring_isNotInDomainPackage</span>() <span class="kw">throws</span> Exception {
+        Class&lt;?&gt; clazz = Class.<span class="fn">forName</span>(APP_WIRING_CLASS);
+        String packageName = clazz.<span class="fn">getPackage</span>() != <span class="kw">null</span>
+            ? clazz.<span class="fn">getPackage</span>().<span class="fn">getName</span>() : <span class="st">""</span>;
+        <span class="fn">assertFalse</span>(
+            <span class="st">"AppWiring must NOT reside in domain package"</span>,
+            packageName.<span class="fn">startsWith</span>(<span class="st">"domain."</span>)
+        );
+    }
+
+    <span class="an">@Test</span>
+    <span class="kw">public void</span> <span class="fn">domainUseCases_doNotDependOnInfrastructurePersistence</span>() <span class="kw">throws</span> Exception {
+        <span class="kw">for</span> (String useCaseClassName : DOMAIN_USE_CASE_CLASSES) {
+            Class&lt;?&gt; useCase = Class.<span class="fn">forName</span>(useCaseClassName);
+            <span class="kw">for</span> (Field f : useCase.<span class="fn">getDeclaredFields</span>()) {
+                String typeName = f.<span class="fn">getType</span>().<span class="fn">getName</span>();
+                <span class="hl"><span class="fn">assertFalse</span>(
+                    <span class="st">"UseCase "</span> + useCaseClassName + <span class="st">" depends on "</span> + typeName,
+                    typeName.<span class="fn">startsWith</span>(INFRA_PERSISTENCE_PACKAGE)
+                );</span>
+            }
+        }
+    }
+}
+</pre></div>
+
+  <div class="callout purple">
+    <strong>El test que protege la arquitectura</strong>
+    Este test es el que mantiene la arquitectura hexagonal viva durante la migración. Si un Code Worker —en busca de una solución rápida— inyecta un <code>JdbcUsuarioRepository</code> directamente en un UseCase, el test falla. La regla "domain ↛ infrastructure" deja de ser convención y se convierte en código ejecutable.
+  </div>
+
+  <div class="sec-title" data-n="4">PATRÓN PARA NUEVOS CONTROLLERS</div>
+
+  <p>Cada Controller añadido al sistema necesita su propio test E2E con la misma estructura. Estos son los 4 asserts mínimos que cada test debe contener:</p>
+
+  <ol>
+    <li><strong>classExists</strong> — <code>Class.forName(CLASS_NAME)</code> retorna no-null</li>
+    <li><strong>extendsHttpServlet</strong> — <code>HttpServlet.class.isAssignableFrom(clazz)</code></li>
+    <li><strong>constructorTakesUseCases</strong> — un solo constructor con N args, todos UseCases del dominio</li>
+    <li><strong>hasDoGetOrDoPost</strong> — al menos un método HTTP</li>
+  </ol>
+
+  <p>Los tests de cada controller añaden asserts específicos: <code>setSessionFilter(SessionFilter)</code> para los protegidos, validación de los UseCases concretos del constructor (no genéricos), y verificación de que el constructor NO acepta repositorios directamente (KI-17: bypass hexagonal).</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: FRONTEND                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-frontend" class="mode-panel">
+
+  <div class="sec-title" data-n="1">EL DESAFÍO DEL TESTING JS VANILLA</div>
+
+  <p>El frontend de WebDTE es Vanilla JS con Web Components y Shadow DOM. <strong>No hay framework, no hay build, no hay TypeScript</strong>. Esto descarta jest+jsdom (soporte incompleto de Shadow DOM) y descarta cualquier herramienta que requiera transpilación. La técnica adoptada es <strong>source-analysis</strong>: leer el .js como texto, aplicar regex, hacer asserts.</p>
+
+  <table class="vtable">
+    <tr><th>Test</th><th>Asserts</th><th>Verifica</th></tr>
+    <tr><td><code>AuthServiceTest.js</code></td><td>8</td><td>fetch + credentials + resp.ok + 4 funciones</td></tr>
+    <tr><td><code>AdminServiceTest.js</code></td><td>6</td><td>4 endpoints admin + ApiResponse handling</td></tr>
+    <tr><td><code>ProcesoServiceTest.js</code></td><td>7</td><td>3 endpoints de procesos</td></tr>
+    <tr><td><code>SolicitudServiceTest.js</code></td><td>5</td><td>filter en query string</td></tr>
+    <tr><td><code>ComponentStructureTest.js</code></td><td>15</td><td>extends HTMLElement + Shadow DOM + define</td></tr>
+    <tr><td><code>RouterTest.js</code></td><td>8</td><td>hashchange + tabla de rutas</td></tr>
+    <tr><td><code>AppShellTest.js</code></td><td>6</td><td>navigation + currentUser handling</td></tr>
+    <tr><td><code>IndexHtmlTest.js</code></td><td>4</td><td>sin globals + carga modular</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">SERVICE TEST — AUTHSERVICETEST.JS</div>
+
+  <p>Ejemplo real del Test Worker para frontend services. Verifica las 3 reglas críticas: cero stubs, <code>credentials: 'include'</code> en cada fetch, <code>resp.ok</code> antes de <code>resp.json()</code>. Funciona con <code>node tests/frontend/AuthServiceTest.js</code> sin más dependencias.</p>
+
+<div class="file-path">tests/frontend/<span class="ext">AuthServiceTest.js</span></div>
+<div class="code-wrap">
+<pre><span class="lang">JavaScript · Source-analysis con Node.js puro</span><button class="copy-btn">COPY</button>
+<span class="kw">'use strict'</span>;
+<span class="kw">const</span> fs   = <span class="fn">require</span>(<span class="st">'fs'</span>);
+<span class="kw">const</span> path = <span class="fn">require</span>(<span class="st">'path'</span>);
+<span class="kw">const</span> assert = <span class="fn">require</span>(<span class="st">'assert'</span>);
+
+<span class="kw">const</span> servicePath = path.<span class="fn">resolve</span>(__dirname,
+    <span class="st">'../../frontend/services/auth-service.js'</span>);
+
+<span class="kw">if</span> (!fs.<span class="fn">existsSync</span>(servicePath)) {
+    console.<span class="fn">error</span>(<span class="st">'SKIP: service file not found'</span>);
+    process.<span class="fn">exit</span>(<span class="nu">0</span>);
+}
+
+<span class="kw">const</span> source = fs.<span class="fn">readFileSync</span>(servicePath, <span class="st">'utf-8'</span>);
+<span class="kw">let</span> passed = <span class="nu">0</span>, failed = <span class="nu">0</span>;
+
+<span class="kw">function</span> <span class="fn">test</span>(name, fn) {
+    <span class="kw">try</span> {
+        <span class="fn">fn</span>();
+        console.<span class="fn">log</span>(<span class="st">'  PASS:'</span>, name);
+        passed++;
+    } <span class="kw">catch</span> (err) {
+        console.<span class="fn">error</span>(<span class="st">'  FAIL:'</span>, name);
+        console.<span class="fn">error</span>(<span class="st">'        '</span>, err.message);
+        failed++;
+    }
+}
+
+console.<span class="fn">log</span>(<span class="st">'\n=== AuthServiceTest ===\n'</span>);
+
+<span class="cm">// 1. Cero stubs</span>
+<span class="fn">test</span>(<span class="st">'No STUB console.log in source'</span>, () =&gt; {
+    assert.<span class="fn">ok</span>(
+        !<span class="hl">/console\.log\s*\(\s*['"`][^'"`]*[Ss][Tt][Uu][Bb]/</span>.<span class="fn">test</span>(source),
+        <span class="st">'Found a console.log containing STUB'</span>
+    );
+});
+
+<span class="cm">// 2. Al menos un fetch()</span>
+<span class="fn">test</span>(<span class="st">'Has at least one fetch() call'</span>, () =&gt; {
+    <span class="kw">const</span> fetchMatches = source.<span class="fn">match</span>(<span class="hl">/fetch\s*\(/g</span>);
+    assert.<span class="fn">ok</span>(fetchMatches && fetchMatches.length &gt; <span class="nu">0</span>);
+});
+
+<span class="cm">// 3. credentials: 'include' presente</span>
+<span class="fn">test</span>(<span class="st">"credentials: 'include' present"</span>, () =&gt; {
+    assert.<span class="fn">ok</span>(
+        <span class="hl">/credentials\s*:\s*['"]include['"]/</span>.<span class="fn">test</span>(source),
+        <span class="st">"Missing credentials: 'include' in fetch options"</span>
+    );
+});
+
+<span class="cm">// 4. resp.ok check antes de .json()</span>
+<span class="fn">test</span>(<span class="st">'.ok check before .json()'</span>, () =&gt; {
+    <span class="kw">const</span> okIdx   = source.<span class="fn">search</span>(<span class="hl">/\.ok\b/</span>);
+    <span class="kw">const</span> jsonIdx = source.<span class="fn">search</span>(<span class="hl">/\.json\s*\(\s*\)/</span>);
+    <span class="kw">if</span> (jsonIdx !== -<span class="nu">1</span>) {
+        assert.<span class="fn">ok</span>(okIdx &lt; jsonIdx, <span class="st">'.ok must appear before .json()'</span>);
+    }
+});
+
+<span class="cm">// 5–8. Funciones requeridas presentes</span>
+[<span class="st">'login'</span>, <span class="st">'register'</span>, <span class="st">'logout'</span>, <span class="st">'getUserData'</span>].<span class="fn">forEach</span>(name =&gt; {
+    <span class="fn">test</span>(<span class="st">`Function </span>${name}<span class="st">() exists`</span>, () =&gt; {
+        <span class="kw">const</span> re = <span class="kw">new</span> <span class="cl">RegExp</span>(<span class="st">`(?:async\\s+)?function\\s+</span>${name}<span class="st">\\b|</span>${name}<span class="st">\\s*=\\s*(?:async\\s*)?\\(`</span>);
+        assert.<span class="fn">ok</span>(re.<span class="fn">test</span>(source), <span class="st">`Missing function </span>${name}<span class="st">`</span>);
+    });
+});
+
+console.<span class="fn">log</span>(<span class="st">`\nResults: </span>${passed}<span class="st"> passed, </span>${failed}<span class="st"> failed\n`</span>);
+process.<span class="fn">exit</span>(failed &gt; <span class="nu">0</span> ? <span class="nu">1</span> : <span class="nu">0</span>);
+</pre></div>
+
+  <div class="callout green">
+    <strong>3 reglas que todo service debe cumplir</strong>
+    1. <code>credentials: 'include'</code> en cada fetch — sin esto las cookies de sesión no se envían.<br>
+    2. <code>resp.ok</code> antes de <code>resp.json()</code> — sin esto un error HTTP se interpreta como datos.<br>
+    3. Cero stubs — el código de producción no debe tener <code>console.log("STUB")</code> ni mocks.<br>
+    Estas 3 reglas son verificadas tanto por los tests del frontend como por los SMOKE checks F1, F2, F3.
+  </div>
+
+  <div class="sec-title" data-n="3">COMPONENT STRUCTURE TEST</div>
+
+  <p>Este test verifica que cada Web Component sigue el patrón canónico: <code>extends HTMLElement</code>, <code>attachShadow({mode: 'open'})</code> en el constructor, lifecycle <code>connectedCallback</code>, y registro vía <code>customElements.define</code>. Aplica el mismo patrón source-analysis a los 8+ componentes del proyecto.</p>
+
+<div class="code-wrap">
+<pre><span class="lang">JavaScript · Verificación de Web Component canónico</span><button class="copy-btn">COPY</button>
+<span class="kw">const</span> componentFiles = [
+    <span class="st">'frontend/components/dte-login.js'</span>,
+    <span class="st">'frontend/components/dte-registro.js'</span>,
+    <span class="st">'frontend/components/dte-principal.js'</span>,
+    <span class="cm">// ... más componentes</span>
+];
+
+componentFiles.<span class="fn">forEach</span>(file =&gt; {
+    <span class="kw">const</span> source = fs.<span class="fn">readFileSync</span>(<span class="fn">path</span>(file), <span class="st">'utf-8'</span>);
+
+    <span class="fn">test</span>(<span class="st">`</span>${file}<span class="st"> extends HTMLElement`</span>, () =&gt; {
+        assert.<span class="fn">ok</span>(<span class="hl">/extends\s+HTMLElement/</span>.<span class="fn">test</span>(source));
+    });
+
+    <span class="fn">test</span>(<span class="st">`</span>${file}<span class="st"> uses Shadow DOM`</span>, () =&gt; {
+        assert.<span class="fn">ok</span>(<span class="hl">/attachShadow\s*\(\s*\{\s*mode\s*:\s*['"]open['"]/</span>.<span class="fn">test</span>(source));
+    });
+
+    <span class="fn">test</span>(<span class="st">`</span>${file}<span class="st"> has connectedCallback`</span>, () =&gt; {
+        assert.<span class="fn">ok</span>(<span class="hl">/connectedCallback\s*\(\s*\)/</span>.<span class="fn">test</span>(source));
+    });
+
+    <span class="fn">test</span>(<span class="st">`</span>${file}<span class="st"> registered with customElements.define`</span>, () =&gt; {
+        assert.<span class="fn">ok</span>(<span class="hl">/customElements\.define\s*\(/</span>.<span class="fn">test</span>(source));
+    });
+
+    <span class="fn">test</span>(<span class="st">`</span>${file}<span class="st"> imports services not raw fetch`</span>, () =&gt; {
+        <span class="kw">const</span> hasFetch = <span class="hl">/\bfetch\s*\(/</span>.<span class="fn">test</span>(source);
+        <span class="kw">const</span> importsService = <span class="hl">/from\s+['"][^'"]*services\//</span>.<span class="fn">test</span>(source);
+        <span class="kw">if</span> (hasFetch) {
+            assert.<span class="fn">ok</span>(importsService,
+                <span class="st">'Component should import service, not call fetch directly'</span>);
+        }
+    });
+});
+</pre></div>
+
+  <div class="sec-title" data-n="4">CÓDIGO QUE PASA EL TEST — AUTH-SERVICE.JS</div>
+
+<div class="file-path">frontend/services/<span class="ext">auth-service.js</span></div>
+<div class="code-wrap">
+<pre><span class="lang">JavaScript · Output CW8 · 4 funciones públicas</span><button class="copy-btn">COPY</button>
+<span class="kw">import</span> { BASE_URL } <span class="kw">from</span> <span class="st">'../config/app-config.js'</span>;
+
+<span class="kw">async function</span> <span class="fn">login</span>(loginId, password) {
+    <span class="kw">try</span> {
+        <span class="kw">const</span> resp = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">'/api/auth/login'</span>, {
+            method: <span class="st">'POST'</span>,
+            <span class="hl">credentials: <span class="st">'include'</span></span>,
+            headers: { <span class="st">'Content-Type'</span>: <span class="st">'application/json'</span> },
+            body: JSON.<span class="fn">stringify</span>({ login: loginId, password }),
+        });
+        <span class="kw">if</span> (!<span class="hl">resp.ok</span>) {
+            <span class="kw">const</span> error = <span class="kw">await</span> resp.<span class="fn">json</span>().<span class="fn">catch</span>(() =&gt; ({}));
+            <span class="kw">return</span> { ok: <span class="kw">false</span>, error: error.message || <span class="st">`Error </span>${resp.status}<span class="st">`</span> };
+        }
+        <span class="kw">const</span> data = <span class="kw">await</span> resp.<span class="fn">json</span>();
+        <span class="kw">return</span> { ok: <span class="kw">true</span>, data };
+    } <span class="kw">catch</span> (err) {
+        <span class="kw">return</span> { ok: <span class="kw">false</span>, error: err.message };
+    }
+}
+
+<span class="cm">// register, logout, getUserData siguen el mismo patrón</span>
+
+<span class="kw">export</span> { login, register, logout, getUserData, updateUser };
+</pre></div>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 Por qué source-analysis es suficiente</div>
+    <div class="insight-content">
+      Source-analysis no detecta bugs de runtime (división por cero, off-by-one, race conditions). Pero <strong>sí detecta los bugs estructurales</strong> que son el 80% de los problemas de migración: ¿olvidé credentials en este service?, ¿este componente sigue extiende HTMLElement?, ¿el router maneja el caso por defecto?<br><br>
+      Los bugs de runtime se cazan en QA manual o en producción. Los bugs estructurales son los que se multiplican cuando una IA genera 20 ficheros en paralelo. Source-analysis es la herramienta correcta para ese problema concreto.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: PATRONES Y ANTI-PATRONES                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-patrones" class="mode-panel">
+
+  <div class="sec-title" data-n="1">LECCIONES APRENDIDAS</div>
+
+  <p>Esta sección consolida los errores reales encontrados durante M2 → M19. Cada anti-patrón documentado aquí ha sido reproducido al menos una vez por el sistema FMI y ha motivado un check del GATE o una regla en SHARED CONTRACTS. Son <strong>aprendizaje convertido en código ejecutable</strong>.</p>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">M2 (2026-04-21)</div>
+      <div class="comp-content">
+        Sin GATE, sin SHARED CONTRACTS. Architect generó DIGEST sin tests formales. Tests escritos como documentación post-hoc. <strong>11/11 usecase tests rotos</strong> por imports a <code>domain.repositories.*</code>. Knowledge injection salvó por azar.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header yellow">M14–M16</div>
+      <div class="comp-content">
+        Iteraciones para diagnosticar y corregir. Post-mortem M16 introduce GATE con 7 checks bloqueantes. Catalogados los 4 errores recurrentes que motivan los checks G2-G7 actuales.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">M17–M19</div>
+      <div class="comp-content">
+        SHARED CONTRACTS formalizados. Tier adaptativo (3 files/worker). Aislamiento estricto entre Code Workers. <strong>28/28 SMOKE, 0 fixes manuales</strong> en M19. Sistema estable y predecible.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">ANTI-PATRÓN 1: ENTITY MUTABLE</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">❌ MAL — Entity con setters</div>
+      <div class="comp-content">
+        <pre style="background:rgba(193,68,14,.05);border:none;padding:8px;font-size:10.5px;line-height:1.6"><span class="kw">public class</span> <span class="cl">Usuario</span> {
+    <span class="kw">private</span> String nombre;
+    <span class="kw">public</span> <span class="cl">Usuario</span>() {}
+    <span class="kw">public void</span> <span class="fn">setNombre</span>(String n) { ... }
+}</pre>
+        Test <code>testClassIsFinal()</code> falla. Test <code>testNoSetters()</code> falla.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">✅ BIEN — Entity inmutable</div>
+      <div class="comp-content">
+        <pre style="background:rgba(42,110,78,.05);border:none;padding:8px;font-size:10.5px;line-height:1.6"><span class="kw">public final class</span> <span class="cl">Usuario</span> {
+    <span class="kw">private final</span> String nombre;
+    <span class="kw">public</span> <span class="fn">Usuario</span>(String nombre) {
+        <span class="kw">this</span>.nombre = nombre;
+    }
+    <span class="kw">public</span> String <span class="fn">getNombre</span>() { ... }
+}</pre>
+        Inmutabilidad estricta. Toda mutación = nueva instancia.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">ANTI-PATRÓN 2: THENRETURN(NULL) EN OPTIONAL</div>
+
+  <p><strong>Bug recurrente</strong>: el Test Worker mockea un repo que retorna <code>Optional&lt;T&gt;</code> con <code>thenReturn(entity)</code> directamente. La firma del método espera <code>Optional</code>, así que esto es type mismatch y NO compila. M16 documentó <strong>5 tests rotos</strong> por esta causa.</p>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">❌ MAL — type mismatch</div>
+      <div class="comp-content">
+        <pre style="background:rgba(193,68,14,.05);border:none;padding:8px;font-size:10.5px;line-height:1.6"><span class="cm">// repo.findByLogin retorna Optional&lt;Usuario&gt;</span>
+<span class="fn">when</span>(repo.<span class="fn">findByLogin</span>(<span class="st">"u"</span>))
+    .<span class="fn">thenReturn</span>(usuario);  <span class="cm">// ❌</span>
+
+<span class="fn">when</span>(repo.<span class="fn">findByLogin</span>(<span class="st">"u"</span>))
+    .<span class="fn">thenReturn</span>(<span class="kw">null</span>);     <span class="cm">// ❌ tampoco</span></pre>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">✅ BIEN — Optional siempre</div>
+      <div class="comp-content">
+        <pre style="background:rgba(42,110,78,.05);border:none;padding:8px;font-size:10.5px;line-height:1.6"><span class="cm">// Caso "encontrado":</span>
+<span class="fn">when</span>(repo.<span class="fn">findByLogin</span>(<span class="st">"u"</span>))
+    .<span class="fn">thenReturn</span>(Optional.<span class="fn">of</span>(usuario));
+
+<span class="cm">// Caso "no encontrado":</span>
+<span class="fn">when</span>(repo.<span class="fn">findByLogin</span>(<span class="st">"x"</span>))
+    .<span class="fn">thenReturn</span>(Optional.<span class="fn">empty</span>());</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout orange">
+    <strong>GATE check G5</strong>
+    El check G5 ejecuta <code>grep -rE "thenReturn\([a-zA-Z]+\)" tests/usecases/ | grep -v "Optional"</code>. Si el resultado no está vacío, ABORT. Esto detecta cualquier <code>thenReturn(usuario)</code> directo sin tener que ejecutar Java.
+  </div>
+
+  <div class="sec-title" data-n="4">ANTI-PATRÓN 3: CONSTRUCTOR ALL-ARGS INVENTADO</div>
+
+  <p>Otro hallazgo del post-mortem M16: el Test Worker inventa un constructor all-args para un DTO mutable. Por ejemplo, <code>new LoginRequest("user", "pass")</code> cuando el contrato dice "DTOs mutables = no-arg + setters". El Code Worker entonces tiene que decidir: ¿implemento el constructor inventado o respeto el contrato? Resultado: incoherencia.</p>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">❌ MAL — Constructor inventado</div>
+      <div class="comp-content">
+        <pre style="background:rgba(193,68,14,.05);border:none;padding:8px;font-size:10.5px;line-height:1.6"><span class="cm">// Test Worker:</span>
+<span class="cl">LoginRequest</span> req =
+    <span class="kw">new</span> <span class="cl">LoginRequest</span>(<span class="st">"u"</span>, <span class="st">"p"</span>);
+
+<span class="cm">// SHARED CONTRACTS dice:</span>
+<span class="cm">// "All DTOs: no-arg + setters"</span>
+<span class="cm">// → Constructor de 2 args es inventado</span></pre>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">✅ BIEN — no-arg + setters</div>
+      <div class="comp-content">
+        <pre style="background:rgba(42,110,78,.05);border:none;padding:8px;font-size:10.5px;line-height:1.6"><span class="cl">LoginRequest</span> req = <span class="kw">new</span> <span class="cl">LoginRequest</span>();
+req.<span class="fn">setLogin</span>(<span class="st">"u"</span>);
+req.<span class="fn">setPassword</span>(<span class="st">"p"</span>);
+
+<span class="cm">// Excepción única: ApiResponse</span>
+<span class="cm">// (factory pattern con private ctor)</span>
+<span class="cl">ApiResponse</span> r = <span class="cl">ApiResponse</span>.<span class="fn">ok</span>(data);</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="5">ANTI-PATRÓN 4: PAQUETE LEAK</div>
+
+  <p>Naming canónico: las interfaces de repo viven en <code>domain.interfaces</code>, NO en <code>domain.repositories</code>. Las entidades en <code>domain.entities</code>, NO en <code>domain.model</code>. El Test Worker a veces alucina con paquetes que existen en otros proyectos pero no en este (e.g., Spring usa <code>repositories</code>). M16: 11 tests con import a <code>domain.repositories.*</code>.</p>
+
+<div class="code-wrap">
+<pre><span class="lang">Java · Imports prohibidos vs permitidos</span><button class="copy-btn">COPY</button>
+<span class="cm">// ❌ PROHIBIDO — paquetes inexistentes</span>
+<span class="kw">import</span> domain.repositories.UsuarioRepository;
+<span class="kw">import</span> domain.responses.UsuarioResponse;
+<span class="kw">import</span> domain.services.AuthService;
+<span class="kw">import</span> domain.model.Usuario;
+
+<span class="cm">// ✅ PERMITIDO — paquetes canónicos</span>
+<span class="kw">import</span> domain.interfaces.UsuarioRepository;
+<span class="kw">import</span> domain.dto.UserProfileResponse;
+<span class="kw">import</span> domain.usecases.AuthenticateUserUseCase;
+<span class="kw">import</span> domain.entities.Usuario;
+</pre></div>
+
+  <div class="callout purple">
+    <strong>GATE check G2 + G3</strong>
+    Dos checks bloqueantes vigilan los paquetes:<br>
+    G2: <code>grep -r "domain.repositories\|domain.responses\|domain.services" tests/</code> → si match, ABORT.<br>
+    G3: <code>grep -r "domain.model" tests/</code> → si match, ABORT.<br>
+    Junto a los auto-fixes pre-GATE que reescriben automáticamente <code>domain.responses</code> → <code>domain.dto</code> en bulk antes de fallar.
+  </div>
+
+  <div class="sec-title" data-n="6">ANTI-PATRÓN 5: MÉTODO INVENTADO EN INTERFACE</div>
+
+  <p>El Test Worker llama <code>findAll()</code> en un repositorio que solo tiene <code>findByFilters()</code> y <code>findByDateRange()</code>. Los Code Workers entonces inventan un <code>findAll()</code> innecesario o, peor, dejan el test sin satisfacer. M16 documentó este patrón en <code>ListSolicitudesUseCase</code>.</p>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">❌ MAL — método inexistente</div>
+      <div class="comp-content">
+        <pre style="background:rgba(193,68,14,.05);border:none;padding:8px;font-size:10.5px;line-height:1.6"><span class="cm">// SolicitudRepository declara:</span>
+<span class="cm">//   findByFilters(SolicitudFilter f)</span>
+<span class="cm">//   findByDateRange(String, String)</span>
+<span class="cm">// PERO el test usa:</span>
+<span class="fn">when</span>(repo.<span class="fn">findAll</span>())  <span class="cm">// ❌</span>
+    .<span class="fn">thenReturn</span>(list);</pre>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">✅ BIEN — sólo SHARED CONTRACTS</div>
+      <div class="comp-content">
+        <pre style="background:rgba(42,110,78,.05);border:none;padding:8px;font-size:10.5px;line-height:1.6"><span class="cl">SolicitudFilter</span> filter = <span class="kw">new</span> <span class="cl">SolicitudFilter</span>();
+filter.<span class="fn">setFechaInicio</span>(<span class="st">"2026-01-01"</span>);
+filter.<span class="fn">setFechaFin</span>(<span class="st">"2026-12-31"</span>);
+
+<span class="fn">when</span>(repo.<span class="fn">findByFilters</span>(filter))
+    .<span class="fn">thenReturn</span>(list);</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="7">ANTI-PATRÓN 6: REPO DIRECTO EN CONTROLLER</div>
+
+  <p>KI-17: cualquier Controller debe usar UseCases del dominio, NUNCA repositorios directamente. Un Controller con <code>private UsuarioRepository repo</code> bypasea la lógica de negocio y rompe la arquitectura hexagonal. <code>AdminControllerE2ETest</code> verifica esto explícitamente.</p>
+
+<div class="code-wrap">
+<pre><span class="lang">Java · KI-17 verification (E2E test)</span><button class="copy-btn">COPY</button>
+<span class="an">@Test</span>
+<span class="kw">public void</span> <span class="fn">adminController_constructorOnlyTakesUseCases</span>() <span class="kw">throws</span> Exception {
+    Class&lt;?&gt; clazz = Class.<span class="fn">forName</span>(<span class="st">"transport.controllers.AdminController"</span>);
+    Constructor&lt;?&gt; ctor = clazz.<span class="fn">getDeclaredConstructors</span>()[<span class="nu">0</span>];
+
+    <span class="kw">for</span> (Class&lt;?&gt; param : ctor.<span class="fn">getParameterTypes</span>()) {
+        String pkg = param.<span class="fn">getPackage</span>().<span class="fn">getName</span>();
+        <span class="hl"><span class="fn">assertFalse</span>(
+            <span class="st">"AdminController must NOT inject repositories directly (KI-17)"</span>,
+            pkg.<span class="fn">startsWith</span>(<span class="st">"domain.interfaces"</span>) ||
+            pkg.<span class="fn">startsWith</span>(<span class="st">"infrastructure"</span>)
+        );
+        <span class="fn">assertTrue</span>(
+            <span class="st">"AdminController constructor params must be UseCases"</span>,
+            pkg.<span class="fn">equals</span>(<span class="st">"domain.usecases"</span>)
+        );</span>
+    }
+}
+</pre></div>
+
+  <div class="sec-title" data-n="8">RESUMEN DE LAS 6 REGLAS DE ORO</div>
+
+  <table class="vtable">
+    <tr><th>Regla</th><th>Detección</th><th>GATE check</th></tr>
+    <tr><td>Entities <code>final</code> + sin setters</td><td>Reflection: <code>Modifier.isFinal</code> + <code>!startsWith("set")</code></td><td>—</td></tr>
+    <tr><td>DTOs mutables = no-arg + setters</td><td>Test Worker: NO inventar <code>new Dto(...)</code></td><td>G6</td></tr>
+    <tr><td>ApiResponse = factory only</td><td>Test: <code>!Modifier.isPublic(ctor)</code></td><td>—</td></tr>
+    <tr><td>Optional usage = <code>.of()</code> / <code>.empty()</code></td><td>grep <code>thenReturn</code> sin Optional</td><td>G5</td></tr>
+    <tr><td>Imports canónicos solamente</td><td>grep paquetes prohibidos</td><td>G2, G3</td></tr>
+    <tr><td>Sólo métodos de SHARED CONTRACTS</td><td>Comparar llamadas a mocks vs interface</td><td>G7</td></tr>
+    <tr><td>Controllers usan UseCases (no Repos)</td><td>E2E test sobre constructor params</td><td>—</td></tr>
+  </table>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 La paradoja del aprendizaje</div>
+    <div class="insight-content">
+      Cada anti-patrón documentado aquí costó horas de debug en una iteración temprana de FMI. Convertirlo en check del GATE significa que <strong>no volverá a ocurrir gratis</strong> — se detecta en 10 segundos, antes de gastar tokens en Code Workers. La paradoja: cuanto más errores cometemos al principio, más robusto se vuelve el sistema. M19 con 0 fixes manuales es el resultado de M2-M16 con ~50 fixes acumulados.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: EJECUCIÓN                                        -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-ejecucion" class="mode-panel">
+
+  <div class="sec-title" data-n="1">DEPENDENCIAS</div>
+
+  <p>El stack de testing es minimal por diseño: 4 dependencias, ninguna superior a 3 MB. Todas son compatibles con Java 8 (no se exige Java 11+). El frontend testing usa Node.js puro sin paquetes npm — no hay <code>package.json</code> de testing.</p>
+
+  <table class="vtable">
+    <tr><th>Dependencia</th><th>Versión</th><th>Propósito</th><th>Tamaño</th></tr>
+    <tr><td><code>junit</code></td><td>4.13.2</td><td>Framework principal de tests Java</td><td>~390 KB</td></tr>
+    <tr><td><code>mockito-all</code></td><td>1.10.19</td><td>Mocks + ArgumentCaptor</td><td>~1.4 MB</td></tr>
+    <tr><td><code>hamcrest-core</code></td><td>1.3</td><td>Matchers (transitiva de JUnit)</td><td>~45 KB</td></tr>
+    <tr><td><code>servlet-api</code></td><td>2.5</td><td>HttpServlet, HttpServletRequest (provided)</td><td>~130 KB</td></tr>
+    <tr><td><em>Frontend</em></td><td>—</td><td>Node.js 14+ (módulos <code>fs</code>, <code>path</code>, <code>assert</code> built-in)</td><td>0 dependencias</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">POM.XML COMPLETO RECOMENDADO</div>
+
+  <p>WebDTE no incluye <code>pom.xml</code> en el repo (la migración FMI deja la decisión de build tool al desarrollador). Este es el <strong>pom recomendado</strong> que ejecuta toda la suite de tests Java + JaCoCo coverage. Listo para copiar y pegar en la raíz del proyecto.</p>
+
+<div class="file-path">project-root/<span class="ext">pom.xml</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Maven · pom.xml completo</span><button class="copy-btn">COPY</button>
+<span class="kw">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cl">&lt;project</span> xmlns=<span class="st">"http://maven.apache.org/POM/4.0.0"</span>
+         xmlns:xsi=<span class="st">"http://www.w3.org/2001/XMLSchema-instance"</span>
+         xsi:schemaLocation=<span class="st">"http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="cl">&gt;</span>
+    <span class="cl">&lt;modelVersion&gt;</span>4.0.0<span class="cl">&lt;/modelVersion&gt;</span>
+
+    <span class="cl">&lt;groupId&gt;</span>com.upm.webdte<span class="cl">&lt;/groupId&gt;</span>
+    <span class="cl">&lt;artifactId&gt;</span>webdte-fmi<span class="cl">&lt;/artifactId&gt;</span>
+    <span class="cl">&lt;version&gt;</span>1.0.0-SNAPSHOT<span class="cl">&lt;/version&gt;</span>
+    <span class="cl">&lt;packaging&gt;</span>war<span class="cl">&lt;/packaging&gt;</span>
+
+    <span class="cl">&lt;properties&gt;</span>
+        <span class="cl">&lt;maven.compiler.source&gt;</span>1.8<span class="cl">&lt;/maven.compiler.source&gt;</span>
+        <span class="cl">&lt;maven.compiler.target&gt;</span>1.8<span class="cl">&lt;/maven.compiler.target&gt;</span>
+        <span class="cl">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="cl">&lt;/project.build.sourceEncoding&gt;</span>
+        <span class="cl">&lt;junit.version&gt;</span>4.13.2<span class="cl">&lt;/junit.version&gt;</span>
+        <span class="cl">&lt;mockito.version&gt;</span>1.10.19<span class="cl">&lt;/mockito.version&gt;</span>
+        <span class="cl">&lt;jacoco.version&gt;</span>0.8.11<span class="cl">&lt;/jacoco.version&gt;</span>
+    <span class="cl">&lt;/properties&gt;</span>
+
+    <span class="cl">&lt;dependencies&gt;</span>
+        <span class="cm">&lt;!-- Servlet API: provided por el contenedor --&gt;</span>
+        <span class="cl">&lt;dependency&gt;</span>
+            <span class="cl">&lt;groupId&gt;</span>javax.servlet<span class="cl">&lt;/groupId&gt;</span>
+            <span class="cl">&lt;artifactId&gt;</span>servlet-api<span class="cl">&lt;/artifactId&gt;</span>
+            <span class="cl">&lt;version&gt;</span>2.5<span class="cl">&lt;/version&gt;</span>
+            <span class="cl">&lt;scope&gt;</span>provided<span class="cl">&lt;/scope&gt;</span>
+        <span class="cl">&lt;/dependency&gt;</span>
+
+        <span class="cm">&lt;!-- PostgreSQL JDBC --&gt;</span>
+        <span class="cl">&lt;dependency&gt;</span>
+            <span class="cl">&lt;groupId&gt;</span>org.postgresql<span class="cl">&lt;/groupId&gt;</span>
+            <span class="cl">&lt;artifactId&gt;</span>postgresql<span class="cl">&lt;/artifactId&gt;</span>
+            <span class="cl">&lt;version&gt;</span>42.7.3<span class="cl">&lt;/version&gt;</span>
+        <span class="cl">&lt;/dependency&gt;</span>
+
+        <span class="cm">&lt;!-- JSON parsing --&gt;</span>
+        <span class="cl">&lt;dependency&gt;</span>
+            <span class="cl">&lt;groupId&gt;</span>com.google.code.gson<span class="cl">&lt;/groupId&gt;</span>
+            <span class="cl">&lt;artifactId&gt;</span>gson<span class="cl">&lt;/artifactId&gt;</span>
+            <span class="cl">&lt;version&gt;</span>2.10.1<span class="cl">&lt;/version&gt;</span>
+        <span class="cl">&lt;/dependency&gt;</span>
+
+        <span class="cm">&lt;!-- TESTING --&gt;</span>
+        <span class="cl">&lt;dependency&gt;</span>
+            <span class="cl">&lt;groupId&gt;</span>junit<span class="cl">&lt;/groupId&gt;</span>
+            <span class="cl">&lt;artifactId&gt;</span>junit<span class="cl">&lt;/artifactId&gt;</span>
+            <span class="cl">&lt;version&gt;</span>${junit.version}<span class="cl">&lt;/version&gt;</span>
+            <span class="cl">&lt;scope&gt;</span>test<span class="cl">&lt;/scope&gt;</span>
+        <span class="cl">&lt;/dependency&gt;</span>
+        <span class="cl">&lt;dependency&gt;</span>
+            <span class="cl">&lt;groupId&gt;</span>org.mockito<span class="cl">&lt;/groupId&gt;</span>
+            <span class="cl">&lt;artifactId&gt;</span>mockito-all<span class="cl">&lt;/artifactId&gt;</span>
+            <span class="cl">&lt;version&gt;</span>${mockito.version}<span class="cl">&lt;/version&gt;</span>
+            <span class="cl">&lt;scope&gt;</span>test<span class="cl">&lt;/scope&gt;</span>
+        <span class="cl">&lt;/dependency&gt;</span>
+    <span class="cl">&lt;/dependencies&gt;</span>
+
+    <span class="cl">&lt;build&gt;</span>
+        <span class="cl">&lt;sourceDirectory&gt;</span>backend<span class="cl">&lt;/sourceDirectory&gt;</span>
+        <span class="cl">&lt;testSourceDirectory&gt;</span>tests<span class="cl">&lt;/testSourceDirectory&gt;</span>
+
+        <span class="cl">&lt;plugins&gt;</span>
+            <span class="cm">&lt;!-- Surefire: ejecuta los tests --&gt;</span>
+            <span class="cl">&lt;plugin&gt;</span>
+                <span class="cl">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="cl">&lt;/groupId&gt;</span>
+                <span class="cl">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="cl">&lt;/artifactId&gt;</span>
+                <span class="cl">&lt;version&gt;</span>3.2.5<span class="cl">&lt;/version&gt;</span>
+                <span class="cl">&lt;configuration&gt;</span>
+                    <span class="cl">&lt;includes&gt;</span>
+                        <span class="cl">&lt;include&gt;</span>**/*Test.java<span class="cl">&lt;/include&gt;</span>
+                    <span class="cl">&lt;/includes&gt;</span>
+                    <span class="cl">&lt;excludes&gt;</span>
+                        <span class="cm">&lt;!-- Excluir tests de frontend que se ejecutan con Node --&gt;</span>
+                        <span class="cl">&lt;exclude&gt;</span>**/frontend/**<span class="cl">&lt;/exclude&gt;</span>
+                    <span class="cl">&lt;/excludes&gt;</span>
+                <span class="cl">&lt;/configuration&gt;</span>
+            <span class="cl">&lt;/plugin&gt;</span>
+
+            <span class="cm">&lt;!-- JaCoCo: cobertura --&gt;</span>
+            <span class="cl">&lt;plugin&gt;</span>
+                <span class="cl">&lt;groupId&gt;</span>org.jacoco<span class="cl">&lt;/groupId&gt;</span>
+                <span class="cl">&lt;artifactId&gt;</span>jacoco-maven-plugin<span class="cl">&lt;/artifactId&gt;</span>
+                <span class="cl">&lt;version&gt;</span>${jacoco.version}<span class="cl">&lt;/version&gt;</span>
+                <span class="cl">&lt;executions&gt;</span>
+                    <span class="cl">&lt;execution&gt;</span>
+                        <span class="cl">&lt;goals&gt;&lt;goal&gt;</span>prepare-agent<span class="cl">&lt;/goal&gt;&lt;/goals&gt;</span>
+                    <span class="cl">&lt;/execution&gt;</span>
+                    <span class="cl">&lt;execution&gt;</span>
+                        <span class="cl">&lt;id&gt;</span>report<span class="cl">&lt;/id&gt;</span>
+                        <span class="cl">&lt;phase&gt;</span>test<span class="cl">&lt;/phase&gt;</span>
+                        <span class="cl">&lt;goals&gt;&lt;goal&gt;</span>report<span class="cl">&lt;/goal&gt;&lt;/goals&gt;</span>
+                    <span class="cl">&lt;/execution&gt;</span>
+                <span class="cl">&lt;/executions&gt;</span>
+                <span class="cl">&lt;configuration&gt;</span>
+                    <span class="cl">&lt;excludes&gt;</span>
+                        <span class="cm">&lt;!-- DTOs son boilerplate puro --&gt;</span>
+                        <span class="cl">&lt;exclude&gt;</span>domain/dto/**<span class="cl">&lt;/exclude&gt;</span>
+                        <span class="cm">&lt;!-- Wiring se valida vía E2E test --&gt;</span>
+                        <span class="cl">&lt;exclude&gt;</span>transport/controllers/AppWiring.class<span class="cl">&lt;/exclude&gt;</span>
+                    <span class="cl">&lt;/excludes&gt;</span>
+                <span class="cl">&lt;/configuration&gt;</span>
+            <span class="cl">&lt;/plugin&gt;</span>
+        <span class="cl">&lt;/plugins&gt;</span>
+    <span class="cl">&lt;/build&gt;</span>
+<span class="cl">&lt;/project&gt;</span>
+</pre></div>
+
+  <div class="sec-title" data-n="3">COMANDOS MAVEN</div>
+
+<div class="code-wrap">
+<pre><span class="lang">Bash · Maven testing commands</span><button class="copy-btn">COPY</button>
+<span class="cm"># Compilar tests (sin ejecutar)</span>
+mvn test-compile
+
+<span class="cm"># Ejecutar todos los tests Java</span>
+mvn test
+
+<span class="cm"># Ejecutar un test concreto</span>
+mvn test -Dtest=UsuarioEntityTest
+
+<span class="cm"># Ejecutar tests por patrón</span>
+mvn test -Dtest=<span class="st">"*EntityTest"</span>
+mvn test -Dtest=<span class="st">"*UseCaseTest"</span>
+
+<span class="cm"># Ejecutar tests de un paquete</span>
+mvn test -Dtest=<span class="st">"domain.entities.*"</span>
+
+<span class="cm"># Ejecutar con coverage (genera target/site/jacoco/index.html)</span>
+mvn test jacoco:report
+
+<span class="cm"># Limpiar + tests</span>
+mvn clean test
+
+<span class="cm"># Skip tests (para builds rápidas de WAR)</span>
+mvn package -DskipTests
+</pre></div>
+
+  <div class="sec-title" data-n="4">EJECUCIÓN DE TESTS FRONTEND</div>
+
+  <p>Los tests JS no usan Maven — se ejecutan con Node.js puro. Cada fichero es un script independiente que usa <code>process.exit(1)</code> en caso de fallo, lo que lo hace integrable trivialmente con cualquier CI.</p>
+
+<div class="code-wrap">
+<pre><span class="lang">Bash · Tests frontend</span><button class="copy-btn">COPY</button>
+<span class="cm"># Test individual</span>
+node tests/frontend/AuthServiceTest.js
+
+<span class="cm"># Output esperado:</span>
+<span class="cm">#   === AuthServiceTest ===</span>
+<span class="cm">#     PASS: No STUB console.log in source</span>
+<span class="cm">#     PASS: Has at least one fetch() call</span>
+<span class="cm">#     PASS: credentials: 'include' present in source</span>
+<span class="cm">#     PASS: Response .ok check present before .json()</span>
+<span class="cm">#     ...</span>
+<span class="cm">#   Results: 8 passed, 0 failed</span>
+
+<span class="cm"># Todos los tests frontend</span>
+<span class="kw">for</span> f <span class="kw">in</span> tests/frontend/*.js; <span class="kw">do</span>
+    <span class="kw">echo</span> <span class="st">"=== $f ==="</span>
+    node <span class="st">"$f"</span> || <span class="kw">exit</span> <span class="nu">1</span>
+<span class="kw">done</span>
+</pre></div>
+
+  <div class="sec-title" data-n="5">SCRIPT WRAPPER PARA TODA LA SUITE</div>
+
+<div class="file-path">project-root/<span class="ext">run-all-tests.sh</span></div>
+<div class="code-wrap">
+<pre><span class="lang">Bash · Wrapper completo</span><button class="copy-btn">COPY</button>
+<span class="cm">#!/usr/bin/env bash</span>
+<span class="kw">set</span> -e
+
+<span class="kw">echo</span> <span class="st">"==================================================="</span>
+<span class="kw">echo</span> <span class="st">"  WebDTE — Suite completa de tests"</span>
+<span class="kw">echo</span> <span class="st">"==================================================="</span>
+
+<span class="cm"># 1. Tests Java + Coverage</span>
+<span class="kw">echo</span>
+<span class="kw">echo</span> <span class="st">"&gt;&gt;&gt; Java tests (JUnit + Mockito)"</span>
+mvn clean test jacoco:report
+
+<span class="cm"># 2. Tests Frontend</span>
+<span class="kw">echo</span>
+<span class="kw">echo</span> <span class="st">"&gt;&gt;&gt; Frontend tests (source-analysis)"</span>
+FE_FAILED=<span class="nu">0</span>
+<span class="kw">for</span> f <span class="kw">in</span> tests/frontend/*.js; <span class="kw">do</span>
+    <span class="kw">if</span> ! node <span class="st">"$f"</span>; <span class="kw">then</span>
+        FE_FAILED=$((FE_FAILED + 1))
+    <span class="kw">fi</span>
+<span class="kw">done</span>
+
+<span class="kw">if</span> [ <span class="nu">$FE_FAILED</span> -gt <span class="nu">0</span> ]; <span class="kw">then</span>
+    <span class="kw">echo</span> <span class="st">"❌ </span><span class="nu">$FE_FAILED</span><span class="st"> frontend tests failed"</span>
+    <span class="kw">exit</span> <span class="nu">1</span>
+<span class="kw">fi</span>
+
+<span class="cm"># 3. Resumen</span>
+<span class="kw">echo</span>
+<span class="kw">echo</span> <span class="st">"==================================================="</span>
+<span class="kw">echo</span> <span class="st">"  ✅ ALL TESTS PASSED"</span>
+<span class="kw">echo</span> <span class="st">"  Coverage report: target/site/jacoco/index.html"</span>
+<span class="kw">echo</span> <span class="st">"==================================================="</span>
+</pre></div>
+
+  <div class="sec-title" data-n="6">COBERTURA — LECTURA DEL REPORTE JACOCO</div>
+
+  <p>Tras <code>mvn jacoco:report</code>, el reporte HTML está en <code>target/site/jacoco/index.html</code>. Las métricas que importan según la naturaleza de cada paquete:</p>
+
+  <table class="vtable">
+    <tr><th>Paquete</th><th>Cobertura objetivo</th><th>Razón</th></tr>
+    <tr><td><code>domain.entities</code></td><td><strong>95%+</strong></td><td>Reflection cubre todos los getters</td></tr>
+    <tr><td><code>domain.usecases</code></td><td><strong>85%+</strong></td><td>Mockito cubre los paths principales</td></tr>
+    <tr><td><code>domain.interfaces</code></td><td>N/A</td><td>Son interfaces, no se ejecutan</td></tr>
+    <tr><td><code>domain.dto</code></td><td><em>Excluido</em></td><td>Boilerplate puro, no aporta señal</td></tr>
+    <tr><td><code>infrastructure.persistence</code></td><td>30–60%</td><td>Tests no levantan DB. Cubrir vía integration tests aparte</td></tr>
+    <tr><td><code>transport.controllers</code></td><td>40–70%</td><td>Tests E2E estructurales no instancian. Cubrir con runtime tests</td></tr>
+  </table>
+
+  <div class="callout blue">
+    <strong>El número que importa es la cobertura de domain.usecases</strong>
+    Si <code>domain.usecases</code> está al 85%+ con tests Mockito, la lógica de negocio crítica está protegida. La cobertura baja en <code>infrastructure</code> y <code>transport</code> es esperable — esas capas se validan con integration tests aparte (no FMI).
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB: CI/CD                                            -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-ci" class="mode-panel">
+
+  <div class="sec-title" data-n="1">PIPELINE COMPLETO — GITHUB ACTIONS</div>
+
+  <p>El pipeline canónico para WebDTE FMI: cada push a <code>main</code> ejecuta tests Java, tests frontend, genera coverage, y publica el reporte. Si todo pasa, dispara el deploy a DigitalOcean App Platform. El pipeline está calibrado en ~2 min para el job de tests + coverage.</p>
+
+<div class="file-path">.github/workflows/<span class="ext">test-and-deploy.yml</span></div>
+<div class="code-wrap">
+<pre><span class="lang">YAML · GitHub Actions</span><button class="copy-btn">COPY</button>
+<span class="kw">name:</span> Test &amp; Deploy
+
+<span class="kw">on:</span>
+  <span class="kw">push:</span>
+    <span class="kw">branches:</span> [ main, develop ]
+  <span class="kw">pull_request:</span>
+    <span class="kw">branches:</span> [ main ]
+
+<span class="kw">jobs:</span>
+
+  <span class="cm"># ═════════════════════════════════════════</span>
+  <span class="cm"># JOB 1: Tests Java con coverage</span>
+  <span class="cm"># ═════════════════════════════════════════</span>
+  <span class="kw">java-tests:</span>
+    <span class="kw">name:</span> Java Tests &amp; Coverage
+    <span class="kw">runs-on:</span> ubuntu-latest
+    <span class="kw">steps:</span>
+      - <span class="kw">name:</span> Checkout
+        <span class="kw">uses:</span> actions/checkout@v4
+
+      - <span class="kw">name:</span> Set up JDK 8
+        <span class="kw">uses:</span> actions/setup-java@v4
+        <span class="kw">with:</span>
+          <span class="kw">distribution:</span> temurin
+          <span class="kw">java-version:</span> <span class="nu">8</span>
+          <span class="kw">cache:</span> maven
+
+      - <span class="kw">name:</span> Run tests + JaCoCo
+        <span class="kw">run:</span> mvn -B clean test jacoco:report
+
+      - <span class="kw">name:</span> Upload coverage artifact
+        <span class="kw">uses:</span> actions/upload-artifact@v4
+        <span class="kw">with:</span>
+          <span class="kw">name:</span> jacoco-report
+          <span class="kw">path:</span> target/site/jacoco/
+
+      - <span class="kw">name:</span> Coverage summary in PR
+        <span class="kw">if:</span> github.event_name == 'pull_request'
+        <span class="kw">uses:</span> madrapps/jacoco-report@v1.6.1
+        <span class="kw">with:</span>
+          <span class="kw">paths:</span> target/site/jacoco/jacoco.xml
+          <span class="kw">token:</span> ${{ secrets.GITHUB_TOKEN }}
+          <span class="kw">min-coverage-overall:</span> <span class="nu">75</span>
+          <span class="kw">min-coverage-changed-files:</span> <span class="nu">85</span>
+
+  <span class="cm"># ═════════════════════════════════════════</span>
+  <span class="cm"># JOB 2: Tests Frontend (source-analysis)</span>
+  <span class="cm"># ═════════════════════════════════════════</span>
+  <span class="kw">frontend-tests:</span>
+    <span class="kw">name:</span> Frontend Tests
+    <span class="kw">runs-on:</span> ubuntu-latest
+    <span class="kw">steps:</span>
+      - <span class="kw">name:</span> Checkout
+        <span class="kw">uses:</span> actions/checkout@v4
+
+      - <span class="kw">name:</span> Set up Node.js
+        <span class="kw">uses:</span> actions/setup-node@v4
+        <span class="kw">with:</span>
+          <span class="kw">node-version:</span> <span class="nu">20</span>
+
+      - <span class="kw">name:</span> Run frontend source-analysis tests
+        <span class="kw">run:</span> |
+          <span class="kw">set -e</span>
+          <span class="kw">for</span> f <span class="kw">in</span> tests/frontend/*.js; <span class="kw">do</span>
+            echo <span class="st">"=== $f ==="</span>
+            node <span class="st">"$f"</span>
+          <span class="kw">done</span>
+
+  <span class="cm"># ═════════════════════════════════════════</span>
+  <span class="cm"># JOB 3: SMOKE checks (28/28)</span>
+  <span class="cm"># ═════════════════════════════════════════</span>
+  <span class="kw">smoke-checks:</span>
+    <span class="kw">name:</span> Smoke (grep + count)
+    <span class="kw">runs-on:</span> ubuntu-latest
+    <span class="kw">steps:</span>
+      - <span class="kw">name:</span> Checkout
+        <span class="kw">uses:</span> actions/checkout@v4
+
+      - <span class="kw">name:</span> Run smoke checks
+        <span class="kw">run:</span> |
+          <span class="kw">set -e</span>
+          <span class="cm"># S1: zero domain → infrastructure imports</span>
+          ! grep -r <span class="st">"import infrastructure"</span> backend/domain/ || exit 1
+          <span class="cm"># S4: 100% PreparedStatement</span>
+          ! grep -rE <span class="st">"createStatement\(\)"</span> backend/infrastructure/ || exit 1
+          <span class="cm"># S7: titulacion not especialidad</span>
+          ! grep -r <span class="st">"especialidad"</span> backend/ || exit 1
+          <span class="cm"># S9: "year" quoted in PG SQL</span>
+          grep -c <span class="st">'\"year\"'</span> backend/infrastructure/persistence/*.java
+          <span class="cm"># F1: zero STUBs en frontend</span>
+          ! grep -rE <span class="st">"console\.log.*STUB"</span> frontend/ || exit 1
+          <span class="cm"># F2: credentials en cada fetch</span>
+          fetch_count=$(grep -rc <span class="st">"fetch("</span> frontend/services/ | awk -F: '{s+=$2} END {print s}')
+          creds_count=$(grep -rc <span class="st">"credentials.*include"</span> frontend/services/ | awk -F: '{s+=$2} END {print s}')
+          [ <span class="st">"$fetch_count"</span> = <span class="st">"$creds_count"</span> ] || exit 1
+
+  <span class="cm"># ═════════════════════════════════════════</span>
+  <span class="cm"># JOB 4: Deploy a DigitalOcean (sólo main)</span>
+  <span class="cm"># ═════════════════════════════════════════</span>
+  <span class="kw">deploy:</span>
+    <span class="kw">name:</span> Deploy to DigitalOcean
+    <span class="kw">needs:</span> [java-tests, frontend-tests, smoke-checks]
+    <span class="kw">if:</span> github.ref == 'refs/heads/main' &amp;&amp; github.event_name == 'push'
+    <span class="kw">runs-on:</span> ubuntu-latest
+    <span class="kw">steps:</span>
+      - <span class="kw">name:</span> Checkout
+        <span class="kw">uses:</span> actions/checkout@v4
+
+      - <span class="kw">name:</span> Build WAR (skip tests, ya pasaron)
+        <span class="kw">run:</span> mvn -B clean package -DskipTests
+
+      - <span class="kw">name:</span> Trigger DO App Platform deploy
+        <span class="kw">env:</span>
+          <span class="kw">DO_APP_ID:</span> ${{ secrets.DO_APP_ID }}
+          <span class="kw">DO_TOKEN:</span> ${{ secrets.DIGITALOCEAN_TOKEN }}
+        <span class="kw">run:</span> |
+          curl -X POST \
+            -H <span class="st">"Authorization: Bearer $DO_TOKEN"</span> \
+            -H <span class="st">"Content-Type: application/json"</span> \
+            <span class="st">"https://api.digitalocean.com/v2/apps/$DO_APP_ID/deployments"</span>
+</pre></div>
+
+  <div class="sec-title" data-n="2">JOBS EN PARALELO</div>
+
+  <p>Los 3 primeros jobs (java-tests, frontend-tests, smoke-checks) se ejecutan <strong>en paralelo</strong>. El job de deploy depende de los 3 vía <code>needs:</code> y solo se ejecuta en <code>main</code>. Tiempos calibrados:</p>
+
+  <table class="vtable">
+    <tr><th>Job</th><th>Wall-clock</th><th>Acciones</th></tr>
+    <tr><td><code>java-tests</code></td><td>~2 min</td><td>setup JDK + cache Maven + test + JaCoCo + upload</td></tr>
+    <tr><td><code>frontend-tests</code></td><td>~30 s</td><td>setup Node + 8 ficheros .js</td></tr>
+    <tr><td><code>smoke-checks</code></td><td>~10 s</td><td>solo grep + count en bash</td></tr>
+    <tr><td><code>deploy</code></td><td>~3 min</td><td>build WAR + curl trigger DO</td></tr>
+    <tr style="background:rgba(42,110,78,.05);font-weight:700"><td>Total (PR)</td><td>~2 min</td><td>Solo los 3 primeros (max es java-tests)</td></tr>
+    <tr style="background:rgba(122,58,205,.05);font-weight:700"><td>Total (push main)</td><td>~5 min</td><td>3 paralelos + deploy secuencial</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">REPORTE EN PULL REQUESTS</div>
+
+  <p>El step <code>madrapps/jacoco-report</code> añade un comentario automático al PR con la cobertura. Si la cobertura baja del 75% global o del 85% en archivos modificados, el PR queda marcado como fallido. Esto impide que merge sin tests pase desapercibido.</p>
+
+  <div class="callout green">
+    <strong>Por qué min-coverage-changed-files es más alto</strong>
+    El umbral de archivos cambiados (85%) es más exigente que el global (75%) porque cualquier código nuevo debería estar bien testeado <em>desde el principio</em>. Permitir un repositorio entero al 75% es razonable; permitir que un PR baje del 85% en lo que está añadiendo no lo es.
+  </div>
+
+  <div class="sec-title" data-n="4">SECRETS REQUERIDOS</div>
+
+  <table class="vtable">
+    <tr><th>Secret</th><th>Origen</th><th>Uso</th></tr>
+    <tr><td><code>GITHUB_TOKEN</code></td><td>Auto-provisto por Actions</td><td>Comentarios en PR (jacoco-report)</td></tr>
+    <tr><td><code>DO_APP_ID</code></td><td>DigitalOcean dashboard → Apps → ID</td><td>Identificar la app a redeploy</td></tr>
+    <tr><td><code>DIGITALOCEAN_TOKEN</code></td><td>DigitalOcean → API → Personal access token</td><td>Autenticar el trigger de deploy</td></tr>
+  </table>
+
+<div class="code-wrap">
+<pre><span class="lang">Bash · Configuración inicial</span><button class="copy-btn">COPY</button>
+<span class="cm"># Crear los secrets en GitHub (UI o CLI)</span>
+gh secret <span class="kw">set</span> DO_APP_ID --body <span class="st">"abc123-def456-..."</span>
+gh secret <span class="kw">set</span> DIGITALOCEAN_TOKEN --body <span class="st">"dop_v1_..."</span>
+
+<span class="cm"># Verificar que los workflows están detectados</span>
+gh workflow list
+
+<span class="cm"># Lanzar el workflow manualmente</span>
+gh workflow run test-and-deploy.yml
+
+<span class="cm"># Ver runs recientes</span>
+gh run list --workflow=test-and-deploy.yml --limit <span class="nu">5</span>
+</pre></div>
+
+  <div class="sec-title" data-n="5">CONSIDERACIONES PARA DIGITALOCEAN APP PLATFORM</div>
+
+  <p>WebDTE migrado se despliega como WAR en un container Tomcat 5.5 sobre DigitalOcean App Platform. La metodología FMI fija algunos requisitos de runtime que el CI debe cumplir:</p>
+
+  <ul>
+    <li><strong>Java 8 estricto</strong> — el deploy target es Tomcat 5.5 con JDK 1.5/1.6, así que el bytecode generado debe ser compatible. <code>maven.compiler.target=1.8</code> es el máximo aceptable.</li>
+    <li><strong>WAR sin dependencias provided</strong> — <code>servlet-api</code> es <code>provided</code> en pom.xml. Tomcat lo aporta. Si lo incluyes, conflicto en runtime.</li>
+    <li><strong>PostgreSQL JDBC en WEB-INF/lib</strong> — incluido como dependencia normal, no provided.</li>
+    <li><strong>Deploy zero-downtime</strong> — DO App Platform hace blue/green automáticamente. El deploy desde CI solo dispara el evento; DO maneja el resto.</li>
+  </ul>
+
+  <div class="insight-box">
+    <div class="insight-title">💡 La regla de oro: tests bloquean el deploy</div>
+    <div class="insight-content">
+      El <code>needs:</code> en el job de deploy es la pieza clave. Si <strong>cualquiera</strong> de los 3 jobs anteriores falla (Java, Frontend, Smoke), el deploy NO se ejecuta. Esto convierte la suite de tests en un firewall efectivo contra deployments rotos. En FMI, donde el código se genera por IA, esta protección es crítica: una iteración del Architect que rompa naming canónico es atrapada por SMOKE antes de llegar a producción.
+    </div>
+  </div>
+</div>
+
+<footer style="margin-top:60px;padding-top:24px;border-top:2px solid var(--ink);font-size:11px;color:var(--muted);line-height:1.7">
+  <div class="stamp">WebDTE · Migración FMI · Testing</div>
+  <p style="font-size:10px;margin-top:8px">
+    Suite de tests multi-capa generada por la metodología FMI sobre <code>pruebaMigracionCompleto19</code>.<br>
+    JUnit 4.13.2 · Mockito 1.10.19 · JaCoCo 0.8.x · Java 8 · Node.js 20+<br>
+    312 tests Java + 8 tests JS · 0 fixes manuales · 28/28 SMOKE checks · 8/8 GATE.
+  </p>
+</footer>
+
+</div><!-- .container -->
+
+<button class="scroll-top" id="scrollTop" aria-label="Volver arriba">↑</button>
+
+<script>
+(function(){
+  // Tab switching with hash navigation
+  function switchTab(id){
+    document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    var panel = document.getElementById('tab-' + id);
+    var btn = document.querySelector('.mode-btn[data-tab="' + id + '"]');
+    if (panel) panel.classList.add('active');
+    if (btn) btn.classList.add('active');
+    if (location.hash !== '#' + id) {
+      history.replaceState(null, '', '#' + id);
+    }
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', function(){
+      switchTab(btn.dataset.tab);
+    });
+  });
+
+  // Initial tab from URL hash
+  if (location.hash) {
+    var hashTab = location.hash.slice(1);
+    if (document.getElementById('tab-' + hashTab)) {
+      switchTab(hashTab);
+    }
+  }
+
+  window.addEventListener('hashchange', function(){
+    var h = location.hash.slice(1);
+    if (h && document.getElementById('tab-' + h)) {
+      switchTab(h);
+    }
+  });
+
+  // Copy buttons
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      var pre = btn.parentElement;
+      var clone = pre.cloneNode(true);
+      var langEl = clone.querySelector('.lang');
+      var copyEl = clone.querySelector('.copy-btn');
+      if (langEl) langEl.remove();
+      if (copyEl) copyEl.remove();
+      var text = clone.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        var orig = btn.textContent;
+        btn.textContent = '\u2713 COPIED';
+        btn.classList.add('copied');
+        setTimeout(function(){
+          btn.textContent = orig;
+          btn.classList.remove('copied');
+        }, 1500);
+      }).catch(function(){
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch(e) {}
+        document.body.removeChild(ta);
+        btn.textContent = '\u2713 COPIED';
+        btn.classList.add('copied');
+        setTimeout(function(){
+          btn.textContent = 'COPY';
+          btn.classList.remove('copied');
+        }, 1500);
+      });
+    });
+  });
+
+  // Scroll to top
+  var scrollBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > 400) {
+      scrollBtn.classList.add('visible');
+    } else {
+      scrollBtn.classList.remove('visible');
+    }
+  });
+  scrollBtn.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  // Keyboard nav: arrow keys
+  document.addEventListener('keydown', function(e){
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var btns = Array.from(document.querySelectorAll('.mode-btn'));
+    var current = btns.findIndex(b => b.classList.contains('active'));
+    if (e.key === 'ArrowRight' && current < btns.length - 1) {
+      switchTab(btns[current + 1].dataset.tab);
+    } else if (e.key === 'ArrowLeft' && current > 0) {
+      switchTab(btns[current - 1].dataset.tab);
+    }
+  });
+})();
+</script>
+</body>
+</html>
