@@ -1,0 +1,2652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe Coding · Guía Completa 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8;--surface:#fff;--surface2:#edeae0;--border:#cfc8b4;
+  --ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;
+  --accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;
+  --yellow:#e8a020;--purple:#7a3acd;--teal:#0e7c7b;
+  --lovable:#e91e8c;--emergent:#6c2bd9;--bolt:#f59e0b;--replit:#0080ff;
+  --mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+.container{max-width:1200px;margin:0 auto;padding:48px 28px 120px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* HEADER */
+header{border-bottom:3px solid var(--ink);padding-bottom:28px;margin-bottom:36px}
+.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:16px;transform:rotate(-0.7deg)}
+h1{font-family:var(--display);font-size:clamp(32px,6vw,64px);font-weight:800;line-height:1;letter-spacing:-2px;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+.subtitle{font-size:12px;color:var(--muted);line-height:1.8;max-width:700px;margin-bottom:16px}
+.tool-badges{display:flex;flex-wrap:wrap;gap:10px}
+.tool-badge{font-size:11px;font-weight:700;letter-spacing:1px;padding:6px 14px;border-radius:4px;border:2px solid;cursor:pointer;transition:all .2s}
+.tool-badge.l{color:var(--lovable);border-color:var(--lovable)}
+.tool-badge.e{color:var(--emergent);border-color:var(--emergent)}
+.tool-badge.b{color:var(--bolt);border-color:var(--bolt)}
+.tool-badge.r{color:var(--replit);border-color:var(--replit)}
+.tool-badge.x{color:var(--accent3);border-color:var(--accent3)}
+
+/* TABS */
+.tab-nav{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:6px;overflow:hidden;margin-bottom:40px}
+.tab-btn{font-family:var(--mono);font-size:9.5px;font-weight:700;padding:10px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+.tab-btn:last-child{border-right:none}
+.tab-btn:hover{background:var(--surface2);color:var(--ink)}
+.tab-btn.active{background:var(--ink);color:var(--bg)}
+.tab-btn.tl.active{background:var(--lovable)}
+.tab-btn.te.active{background:var(--emergent)}
+.tab-btn.tb.active{background:var(--bolt);color:var(--ink)}
+.tab-btn.tr.active{background:var(--replit)}
+.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s ease both}
+
+/* TYPOGRAPHY */
+.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 16px;display:flex;align-items:center;gap:12px}
+.sec:first-child{margin-top:0}
+.sec::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:3px;flex-shrink:0}
+.sec.l::before{background:var(--lovable)}.sec.e::before{background:var(--emergent)}.sec.b::before{background:var(--bolt);color:var(--ink)}.sec.r::before{background:var(--replit)}
+
+/* CALLOUTS */
+.note{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.75;color:var(--ink2);border-radius:0 5px 5px 0}
+.note strong{display:block;margin-bottom:4px}
+.note code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px}
+.note.o{border-color:var(--accent);background:rgba(193,68,14,.05)}.note.o strong{color:var(--accent)}
+.note.g{border-color:var(--accent2);background:rgba(42,110,78,.05)}.note.g strong{color:var(--accent2)}
+.note.b{border-color:var(--accent3);background:rgba(26,74,138,.05)}.note.b strong{color:var(--accent3)}
+.note.y{border-color:var(--yellow);background:rgba(232,160,32,.05)}.note.y strong{color:var(--yellow)}
+.note.p{border-color:var(--purple);background:rgba(122,58,205,.05)}.note.p strong{color:var(--purple)}
+.note.l{border-color:var(--lovable);background:rgba(233,30,140,.05)}.note.l strong{color:var(--lovable)}
+.note.e{border-color:var(--emergent);background:rgba(108,43,217,.05)}.note.e strong{color:var(--emergent)}
+.note.bolt{border-color:var(--bolt);background:rgba(245,158,11,.05)}.note.bolt strong{color:var(--bolt)}
+.note.r{border-color:var(--replit);background:rgba(0,128,255,.05)}.note.r strong{color:var(--replit)}
+
+/* CODE */
+pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:14px 0;position:relative}
+.kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.hl{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);overflow:hidden;margin:14px 0;border-radius:5px}
+.tbl th{background:var(--ink);color:var(--bg);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+.tbl td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(0,0,0,.015)}
+.tbl td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:10.5px}
+.tbl td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+.tbl td.ok{color:var(--accent2);font-weight:700}.tbl td.bad{color:var(--accent);font-weight:700}.tbl td.warn{color:var(--yellow);font-weight:700}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin:16px 0}
+.card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.card-hd{padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.card-hd.l{background:rgba(233,30,140,.1);color:var(--lovable)}.card-hd.e{background:rgba(108,43,217,.1);color:var(--emergent)}.card-hd.b{background:rgba(245,158,11,.1);color:var(--bolt)}.card-hd.r{background:rgba(0,128,255,.1);color:var(--replit)}
+.card-hd.g{background:rgba(42,110,78,.1);color:var(--accent2)}.card-hd.o{background:rgba(193,68,14,.1);color:var(--accent)}.card-hd.p{background:rgba(122,58,205,.1);color:var(--purple)}.card-hd.t{background:rgba(14,124,123,.1);color:var(--teal)}
+.card-bd{padding:14px;font-size:12px;line-height:1.75;color:var(--ink2)}
+
+/* FLOW */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin:20px 0}
+.fbox{border:2px solid var(--ink);border-radius:5px;padding:10px 14px;font-size:11px;font-weight:700;text-align:center;background:var(--surface);min-width:100px}
+.fbox.l{background:var(--lovable);color:#fff;border-color:var(--lovable)}.fbox.e{background:var(--emergent);color:#fff;border-color:var(--emergent)}.fbox.b{background:var(--bolt);color:var(--ink);border-color:var(--bolt)}.fbox.r{background:var(--replit);color:#fff;border-color:var(--replit)}
+.fbox.g{background:var(--accent2);color:#fff;border-color:var(--accent2)}.fbox.o{background:var(--accent);color:#fff;border-color:var(--accent)}.fbox.p{background:var(--purple);color:#fff;border-color:var(--purple)}.fbox.t{background:var(--teal);color:#fff;border-color:var(--teal)}
+.fbox sub{display:block;font-size:9px;opacity:.8;font-weight:400;margin-top:2px}
+.farr{font-size:18px;color:var(--muted);padding:0 4px}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;margin:14px 0}
+.step{display:flex;align-items:stretch}
+.step-l{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.step-n{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+.step-n.l{background:var(--lovable)}.step-n.e{background:var(--emergent)}.step-n.b{background:var(--bolt);color:var(--ink)}.step-n.r{background:var(--replit)}.step-n.g{background:var(--accent2)}.step-n.o{background:var(--accent)}.step-n.p{background:var(--purple)}
+.step-line{width:2px;background:var(--border);flex:1;margin:4px auto}
+.step:last-child .step-line{display:none}
+.step-body{padding:0 0 22px 14px;flex:1}
+.step-t{font-weight:700;font-size:12.5px;margin-bottom:5px}
+.step-d{font-size:12px;color:var(--ink2);line-height:1.7}
+
+/* INSIGHT/DANGER */
+.insight{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+.insight-t{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+.insight-b{font-size:12px;color:var(--ink2);line-height:1.75}
+.danger{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+.danger-t{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+.danger-b{font-size:12px;color:var(--ink2);line-height:1.75}
+
+/* DEPLOY CARDS */
+.deploy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:16px 0}
+.deploy-card{border:2px solid var(--border);border-radius:8px;padding:18px;transition:border-color .2s}
+.deploy-card:hover{border-color:var(--ink)}
+.deploy-icon{font-size:28px;margin-bottom:8px}
+.deploy-name{font-family:var(--display);font-size:15px;font-weight:700;margin-bottom:4px}
+.deploy-tag{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:3px;border:1.5px solid;display:inline-block;margin-bottom:10px}
+.deploy-tag.free{color:var(--accent2);border-color:var(--accent2)}.deploy-tag.paid{color:var(--accent);border-color:var(--accent)}.deploy-tag.freemium{color:var(--yellow);border-color:var(--yellow)}
+.deploy-desc{font-size:11.5px;color:var(--ink2);line-height:1.65}
+
+/* PROMPT BOX */
+.prompt-box{background:#1a1410;color:#f0ebe0;border-radius:8px;padding:20px 22px;margin:16px 0;font-size:12px;line-height:1.85;position:relative}
+.prompt-box .plabel{position:absolute;top:10px;right:14px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#8a7a65;font-weight:600}
+.prompt-box .ph{color:#c1440e;font-weight:600}.prompt-box .pv{color:#2a9d5a}
+.prompt-box .pc{color:#6a7a6a;font-style:italic}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:16px 0}
+.metric{background:var(--surface2);border:2px solid var(--border);border-radius:6px;padding:16px;text-align:center}
+.metric-v{font-family:var(--display);font-size:28px;font-weight:800}
+.metric-v.l{color:var(--lovable)}.metric-v.e{color:var(--emergent)}.metric-v.b{color:var(--bolt)}.metric-v.r{color:var(--replit)}.metric-v.g{color:var(--accent2)}.metric-v.o{color:var(--accent)}
+.metric-l{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-top:4px}
+
+/* COMPARISON TABLE SPECIAL */
+.comp-tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:6px;overflow:hidden;margin:16px 0}
+.comp-tbl th{padding:12px 14px;font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:center;color:#fff;font-weight:700}
+.comp-tbl th:first-child{background:var(--ink);text-align:left}
+.comp-tbl th.l{background:var(--lovable)}.comp-tbl th.e{background:var(--emergent)}.comp-tbl th.b{background:var(--bolt);color:var(--ink)}.comp-tbl th.r{background:var(--replit)}
+.comp-tbl td{padding:10px 14px;font-size:12px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle}
+.comp-tbl td:first-child{text-align:left;font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);font-size:11px}
+.comp-tbl tr:last-child td{border-bottom:none}
+.comp-tbl .y{color:var(--accent2)}.comp-tbl .n{color:var(--accent)}.comp-tbl .m{color:var(--yellow)}
+
+@media(max-width:720px){.grid,.deploy-grid,.metrics{grid-template-columns:1fr}.flow{gap:6px}.fbox{min-width:80px;font-size:10px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ════════════════════════════════════ HEADER ════════ -->
+<header>
+  <div class="stamp">Guía completa · Vibe Coding 2026</div>
+  <h1>De la idea<br>al <em>deploy</em></h1>
+  <div class="subtitle">El mapa completo para construir apps con IA generativa — generar, entender, modificar y publicar. Lovable · Emergent · Bolt.new · Replit y todas las opciones de publicación reales.</div>
+  <div class="tool-badges">
+    <span class="tool-badge l">💜 Lovable</span>
+    <span class="tool-badge e">🤖 Emergent</span>
+    <span class="tool-badge b">⚡ Bolt.new</span>
+    <span class="tool-badge r">🔄 Replit</span>
+    <span class="tool-badge x">🌍 Deploy completo</span>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════ TABS ══════════ -->
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="st('mapa')">🗺️ MAPA</button>
+  <button class="tab-btn tl" onclick="st('lovable')">💜 LOVABLE</button>
+  <button class="tab-btn te" onclick="st('emergent')">🤖 EMERGENT</button>
+  <button class="tab-btn tb" onclick="st('bolt')">⚡ BOLT</button>
+  <button class="tab-btn tr" onclick="st('replit')">🔄 REPLIT</button>
+  <button class="tab-btn" onclick="st('mobile')">📱 MOBILE</button>
+  <button class="tab-btn" onclick="st('testing')">🧪 TESTING</button>
+  <button class="tab-btn" onclick="st('deploy')">🚀 DEPLOY</button>
+  <button class="tab-btn" onclick="st('modificar')">✏️ MODIFICAR</button>
+  <button class="tab-btn" onclick="st('comparativa')">⚖️ COMPARATIVA</button>
+  <button class="tab-btn" onclick="st('n8n')">⚙️ N8N</button>
+  <button class="tab-btn" onclick="st('openclaw')">🦞 OPENCLAW</button>
+  <button class="tab-btn" onclick="st('agentes')">🧠 AGENTES</button>
+  <button class="tab-btn" onclick="st('flujo')">🔁 FLUJO COMPLETO</button>
+</nav>
+
+<!-- ══════════════════════════════ TAB: MAPA ══════════ -->
+<div id="tab-mapa" class="tab-panel active">
+
+  <div class="sec" data-n="★">EL MAPA COMPLETO — DE LA IDEA AL DEPLOY</div>
+
+  <div class="note g">
+    <strong>Esto no es un tutorial de herramientas. Es el mapa de decisiones.</strong>
+    Cada pieza que generas con IA tiene un stack concreto, unas opciones de deploy concretas y una forma concreta de ser modificada. Entender el mapa te evita sorpresas cuando quieras escalar o extender lo que has construido.
+  </div>
+
+  <div class="flow" style="flex-wrap:wrap;gap:8px;justify-content:center">
+    <div class="fbox o">💡 Idea<sub>prompt</sub></div><div class="farr">→</div>
+    <div class="fbox" style="background:var(--surface2)">🤖 Generar<sub>Lovable / Emergent / Bolt / Replit</sub></div><div class="farr">→</div>
+    <div class="fbox" style="background:var(--surface2)">📦 Código<sub>React / Next / Python / Node</sub></div><div class="farr">→</div>
+    <div class="fbox g">✏️ Modificar<sub>Cursor / Copilot / Claude Code</sub></div><div class="farr">→</div>
+    <div class="fbox p">🚀 Deploy<sub>Vercel / DO / Railway / Store</sub></div><div class="farr">→</div>
+    <div class="fbox t">📊 Mantener<sub>CI/CD + monitoreo</sub></div>
+  </div>
+
+  <div class="sec" data-n="1">QUÉ GENERA CADA HERRAMIENTA — EL STACK REAL</div>
+
+  <table class="tbl">
+    <tr><th>Herramienta</th><th>Frontend</th><th>Backend</th><th>Base de datos</th><th>Exporta código</th><th>Lock-in</th></tr>
+    <tr>
+      <td class="cat" style="color:var(--lovable)">💜 Lovable</td>
+      <td>React + Vite + Tailwind</td>
+      <td>Supabase (PostgreSQL + Auth + Storage)</td>
+      <td>PostgreSQL (Supabase)</td>
+      <td class="ok">✓ GitHub sync</td>
+      <td class="warn">Supabase</td>
+    </tr>
+    <tr>
+      <td class="cat" style="color:var(--emergent)">🤖 Emergent</td>
+      <td>React / React Native</td>
+      <td>Python (FastAPI) + Node.js</td>
+      <td>PostgreSQL / MongoDB</td>
+      <td class="ok">✓ Descarga ZIP</td>
+      <td class="ok">Bajo</td>
+    </tr>
+    <tr>
+      <td class="cat" style="color:var(--bolt)">⚡ Bolt.new</td>
+      <td>React + Vite / Next.js</td>
+      <td>Node.js (Express / Hono)</td>
+      <td>SQLite / sin BD por defecto</td>
+      <td class="ok">✓ Descarga / GitHub</td>
+      <td class="ok">Mínimo</td>
+    </tr>
+    <tr>
+      <td class="cat" style="color:var(--replit)">🔄 Replit</td>
+      <td>Cualquier framework</td>
+      <td>Python / Node / cualquier lenguaje</td>
+      <td>PostgreSQL (Neon) / SQLite</td>
+      <td class="warn">✓ Parcial (Git)</td>
+      <td class="bad">Alto (Neon + Replit hosting)</td>
+    </tr>
+  </table>
+
+  <div class="sec" data-n="2">ÁRBOL DE DECISIÓN — ¿QUÉ HERRAMIENTA USAR?</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-hd l">💜 Usa Lovable si...</div>
+      <div class="card-bd">
+        Quieres una app web con auth, BD y UI pulida en el menor tiempo posible. Necesitas GitHub sync para luego modificar con Cursor. El proyecto tiene formularios, dashboards y CRUD. Supabase como backend no te asusta.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd e">🤖 Usa Emergent si...</div>
+      <div class="card-bd">
+        Necesitas web + mobile (Android/iOS) desde el mismo prompt. Quieres Python en el backend. El proyecto tiene lógica de negocio compleja. Necesitas el menor lock-in posible — el código es tuyo desde el principio.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd b">⚡ Usa Bolt si...</div>
+      <div class="card-bd">
+        Quieres iterar rápido en el frontend con código limpio. El proyecto es frontend-heavy. Prefieres arrancar sin BD y añadirla después. Quieres el código más limpio y portable de todos.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd r">🔄 Usa Replit si...</div>
+      <div class="card-bd">
+        Necesitas cualquier lenguaje (Python, Rust, Go). Quieres un entorno todo-en-uno sin instalar nada. El proyecto es un script, bot, API o backend puro. No te importa el lock-in a cambio de velocidad.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="3">LAS CAPAS DEL DEPLOY — LO QUE TIENES QUE ALOJAR</div>
+
+  <div class="note b">
+    <strong>Cualquier app fullstack tiene tres piezas que alojar por separado.</strong>
+    El generador de IA puede darte las tres, pero no siempre las aloja donde más te conviene. Entender las capas te da libertad para mover cada pieza al proveedor que prefieras.
+  </div>
+
+  <div class="flow" style="flex-wrap:wrap;gap:10px">
+    <div class="fbox o">🖥️ Frontend<sub>React / HTML / CSS</sub><sub>→ Vercel / Netlify</sub></div>
+    <div class="farr">+</div>
+    <div class="fbox g">⚙️ Backend / API<sub>Node / Python / Java</sub><sub>→ DigitalOcean / Railway</sub></div>
+    <div class="farr">+</div>
+    <div class="fbox b" style="background:var(--accent3)">🗄️ Base de datos<sub>PostgreSQL / MongoDB</sub><sub>→ Supabase / Neon / DO</sub></div>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Capa</th><th>Opción gratuita</th><th>Opción de pago recomendada</th><th>Dónde lo genera cada tool</th></tr>
+    <tr><td class="cat">Frontend</td><td>Vercel Hobby / Netlify Free</td><td>Vercel Pro ($20/mes)</td><td>Lovable ✓ · Emergent ✓ · Bolt ✓ · Replit ✓</td></tr>
+    <tr><td class="cat">Backend / API</td><td>Railway (500h/mes) / Render Free</td><td>DigitalOcean Droplet ($6/mes)</td><td>Emergent ✓ · Replit ✓ · Bolt (limitado) · Lovable (Supabase)</td></tr>
+    <tr><td class="cat">Base de datos</td><td>Supabase Free / Neon Free</td><td>Supabase Pro ($25/mes) / DO Managed DB ($15/mes)</td><td>Lovable (Supabase) · Replit (Neon) · Emergent (tú eliges)</td></tr>
+    <tr><td class="cat">Mobile</td><td>PWA (cualquier hosting)</td><td>Play Store ($25 único) / App Store ($99/año)</td><td>Emergent ✓ nativo · Resto: PWA o Capacitor</td></tr>
+  </table>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: LOVABLE ══════ -->
+<div id="tab-lovable" class="tab-panel">
+
+  <div class="sec l" data-n="💜">LOVABLE — EL FULLSTACK ENGINEER DE IA</div>
+
+  <div class="metrics">
+    <div class="metric"><div class="metric-v l">$330M</div><div class="metric-l">Serie B (dic 2025)</div></div>
+    <div class="metric"><div class="metric-v l">$6.6B</div><div class="metric-l">Valoración</div></div>
+    <div class="metric"><div class="metric-v l">$20</div><div class="metric-l">Plan/mes (Starter)</div></div>
+    <div class="metric"><div class="metric-v l">React</div><div class="metric-l">Stack principal</div></div>
+  </div>
+
+  <div class="note l">
+    <strong>Lovable se autodenomina "el primer AI Fullstack Engineer".</strong>
+    Genera apps React completas con auth, BD (Supabase), pagos (Stripe) y UI pulida. Tiene sincronización bidireccional con GitHub — lo que significa que puedes editar en Lovable y luego en Cursor, y los cambios fluyen en ambas direcciones.
+  </div>
+
+  <div class="sec" data-n="S">STACK QUE GENERA</div>
+
+  <div class="grid">
+    <div class="card"><div class="card-hd l">Frontend</div><div class="card-bd">React + Vite + TypeScript + Tailwind CSS + shadcn/ui. Código limpio y componetizado. Todo en un repo GitHub que controlas tú.</div></div>
+    <div class="card"><div class="card-hd l">Backend</div><div class="card-bd">Supabase como backend completo: PostgreSQL, autenticación (email, Google, GitHub), storage para ficheros, Edge Functions para lógica server-side.</div></div>
+    <div class="card"><div class="card-hd l">Pagos</div><div class="card-bd">Stripe integrado de serie. Configuras tus productos y Lovable genera el checkout, webhooks y gestión de suscripciones automáticamente.</div></div>
+    <div class="card"><div class="card-hd l">Deploy</div><div class="card-bd">Deploy en el hosting propio de Lovable (subdomain gratuito) o en Vercel/Netlify conectando el repositorio GitHub generado.</div></div>
+  </div>
+
+  <div class="sec" data-n="P">PROMPTS QUE FUNCIONAN — TÉCNICA DE 3 CAPAS</div>
+
+  <div class="note y">
+    <strong>Los mejores prompts en Lovable tienen tres partes:</strong>
+    (1) Qué construir, (2) Cómo debe comportarse, (3) Qué tecnología usar.
+  </div>
+
+  <div class="prompt-box">
+    <div class="plabel">PROMPT INICIAL — APP DE GESTIÓN</div>
+    <span class="ph">Construye una app de gestión de proyectos</span> con las siguientes características:
+
+<span class="pc">// QUÉ construir</span>
+- Dashboard con KPIs: proyectos activos, tareas pendientes, tiempo registrado
+- CRUD completo de proyectos (crear, editar, eliminar, archivar)
+- Gestión de tareas con estados: pendiente, en progreso, completado
+- Asignación de tareas a miembros del equipo
+
+<span class="pc">// CÓMO debe comportarse</span>
+- Autenticación con email y Google OAuth
+- Cada usuario solo ve sus proyectos y los compartidos
+- Las tareas se pueden reordenar con drag and drop
+- Notificaciones en tiempo real cuando alguien te asigna una tarea
+
+<span class="pc">// QUÉ tecnología</span>
+- React + TypeScript + Tailwind + shadcn/ui
+- Supabase para auth y BD
+- Diseño oscuro profesional, tipo Linear o Vercel
+  </div>
+
+  <div class="sec" data-n="F">FLUJO COMPLETO EN LOVABLE</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-l"><div class="step-n l">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Crear proyecto en lovable.dev</div>
+        <div class="step-d">New Project → pegar el prompt. Lovable genera la app completa en 2-5 minutos. Ve el resultado en el preview de la derecha mientras se construye.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n l">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Conectar Supabase</div>
+        <div class="step-d">Lovable te pide conectar tu cuenta de Supabase (gratis). Crea las tablas, RLS policies y funciones automáticamente. También puedes usar el Supabase que Lovable gestiona por ti.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n l">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Iterar con prompts de refinamiento</div>
+        <div class="step-d">Usa el chat para pedir cambios: <em>"Cambia el color del sidebar a slate-900"</em>, <em>"Añade un campo de prioridad a las tareas"</em>, <em>"El drag and drop no funciona en móvil, arréglalo"</em>. Cada prompt regenera solo lo necesario.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n l">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Conectar GitHub y clonar</div>
+        <div class="step-d">Settings → GitHub → Connect. Lovable sincroniza el código en un repo tuyo. Desde ese momento puedes editar en local con Cursor/VSCode y los cambios se sincronizan en ambas direcciones.</div>
+<pre>git clone https://github.com/tu-usuario/proyecto-lovable
+cd proyecto-lovable
+npm install
+npm run dev          <span class="cm"># corre en localhost:5173</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n l">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Deploy en Vercel (recomendado)</div>
+        <div class="step-d">Conecta el repo GitHub a Vercel. Cada push a main hace deploy automático. Variables de entorno de Supabase en Vercel Settings. Tu app está en producción con HTTPS y CDN global.</div>
+<pre><span class="cm"># Variables de entorno necesarias en Vercel:</span>
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGci...
+VITE_STRIPE_PUBLIC_KEY=pk_live_...</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="D">OPCIONES DE DEPLOY DESDE LOVABLE</div>
+
+  <div class="deploy-grid">
+    <div class="deploy-card">
+      <div class="deploy-icon">💜</div>
+      <div class="deploy-name">Lovable Hosting</div>
+      <div class="deploy-tag freemium">Incluido</div>
+      <div class="deploy-desc">Deploy en <code>tuapp.lovable.app</code> con un clic. Gratis con el plan base. Dominio propio con plan de pago. Sin configuración. Limitado en performance para apps con mucho tráfico.</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">▲</div>
+      <div class="deploy-name">Vercel</div>
+      <div class="deploy-tag free">Gratis Hobby</div>
+      <div class="deploy-desc">Conecta el repo GitHub → deploy automático. CDN global, HTTPS, preview deployments por rama. La mejor opción para React/Vite. Plan Hobby gratis para proyectos personales.</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">🌊</div>
+      <div class="deploy-name">DigitalOcean App Platform</div>
+      <div class="deploy-tag paid">Desde $5/mes</div>
+      <div class="deploy-desc">Si quieres alejarte de Vercel. Soporta frontend + las Edge Functions de Supabase. Buen precio, buena performance, panel más familiar si ya usas DO.</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">🟩</div>
+      <div class="deploy-name">Netlify</div>
+      <div class="deploy-tag free">Gratis</div>
+      <div class="deploy-desc">Alternativa a Vercel. Mismo concepto: conecta GitHub, deploy automático. Formularios gratis, functions serverless. Menos integrado con el ecosistema React que Vercel.</div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="L">LIMITACIONES A CONOCER</div>
+
+  <div class="danger">
+    <div class="danger-t">⚠️ El lock-in de Supabase</div>
+    <div class="danger-b">
+      Todo el backend de Lovable es Supabase. Auth, BD, storage, real-time. Si quieres migrar a otro backend (tu propio servidor, Firebase, PlanetScale) hay que reescribir toda la capa de datos. Evalúa si Supabase es suficiente para tu proyecto a largo plazo antes de empezar.
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-t">💡 El flujo híbrido ideal con Lovable</div>
+    <div class="insight-b">
+      Genera el 80% en Lovable (estructura, auth, CRUD, UI). Conecta GitHub. Clona el repo. Abre en Cursor con Copilot. El 20% restante (lógica compleja, optimizaciones, integraciones específicas) lo haces en local con control total. Push a GitHub → Vercel despliega automáticamente.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: EMERGENT ════ -->
+<div id="tab-emergent" class="tab-panel">
+
+  <div class="sec e" data-n="🤖">EMERGENT — MULTI-AGENTE PARA APPS SERIAS</div>
+
+  <div class="metrics">
+    <div class="metric"><div class="metric-v e">$300M</div><div class="metric-l">Valoración (YC)</div></div>
+    <div class="metric"><div class="metric-v e">$70M</div><div class="metric-l">Serie B</div></div>
+    <div class="metric"><div class="metric-v e">$20</div><div class="metric-l">Plan Standard/mes</div></div>
+    <div class="metric"><div class="metric-v e">Web+App</div><div class="metric-l">Web y Mobile nativo</div></div>
+  </div>
+
+  <div class="note e">
+    <strong>Emergent usa múltiples agentes especializados trabajando en paralelo.</strong>
+    Un agente diseña la arquitectura, otro escribe el frontend, otro el backend, otro gestiona la BD. El resultado es código más coherente y production-ready que el de herramientas de un solo agente. Es el que más se acerca a lo que haría un equipo de developers real.
+  </div>
+
+  <div class="sec" data-n="S">STACK QUE GENERA</div>
+
+  <div class="grid">
+    <div class="card"><div class="card-hd e">Frontend Web</div><div class="card-bd">React con TypeScript. Estilos con Tailwind o styled-components. Componentes bien estructurados y reutilizables. Código exportable y modificable.</div></div>
+    <div class="card"><div class="card-hd e">Frontend Mobile</div><div class="card-bd">React Native para iOS y Android desde el mismo código base. No es una PWA — genera APK real para Android y build para App Store. El punto diferencial respecto a todos los demás.</div></div>
+    <div class="card"><div class="card-hd e">Backend</div><div class="card-bd">Python con FastAPI o Node.js con Express según el proyecto. API REST bien documentada con Swagger automático. Autenticación JWT. Tests básicos incluidos.</div></div>
+    <div class="card"><div class="card-hd e">Base de datos</div><div class="card-bd">PostgreSQL o MongoDB según el tipo de datos. Migraciones automáticas. ORM (SQLAlchemy para Python, Prisma para Node). El esquema se genera del prompt.</div></div>
+  </div>
+
+  <div class="sec" data-n="P">PROMPTS PARA EMERGENT — MÁS TÉCNICOS</div>
+
+  <div class="note y">
+    <strong>Emergent entiende especificaciones técnicas.</strong>
+    A diferencia de otras herramientas, puedes ser muy explícito sobre la arquitectura que quieres. Cuanto más preciso, mejor el resultado.
+  </div>
+
+  <div class="prompt-box">
+    <div class="plabel">PROMPT — APP WEB + MOBILE</div>
+<span class="ph">Crea una aplicación de gestión de proyectos fullstack</span> con estas especificaciones técnicas:
+
+<span class="pc">// ARQUITECTURA</span>
+- Frontend web: React + TypeScript + Tailwind
+- Mobile: React Native (iOS + Android)
+- Backend: Python FastAPI con autenticación JWT
+- BD: PostgreSQL con Prisma ORM
+- Comunicación: API REST con documentación Swagger
+
+<span class="pc">// FUNCIONALIDAD</span>
+- Auth: registro, login, refresh token, Google OAuth
+- Proyectos: CRUD completo, asignación de miembros
+- Tareas: estados (todo/doing/done), prioridades, fechas límite
+- Dashboard: métricas en tiempo real, gráficos de progreso
+- Notificaciones push en la app mobile
+
+<span class="pc">// DEPLOY TARGET</span>
+- Frontend web: preparado para Vercel
+- Backend: preparado para Docker en DigitalOcean
+- Mobile: preparado para Play Store y App Store
+  </div>
+
+  <div class="sec" data-n="F">FLUJO COMPLETO EN EMERGENT</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-l"><div class="step-n e">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Crear proyecto en emergent.sh</div>
+        <div class="step-d">New Project → describir la app. Los agentes especializados arrancan en paralelo. Puedes ver en tiempo real qué hace cada agente (Architect, Frontend, Backend, Database). Tarda 5-15 min para apps complejas.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n e">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Revisar la arquitectura generada</div>
+        <div class="step-d">Emergent muestra el árbol de archivos completo antes de escribir el código. Puedes corregir la arquitectura en este punto — más barato que hacerlo después. Aprueba o pide ajustes.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n e">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Descargar el código</div>
+        <div class="step-d">Download ZIP o conectar GitHub. El ZIP incluye frontend web, mobile y backend como proyectos separados con sus propios package.json / requirements.txt.</div>
+<pre>proyecto-emergent/
+├── frontend/          <span class="cm"># React web</span>
+│   ├── src/
+│   └── package.json
+├── mobile/            <span class="cm"># React Native</span>
+│   ├── src/
+│   └── package.json
+└── backend/           <span class="cm"># Python FastAPI</span>
+    ├── app/
+    └── requirements.txt</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n e">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Arrancar en local</div>
+<pre><span class="cm"># Backend Python</span>
+cd backend
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload   <span class="cm"># http://localhost:8000</span>
+
+<span class="cm"># Frontend web</span>
+cd frontend
+npm install && npm run dev      <span class="cm"># http://localhost:3000</span>
+
+<span class="cm"># Mobile (requiere Expo CLI)</span>
+cd mobile
+npm install && npx expo start   <span class="cm"># QR para móvil o emulador</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n e">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Deploy completo</div>
+        <div class="step-d">Frontend → Vercel. Backend → DigitalOcean con Docker. Mobile → Play Store + App Store. Ver pestaña DEPLOY para el detalle de cada uno.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="M">MOBILE CON EMERGENT — EL PROCESO REAL</div>
+
+  <div class="note e">
+    <strong>Emergent genera React Native — no una PWA.</strong>
+    Esto significa código nativo real, acceso a APIs del dispositivo (cámara, notificaciones push, GPS) y publicación en las tiendas oficiales.
+  </div>
+
+<pre><span class="cm"># Generar el APK para Android (desde el proyecto mobile)</span>
+cd mobile
+npm install
+npx expo build:android         <span class="cm"># genera APK en la nube (Expo EAS)</span>
+<span class="cm"># o build local con Android Studio:</span>
+npx expo run:android
+
+<span class="cm"># Generar IPA para iOS</span>
+npx expo build:ios             <span class="cm"># requiere cuenta Apple Developer ($99/año)</span>
+
+<span class="cm"># Con Expo EAS Build (recomendado)</span>
+npm install -g eas-cli
+eas login
+eas build --platform android   <span class="cm"># build en la nube, sin Mac necesario</span>
+eas build --platform ios</pre>
+
+  <div class="deploy-grid">
+    <div class="deploy-card">
+      <div class="deploy-icon">🤖</div>
+      <div class="deploy-name">Play Store</div>
+      <div class="deploy-tag paid">$25 único</div>
+      <div class="deploy-desc">Cuenta Google Play Console. Sube el APK/AAB generado por Expo EAS. Revisión en 1-3 días. Actualizaciones OTA con Expo Updates (sin pasar revisión para cambios de JS).</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">🍎</div>
+      <div class="deploy-name">App Store</div>
+      <div class="deploy-tag paid">$99/año</div>
+      <div class="deploy-desc">Cuenta Apple Developer. Build en Mac o con Expo EAS Cloud. Revisión más estricta (5-7 días). Requiere Mac para el proceso aunque Expo EAS permite build sin él.</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">🌐</div>
+      <div class="deploy-name">Backend en DO</div>
+      <div class="deploy-tag paid">Desde $6/mes</div>
+      <div class="deploy-desc">El FastAPI se dockeriza fácilmente. DigitalOcean Droplet con Docker o App Platform. PostgreSQL en DO Managed Database. Vercel no aloja backends Python — DO es la opción natural.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: BOLT ════════ -->
+<div id="tab-bolt" class="tab-panel">
+
+  <div class="sec b" data-n="⚡">BOLT.NEW — VELOCIDAD MÁXIMA EN EL NAVEGADOR</div>
+
+  <div class="metrics">
+    <div class="metric"><div class="metric-v b">0</div><div class="metric-l">Instalación necesaria</div></div>
+    <div class="metric"><div class="metric-v b">React</div><div class="metric-l">Stack principal</div></div>
+    <div class="metric"><div class="metric-v b">Free</div><div class="metric-l">Plan básico</div></div>
+    <div class="metric"><div class="metric-v b">WebContainer</div><div class="metric-l">Tecnología clave</div></div>
+  </div>
+
+  <div class="note bolt">
+    <strong>Bolt corre un entorno Node.js completo dentro del navegador.</strong>
+    Sin instalación, sin setup, sin Docker. Abres bolt.new, escribes el prompt y en segundos tienes un servidor Node corriendo con hot reload. La tecnología detrás es WebContainers de StackBlitz — la misma que usa el playground oficial de React y Angular.
+  </div>
+
+  <div class="sec" data-n="S">STACK QUE GENERA</div>
+
+  <div class="grid">
+    <div class="card"><div class="card-hd b">Frontend</div><div class="card-bd">React + Vite + TypeScript + Tailwind. También puede generar Next.js, Astro, Vue o vanilla JS. El código más limpio de todas las herramientas — sin overhead de plataforma.</div></div>
+    <div class="card"><div class="card-hd b">Backend</div><div class="card-bd">Node.js con Express, Hono o Fastify. APIs REST sencillas. Para backends complejos con BD real, Bolt es el punto de partida — luego extiendes en local.</div></div>
+    <div class="card"><div class="card-hd b">Base de datos</div><div class="card-bd">SQLite por defecto (sin configuración). Puede conectarse a Supabase o PlanetScale añadiéndolo al prompt. Para producción, conectar Supabase es lo más limpio.</div></div>
+    <div class="card"><div class="card-hd b">Deploy</div><div class="card-bd">Deploy en Netlify con un clic desde la interfaz. O exporta el código y despliega donde quieras. El ZIP es puro Node/React — funciona en cualquier sitio.</div></div>
+  </div>
+
+  <div class="sec" data-n="P">PROMPTS PARA BOLT — ITERATIVO Y RÁPIDO</div>
+
+  <div class="prompt-box">
+    <div class="plabel">PROMPT INICIAL</div>
+<span class="ph">Crea una app de gestión de proyectos</span> con React + TypeScript + Tailwind:
+
+- Sidebar con navegación: Dashboard, Proyectos, Tareas, Equipo
+- Dashboard con 4 KPI cards: proyectos activos, tareas completadas, tiempo registrado, miembros
+- Lista de proyectos con cards: nombre, progreso (barra), estado, fecha límite
+- Vista de tareas tipo kanban: columnas Todo, In Progress, Done con drag and drop
+- Modal para crear/editar proyecto y tareas
+- Diseño oscuro profesional, tipografía Inter, colores azul/slate
+- Datos mock para que se vea completo desde el principio
+  </div>
+
+  <div class="prompt-box" style="margin-top:8px">
+    <div class="plabel">PROMPTS DE REFINAMIENTO (en el chat)</div>
+<span class="pc">// Después del primer resultado:</span>
+<span class="pv">"Añade un campo de prioridad a las tareas: baja, media, alta. 
+ Alta en rojo, media en amarillo, baja en verde."</span>
+
+<span class="pv">"El kanban necesita mostrar el número de tareas en cada columna."</span>
+
+<span class="pv">"Añade animaciones suaves al cambiar una tarea de columna."</span>
+
+<span class="pv">"Conecta a Supabase. La URL y la key las añado yo en variables de entorno."</span>
+  </div>
+
+  <div class="sec" data-n="F">FLUJO COMPLETO EN BOLT</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-l"><div class="step-n b">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Abrir bolt.new — sin cuenta necesaria</div>
+        <div class="step-d">Ir a <strong>bolt.new</strong> en el navegador. Pegar el prompt. En 30-60 segundos tienes la app corriendo con preview en la derecha. El entorno Node corre completamente en el navegador.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n b">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Iterar con el chat</div>
+        <div class="step-d">El chat de la izquierda permite pedir cambios. Bolt edita solo los ficheros necesarios — no regenera todo. Puedes ver exactamente qué ficheros cambia antes de aplicarlo.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n b">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Exportar el código</div>
+        <div class="step-d">Download ZIP o sincronizar con GitHub. El proyecto es puro Vite + React — se instala y corre como cualquier proyecto Node estándar.</div>
+<pre>unzip proyecto-bolt.zip && cd proyecto-bolt
+npm install
+npm run dev     <span class="cm"># localhost:5173</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n b">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Añadir backend real si hace falta</div>
+        <div class="step-d">Bolt genera principalmente frontend. Si necesitas backend propio, dos opciones: (A) conectar Supabase como BaaS, o (B) crear el backend por separado con Emergent o en local y conectarlos via API REST.</div>
+<pre><span class="cm"># Añadir Supabase al proyecto de Bolt</span>
+npm install @supabase/supabase-js
+<span class="cm"># Crear src/lib/supabase.ts y conectar</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n b">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Deploy en Netlify o Vercel</div>
+        <div class="step-d">Desde Bolt: botón Deploy → Netlify (un clic). O conectar el repo GitHub a Vercel manualmente. Es React + Vite estándar — funciona en cualquier CDN.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="C">CUÁNDO BOLT ES LA MEJOR OPCIÓN</div>
+
+  <div class="grid">
+    <div class="card"><div class="card-hd b">✅ Prototipos rápidos</div><div class="card-bd">Quieres mostrar algo en funcionamiento en menos de una hora. Reunión en 2 horas y necesitas un demo. Sin BD, sin auth — solo la UI funcionando.</div></div>
+    <div class="card"><div class="card-hd b">✅ Frontend-heavy</div><div class="card-bd">Apps donde el 80% del trabajo es la UI — dashboards, portfolios, landing pages, visualizaciones de datos. Bolt genera el mejor código frontend de todos.</div></div>
+    <div class="card"><div class="card-hd b">✅ Punto de partida</div><div class="card-bd">Genera la estructura y los componentes en Bolt, exporta, y añade el backend en local. Es más rápido que empezar desde cero con Vite manualmente.</div></div>
+    <div class="card"><div class="card-hd o">❌ Backend complejo</div><div class="card-bd">Si necesitas lógica server-side compleja, colas de mensajes, workers en background o múltiples microservicios — Bolt no es la herramienta. Usa Emergent o Replit.</div></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: REPLIT ══════ -->
+<div id="tab-replit" class="tab-panel">
+
+  <div class="sec r" data-n="🔄">REPLIT — EL TODO EN UNO PARA CUALQUIER LENGUAJE</div>
+
+  <div class="metrics">
+    <div class="metric"><div class="metric-v r">$100M</div><div class="metric-l">ARR en 2025</div></div>
+    <div class="metric"><div class="metric-v r">Any</div><div class="metric-l">Lenguaje soportado</div></div>
+    <div class="metric"><div class="metric-v r">$20</div><div class="metric-l">Plan Core/mes</div></div>
+    <div class="metric"><div class="metric-v r">0</div><div class="metric-l">Instalación local</div></div>
+  </div>
+
+  <div class="note r">
+    <strong>Replit es el único entorno que soporta cualquier lenguaje sin instalación.</strong>
+    Python, Node.js, Go, Rust, Java, C++, Ruby — todo en el navegador con su entorno completo. Su AI Agent planifica y construye aplicaciones autónomamente. El punto diferencial: si tu backend no es JavaScript/Python, Replit es prácticamente la única opción de vibe coding que te sirve.
+  </div>
+
+  <div class="sec" data-n="S">STACK QUE GENERA</div>
+
+  <div class="grid">
+    <div class="card"><div class="card-hd r">Cualquier lenguaje</div><div class="card-bd">Python, Node.js, Java, Go, Rust, Ruby, PHP, C#... Replit configura el entorno automáticamente. Sin Dockerfile, sin configuración de runtime.</div></div>
+    <div class="card"><div class="card-hd r">Base de datos</div><div class="card-bd">Neon PostgreSQL integrado (serverless). También soporta SQLite, Redis (Key-Value store propio), MongoDB. La BD se crea y conecta automáticamente.</div></div>
+    <div class="card"><div class="card-hd r">Hosting propio</div><div class="card-bd">Replit Deployments aloja tu app directamente desde el editor. No necesitas Vercel ni DO. La URL es <code>tuapp.replit.app</code>. El hosting es parte de la plataforma.</div></div>
+    <div class="card"><div class="card-hd r">Colaboración</div><div class="card-bd">Múltiples personas editando el mismo Repl en tiempo real, como Google Docs. Ideal para pair programming o para que el cliente vea en directo lo que estás construyendo.</div></div>
+  </div>
+
+  <div class="sec" data-n="P">PROMPTS PARA REPLIT — AGENT MODE</div>
+
+  <div class="prompt-box">
+    <div class="plabel">PROMPT — BACKEND API + DASHBOARD</div>
+<span class="ph">Crea una API REST para gestión de proyectos</span> con Python FastAPI:
+
+<span class="pc">// BACKEND (Python)</span>
+- Endpoints: GET/POST/PUT/DELETE /projects, /tasks, /users
+- Autenticación JWT con refresh tokens
+- PostgreSQL con SQLAlchemy ORM y Alembic para migraciones
+- Documentación Swagger automática en /docs
+- Tests con pytest para los endpoints principales
+
+<span class="pc">// FRONTEND (React integrado)</span>
+- Dashboard que consume la API
+- Login/registro conectado al JWT
+- CRUD de proyectos y tareas
+
+<span class="pc">// DOCKER</span>
+- Dockerfile listo para deploy en DigitalOcean
+- docker-compose.yml con la app + PostgreSQL para desarrollo local
+  </div>
+
+  <div class="sec" data-n="F">FLUJO COMPLETO EN REPLIT</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-l"><div class="step-n r">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Crear Repl con el Agent</div>
+        <div class="step-d">replit.com → Create Repl → usar el Agent (no la plantilla manual). Describir la app en el chat del Agent. El Agent planifica la arquitectura, instala dependencias y escribe el código.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n r">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Trabajar en el editor</div>
+        <div class="step-d">Replit tiene un editor completo (VSCode-like) con terminal integrada, file explorer y preview. Puedes editar manualmente o seguir usando el Agent para cambios concretos.</div>
+<pre><span class="cm"># En la terminal de Replit:</span>
+pip install fastapi uvicorn sqlalchemy
+uvicorn main:app --reload      <span class="cm"># corre automáticamente</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n r">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Deploy en Replit (más sencillo) o exportar</div>
+        <div class="step-d">Opción A — Deploy en Replit: botón Deploy → está en <code>tuapp.replit.app</code> en 1 minuto. Escala automáticamente.<br><br>Opción B — Exportar a Git: conectar GitHub desde Settings → Secrets → Git. El código es tuyo para llevarlo a cualquier parte.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n r">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Mover el backend a DigitalOcean (si necesitas más control)</div>
+<pre><span class="cm"># Desde el repo exportado de Replit:</span>
+<span class="cm"># Dockerfile generado por el Agent:</span>
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+<span class="cm"># En DigitalOcean App Platform:</span>
+<span class="cm"># Conectar el repo → detecta el Dockerfile → deploy automático</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="L">EL LOCK-IN DE REPLIT — ENTENDERLO ANTES DE COMPROMETERSE</div>
+
+  <div class="danger">
+    <div class="danger-t">⚠️ Neon PostgreSQL y el hosting propio crean dependencia</div>
+    <div class="danger-b">
+      La BD de Replit es Neon PostgreSQL (serverless). Si en algún momento quieres mover la app fuera de Replit, necesitas: (1) exportar el esquema y los datos de Neon, (2) montar una BD en otro sitio, (3) cambiar la connection string. No es imposible pero requiere trabajo. Si sabes desde el principio que la app irá a producción fuera de Replit, exporta el código pronto y trabaja en local desde ese momento.
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-t">💡 El caso de uso ideal de Replit</div>
+    <div class="insight-b">
+      Backends y APIs en Python. Scripts que necesitan correr en la nube sin servidor propio. Prototipos donde el lenguaje no es JavaScript. Proyectos colaborativos donde varios desarrolladores trabajan en tiempo real. Bots (Discord, Telegram, Slack) que necesitan un hosting siempre encendido. Para estos casos, Replit es insuperable en velocidad de setup.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: MOBILE ══════ -->
+<div id="tab-mobile" class="tab-panel">
+
+  <div class="sec" data-n="📱">DE APP WEB A MÓVIL — LAS RUTAS REALES</div>
+
+  <div class="note b">
+    <strong>Hay tres rutas para llegar a un móvil desde código web.</strong>
+    PWA (Progressive Web App), Capacitor/Cordova (wrapper nativo) y React Native (nativo real). Cada una tiene sus casos de uso, sus limitaciones y sus procesos de publicación. Emergent es la única herramienta que genera React Native directamente.
+  </div>
+
+  <table class="tbl">
+    <tr><th>Ruta</th><th>Lovable</th><th>Emergent</th><th>Bolt</th><th>Replit</th><th>Acceso nativo</th><th>Play Store</th><th>App Store</th></tr>
+    <tr><td class="cat">PWA</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="bad">Limitado</td><td class="warn">No oficial</td><td class="bad">No</td></tr>
+    <tr><td class="cat">Capacitor</td><td class="warn">Manual</td><td class="warn">Manual</td><td class="warn">Manual</td><td class="warn">Manual</td><td class="ok">Completo</td><td class="ok">✓</td><td class="ok">✓</td></tr>
+    <tr><td class="cat">React Native</td><td class="bad">No</td><td class="ok">✓ Nativo</td><td class="bad">No</td><td class="warn">Manual</td><td class="ok">Completo</td><td class="ok">✓</td><td class="ok">✓</td></tr>
+  </table>
+
+  <div class="sec" data-n="1">RUTA A: PWA — LA MÁS RÁPIDA</div>
+
+  <div class="note g">
+    <strong>Una PWA es una web que el usuario puede "instalar" en su móvil.</strong>
+    No pasa por la Play Store. El usuario va a tu URL desde Chrome/Safari y le sale el banner "Añadir a pantalla de inicio". Se comporta casi como una app nativa — tiene icono, va fullscreen, puede funcionar offline y puede recibir notificaciones push.
+  </div>
+
+<pre><span class="cm">// Añadir PWA a cualquier app React (Lovable, Bolt, Emergent web)</span>
+npm install vite-plugin-pwa
+
+<span class="cm">// vite.config.ts</span>
+<span class="kw">import</span> { VitePWA } <span class="kw">from</span> <span class="st">'vite-plugin-pwa'</span>;
+
+<span class="kw">export default</span> {
+  plugins: [
+    VitePWA({
+      registerType: <span class="st">'autoUpdate'</span>,
+      manifest: {
+        name: <span class="st">'Mi App de Proyectos'</span>,
+        short_name: <span class="st">'Proyectos'</span>,
+        description: <span class="st">'Gestión de proyectos'</span>,
+        theme_color: <span class="st">'#1a1410'</span>,
+        background_color: <span class="st">'#f5f0e8'</span>,
+        display: <span class="st">'standalone'</span>,  <span class="cm">// fullscreen, sin barra del navegador</span>
+        icons: [
+          { src: <span class="st">'/icon-192.png'</span>, sizes: <span class="st">'192x192'</span>, type: <span class="st">'image/png'</span> },
+          { src: <span class="st">'/icon-512.png'</span>, sizes: <span class="st">'512x512'</span>, type: <span class="st">'image/png'</span> },
+        ]
+      }
+    })
+  ]
+}</pre>
+
+  <div class="sec" data-n="2">RUTA B: CAPACITOR — WEB → APK REAL</div>
+
+  <div class="note y">
+    <strong>Capacitor envuelve tu app web en una shell nativa.</strong>
+    El resultado es un APK (Android) o IPA (iOS) real que se publica en las tiendas. Tiene acceso completo a las APIs nativas: cámara, GPS, notificaciones push, biometría, almacenamiento local. Es el puente entre Lovable/Bolt y las tiendas oficiales.
+  </div>
+
+<pre><span class="cm"># Añadir Capacitor a tu app de Lovable/Bolt</span>
+npm install @capacitor/core @capacitor/cli
+npx cap init "Mi App" "com.miempresa.miapp"
+npm install @capacitor/android @capacitor/ios
+
+<span class="cm"># Construir la web primero</span>
+npm run build                  <span class="cm"># genera carpeta dist/</span>
+
+<span class="cm"># Sincronizar con los proyectos nativos</span>
+npx cap add android
+npx cap add ios
+npx cap sync                   <span class="cm"># copia dist/ a los proyectos nativos</span>
+
+<span class="cm"># Abrir en Android Studio para generar el APK</span>
+npx cap open android
+
+<span class="cm"># En Android Studio: Build → Generate Signed APK/AAB</span>
+<span class="cm"># El AAB es el formato que acepta la Play Store</span></pre>
+
+<pre><span class="cm"># Acceso a APIs nativas con Capacitor</span>
+<span class="kw">import</span> { Camera } <span class="kw">from</span> <span class="st">'@capacitor/camera'</span>;
+<span class="kw">import</span> { Geolocation } <span class="kw">from</span> <span class="st">'@capacitor/geolocation'</span>;
+<span class="kw">import</span> { PushNotifications } <span class="kw">from</span> <span class="st">'@capacitor/push-notifications'</span>;
+
+<span class="cm">// Sacar foto</span>
+<span class="kw">const</span> photo = <span class="kw">await</span> Camera.getPhoto({ quality: <span class="nu">90</span>, resultType: <span class="st">'uri'</span> });
+
+<span class="cm">// Ubicación</span>
+<span class="kw">const</span> pos = <span class="kw">await</span> Geolocation.getCurrentPosition();</pre>
+
+  <div class="sec" data-n="3">RUTA C: REACT NATIVE (EMERGENT) — NATIVO REAL</div>
+
+<pre><span class="cm"># Con el proyecto mobile de Emergent</span>
+cd mobile
+
+<span class="cm"># Instalar Expo EAS para builds en la nube</span>
+npm install -g eas-cli
+eas login
+
+<span class="cm"># Configurar el build</span>
+eas build:configure
+
+<span class="cm"># Build Android (sin necesitar Android Studio local)</span>
+eas build --platform android --profile production
+<span class="cm"># → genera un AAB en la nube, te manda el link de descarga</span>
+
+<span class="cm"># Build iOS (sin necesitar Mac local)</span>
+eas build --platform ios --profile production
+<span class="cm"># → genera el IPA en la nube (necesitas cuenta Apple Developer)</span>
+
+<span class="cm"># Subir directamente a las tiendas</span>
+eas submit --platform android  <span class="cm"># sube a Play Store automáticamente</span>
+eas submit --platform ios      <span class="cm"># sube a App Store Connect</span></pre>
+
+  <div class="sec" data-n="4">PUBLICAR EN PLAY STORE — PASO A PASO</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-l"><div class="step-n g">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Crear cuenta Google Play Console</div>
+        <div class="step-d">play.google.com/console → Registrarse → Pago único de $25. Verificación de identidad (1-2 días).</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n g">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Crear la aplicación en la consola</div>
+        <div class="step-d">Create app → Nombre, idioma, tipo (app/juego), gratuita/de pago. Rellenar la ficha: descripción, capturas de pantalla, icono (512x512), política de privacidad (obligatoria).</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n g">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Subir el AAB</div>
+        <div class="step-d">Production → Create new release → subir el fichero .aab generado por Expo EAS. Añadir release notes. Google firma el APK automáticamente para los usuarios.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n g">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Revisión y publicación</div>
+        <div class="step-d">Google revisa en 1-3 días (apps nuevas). Actualizaciones posteriores: horas. Con Expo Updates puedes actualizar la lógica JS sin nueva revisión — solo cambios nativos requieren pasar por la tienda.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: TESTING ═════ -->
+<div id="tab-testing" class="tab-panel">
+
+  <div class="sec" data-n="🧪">DISTRIBUIR Y TESTEAR TU APP — SIN TIENDAS</div>
+
+  <div class="note g">
+    <strong>Para testear tu propia app no necesitas Play Store ni Aptoide.</strong>
+    Hay opciones más rápidas, gratuitas y pensadas exactamente para esto: instalar en tu móvil, compartir con 2-3 personas de confianza y actualizar sin fricción. Aptoide tiene sentido cuando quieres distribución pública — no para testing privado.
+  </div>
+
+  <div class="sec" data-n="D">ÁRBOL DE DECISIÓN — QUÉ OPCIÓN USAR</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-hd g">Solo tú · Desarrollo activo</div>
+      <div class="card-bd"><strong>→ Expo Go + QR</strong><br>Ves la app en tu móvil en tiempo real mientras codeas. Hot reload instantáneo. Sin generar APK. La opción más rápida para development.</div>
+    </div>
+    <div class="card">
+      <div class="card-hd g">Solo tú · Build real en tu móvil</div>
+      <div class="card-bd"><strong>→ APK directo por Telegram</strong><br>Generas el APK, te lo mandas por Telegram, lo instalas. Simple y sin infraestructura. Para cuando quieres ver el comportamiento nativo real.</div>
+    </div>
+    <div class="card">
+      <div class="card-hd b">Tú + 2-10 personas</div>
+      <div class="card-bd"><strong>→ Firebase App Distribution</strong><br>Gratis, privado, hasta 100 testers por email. Cada versión nueva → los testers reciben un link. La mejor opción para testing estructurado sin tiendas.</div>
+    </div>
+    <div class="card">
+      <div class="card-hd b">Equipo más grande o beta pública</div>
+      <div class="card-bd"><strong>→ Play Internal Testing</strong><br>Con los $25 de Play Console. Hasta 100 testers, disponible en minutos, sin revisión de Google. El escalón previo a producción.</div>
+    </div>
+    <div class="card">
+      <div class="card-hd p">Distribución pública alternativa</div>
+      <div class="card-bd"><strong>→ Aptoide Connect</strong><br>Para distribución a 200M usuarios sin las restricciones de Google Play. También útil si tu app fue rechazada por Play Store.</div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="1">EXPO GO — TESTING EN TIEMPO REAL SIN APK</div>
+
+  <div class="note g">
+    <strong>La opción más rápida durante el desarrollo.</strong>
+    Instala Expo Go en tu móvil, lanza el servidor de desarrollo, escanea el QR y ves tu app React Native en el móvil con hot reload. Cualquier cambio en el código se refleja en segundos.
+  </div>
+
+<pre><span class="cm"># En tu ordenador (desde el proyecto mobile de Emergent)</span>
+cd mobile
+npm install
+npx expo start
+
+<span class="cm"># Saldrá un QR en la terminal</span>
+<span class="cm"># En tu móvil Android:</span>
+<span class="cm">#   1. Instalar "Expo Go" desde Play Store</span>
+<span class="cm">#   2. Abrir Expo Go → escanear el QR</span>
+<span class="cm">#   3. La app carga en segundos</span>
+<span class="cm">#   4. Cada cambio en el código → hot reload automático</span>
+
+<span class="cm"># Para que funcione en red diferente (VPN, móvil de datos):</span>
+npx expo start --tunnel   <span class="cm"># usa ngrok, funciona desde cualquier red</span></pre>
+
+  <div class="danger">
+    <div class="danger-t">⚠️ Expo Go tiene limitaciones</div>
+    <div class="danger-b">
+      Expo Go no soporta módulos nativos personalizados — solo las APIs que incluye Expo de serie. Si tu app usa librerías con código nativo no estándar (por ejemplo algunos SDKs de pagos o biometría específica), necesitarás una Development Build en lugar de Expo Go. <code>npx expo run:android</code> genera una build de desarrollo con todos tus módulos nativos incluidos.
+    </div>
+  </div>
+
+  <div class="sec" data-n="2">APK DIRECTO — EL MÁS SIMPLE</div>
+
+  <div class="note y">
+    <strong>Genera el APK y mándatelo por Telegram, WhatsApp o Google Drive.</strong>
+    En el móvil: abre el fichero → instalar. Hay que tener activado "Instalar apps de fuentes desconocidas" en los ajustes del móvil, pero se activa una sola vez.
+  </div>
+
+<pre><span class="cm"># Generar APK de preview (más rápido que production)</span>
+<span class="cm"># Crear primero el perfil en eas.json:</span>
+{
+  <span class="st">"build"</span>: {
+    <span class="st">"preview"</span>: {
+      <span class="st">"android"</span>: {
+        <span class="st">"buildType"</span>: <span class="st">"apk"</span>   <span class="cm">// APK directo, no AAB</span>
+      }
+    },
+    <span class="st">"production"</span>: {
+      <span class="st">"android"</span>: {
+        <span class="st">"buildType"</span>: <span class="st">"app-bundle"</span>  <span class="cm">// AAB para Play Store</span>
+      }
+    }
+  }
+}
+
+<span class="cm"># Lanzar el build de preview en la nube (EAS)</span>
+eas build --platform android --profile preview
+
+<span class="cm"># EAS te manda un link de descarga del APK</span>
+<span class="cm"># Descárgalo y mándatelo por Telegram a tu móvil</span>
+
+<span class="cm"># En el móvil Android:</span>
+<span class="cm"># Ajustes → Seguridad → Instalar apps desconocidas</span>
+<span class="cm"># → activar para Telegram/Files (solo una vez)</span>
+<span class="cm"># → abrir el APK → instalar</span>
+
+<span class="cm"># Build local sin EAS (requiere Android Studio instalado):</span>
+npx expo run:android --variant release</pre>
+
+  <div class="sec" data-n="3">FIREBASE APP DISTRIBUTION — LA MEJOR PARA TESTERS</div>
+
+  <div class="note b">
+    <strong>Gratis, privado, hasta 100 testers, notificaciones automáticas.</strong>
+    Subes el APK a Firebase, añades los emails de los testers, ellos reciben un link y pueden instalar con un clic. Cuando subes una versión nueva, les notifica automáticamente. Sin tiendas, sin revisiones.
+  </div>
+
+<pre><span class="cm"># 1. Instalar Firebase CLI</span>
+npm install -g firebase-tools
+firebase login
+
+<span class="cm"># 2. Crear proyecto en Firebase Console (gratis)</span>
+<span class="cm">#    console.firebase.google.com → Add project</span>
+<span class="cm">#    → App Distribution → Activar</span>
+
+<span class="cm"># 3. Obtener el App ID</span>
+<span class="cm">#    Firebase Console → Project Settings → General</span>
+<span class="cm">#    → tu app Android → App ID (1:xxxx:android:xxxx)</span>
+
+<span class="cm"># 4. Subir el APK con release notes</span>
+firebase appdistribution:distribute tu-app.apk \
+  --app <span class="hl">1:123456789:android:abcdef123456</span> \
+  --testers <span class="hl">"tu@email.com,colega@email.com"</span> \
+  --release-notes <span class="st">"v1.2 — módulo de proyectos, fix en el login"</span>
+
+<span class="cm"># Los testers reciben un email con el link</span>
+<span class="cm"># Instalan la app Firebase App Tester en su móvil</span>
+<span class="cm"># Desde esa app gestionan las versiones y actualizaciones</span></pre>
+
+<pre><span class="cm"># Integrar Firebase Distribution en el pipeline de Expo EAS</span>
+<span class="cm"># eas.json — tras el build, distribuye automáticamente</span>
+{
+  <span class="st">"build"</span>: {
+    <span class="st">"preview"</span>: {
+      <span class="st">"android"</span>: { <span class="st">"buildType"</span>: <span class="st">"apk"</span> },
+      <span class="st">"distribution"</span>: <span class="st">"internal"</span>
+    }
+  },
+  <span class="st">"submit"</span>: {
+    <span class="st">"preview"</span>: {
+      <span class="st">"android"</span>: {
+        <span class="st">"serviceAccountKeyPath"</span>: <span class="st">"./firebase-key.json"</span>,
+        <span class="st">"firebaseAppId"</span>: <span class="st">"1:xxx:android:xxx"</span>,
+        <span class="st">"groups"</span>: [<span class="st">"testers-internos"</span>]
+      }
+    }
+  }
+}
+
+<span class="cm"># Build + distribución automática en un comando</span>
+eas build --platform android --profile preview
+eas submit --platform android --profile preview
+<span class="cm"># → build en la nube → APK → subido a Firebase → testers notificados</span></pre>
+
+  <div class="sec" data-n="4">EXPO EAS UPDATE — ACTUALIZAR SIN NUEVA BUILD</div>
+
+  <div class="note p">
+    <strong>La opción más potente para actualizar apps ya instaladas.</strong>
+    Con Expo Updates puedes actualizar el código JavaScript de la app sin generar una nueva build ni pedir a los testers que reinstalen nada. La app se actualiza automáticamente la próxima vez que se abre.
+  </div>
+
+<pre><span class="cm"># Configurar EAS Update en el proyecto</span>
+npx expo install expo-updates
+eas update:configure
+
+<span class="cm"># Publicar una actualización OTA (Over The Air)</span>
+eas update --branch preview --message <span class="st">"fix: crash en pantalla de login"</span>
+
+<span class="cm"># La próxima vez que los testers abran la app:</span>
+<span class="cm"># → descarga la actualización en background</span>
+<span class="cm"># → al reabrir la app: nueva versión activa</span>
+<span class="cm"># → sin reinstalar, sin notificaciones, transparente</span>
+
+<span class="cm"># Importante: solo actualiza el código JS</span>
+<span class="cm"># Si cambias código nativo (Android/iOS) → nueva build necesaria</span>
+<span class="cm"># Si cambias solo React Native / lógica JS → OTA es suficiente</span></pre>
+
+  <div class="sec" data-n="5">GOOGLE PLAY INTERNAL TESTING — PARA EQUIPOS GRANDES</div>
+
+<pre><span class="cm"># Requiere cuenta Google Play Console ($25 único)</span>
+<span class="cm"># Una vez creada la app en Play Console:</span>
+
+<span class="cm"># 1. Generar AAB firmado con Expo EAS</span>
+eas build --platform android --profile production
+
+<span class="cm"># 2. En Play Console:</span>
+<span class="cm">#    Testing → Internal testing → Create new release</span>
+<span class="cm">#    → subir el AAB → añadir testers por email</span>
+<span class="cm">#    → publicar (disponible en minutos, sin revisión)</span>
+
+<span class="cm"># 3. Los testers reciben el link de Play Store</span>
+<span class="cm">#    La app se instala y actualiza como cualquier app de Play</span>
+<span class="cm">#    Máximo 100 testers en Internal Testing</span></pre>
+
+  <div class="sec" data-n="6">APTOIDE — DISTRIBUCIÓN PÚBLICA ALTERNATIVA</div>
+
+  <div class="note" style="border-color:var(--purple);background:rgba(122,58,205,.05)">
+    <strong style="color:var(--purple)">Cuándo tiene sentido Aptoide</strong>
+    Distribución pública a 200M usuarios, apps rechazadas por Play Store, distribución en mercados sin Google Services (Huawei), o cuando quieres publicar sin los $25 de Google.
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-l"><div class="step-n p">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Crear cuenta gratuita en Aptoide Connect</div>
+        <div class="step-d">Ir a <strong>connect.aptoide.com</strong> → Sign Up. Gratis, sin pago de registro. Verificar el email.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n p">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Añadir la app</div>
+        <div class="step-d">Add App → "¿Está en Google Play?" Si está: Aptoide sincroniza automáticamente los metadatos y el APK — las actualizaciones de Play llegan a Aptoide en menos de 24h sin hacer nada. Si no está: subir el APK manualmente.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n p">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Rellenar metadatos (si no viene de Play Store)</div>
+<pre style="margin-top:8px">Nombre de la app
+Descripción (corta y larga)
+Categoría
+Clasificación de edad
+Capturas de pantalla (mínimo 2)
+Icono: 512×512 px PNG
+Política de privacidad (URL)</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n p">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Revisión de seguridad automática</div>
+        <div class="step-d">Aptoide escanea el APK con múltiples antivirus. Si no detecta malware, la app se publica en horas — no días como en Play Store. Las actualizaciones posteriores siguen el mismo proceso.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n p">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Distribución en 10+ tiendas con un clic</div>
+        <div class="step-d">Aptoide Connect distribuye automáticamente en su red de tiendas partner — sin subir nada adicional. Una sola integración, múltiples tiendas Android.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="C">COMPARATIVA COMPLETA</div>
+
+  <table class="tbl">
+    <tr><th>Opción</th><th>Coste</th><th>Testers</th><th>Actualizaciones</th><th>Cuándo</th></tr>
+    <tr>
+      <td class="cat">Expo Go + QR</td>
+      <td class="ok">Gratis</td>
+      <td>Solo tú</td>
+      <td class="ok">Hot reload en tiempo real</td>
+      <td>Desarrollo activo, iteración rápida</td>
+    </tr>
+    <tr>
+      <td class="cat">APK por Telegram</td>
+      <td class="ok">Gratis</td>
+      <td>1-5 personas</td>
+      <td>Manual (reenviar APK)</td>
+      <td>Build real en tu móvil, sin infraestructura</td>
+    </tr>
+    <tr>
+      <td class="cat">Expo EAS Update</td>
+      <td class="ok">Gratis (50 updates/mes)</td>
+      <td>Todos los que tienen la app</td>
+      <td class="ok">Automática OTA (solo JS)</td>
+      <td>Fixes rápidos sin nueva build</td>
+    </tr>
+    <tr>
+      <td class="cat">Firebase App Distribution</td>
+      <td class="ok">Gratis</td>
+      <td>Hasta 100</td>
+      <td class="ok">Notificación automática por email</td>
+      <td>Testing privado con equipo o clientes</td>
+    </tr>
+    <tr>
+      <td class="cat">Play Internal Testing</td>
+      <td class="warn">$25 único</td>
+      <td>Hasta 100</td>
+      <td class="ok">Auto vía Play Store</td>
+      <td>Pre-producción formal, equipo grande</td>
+    </tr>
+    <tr>
+      <td class="cat">Aptoide Connect</td>
+      <td class="ok">Gratis</td>
+      <td>200M usuarios</td>
+      <td class="ok">Auto si sincroniza con Play</td>
+      <td>Distribución pública alternativa a Play Store</td>
+    </tr>
+    <tr>
+      <td class="cat">Play Store (producción)</td>
+      <td class="warn">$25 único</td>
+      <td>3.000M usuarios</td>
+      <td class="ok">Auto vía Play Store</td>
+      <td>Lanzamiento público oficial</td>
+    </tr>
+  </table>
+
+  <div class="insight">
+    <div class="insight-title">💡 El flujo de testing recomendado</div>
+    <div class="insight-content">
+      <strong>Día a día en desarrollo:</strong> Expo Go + QR. Ves los cambios en tiempo real en tu móvil sin generar nada.<br>
+      <strong>Cuando quieres probar el comportamiento nativo real:</strong> <code>eas build --profile preview</code> → APK por Telegram.<br>
+      <strong>Cuando tienes algo que mostrar a alguien:</strong> Firebase App Distribution. Les llega un email, instalan con un clic.<br>
+      <strong>Fix urgente en una versión ya instalada:</strong> <code>eas update</code> → OTA, se actualiza sola la próxima vez que abren la app.<br>
+      <strong>Cuando quieres llegar a más gente sin Play Store:</strong> Aptoide Connect, gratis y en horas.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: DEPLOY ══════ -->
+<div id="tab-deploy" class="tab-panel">
+
+  <div class="sec" data-n="🚀">TODAS LAS OPCIONES DE DEPLOY — COMPARATIVA REAL</div>
+
+  <div class="sec" data-n="F">FRONTEND — DÓNDE ALOJAR REACT/NEXT</div>
+
+  <div class="deploy-grid">
+    <div class="deploy-card">
+      <div class="deploy-icon">▲</div>
+      <div class="deploy-name">Vercel</div>
+      <div class="deploy-tag free">Hobby gratis</div>
+      <div class="deploy-desc">El estándar para React/Next.js. CDN global, HTTPS automático, preview deployments por rama, analytics incluidos. <strong>Hobby gratis</strong> para proyectos personales. Pro $20/mes para equipos. Conexión directa con GitHub — cada push despliega.</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">🟢</div>
+      <div class="deploy-name">Netlify</div>
+      <div class="deploy-tag free">Free tier</div>
+      <div class="deploy-desc">Alternativa sólida a Vercel. Free tier generoso (100GB bandwidth). Formularios gratis, funciones serverless, split testing. Algo menos integrado con el ecosistema React que Vercel pero muy competente.</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">🌊</div>
+      <div class="deploy-name">DO App Platform</div>
+      <div class="deploy-tag paid">Desde $5/mes</div>
+      <div class="deploy-desc">DigitalOcean gestiona el deploy del frontend. Buena opción si ya tienes el backend en DO y quieres todo en el mismo proveedor. Menos optimizado para React que Vercel pero muy estable.</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">☁️</div>
+      <div class="deploy-name">Cloudflare Pages</div>
+      <div class="deploy-tag free">Gratis</div>
+      <div class="deploy-desc">El más rápido en latencia global. Red de Cloudflare. Gratis para proyectos personales. Workers para lógica server-side edge. Excelente para apps con usuarios globales.</div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="B">BACKEND — DÓNDE ALOJAR NODE/PYTHON/JAVA</div>
+
+  <div class="deploy-grid">
+    <div class="deploy-card">
+      <div class="deploy-icon">🌊</div>
+      <div class="deploy-name">DigitalOcean</div>
+      <div class="deploy-tag paid">Desde $6/mes</div>
+      <div class="deploy-desc"><strong>El más recomendado para proyectos serios.</strong> Droplets (VPS con Docker), App Platform (similar a Heroku), Managed Databases, Spaces (S3-compatible). Panel limpio, precios predecibles, muy buen soporte. El Droplet básico de $6/mes aguanta una app con carga moderada.</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">🚂</div>
+      <div class="deploy-name">Railway</div>
+      <div class="deploy-tag freemium">$5 crédito/mes</div>
+      <div class="deploy-desc">El más sencillo para backends: conecta el repo, detecta el runtime automáticamente (Node, Python, Go...), despliega. PostgreSQL integrado. Escala a cero cuando no hay tráfico — perfecto para proyectos con tráfico variable. $5 de crédito gratuito al mes.</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">🟣</div>
+      <div class="deploy-name">Render</div>
+      <div class="deploy-tag freemium">Free (spin-down)</div>
+      <div class="deploy-desc">Similar a Railway. Free tier para proyectos pequeños (el servicio se apaga tras 15 min sin tráfico — cold start de 30-60 seg). Web services, workers, cron jobs, PostgreSQL. Muy usado para proyectos personales y startups early-stage.</div>
+    </div>
+    <div class="deploy-card">
+      <div class="deploy-icon">🟠</div>
+      <div class="deploy-name">Fly.io</div>
+      <div class="deploy-tag freemium">Free tier</div>
+      <div class="deploy-desc">Deploy de contenedores Docker en múltiples regiones. Muy rápido para apps con latencia crítica. Free tier generoso. Curva de aprendizaje mayor que Railway pero más control y flexibilidad.</div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="D">BASE DE DATOS — OPCIONES GESTIONADAS</div>
+
+  <table class="tbl">
+    <tr><th>Proveedor</th><th>Tipo</th><th>Free tier</th><th>Pago</th><th>Cuándo usarlo</th></tr>
+    <tr><td class="cat">Supabase</td><td>PostgreSQL + BaaS</td><td class="ok">2 proyectos gratis</td><td>$25/mes</td><td>Con Lovable o cualquier app React. Auth + BD + Storage en uno.</td></tr>
+    <tr><td class="cat">Neon</td><td>PostgreSQL serverless</td><td class="ok">Gratis (0.5GB)</td><td>$19/mes</td><td>Escala a cero. Ideal para proyectos con tráfico variable. Usado por Replit.</td></tr>
+    <tr><td class="cat">PlanetScale</td><td>MySQL serverless</td><td class="warn">Solo pago ($39)</td><td>$39/mes</td><td>Si necesitas MySQL y escala automática. Branching de BD como Git.</td></tr>
+    <tr><td class="cat">MongoDB Atlas</td><td>MongoDB gestionado</td><td class="ok">512MB gratis</td><td>$57/mes</td><td>Datos no relacionales, documentos JSON complejos, búsqueda full-text.</td></tr>
+    <tr><td class="cat">DO Managed DB</td><td>PostgreSQL gestionado</td><td class="bad">No</td><td>$15/mes</td><td>Si ya tienes el backend en DigitalOcean — todo en el mismo proveedor.</td></tr>
+    <tr><td class="cat">Redis (Upstash)</td><td>Redis serverless</td><td class="ok">10K req/día</td><td>$0.2/100K req</td><td>Cache, sesiones, colas de mensajes. Se paga por uso.</td></tr>
+  </table>
+
+  <div class="sec" data-n="V">DESPLEGAR EN VERCEL — EL CASO MÁS COMÚN</div>
+
+<pre><span class="cm"># Opción 1: Desde la interfaz de Vercel (recomendado para Lovable/Bolt)</span>
+<span class="cm"># 1. Ir a vercel.com → Add New Project</span>
+<span class="cm"># 2. Import Git Repository → seleccionar el repo de GitHub</span>
+<span class="cm"># 3. Vercel detecta Vite/Next.js automáticamente</span>
+<span class="cm"># 4. Añadir variables de entorno en Settings → Environment Variables</span>
+<span class="cm"># 5. Deploy → tu app está en tuapp.vercel.app</span>
+
+<span class="cm"># Opción 2: Desde terminal con Vercel CLI</span>
+npm install -g vercel
+vercel login
+cd tu-proyecto
+vercel                         <span class="cm"># primera vez — configura el proyecto</span>
+vercel --prod                  <span class="cm"># deploy a producción</span>
+
+<span class="cm"># Dominio propio en Vercel</span>
+vercel domains add tudominio.com
+<span class="cm"># Añadir los registros DNS que Vercel indica en tu registrador (Namecheap, Cloudflare...)</span></pre>
+
+  <div class="sec" data-n="DO">DESPLEGAR BACKEND EN DIGITALOCEAN CON DOCKER</div>
+
+<pre><span class="cm"># Dockerfile básico para cualquier backend Node (generado por las herramientas)</span>
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json .
+RUN npm ci --only=production
+COPY . .
+EXPOSE 3000
+CMD ["node", "src/index.js"]
+
+<span class="cm"># Dockerfile para Python FastAPI (Emergent/Replit)</span>
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt --no-cache-dir
+COPY . .
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+<span class="cm"># En DigitalOcean — dos opciones:</span>
+
+<span class="cm"># OPCIÓN A: App Platform (más sencillo, como Heroku)</span>
+<span class="cm"># Dashboard DO → App Platform → Create App</span>
+<span class="cm"># → seleccionar repo GitHub → detecta Dockerfile</span>
+<span class="cm"># → elige región, plan ($5-12/mes) → Deploy</span>
+
+<span class="cm"># OPCIÓN B: Droplet con Docker (más control)</span>
+doctl compute droplet create mi-backend \
+  --image ubuntu-22-04-x64 \
+  --size s-1vcpu-1gb \
+  --region ams3
+
+ssh root@IP_DEL_DROPLET
+apt update && apt install docker.io docker-compose -y
+git clone tu-repo && cd tu-repo
+docker build -t mi-app .
+docker run -d -p 80:8000 --env-file .env mi-app</pre>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: MODIFICAR ══ -->
+<div id="tab-modificar" class="tab-panel">
+
+  <div class="sec" data-n="✏️">CÓMO MODIFICAR Y EXTENDER EL CÓDIGO GENERADO</div>
+
+  <div class="note g">
+    <strong>El código generado por IA es el punto de partida, no el destino.</strong>
+    El flujo correcto: generar el 70-80% con la herramienta de vibe coding → exportar → entender la estructura → modificar con Cursor/Copilot → añadir funcionalidad que la herramienta no puede generar.
+  </div>
+
+  <div class="sec" data-n="1">ENTENDER LO QUE TE HAN GENERADO — PRIMERO</div>
+
+<pre><span class="cm"># Después de clonar el proyecto generado</span>
+cd proyecto-generado
+
+<span class="cm"># Ver la estructura completa</span>
+find . -type f -name "*.ts" -o -name "*.tsx" | head -30
+
+<span class="cm"># Pedir a Copilot que te explique la arquitectura</span>
+<span class="cm"># En Copilot Chat:</span>
+<span class="cm"># "Analiza este proyecto React generado por Lovable y explícame:</span>
+<span class="cm">#  1. Qué hace cada carpeta</span>
+<span class="cm">#  2. Cómo fluyen los datos (state management)</span>
+<span class="cm">#  3. Cómo está conectado con Supabase</span>
+<span class="cm">#  4. Qué tendría que cambiar para añadir un módulo de facturación"</span></pre>
+
+  <div class="sec" data-n="2">ESTRUCTURA TÍPICA DE LO QUE GENERA LOVABLE/BOLT</div>
+
+<pre>src/
+├── components/          <span class="cm"># Componentes UI reutilizables</span>
+│   ├── ui/              <span class="cm"># shadcn/ui — NO modificar</span>
+│   ├── layout/          <span class="cm"># Sidebar, Header, Footer</span>
+│   └── features/        <span class="cm"># Componentes de negocio</span>
+├── pages/               <span class="cm"># Una carpeta por ruta principal</span>
+│   ├── Dashboard.tsx
+│   ├── Projects.tsx
+│   └── Tasks.tsx
+├── hooks/               <span class="cm"># Custom hooks para lógica reutilizable</span>
+│   ├── useProjects.ts   <span class="cm"># ← aquí está la lógica de datos</span>
+│   └── useAuth.ts
+├── lib/
+│   ├── supabase.ts      <span class="cm"># cliente de Supabase</span>
+│   └── utils.ts
+├── types/               <span class="cm"># TypeScript types</span>
+│   └── index.ts
+└── App.tsx              <span class="cm"># Router y providers</span></pre>
+
+  <div class="sec" data-n="3">FLUJO DE MODIFICACIÓN CON CURSOR + COPILOT</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-l"><div class="step-n g">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Abrir el proyecto en Cursor</div>
+        <div class="step-d">Cursor indexa todo el codebase automáticamente. Desde ese momento, Copilot/Claude en Cursor tiene contexto de todo el proyecto — no solo del fichero abierto.</div>
+<pre>cursor .    <span class="cm"># abrir la carpeta en Cursor</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n g">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Usar Cursor Chat para cambios de alta nivel</div>
+        <div class="step-d"><code>Ctrl+L</code> → chat con contexto completo. Para cambios que afectan a múltiples ficheros — el agente los edita todos de una vez.</div>
+        <div class="prompt-box" style="font-size:11px;padding:14px">
+<span class="pv">"Añade un módulo de tiempo registrado (time tracking) a la app.
+ Necesito: 
+ - Botón start/stop en cada tarea
+ - Timer que sume el tiempo mientras está activo
+ - Total de horas por proyecto visible en el dashboard
+ - Tabla 'time_entries' en Supabase con user_id, task_id, start_time, end_time
+ Crea todos los ficheros necesarios y modifica los que haya que modificar."</span>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n g">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Usar Cursor Composer para multi-file edits</div>
+        <div class="step-d"><code>Ctrl+Shift+I</code> → Composer. Describe los cambios, Cursor muestra un diff de todos los ficheros que va a tocar antes de aplicar. Revisas y apruebas.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n g">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Iterar con inline edits para cambios pequeños</div>
+        <div class="step-d"><code>Ctrl+K</code> sobre una selección → editar solo ese bloque. Para cambios de UI, lógica de un componente o correcciones rápidas.</div>
+<pre><span class="cm">// Seleccionar el componente → Ctrl+K:</span>
+<span class="cm">"Cambia esta tabla para que sea ordenable por cualquier columna</span>
+<span class="cm"> haciendo click en el header"</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n g">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Push → deploy automático</div>
+        <div class="step-d">Cuando estés satisfecho con los cambios: <code>git push</code>. Vercel/Netlify detecta el push y despliega automáticamente en 1-2 minutos. Si tienes preview deployments configurados, cada rama tiene su propia URL de preview.</div>
+<pre>git add . && git commit -m "feat: time tracking module"
+git push origin main   <span class="cm"># → Vercel despliega en 2 min</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="A">AÑADIR LO QUE LAS HERRAMIENTAS NO GENERAN</div>
+
+  <table class="tbl">
+    <tr><th>Lo que falta habitualmente</th><th>Cómo añadirlo con Cursor/Copilot</th></tr>
+    <tr><td class="cat">Tests</td><td>Prompt: <em>"Genera tests con Vitest + Testing Library para todos los custom hooks de la carpeta hooks/"</em></td></tr>
+    <tr><td class="cat">Error handling robusto</td><td>Prompt: <em>"Añade error boundaries en los componentes principales y mensajes de error amigables para el usuario"</em></td></tr>
+    <tr><td class="cat">Optimización de queries</td><td>Prompt: <em>"Revisa las queries a Supabase y añade paginación donde falte. Añade índices al esquema"</em></td></tr>
+    <tr><td class="cat">Internacionalización</td><td>Prompt: <em>"Integra i18next y extrae todos los textos hardcoded a ficheros de traducción en/es"</em></td></tr>
+    <tr><td class="cat">Autenticación avanzada</td><td>Prompt: <em>"Añade 2FA con TOTP (Google Authenticator) usando supabase-mfa"</em></td></tr>
+    <tr><td class="cat">Websockets / real-time</td><td>Supabase Realtime ya está incluido — prompt para activarlo en los componentes que lo necesiten</td></tr>
+    <tr><td class="cat">Lógica de negocio compleja</td><td>Aquí es donde tu experiencia como arquitecto senior marca la diferencia — define la arquitectura, Cursor implementa</td></tr>
+  </table>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: COMPARATIVA ═ -->
+<div id="tab-comparativa" class="tab-panel">
+
+  <div class="sec" data-n="⚖️">TABLA DE DECISIÓN COMPLETA</div>
+
+  <table class="comp-tbl">
+    <tr>
+      <th>Criterio</th>
+      <th class="l">💜 Lovable</th>
+      <th class="e">🤖 Emergent</th>
+      <th class="b">⚡ Bolt</th>
+      <th class="r">🔄 Replit</th>
+    </tr>
+    <tr><td>App web fullstack</td><td class="y">★★★★★</td><td class="y">★★★★☆</td><td class="y">★★★☆☆</td><td class="y">★★★★☆</td></tr>
+    <tr><td>App mobile nativa</td><td class="n">No</td><td class="y">★★★★★</td><td class="n">No</td><td class="m">Manual</td></tr>
+    <tr><td>PWA instalable</td><td class="y">★★★★☆</td><td class="y">★★★★☆</td><td class="y">★★★★☆</td><td class="y">★★★☆☆</td></tr>
+    <tr><td>Calidad del código</td><td class="y">★★★★☆</td><td class="y">★★★★★</td><td class="y">★★★★★</td><td class="y">★★★☆☆</td></tr>
+    <tr><td>UI/diseño</td><td class="y">★★★★★</td><td class="y">★★★☆☆</td><td class="y">★★★★★</td><td class="y">★★★☆☆</td></tr>
+    <tr><td>Backend complejo</td><td class="m">Supabase</td><td class="y">★★★★★</td><td class="y">★★★☆☆</td><td class="y">★★★★★</td></tr>
+    <tr><td>Cualquier lenguaje</td><td class="n">React only</td><td class="m">React/Python</td><td class="m">React/Node</td><td class="y">Cualquiera</td></tr>
+    <tr><td>Exportar código</td><td class="y">GitHub sync</td><td class="y">ZIP completo</td><td class="y">ZIP / GitHub</td><td class="m">Git parcial</td></tr>
+    <tr><td>Lock-in</td><td class="m">Supabase</td><td class="y">Mínimo</td><td class="y">Mínimo</td><td class="n">Alto</td></tr>
+    <tr><td>Deploy integrado</td><td class="y">✓ Lovable.app</td><td class="y">✓ Emergent</td><td class="y">✓ Netlify</td><td class="y">✓ Replit.app</td></tr>
+    <tr><td>Precio mínimo útil</td><td class="y">$20/mes</td><td class="y">$20/mes</td><td class="y">Gratis</td><td class="y">$20/mes</td></tr>
+    <tr><td>Velocidad de setup</td><td class="y">★★★★★</td><td class="y">★★★★☆</td><td class="y">★★★★★</td><td class="y">★★★★★</td></tr>
+    <tr><td>Para modificar después</td><td class="y">★★★★★</td><td class="y">★★★★★</td><td class="y">★★★★★</td><td class="m">★★★☆☆</td></tr>
+  </table>
+
+  <div class="sec" data-n="D">DECISIÓN RÁPIDA — EL ÁRBOL</div>
+
+  <div class="grid">
+    <div class="card"><div class="card-hd l">Quiero la app más pulida posible en el menor tiempo</div><div class="card-bd">→ <strong>Lovable</strong>. La UI que genera es la mejor de todas. Supabase resuelve el backend. GitHub sync permite extender con Cursor después.</div></div>
+    <div class="card"><div class="card-hd e">Necesito web + mobile desde el mismo proyecto</div><div class="card-bd">→ <strong>Emergent</strong>. El único que genera React Native real. Backend Python si lo necesitas. Mayor control sobre el stack.</div></div>
+    <div class="card"><div class="card-hd b">Quiero el código más limpio para modificar yo</div><div class="card-bd">→ <strong>Bolt.new</strong>. El código que genera es el más estándar y portable. Perfecto como punto de partida para extender en local.</div></div>
+    <div class="card"><div class="card-hd r">El backend no es JavaScript ni Python estándar</div><div class="card-bd">→ <strong>Replit</strong>. El único que soporta cualquier lenguaje sin fricción. Para scripts, bots, APIs en Go/Rust/Java.</div></div>
+    <div class="card"><div class="card-hd g">Quiero lo mejor de Lovable + máximo control</div><div class="card-bd">→ <strong>Lovable + Cursor</strong>. Genera en Lovable, exporta a GitHub, modifica en Cursor. El flujo híbrido más productivo para developers con experiencia.</div></div>
+    <div class="card"><div class="card-hd p">Quiero web + mobile + sin lock-in</div><div class="card-bd">→ <strong>Emergent + Vercel + DigitalOcean</strong>. Frontend en Vercel, backend Python en DO, mobile en Play Store / App Store con Expo EAS.</div></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: FLUJO COMPLETO ═ -->
+<!-- ══════════════════════════════ TAB: N8N ══════════ -->
+<div id="tab-n8n" class="tab-panel">
+
+  <div class="sec" data-n="⚙️">N8N — LA CAPA DE AUTOMATIZACIÓN DEL STACK</div>
+
+  <div class="note g">
+    <strong>n8n es el pegamento entre todas las piezas que has construido.</strong>
+    Tu app de Lovable genera un usuario nuevo → n8n lo detecta vía webhook → envía un email de bienvenida → crea una tarea en Notion → notifica al equipo en Slack → y registra el evento en una hoja de Google Sheets. Todo eso sin tocar el código de la app. n8n es open source, se autoaloja en DigitalOcean y no tiene límite de ejecuciones.
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="metric-v g">$0</div><div class="metric-l">Coste software</div><div class="metric-s">open source + autoalojado</div></div>
+    <div class="metric"><div class="metric-v g">400+</div><div class="metric-l">Integraciones</div><div class="metric-s">nativas</div></div>
+    <div class="metric"><div class="metric-v g">∞</div><div class="metric-l">Ejecuciones</div><div class="metric-s">sin límite en self-hosted</div></div>
+    <div class="metric"><div class="metric-v g">$12</div><div class="metric-l">Coste DO</div><div class="metric-s">Droplet 2GB recomendado</div></div>
+  </div>
+
+  <div class="sec" data-n="I">INSTALAR N8N EN DIGITALOCEAN — SETUP COMPLETO</div>
+
+  <div class="note b">
+    <strong>Opción A — DigitalOcean Marketplace (5 minutos).</strong>
+    DO tiene n8n en su Marketplace con PostgreSQL, HTTPS y health checks preconfigurados. Un clic y está listo. La opción más rápida si quieres n8n en producción sin tocar configuración.
+  </div>
+
+<pre><span class="cm"># Opción A: Marketplace (recomendado para empezar)</span>
+<span class="cm"># digitalocean.com → Marketplace → buscar "n8n"</span>
+<span class="cm"># → Create Droplet → $12/mes (2GB RAM) → listo</span>
+
+<span class="cm"># Opción B: Docker Compose manual (más control)</span>
+<span class="cm"># En un Droplet Ubuntu 22.04 ($12/mes):</span>
+
+apt update && apt install docker.io docker-compose-plugin -y
+
+mkdir ~/n8n && cd ~/n8n
+cat > docker-compose.yml &lt;&lt; 'EOF'
+version: "3.8"
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: n8n
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: <span class="hl">TU_PASSWORD_SEGURA</span>
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  n8n:
+    image: n8nio/n8n:latest
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=<span class="hl">TU_PASSWORD_SEGURA</span>
+      - N8N_HOST=<span class="hl">n8n.tudominio.com</span>
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://<span class="hl">n8n.tudominio.com</span>/
+      - N8N_ENCRYPTION_KEY=<span class="hl">CLAVE_ALEATORIA_32_CHARS</span>
+      - GENERIC_TIMEZONE=Europe/Madrid
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  n8n_data:
+EOF
+
+docker compose up -d
+<span class="cm"># → n8n disponible en http://IP:5678</span>
+<span class="cm"># → Configurar dominio + SSL con Caddy o Nginx</span></pre>
+
+  <div class="sec" data-n="W">WEBHOOKS — EL PUENTE CON TUS APPS</div>
+
+  <div class="note y">
+    <strong>El webhook es el mecanismo clave para conectar n8n con lo que generas.</strong>
+    Cuando algo pasa en tu app (nuevo usuario, nueva venta, nuevo proyecto creado) tu app llama a la URL del webhook de n8n y n8n ejecuta el flujo automáticamente.
+  </div>
+
+<pre><span class="cm">// En tu app de Lovable/Bolt — llamar al webhook de n8n</span>
+<span class="cm">// cuando se crea un proyecto nuevo</span>
+
+<span class="kw">const</span> notificarN8N = <span class="kw">async</span> (proyecto: Proyecto) => {
+  <span class="kw">await</span> fetch(<span class="st">'https://n8n.tudominio.com/webhook/nuevo-proyecto'</span>, {
+    method: <span class="st">'POST'</span>,
+    headers: { <span class="st">'Content-Type'</span>: <span class="st">'application/json'</span> },
+    body: JSON.stringify({
+      id:        proyecto.id,
+      nombre:    proyecto.nombre,
+      usuario:   proyecto.usuario_email,
+      timestamp: <span class="kw">new</span> Date().toISOString(),
+    })
+  });
+};
+
+<span class="cm">// Llamarlo después de crear el proyecto en Supabase:</span>
+<span class="kw">const</span> { data } = <span class="kw">await</span> supabase.from(<span class="st">'proyectos'</span>).insert(nuevoProyecto);
+<span class="kw">await</span> notificarN8N(data[<span class="nu">0</span>]);</pre>
+
+  <div class="sec" data-n="F">FLUJOS QUE TIENE SENTIDO CONSTRUIR CON N8N</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-hd g">📧 Onboarding de usuarios</div>
+      <div class="card-bd">
+        <strong>Trigger:</strong> webhook desde Supabase Auth cuando se registra un usuario.<br>
+        <strong>Flujo:</strong> esperar 5 min → enviar email de bienvenida (Resend/SendGrid) → crear registro en HubSpot CRM → notificar al equipo en Slack → añadir a lista de email marketing.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd g">💳 Gestión de pagos</div>
+      <div class="card-bd">
+        <strong>Trigger:</strong> webhook de Stripe cuando se completa un pago.<br>
+        <strong>Flujo:</strong> actualizar estado en Supabase → generar factura PDF → enviar por email → actualizar Google Sheets de contabilidad → notificar en Slack.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd g">🔔 Alertas y monitoreo</div>
+      <div class="card-bd">
+        <strong>Trigger:</strong> cron cada 5 minutos.<br>
+        <strong>Flujo:</strong> comprobar health de tu API → si falla: enviar alerta a Telegram + email + reintentar → si OK: registrar uptime en Google Sheets.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd g">🤖 Procesamiento con IA</div>
+      <div class="card-bd">
+        <strong>Trigger:</strong> webhook cuando un usuario envía un formulario.<br>
+        <strong>Flujo:</strong> enviar el texto a OpenAI/Claude API → procesar la respuesta → guardar en Supabase → notificar al usuario → loguear en hoja de cálculo.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd g">📊 Reportes automáticos</div>
+      <div class="card-bd">
+        <strong>Trigger:</strong> cron cada lunes a las 9:00.<br>
+        <strong>Flujo:</strong> consultar tu BD → generar resumen con OpenAI → enviar email con el informe semanal a todos los usuarios → publicar en Slack del equipo.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd g">🔄 Sincronización de datos</div>
+      <div class="card-bd">
+        <strong>Trigger:</strong> cron cada hora.<br>
+        <strong>Flujo:</strong> leer datos de tu API → transformar → actualizar Airtable/Notion/Google Sheets → comparar con la ejecución anterior → alertar si hay anomalías.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="A">N8N COMO CAPA DE IA — EL NODO AI AGENT</div>
+
+  <div class="note p">
+    <strong>n8n tiene integración nativa con LangChain y ~70 nodos de IA.</strong>
+    Puedes construir agentes, pipelines RAG y flujos multi-modelo directamente en el editor visual. Sin escribir código de LangChain — n8n lo gestiona visualmente.
+  </div>
+
+<pre><span class="cm">// Flujo n8n con IA — exportado como JSON (versionar en Git)</span>
+{
+  "nodes": [
+    {
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "parameters": { "path": "procesar-consulta" }
+    },
+    {
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "parameters": {
+        "model": "gpt-4o",
+        "systemMessage": "Eres el asistente de mi app de proyectos...",
+        "tools": ["supabase-query", "send-email", "create-task"]
+      }
+    },
+    {
+      "name": "Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "parameters": {
+        "operation": "upsert",
+        "tableId": "ai_responses"
+      }
+    }
+  ]
+}
+
+<span class="cm"># Versionar los flujos de n8n en Git:</span>
+<span class="cm"># n8n → Settings → Environments → Git → conectar repo</span>
+<span class="cm"># Cada workflow es un JSON versionable</span></pre>
+
+  <div class="sec" data-n="C">COSTE REAL DE N8N SELF-HOSTED VS CLOUD</div>
+
+  <table class="tbl">
+    <tr><th>Opción</th><th>Coste</th><th>Límites</th><th>Cuándo elegir</th></tr>
+    <tr><td class="cat">n8n Self-hosted (DO $12/mes)</td><td class="ok">$12/mes</td><td class="ok">Sin límites</td><td>Siempre que vayas en serio. Amortizado desde el primer mes.</td></tr>
+    <tr><td class="cat">n8n Cloud Starter</td><td class="warn">$24/mes</td><td class="warn">2.500 ejecuciones</td><td>Si no quieres gestionar infraestructura y el volumen es bajo.</td></tr>
+    <tr><td class="cat">n8n Cloud Pro</td><td class="bad">$60/mes</td><td class="warn">10.000 ejecuciones</td><td>Si necesitas soporte y el self-hosted te da pereza.</td></tr>
+    <tr><td class="cat">Zapier (equivalente)</td><td class="bad">$49-69/mes</td><td class="bad">1.000-2.000 tareas</td><td>Nunca — n8n self-hosted hace lo mismo por $12.</td></tr>
+  </table>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: OPENCLAW ═══ -->
+<div id="tab-openclaw" class="tab-panel">
+
+  <div class="sec" data-n="🦞">OPENCLAW — EL AGENTE QUE ORQUESTA TODO</div>
+
+  <div class="note p">
+    <strong>OpenClaw no es un chatbot. Es un agente autónomo que ejecuta acciones reales.</strong>
+    Lo instalas en tu servidor (DigitalOcean), le conectas tu API key de Claude o GPT, y lo controlas desde WhatsApp o Telegram. Le dices "crea un informe de los proyectos del mes" y lo hace — consulta tu app, procesa los datos, genera el PDF y te lo manda. Sin abrir el ordenador.
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="metric-v" style="color:var(--purple)">350K+</div><div class="metric-l">GitHub stars</div><div class="metric-s">el más rápido en la historia</div></div>
+    <div class="metric"><div class="metric-v" style="color:var(--purple)">$0</div><div class="metric-l">Coste software</div><div class="metric-s">open source Apache 2.0</div></div>
+    <div class="metric"><div class="metric-v" style="color:var(--purple)">100+</div><div class="metric-l">Skills</div><div class="metric-s">acciones preconfiguradas</div></div>
+    <div class="metric"><div class="metric-v" style="color:var(--purple)">20+</div><div class="metric-l">Canales</div><div class="metric-s">WhatsApp, Telegram, Slack...</div></div>
+  </div>
+
+  <div class="sec" data-n="I">INSTALAR OPENCLAW EN DIGITALOCEAN</div>
+
+  <div class="note b">
+    <strong>DigitalOcean tiene deploy de 1 clic para OpenClaw.</strong>
+    La imagen incluye la configuración de seguridad endurecida. Alternativa: instalarlo manualmente con Docker en el mismo Droplet que n8n (si tiene suficiente RAM — usar 4GB para ambos).
+  </div>
+
+<pre><span class="cm"># Opción A: DigitalOcean 1-Click</span>
+<span class="cm"># marketplace.digitalocean.com → buscar "OpenClaw"</span>
+<span class="cm"># → Create Droplet → $12/mes → listo</span>
+
+<span class="cm"># Opción B: Docker manual</span>
+<span class="cm"># En tu Droplet existente (si tiene 4GB+)</span>
+
+mkdir ~/openclaw && cd ~/openclaw
+
+<span class="cm"># Instalar OpenClaw Onboard (el instalador guiado)</span>
+curl -fsSL https://openclaw.ai/install.sh | bash
+
+<span class="cm"># O con Docker directo:</span>
+docker run -d \
+  --name openclaw \
+  --restart always \
+  -p 3000:3000 \
+  -v ~/.openclaw:/root/.openclaw \
+  -e ANTHROPIC_API_KEY=<span class="hl">tu-api-key</span> \
+  -e OPENCLAW_GATEWAY_PORT=3000 \
+  openclaw/openclaw:latest
+
+<span class="cm"># OpenClaw Gateway corriendo en localhost:3000</span>
+<span class="cm"># Configurar el canal de mensajería (Telegram recomendado)</span></pre>
+
+  <div class="sec" data-n="C">CONFIGURAR OPENCLAW — LOS 4 FICHEROS CLAVE</div>
+
+  <div class="note y">
+    <strong>OpenClaw se configura con ficheros Markdown.</strong>
+    Sin dashboards complicados — todo es texto plano que puedes versionar en Git y editar con cualquier editor.
+  </div>
+
+<pre><span class="cm">~/.openclaw/workspace/</span>
+├── AGENTS.md       <span class="cm">← qué agentes tiene disponibles</span>
+├── SOUL.md         <span class="cm">← personalidad y contexto del agente</span>
+├── TOOLS.md        <span class="cm">← qué herramientas puede usar</span>
+├── HEARTBEAT.md    <span class="cm">← tareas que ejecuta automáticamente (cron)</span>
+└── skills/         <span class="cm">← skills instaladas</span>
+    ├── supabase/SKILL.md
+    ├── n8n/SKILL.md
+    ├── github/SKILL.md
+    └── telegram/SKILL.md</pre>
+
+<pre><span class="cm"># SOUL.md — quién es tu agente</span>
+<span class="cm">## Identidad</span>
+Eres el asistente personal de Antonio, arquitecto senior.
+Tienes acceso a todas las apps de gestión de proyectos y puedes
+ejecutar acciones en nombre de Antonio.
+
+<span class="cm">## Contexto de negocio</span>
+- La app principal está en: https://miapp.vercel.app
+- La API REST está en: https://api.miempresa.do.com
+- La BD es Supabase: https://xxx.supabase.co
+- n8n está en: https://n8n.miempresa.com
+- Zona horaria: Europe/Madrid
+
+<span class="cm">## Reglas de comportamiento</span>
+- Siempre confirmar antes de ejecutar acciones destructivas
+- Nunca exponer credenciales en los mensajes
+- Si hay dudas, preguntar antes de actuar
+- Registrar todas las acciones en el log diario</pre>
+
+<pre><span class="cm"># HEARTBEAT.md — tareas automáticas</span>
+<span class="cm">## Cron diario 08:00</span>
+- Consultar proyectos con fecha límite esta semana
+- Enviar resumen por Telegram al usuario
+- Actualizar el dashboard de métricas
+
+<span class="cm">## Cron semanal lunes 09:00</span>
+- Generar informe semanal de la app
+- Enviar por email a antonio@miempresa.com
+- Publicar resumen en el canal de Slack #equipo</pre>
+
+  <div class="sec" data-n="S">SKILLS — LO QUE OPENCLAW PUEDE HACER CON TU STACK</div>
+
+<pre><span class="cm"># Instalar skill para conectar con tu app via API</span>
+
+<span class="cm"># ~/.openclaw/workspace/skills/mi-app/SKILL.md</span>
+<span class="cm">## Descripción</span>
+Conecta con la API REST de mi app de gestión de proyectos.
+
+<span class="cm">## Endpoints disponibles</span>
+
+<span class="cm">### Listar proyectos</span>
+GET https://api.miempresa.com/api/proyectos
+Headers: Authorization: Bearer {API_KEY}
+
+<span class="cm">### Crear proyecto</span>
+POST https://api.miempresa.com/api/proyectos
+Body: { "nombre": string, "descripcion": string }
+
+<span class="cm">### Crear tarea</span>
+POST https://api.miempresa.com/api/tareas
+Body: { "proyectoId": string, "titulo": string, "prioridad": "alta|media|baja" }
+
+<span class="cm">### Obtener métricas del dashboard</span>
+GET https://api.miempresa.com/api/metricas?periodo=semana</pre>
+
+<pre><span class="cm"># ~/.openclaw/workspace/skills/n8n/SKILL.md</span>
+<span class="cm">## Descripción</span>
+Lanza workflows de n8n programáticamente.
+
+<span class="cm">## Acciones disponibles</span>
+
+<span class="cm">### Disparar workflow por ID</span>
+POST https://n8n.miempresa.com/webhook/{workflow-id}
+Body: { "datos": any }
+
+<span class="cm">## Ejemplos de uso</span>
+- "Envía el informe semanal ahora" → dispara workflow-informe-semanal
+- "Notifica al equipo sobre el proyecto X" → dispara workflow-notificacion</pre>
+
+  <div class="sec" data-n="U">USO REAL DESDE TELEGRAM/WHATSAPP</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-hd p">📱 Controlar la app desde el móvil</div>
+      <div class="card-bd">
+        Tú desde Telegram: <em>"¿Cuántos proyectos activos tenemos esta semana?"</em><br>
+        OpenClaw: consulta tu API → procesa → responde: <em>"Hay 7 proyectos activos. Los 3 con fecha límite esta semana son: [lista]. ¿Quieres que genere el informe?"</em>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd p">🤖 Acciones autónomas</div>
+      <div class="card-bd">
+        Tú desde WhatsApp: <em>"Crea una tarea urgente en el proyecto Alpha: revisar los contratos antes del viernes"</em><br>
+        OpenClaw: llama al API → crea la tarea → confirma: <em>"✓ Tarea creada en Alpha con prioridad alta, fecha límite viernes."</em>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd p">⚡ Encadenar con n8n</div>
+      <div class="card-bd">
+        Tú desde Telegram: <em>"Envía el informe mensual a todos los clientes"</em><br>
+        OpenClaw: llama al webhook de n8n → n8n genera el informe, lo personaliza por cliente y lo envía → OpenClaw confirma: <em>"✓ Informe enviado a 12 clientes."</em>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd p">📊 Consultas en lenguaje natural</div>
+      <div class="card-bd">
+        Tú desde Slack: <em>"¿Qué proyectos llevan más de 2 semanas sin actividad?"</em><br>
+        OpenClaw: consulta Supabase → analiza fechas → responde con la lista + sugiere acciones.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="A">OPENCLAW EN EL SERVIDOR — ARQUITECTURA COMPLETA</div>
+
+<pre>DigitalOcean Droplet ($24/mes — 4GB RAM)
+├── Docker container: OpenClaw Gateway
+│   ├── ANTHROPIC_API_KEY (Claude como modelo)
+│   ├── Canal: Telegram Bot
+│   ├── Skills: mi-app / n8n / supabase / github
+│   └── HEARTBEAT: cron diario + semanal
+│
+├── Docker container: n8n
+│   ├── PostgreSQL (en otro container)
+│   ├── Webhooks expuestos: /webhook/*
+│   └── Flujos: onboarding / pagos / alertas / reportes
+│
+└── Nginx (reverse proxy)
+    ├── openclaw.miempresa.com → Gateway:3000
+    └── n8n.miempresa.com      → n8n:5678</pre>
+
+<pre><span class="cm"># docker-compose.yml — OpenClaw + n8n juntos</span>
+version: "3.8"
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: n8n
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: <span class="hl">password_segura</span>
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  n8n:
+    image: n8nio/n8n:latest
+    restart: always
+    ports: ["5678:5678"]
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=<span class="hl">password_segura</span>
+      - N8N_HOST=n8n.<span class="hl">tudominio.com</span>
+      - WEBHOOK_URL=https://n8n.<span class="hl">tudominio.com</span>/
+      - N8N_ENCRYPTION_KEY=<span class="hl">clave_aleatoria</span>
+
+  openclaw:
+    image: openclaw/openclaw:latest
+    restart: always
+    ports: ["3000:3000"]
+    environment:
+      - ANTHROPIC_API_KEY=<span class="hl">tu-api-key</span>
+      - OPENCLAW_GATEWAY_PORT=3000
+    volumes:
+      - ~/.openclaw:/root/.openclaw
+
+volumes:
+  postgres_data:</pre>
+
+  <div class="sec" data-n="M">EL STACK COMPLETO CON N8N + OPENCLAW</div>
+
+  <div class="flow" style="flex-wrap:wrap;gap:6px;justify-content:center">
+    <div class="fbox l">App Lovable<sub>React + Supabase</sub></div>
+    <div class="farr">↕</div>
+    <div class="fbox g">n8n Workflows<sub>automatización</sub></div>
+    <div class="farr">↕</div>
+    <div class="fbox" style="background:var(--purple);color:#fff;border-color:var(--purple)">OpenClaw<sub>agente autónomo</sub></div>
+    <div class="farr">↕</div>
+    <div class="fbox" style="background:var(--surface2)">Telegram / WhatsApp<sub>tú, desde el móvil</sub></div>
+  </div>
+
+  <div class="note g">
+    <strong>El ciclo completo:</strong>
+    La app genera datos → n8n automatiza los flujos entre servicios → OpenClaw orquesta todo y te da control en lenguaje natural desde el móvil. Tú construiste la app con Lovable en un día. n8n la conecta con el resto del mundo. OpenClaw la convierte en un empleado digital que trabaja 24/7.
+  </div>
+
+  <div class="sec" data-n="S">SEGURIDAD — LO QUE TIENES QUE CONFIGURAR</div>
+
+  <div class="danger">
+    <div class="danger-t">⚠️ OpenClaw ejecuta acciones reales — configurar bien los permisos</div>
+    <div class="danger-b">
+      OpenClaw puede ejecutar comandos de shell, llamar APIs, enviar emails, modificar ficheros. Antes de ponerlo en producción: (1) Configurar qué skills puede usar y cuáles no. (2) Definir en SOUL.md que pida confirmación antes de acciones destructivas. (3) Nunca darle acceso root al servidor — correr en un usuario con permisos limitados. (4) Mantener el Gateway detrás de un proxy con autenticación — no exponer el puerto 3000 directamente.
+    </div>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Riesgo</th><th>Mitigación</th></tr>
+    <tr><td class="cat">Skills maliciosas del repositorio</td><td>Solo instalar skills del repositorio oficial o de fuentes conocidas. Verificar el SKILL.md antes de instalar.</td></tr>
+    <tr><td class="cat">Acceso no autorizado al Gateway</td><td>Poner el Gateway detrás de Nginx con autenticación básica o IP whitelist. No exponer públicamente.</td></tr>
+    <tr><td class="cat">Acciones destructivas accidentales</td><td>En SOUL.md: "Siempre pedir confirmación explícita antes de eliminar datos o enviar comunicaciones masivas".</td></tr>
+    <tr><td class="cat">Exposición de API keys</td><td>OpenClaw guarda las keys en ficheros locales cifrados. Nunca las pasa en mensajes. Rotar las keys periódicamente.</td></tr>
+  </table>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: AGENTES ════════ -->
+<div id="tab-agentes" class="tab-panel">
+
+  <div class="sec" data-n="🧠">CÓMO FUNCIONAN LOS AGENTES POR DENTRO</div>
+
+  <div class="note p">
+    <strong>Lovable y Emergent son cajas negras. Claude Code, CrewAI y LangGraph te dan el control.</strong>
+    Entender cómo funciona el pipeline de agentes internamente te permite decidir cuándo aceptar la caja negra y cuándo necesitas control total sobre cada pieza.
+  </div>
+
+  <div class="sec" data-n="A">ARQUITECTURA INTERNA — EL PATRÓN UNIVERSAL</div>
+
+  <div class="flow" style="flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:24px">
+    <div class="fbox o">Tu prompt<sub>instrucción</sub></div>
+    <div class="farr">→</div>
+    <div class="fbox" style="background:var(--purple);color:#fff;border-color:var(--purple)">Planner / Orquestador<sub>Opus / o1 — descompone en tareas</sub></div>
+    <div class="farr">→</div>
+    <div class="fbox g">Agentes especializados<sub>trabajan en paralelo</sub></div>
+    <div class="farr">→</div>
+    <div class="fbox b" style="background:var(--accent3)">Coordinator<sub>merge + coherencia</sub></div>
+    <div class="farr">→</div>
+    <div class="fbox g">Resultado<sub>código coherente</sub></div>
+  </div>
+
+  <div class="sec" data-n="L">LOVABLE — UN AGENTE BIEN EQUIPADO (NO MULTI-AGENTE)</div>
+
+  <div class="note l">
+    <strong>Lovable usa Claude Sonnet como único modelo con herramientas (tools).</strong>
+    No es un sistema multi-agente real. Es un agente único que tiene acceso a herramientas para leer ficheros, escribir código, ejecutar comandos y llamar a Supabase. La "magia" viene del contexto completo del proyecto + las herramientas, no de múltiples agentes.
+  </div>
+
+<pre><span class="cm">// Lo que Lovable hace internamente (simplificado)</span>
+<span class="cm">// No configurable — caja negra</span>
+
+<span class="st">Tu prompt</span>
+    ↓
+<span class="cl">Claude Sonnet</span> + tools:
+    ├── <span class="fn">read_file</span>(path)         <span class="cm">// lee el código existente</span>
+    ├── <span class="fn">write_file</span>(path, code)   <span class="cm">// escribe el nuevo código</span>
+    ├── <span class="fn">run_command</span>(cmd)         <span class="cm">// npm install, npm run dev</span>
+    ├── <span class="fn">supabase_query</span>(sql)      <span class="cm">// crea tablas, policies</span>
+    └── <span class="fn">preview_reload</span>()         <span class="cm">// actualiza la preview</span>
+
+<span class="cm">// El modelo decide qué herramienta usar en cada momento</span>
+<span class="cm">// Itera hasta que el resultado es correcto</span>
+<span class="cm">// Tú no controlas nada de este proceso</span></pre>
+
+  <div class="sec" data-n="E">EMERGENT — MULTI-AGENTE REAL PERO CAJA NEGRA</div>
+
+  <div class="note e">
+    <strong>Emergent sí tiene agentes especializados trabajando en paralelo.</strong>
+    Puedes verlos en el panel en tiempo real. Pero no puedes configurar cuáles son, qué modelo usa cada uno ni cómo se coordinan. El pipeline es fijo — lo define Emergent, no tú.
+  </div>
+
+<pre><span class="cm">// Arquitectura interna de Emergent (aproximada)</span>
+<span class="cm">// Visible pero no configurable</span>
+
+<span class="st">Tu prompt</span>
+    ↓
+<span class="cl">Architect Agent</span> (modelo potente — probablemente o1 o Claude Opus)
+    → analiza el prompt
+    → decide la estructura del proyecto
+    → asigna tareas a los agentes especializados
+    ↓
+En paralelo:
+    ├── <span class="cl">Frontend Agent</span>   → genera src/components/, pages/, estilos
+    ├── <span class="cl">Backend Agent</span>    → genera API routes, controllers, middleware
+    ├── <span class="cl">Database Agent</span>   → genera schema, migraciones, queries
+    └── <span class="cl">QA Agent</span>         → revisa coherencia entre capas
+    ↓
+<span class="cl">Coordinator</span>
+    → merge de todos los cambios
+    → resuelve conflictos (mismo fichero editado por dos agentes)
+    → verifica que el proyecto compila
+    ↓
+Código final</pre>
+
+  <div class="sec" data-n="E">EL ESPECTRO DE CONTROL</div>
+
+  <table class="tbl">
+    <tr><th>Herramienta</th><th>¿Ves los agentes?</th><th>¿Los configuras?</th><th>¿Eliges el modelo?</th><th>Control</th></tr>
+    <tr><td class="cat" style="color:var(--lovable)">Lovable</td><td class="bad">No</td><td class="bad">No</td><td class="bad">No</td><td class="bad">Solo el prompt</td></tr>
+    <tr><td class="cat" style="color:var(--emergent)">Emergent</td><td class="ok">Sí</td><td class="bad">No</td><td class="bad">No</td><td class="warn">Solo el prompt</td></tr>
+    <tr><td class="cat" style="color:var(--bolt)">Bolt / Replit</td><td class="bad">No</td><td class="bad">No</td><td class="bad">No</td><td class="bad">Solo el prompt</td></tr>
+    <tr><td class="cat" style="color:var(--purple)">OpenClaw</td><td class="ok">Sí</td><td class="ok">Parcial (SOUL.md)</td><td class="ok">Sí (API key)</td><td class="ok">Alto</td></tr>
+    <tr><td class="cat">Claude Code</td><td class="ok">Sí</td><td class="ok">Sí (CLAUDE.md)</td><td class="ok">Sí</td><td class="ok">Muy alto</td></tr>
+    <tr><td class="cat">n8n AI nodes</td><td class="ok">Sí</td><td class="ok">Sí (visual)</td><td class="ok">Sí</td><td class="ok">Muy alto</td></tr>
+    <tr><td class="cat">CrewAI</td><td class="ok">Sí</td><td class="ok">Total (Python)</td><td class="ok">Total</td><td class="ok">Total</td></tr>
+    <tr><td class="cat">LangGraph</td><td class="ok">Sí</td><td class="ok">Total (Python)</td><td class="ok">Total</td><td class="ok">Total</td></tr>
+  </table>
+
+  <div class="sec" data-n="C">CREWAI — AGENTES CONFIGURABLES EN PYTHON</div>
+
+  <div class="note g">
+    <strong>CrewAI permite definir cada agente, su rol, su modelo y su orden de ejecución.</strong>
+    Es como Emergent pero completamente en tu control — tú defines qué agentes existen, qué saben, qué pueden hacer y cómo se coordinan.
+  </div>
+
+<pre><span class="kw">pip install</span> crewai crewai-tools anthropic
+
+<span class="cm"># crew_app_builder.py</span>
+<span class="cm"># Recrear el pipeline de Emergent pero con control total</span>
+
+<span class="kw">from</span> crewai <span class="kw">import</span> Agent, Task, Crew, Process
+<span class="kw">from</span> crewai_tools <span class="kw">import</span> FileReadTool, FileWriterTool
+
+<span class="cm"># ── DEFINIR LOS AGENTES ─────────────────────────────────</span>
+
+arquitecto = Agent(
+    role=<span class="st">"Arquitecto de software senior"</span>,
+    goal=<span class="st">"Diseñar la arquitectura completa del proyecto antes de escribir código"</span>,
+    backstory=<span class="st">"""Experto en arquitectura clean code, SOLID y DDD.
+    Siempre documenta la arquitectura antes de delegar a los developers.
+    Conoce React, FastAPI, PostgreSQL y Supabase."""</span>,
+    llm=<span class="st">"claude-opus-4-6"</span>,     <span class="cm"># el más potente para planificar</span>
+    verbose=<span class="kw">True</span>,
+    allow_delegation=<span class="kw">True</span>,   <span class="cm"># puede delegar subtareas</span>
+)
+
+frontend_dev = Agent(
+    role=<span class="st">"Frontend Developer React Senior"</span>,
+    goal=<span class="st">"Implementar la UI con React, TypeScript y Tailwind. Código limpio y tipado."</span>,
+    backstory=<span class="st">"""Especialista en React 19, shadcn/ui, Zustand y React Query.
+    Siempre crea componentes reutilizables y bien tipados con TypeScript."""</span>,
+    llm=<span class="st">"claude-sonnet-4-5"</span>,   <span class="cm"># más rápido para generar código</span>
+    tools=[FileWriterTool()],
+    verbose=<span class="kw">True</span>,
+)
+
+backend_dev = Agent(
+    role=<span class="st">"Backend Developer Python Senior"</span>,
+    goal=<span class="st">"Implementar la API REST con FastAPI, validaciones y tests."</span>,
+    backstory=<span class="st">"""Experto en FastAPI, SQLAlchemy, Pydantic y pytest.
+    Siempre incluye validación de inputs, manejo de errores y tests básicos."""</span>,
+    llm=<span class="st">"claude-sonnet-4-5"</span>,
+    tools=[FileWriterTool()],
+    verbose=<span class="kw">True</span>,
+)
+
+db_designer = Agent(
+    role=<span class="st">"Database Designer"</span>,
+    goal=<span class="st">"Diseñar el esquema PostgreSQL óptimo con índices y constraints correctos."</span>,
+    backstory=<span class="st">"""DBA con experiencia en PostgreSQL, diseño de esquemas normalizados,
+    políticas RLS de Supabase y optimización de queries."""</span>,
+    llm=<span class="st">"claude-sonnet-4-5"</span>,
+    tools=[FileWriterTool()],
+    verbose=<span class="kw">True</span>,
+)
+
+qa_reviewer = Agent(
+    role=<span class="st">"QA Engineer"</span>,
+    goal=<span class="st">"Revisar que el código de todos los agentes es coherente y no tiene conflictos."</span>,
+    backstory=<span class="st">"""Especialista en testing, revisión de código y coherencia de APIs.
+    Detecta inconsistencias entre el frontend y el backend antes de que lleguen a producción."""</span>,
+    llm=<span class="st">"claude-opus-4-6"</span>,   <span class="cm"># potente para razonamiento de revisión</span>
+    tools=[FileReadTool()],
+    verbose=<span class="kw">True</span>,
+)</pre>
+
+<pre><span class="cm"># ── DEFINIR LAS TAREAS ─────────────────────────────────</span>
+
+tarea_arquitectura = Task(
+    description=<span class="st">"""
+    Diseña la arquitectura completa para: {descripcion_app}
+
+    Entrega:
+    1. Árbol de ficheros del proyecto (frontend + backend)
+    2. Esquema de la BD (tablas, relaciones, campos)
+    3. Endpoints de la API REST (método, path, request, response)
+    4. Plan de implementación para el equipo
+    """</span>,
+    agent=arquitecto,
+    expected_output=<span class="st">"Documento de arquitectura completo en Markdown"</span>,
+)
+
+tarea_database = Task(
+    description=<span class="st">"""
+    Basándote en la arquitectura diseñada, crea:
+    - El fichero SQL con CREATE TABLE, índices y constraints
+    - El fichero de migraciones con Alembic
+    - Las políticas RLS de Supabase si aplican
+    Guárdalos en backend/database/
+    """</span>,
+    agent=db_designer,
+    context=[tarea_arquitectura],    <span class="cm"># depende de la arquitectura</span>
+)
+
+tarea_backend = Task(
+    description=<span class="st">"""
+    Implementa la API REST con FastAPI según la arquitectura.
+    Incluye: modelos Pydantic, rutas, autenticación JWT, manejo de errores.
+    Guarda los ficheros en backend/
+    """</span>,
+    agent=backend_dev,
+    context=[tarea_arquitectura, tarea_database],
+)
+
+tarea_frontend = Task(
+    description=<span class="st">"""
+    Implementa la UI con React + TypeScript + Tailwind + shadcn/ui.
+    Incluye: componentes, páginas, hooks, cliente HTTP para la API.
+    Guarda los ficheros en frontend/src/
+    """</span>,
+    agent=frontend_dev,
+    context=[tarea_arquitectura, tarea_backend],
+)
+
+tarea_qa = Task(
+    description=<span class="st">"""
+    Revisa el código generado por todos los agentes:
+    1. ¿Los tipos del frontend coinciden con la respuesta del backend?
+    2. ¿Los endpoints del frontend llaman a las rutas correctas del backend?
+    3. ¿El esquema de BD coincide con los modelos del backend?
+    Lista los problemas encontrados y las correcciones necesarias.
+    """</span>,
+    agent=qa_reviewer,
+    context=[tarea_arquitectura, tarea_database, tarea_backend, tarea_frontend],
+)
+
+<span class="cm"># ── CREAR EL CREW Y EJECUTAR ───────────────────────────</span>
+
+crew = Crew(
+    agents=[arquitecto, frontend_dev, backend_dev, db_designer, qa_reviewer],
+    tasks=[tarea_arquitectura, tarea_database, tarea_backend, tarea_frontend, tarea_qa],
+
+    <span class="cm"># Process.sequential: tareas en orden (la salida de una alimenta la siguiente)</span>
+    <span class="cm"># Process.hierarchical: el manager decide el orden en tiempo real</span>
+    process=Process.sequential,
+
+    verbose=<span class="kw">True</span>,
+    memory=<span class="kw">True</span>,    <span class="cm"># los agentes recuerdan el contexto de tareas anteriores</span>
+)
+
+resultado = crew.kickoff(inputs={
+    <span class="st">"descripcion_app"</span>: <span class="st">"""
+        App de gestión de proyectos con:
+        - Auth JWT (email + Google OAuth)
+        - CRUD de proyectos y tareas
+        - Dashboard con métricas en tiempo real
+        - Notificaciones por email
+        Stack: React + FastAPI + PostgreSQL + Supabase
+    """</span>
+})
+
+<span class="kw">print</span>(resultado)</pre>
+
+  <div class="sec" data-n="G">LANGGRAPH — EL GRAFO DE AGENTES</div>
+
+  <div class="note b">
+    <strong>LangGraph permite definir el flujo como un grafo con decisiones condicionales.</strong>
+    A diferencia de CrewAI (lineal o jerárquico), LangGraph puede tener bucles, ramas condicionales y nodos que deciden qué agente activa a continuación. Es el más potente — y el más complejo.
+  </div>
+
+<pre><span class="kw">pip install</span> langgraph langchain-anthropic
+
+<span class="cm"># langgraph_app_builder.py</span>
+<span class="cm"># El mismo pipeline pero como grafo con decisiones</span>
+
+<span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, END
+<span class="kw">from</span> langchain_anthropic <span class="kw">import</span> ChatAnthropic
+<span class="kw">from</span> typing <span class="kw">import</span> TypedDict, List
+
+<span class="cm"># ── ESTADO COMPARTIDO ENTRE TODOS LOS AGENTES ──────────</span>
+<span class="kw">class</span> <span class="cl">EstadoProyecto</span>(TypedDict):
+    prompt_usuario: str
+    arquitectura: str          <span class="cm"># output del Architect</span>
+    schema_bd: str             <span class="cm"># output del DB Designer</span>
+    codigo_backend: str        <span class="cm"># output del Backend Dev</span>
+    codigo_frontend: str       <span class="cm"># output del Frontend Dev</span>
+    revision_qa: str           <span class="cm"># output del QA</span>
+    errores_encontrados: List[str]
+    iteracion: int             <span class="cm"># cuántas veces hemos iterado</span>
+
+<span class="cm"># ── DEFINIR LOS NODOS (cada uno es una función/agente) ─</span>
+
+opus  = ChatAnthropic(model=<span class="st">"claude-opus-4-6"</span>)
+sonnet = ChatAnthropic(model=<span class="st">"claude-sonnet-4-5"</span>)
+
+<span class="kw">def</span> <span class="fn">nodo_arquitecto</span>(estado: EstadoProyecto) -> EstadoProyecto:
+    respuesta = opus.invoke([{
+        <span class="st">"role"</span>: <span class="st">"user"</span>,
+        <span class="st">"content"</span>: <span class="st">f"Diseña la arquitectura para: {estado['prompt_usuario']}"</span>
+    }])
+    <span class="kw">return</span> {**estado, <span class="st">"arquitectura"</span>: respuesta.content}
+
+<span class="kw">def</span> <span class="fn">nodo_db</span>(estado: EstadoProyecto) -> EstadoProyecto:
+    respuesta = sonnet.invoke([{
+        <span class="st">"role"</span>: <span class="st">"user"</span>,
+        <span class="st">"content"</span>: <span class="st">f"Arquitectura:\n{estado['arquitectura']}\nCrea el esquema SQL"</span>
+    }])
+    <span class="kw">return</span> {**estado, <span class="st">"schema_bd"</span>: respuesta.content}
+
+<span class="kw">def</span> <span class="fn">nodo_qa</span>(estado: EstadoProyecto) -> EstadoProyecto:
+    respuesta = opus.invoke([{
+        <span class="st">"role"</span>: <span class="st">"user"</span>,
+        <span class="st">"content"</span>: <span class="st">f"""Revisa la coherencia:
+        Backend: {estado['codigo_backend']}
+        Frontend: {estado['codigo_frontend']}
+        Lista los errores encontrados."""</span>
+    }])
+    errores = <span class="cm"># parsear la respuesta para extraer errores</span>
+    <span class="kw">return</span> {**estado, <span class="st">"revision_qa"</span>: respuesta.content, <span class="st">"errores_encontrados"</span>: errores}
+
+<span class="cm"># ── LA DECISIÓN CLAVE — BUCLE DE CORRECCIÓN ────────────</span>
+<span class="kw">def</span> <span class="fn">decidir_si_corregir</span>(estado: EstadoProyecto) -> str:
+    <span class="kw">if</span> len(estado[<span class="st">"errores_encontrados"</span>]) > <span class="nu">0</span> <span class="kw">and</span> estado[<span class="st">"iteracion"</span>] < <span class="nu">3</span>:
+        <span class="kw">return</span> <span class="st">"corregir"</span>   <span class="cm"># volver a los agentes que generaron errores</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="st">"finalizar"</span> <span class="cm"># el resultado es aceptable</span>
+
+<span class="cm"># ── CONSTRUIR EL GRAFO ─────────────────────────────────</span>
+grafo = StateGraph(EstadoProyecto)
+
+<span class="cm"># Añadir nodos</span>
+grafo.add_node(<span class="st">"arquitecto"</span>, nodo_arquitecto)
+grafo.add_node(<span class="st">"db_designer"</span>, nodo_db)
+grafo.add_node(<span class="st">"backend_dev"</span>, nodo_backend)
+grafo.add_node(<span class="st">"frontend_dev"</span>, nodo_frontend)
+grafo.add_node(<span class="st">"qa"</span>, nodo_qa)
+
+<span class="cm"># Definir el flujo</span>
+grafo.set_entry_point(<span class="st">"arquitecto"</span>)
+grafo.add_edge(<span class="st">"arquitecto"</span>, <span class="st">"db_designer"</span>)
+grafo.add_edge(<span class="st">"db_designer"</span>, <span class="st">"backend_dev"</span>)
+grafo.add_edge(<span class="st">"backend_dev"</span>, <span class="st">"frontend_dev"</span>)
+grafo.add_edge(<span class="st">"frontend_dev"</span>, <span class="st">"qa"</span>)
+
+<span class="cm"># ← AQUÍ ESTÁ EL PODER DE LANGGRAPH:</span>
+<span class="cm"># Si QA encuentra errores → volver a corregir (bucle)</span>
+<span class="cm"># Si todo está bien → finalizar</span>
+grafo.add_conditional_edges(
+    <span class="st">"qa"</span>,
+    decidir_si_corregir,
+    {
+        <span class="st">"corregir"</span>: <span class="st">"backend_dev"</span>,   <span class="cm"># vuelve al backend a corregir</span>
+        <span class="st">"finalizar"</span>: END
+    }
+)
+
+app = grafo.compile()
+resultado = app.invoke({<span class="st">"prompt_usuario"</span>: <span class="st">"App de gestión de proyectos..."</span>, <span class="st">"iteracion"</span>: <span class="nu">0</span>})</pre>
+
+  <div class="sec" data-n="F">EL FMI — YA TIENES UN SISTEMA MULTI-AGENTE CONFIGURADO</div>
+
+  <div class="insight">
+    <div class="insight-title">💡 Tu patrón FMI es más sofisticado que Lovable y Emergent</div>
+    <div class="insight-content">
+      Lo que tienes en el FMI — Opus como Planner escribiendo en <code>analysis.md</code>, Sonnet como Executor leyendo <code>directive.md</code> y escribiendo <code>outcome.md</code> — es exactamente un sistema multi-agente configurable. La diferencia con CrewAI y LangGraph es solo que el tuyo usa ficheros .md como bus de comunicación en lugar de estado en memoria. Ventaja: los ficheros son inspeccionables, versionables en Git y sobreviven a cualquier crash.
+    </div>
+  </div>
+
+<pre><span class="cm"># El patrón FMI mapeado a CrewAI</span>
+
+<span class="cm"># Tu CLAUDE.md = el backstory de cada agente en CrewAI</span>
+<span class="cm"># Tu analysis.md = el output de la Task del Planner</span>
+<span class="cm"># Tu directive.md = el input de la Task del Executor</span>
+<span class="cm"># Tu outcome.md = el output de la Task del Executor</span>
+
+<span class="cm"># En el FMI (Claude Code)</span>
+planner = <span class="st">"Claude Opus"</span>   <span class="cm"># lee el código, escribe analysis.md</span>
+executor = <span class="st">"Claude Sonnet"</span> <span class="cm"># lee directive.md, escribe código</span>
+bus = <span class="st">"ficheros .md"</span>       <span class="cm"># la comunicación entre agentes</span>
+humano = <span class="st">"tú"</span>              <span class="cm"># validas entre cada ciclo</span>
+
+<span class="cm"># Ventaja del FMI sobre CrewAI/LangGraph:</span>
+<span class="cm"># El humano está EN el bucle — no solo al principio y al final</span>
+<span class="cm"># Cada .md es un checkpoint inspeccionable y versionable</span>
+<span class="cm"># Si algo falla, el estado está en disco — no se pierde</span></pre>
+
+  <div class="sec" data-n="D">CUÁNDO USAR CADA APROXIMACIÓN</div>
+
+  <table class="tbl">
+    <tr><th>Situación</th><th>Herramienta recomendada</th><th>Por qué</th></tr>
+    <tr>
+      <td class="cat">Prototipo rápido en horas</td>
+      <td style="color:var(--lovable)">Lovable / Bolt</td>
+      <td>La caja negra es una ventaja — no pierdes tiempo configurando agentes</td>
+    </tr>
+    <tr>
+      <td class="cat">Web + mobile desde el mismo proyecto</td>
+      <td style="color:var(--emergent)">Emergent</td>
+      <td>Multi-agente real para las dos plataformas simultáneamente</td>
+    </tr>
+    <tr>
+      <td class="cat">Migración de sistema legacy con control</td>
+      <td>Claude Code + FMI</td>
+      <td>El humano en el bucle + ficheros versionables es lo correcto para código crítico</td>
+    </tr>
+    <tr>
+      <td class="cat">Pipeline repetible para múltiples proyectos</td>
+      <td>CrewAI</td>
+      <td>Defines el pipeline una vez y lo ejecutas para cada proyecto nuevo</td>
+    </tr>
+    <tr>
+      <td class="cat">Pipeline con bucles y corrección automática</td>
+      <td>LangGraph</td>
+      <td>El grafo condicional permite que QA detecte errores y los agentes se autocorrijan</td>
+    </tr>
+    <tr>
+      <td class="cat">Automatización de workflows con IA</td>
+      <td>n8n AI nodes</td>
+      <td>Visual, sin código Python, integrado con el resto de servicios</td>
+    </tr>
+    <tr>
+      <td class="cat">Orquestación desde el móvil 24/7</td>
+      <td>OpenClaw</td>
+      <td>El agente siempre activo que ejecuta sin que abras el ordenador</td>
+    </tr>
+  </table>
+
+  <div class="sec" data-n="V">EL STACK COMPLETO CONFIGURADO — VISIÓN FINAL</div>
+
+  <div class="note g">
+    <strong>La combinación más potente para un arquitecto senior en 2026:</strong>
+  </div>
+
+<pre><span class="cm">GENERAR (el punto de partida)</span>
+  Lovable  → apps web con UI pulida, Supabase incluido
+  Emergent → apps web + mobile nativo
+  Bolt     → frontend limpio como base para extender
+
+<span class="cm">CONTROLAR (cuando la caja negra no es suficiente)</span>
+  Claude Code + FMI → migración de legacy, código crítico
+  CrewAI            → pipelines repetibles multi-agente
+  LangGraph         → flujos complejos con autocorrección
+
+<span class="cm">AUTOMATIZAR (conectar las piezas)</span>
+  n8n               → workflows entre servicios, sin código
+  n8n AI nodes      → agentes de IA integrados en workflows
+
+<span class="cm">ORQUESTAR (control desde cualquier sitio)</span>
+  OpenClaw          → agente autónomo, control por Telegram 24/7
+
+<span class="cm">PUBLICAR (llevar a producción)</span>
+  Vercel            → frontend React/Next.js
+  DigitalOcean      → backend + n8n + OpenClaw
+  Play Store        → Android (Emergent nativo o Capacitor)
+  App Store         → iOS (Emergent nativo o Capacitor)</pre>
+
+</div>
+
+<!-- ══════════════════════════════ TAB: FLUJO COMPLETO ═ -->
+<div id="tab-flujo" class="tab-panel">
+
+  <div class="sec" data-n="🔁">CASO COMPLETO — GESTOR DE PROYECTOS DE PRINCIPIO A FIN</div>
+
+  <div class="note b">
+    <strong>La misma app construida con dos rutas diferentes.</strong>
+    Ruta A: Lovable → GitHub → Vercel (web) + Capacitor (mobile). Ruta B: Emergent → DigitalOcean (backend) + Vercel (frontend) + Play Store (Android). Elige la que encaje con tus necesidades.
+  </div>
+
+  <div class="sec" data-n="A">RUTA A — LOVABLE + VERCEL + CAPACITOR</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-l"><div class="step-n l">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Generar en Lovable (~5 min)</div>
+        <div class="step-d">lovable.dev → New Project → prompt completo con auth, CRUD, dashboard. Conectar Supabase. Preview funcionando.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n l">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Exportar a GitHub y refinar con Cursor (~2h)</div>
+<pre>git clone https://github.com/tu/proyecto-lovable
+cd proyecto-lovable && npm install && npm run dev
+<span class="cm"># Abrir en Cursor → refinar con prompts de alto nivel</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n l">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Deploy web en Vercel (~10 min)</div>
+<pre>vercel             <span class="cm"># conectar y configurar</span>
+<span class="cm"># Añadir variables: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY</span>
+vercel --prod      <span class="cm"># → tuapp.vercel.app</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n l">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Añadir Capacitor para mobile (~1h)</div>
+<pre>npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/ios
+npx cap init "Proyectos" "com.miempresa.proyectos"
+npm run build         <span class="cm"># genera dist/</span>
+npx cap add android && npx cap sync
+npx cap open android  <span class="cm"># → Android Studio → Build AAB</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n l">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Publicar en Play Store</div>
+        <div class="step-d">Google Play Console → Create app → subir el AAB → revisión 1-3 días → en producción.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="B">RUTA B — EMERGENT + DO + VERCEL + PLAY STORE</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-l"><div class="step-n e">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Generar en Emergent (~15 min)</div>
+        <div class="step-d">emergent.sh → New Project → prompt con especificaciones técnicas (React web + React Native + FastAPI + PostgreSQL). Descargar ZIP.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n e">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Arrancar y verificar en local (~30 min)</div>
+<pre>cd backend && pip install -r requirements.txt
+uvicorn main:app --reload       <span class="cm"># :8000</span>
+cd ../frontend && npm install && npm run dev  <span class="cm"># :3000</span>
+cd ../mobile && npx expo start  <span class="cm"># QR para probar en móvil</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n e">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Deploy backend en DigitalOcean</div>
+<pre><span class="cm"># App Platform (más sencillo):</span>
+<span class="cm"># DO Dashboard → App Platform → Create App</span>
+<span class="cm"># → conectar repo → detecta Dockerfile → $12/mes</span>
+
+<span class="cm"># O Droplet con Docker ($6/mes):</span>
+docker build -t backend . && docker run -d -p 80:8000 backend</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n e">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Deploy frontend en Vercel</div>
+<pre><span class="cm"># En el frontend: cambiar la URL del backend</span>
+<span class="cm"># .env.production:</span>
+VITE_API_URL=https://tu-backend.ondigitalocean.app
+
+vercel --prod   <span class="cm"># → tuapp.vercel.app conectado al backend en DO</span></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-l"><div class="step-n e">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-t">Build y publicar Android</div>
+<pre>cd mobile
+eas login && eas build:configure
+eas build --platform android --profile production
+<span class="cm"># → link de descarga del AAB en la nube</span>
+eas submit --platform android
+<span class="cm"># → sube directamente a Play Store</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" data-n="C">COSTES REALES DE PRODUCCIÓN — RESUMEN</div>
+
+  <table class="tbl">
+    <tr><th>Componente</th><th>Ruta A (Lovable)</th><th>Ruta B (Emergent)</th></tr>
+    <tr><td class="cat">Herramienta IA</td><td>Lovable $20/mes</td><td>Emergent $20/mes</td></tr>
+    <tr><td class="cat">Frontend hosting</td><td>Vercel Hobby $0</td><td>Vercel Hobby $0</td></tr>
+    <tr><td class="cat">Backend hosting</td><td>Supabase $0-25/mes</td><td>DO App Platform $12/mes</td></tr>
+    <tr><td class="cat">Base de datos</td><td>Incluida en Supabase</td><td>DO Managed DB $15/mes</td></tr>
+    <tr><td class="cat">Play Store</td><td>$25 único</td><td>$25 único</td></tr>
+    <tr><td class="cat">App Store</td><td>$99/año</td><td>$99/año</td></tr>
+    <tr><td class="cat"><strong>Total primer mes</strong></td><td class="ok"><strong>~$45-70</strong></td><td class="ok"><strong>~$72</strong></td></tr>
+    <tr><td class="cat"><strong>Total mensual recurrente</strong></td><td class="ok"><strong>$20-45/mes</strong></td><td class="ok"><strong>$47/mes</strong></td></tr>
+  </table>
+
+  <div class="insight">
+    <div class="insight-t">💡 La estrategia óptima para empezar</div>
+    <div class="insight-b">
+      <strong>Semana 1:</strong> Genera en Lovable o Bolt. Itera rápido con prompts. Valida que la idea funciona.<br>
+      <strong>Semana 2:</strong> Exporta a GitHub. Refina con Cursor. Conecta el dominio propio.<br>
+      <strong>Semana 3:</strong> Deploy en producción (Vercel + Supabase). Primeros usuarios reales.<br>
+      <strong>Mes 2+:</strong> Si crece, evalúa mover el backend a DO para más control. Añade mobile con Capacitor o Emergent.
+    </div>
+  </div>
+
+</div>
+
+</div><!-- .container -->
+<script>
+function st(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
