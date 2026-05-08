@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMI V5M/V6M · Guía Ejecutiva · WebDTE 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--surface:#fff;--surface2:#edeae0;--border:#cfc8b4;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--teal:#0e7c7b;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}.container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+header{border-bottom:3px solid var(--ink);padding-bottom:26px;margin-bottom:34px}.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-0.7deg)}h1{font-family:var(--display);font-size:clamp(28px,5vw,54px);font-weight:800;line-height:1;letter-spacing:-1.5px;margin-bottom:12px}h1 em{font-style:normal;color:var(--accent)}h1 .v{color:var(--accent2)}.subtitle{font-size:12px;color:var(--muted);line-height:1.8;max-width:700px;margin-bottom:16px}.badge-row{display:flex;flex-wrap:wrap;gap:8px}.badge{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}.badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}.badge.t{color:var(--teal);border-color:var(--teal)}
+.tab-nav{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:5px;overflow:hidden;margin-bottom:36px}.tab-btn{font-family:var(--mono);font-size:10px;font-weight:700;padding:10px 13px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}.tab-btn:last-child{border-right:none}.tab-btn:hover{background:var(--surface2);color:var(--ink)}.tab-btn.active{background:var(--ink);color:var(--bg)}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s ease both}
+.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:30px 0 14px;display:flex;align-items:center;gap:12px}.sec:first-child{margin-top:0}.sec::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:3px;flex-shrink:0}
+.note{border-left:4px solid;padding:13px 17px;margin:13px 0;font-size:12px;line-height:1.75;color:var(--ink2);border-radius:0 4px 4px 0}.note strong{display:block;margin-bottom:4px}.note code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px}.note.o{border-color:var(--accent);background:rgba(193,68,14,.05)}.note.o strong{color:var(--accent)}.note.g{border-color:var(--accent2);background:rgba(42,110,78,.05)}.note.g strong{color:var(--accent2)}.note.b{border-color:var(--accent3);background:rgba(26,74,138,.05)}.note.b strong{color:var(--accent3)}.note.y{border-color:var(--yellow);background:rgba(232,160,32,.05)}.note.y strong{color:var(--yellow)}.note.p{border-color:var(--purple);background:rgba(122,58,205,.05)}.note.p strong{color:var(--purple)}.note.t{border-color:var(--teal);background:rgba(14,124,123,.05)}.note.t strong{color:var(--teal)}
+pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:16px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:13px 0}.kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.hl{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px}
+.tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);overflow:hidden;margin:13px 0;border-radius:4px}.tbl th{background:var(--ink);color:var(--bg);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:10px 13px;text-align:left}.tbl td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(0,0,0,.015)}.tbl td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:10.5px}.tbl td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}.tbl td.ok{color:var(--accent2);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin:14px 0}.card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .2s}.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.07)}.card-hd{padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}.card-hd.g{background:rgba(42,110,78,.1);color:var(--accent2)}.card-hd.o{background:rgba(193,68,14,.1);color:var(--accent)}.card-hd.b{background:rgba(26,74,138,.1);color:var(--accent3)}.card-hd.p{background:rgba(122,58,205,.1);color:var(--purple)}.card-hd.y{background:rgba(232,160,32,.1);color:var(--yellow)}.card-hd.t{background:rgba(14,124,123,.1);color:var(--teal)}.card-bd{padding:13px;font-size:12px;line-height:1.75;color:var(--ink2)}
+.insight{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:17px 21px;margin:17px 0}.insight-t{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:7px}.insight-b{font-size:12px;color:var(--ink2);line-height:1.75}.danger{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:17px 21px;margin:17px 0}.danger-t{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:7px}.danger-b{font-size:12px;color:var(--ink2);line-height:1.75}
+.steps{display:flex;flex-direction:column;margin:14px 0}.step{display:flex;align-items:stretch}.step-l{display:flex;flex-direction:column;align-items:center;flex-shrink:0}.step-n{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}.step-n.o{background:var(--accent)}.step-n.g{background:var(--accent2)}.step-n.b{background:var(--accent3)}.step-n.p{background:var(--purple)}.step-n.y{background:var(--yellow);color:var(--ink)}.step-n.t{background:var(--teal)}.step-line{width:2px;background:var(--border);flex:1;margin:4px auto}.step:last-child .step-line{display:none}.step-body{padding:0 0 20px 14px;flex:1}.step-t{font-weight:700;font-size:12.5px;margin-bottom:5px;display:flex;align-items:center;gap:8px}.step-d{font-size:12px;color:var(--ink2);line-height:1.7}.h-badge{font-size:10px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);padding:2px 8px;border-radius:3px}.done-badge{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:var(--accent2);color:#fff}
+.horas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:14px 0}.hora-block{background:var(--surface);border:2px solid var(--border);border-radius:7px;padding:14px;text-align:center}.hora-v{font-family:var(--display);font-size:28px;font-weight:800}.hora-v.o{color:var(--accent)}.hora-v.g{color:var(--accent2)}.hora-v.b{color:var(--accent3)}.hora-v.p{color:var(--purple)}.hora-v.t{color:var(--teal)}.hora-l{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-top:3px}.hora-s{font-size:10px;color:var(--ink2);margin-top:2px}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:16px 0}.fbox{border:2px solid var(--ink);border-radius:5px;padding:9px 13px;font-size:11px;font-weight:700;text-align:center;min-width:90px}.fbox sub{display:block;font-size:9px;opacity:.75;font-weight:400;margin-top:2px}.fbox.o{background:var(--accent);color:#fff;border-color:var(--accent)}.fbox.g{background:var(--accent2);color:#fff;border-color:var(--accent2)}.fbox.b{background:var(--accent3);color:#fff;border-color:var(--accent3)}.fbox.p{background:var(--purple);color:#fff;border-color:var(--purple)}.fbox.t{background:var(--teal);color:#fff;border-color:var(--teal)}.fbox.y{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}.fbox.s{background:var(--surface2)}.farr{font-size:18px;color:var(--muted);flex-shrink:0}
+.quote{border-left:4px solid var(--purple);background:rgba(122,58,205,.03);padding:16px 20px;margin:16px 0;border-radius:0 6px 6px 0}.quote-t{font-size:13px;line-height:1.8;color:var(--ink2);font-style:italic;margin-bottom:8px}.quote-a{font-size:11px;font-weight:700;color:var(--purple)}
+.plan-row{display:grid;grid-template-columns:auto 1fr auto;gap:0;border:2px solid var(--border);border-radius:7px;overflow:hidden;margin:10px 0;transition:box-shadow .2s}.plan-row:hover{box-shadow:0 3px 12px rgba(0,0,0,.07)}.plan-num{padding:14px 18px;font-family:var(--display);font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:center;min-width:60px}.plan-num.o{background:rgba(193,68,14,.1);color:var(--accent)}.plan-num.g{background:rgba(42,110,78,.1);color:var(--accent2)}.plan-num.b{background:rgba(26,74,138,.1);color:var(--accent3)}.plan-num.p{background:rgba(122,58,205,.1);color:var(--purple)}.plan-num.t{background:rgba(14,124,123,.1);color:var(--teal)}.plan-num.done{background:rgba(102,102,102,.1);color:#888}.plan-body{padding:13px 16px;border-left:1px solid var(--border);border-right:1px solid var(--border)}.plan-title{font-weight:700;font-size:13px;margin-bottom:4px}.plan-desc{font-size:11.5px;color:var(--ink2);line-height:1.65}.plan-h{padding:14px 18px;font-family:var(--display);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;min-width:60px}.plan-h.o{color:var(--accent)}.plan-h.g{color:var(--accent2)}.plan-h.b{color:var(--accent3)}.plan-h.p{color:var(--purple)}.plan-h.t{color:var(--teal)}.plan-h.done{color:#888}
+.timeline{position:relative;margin:20px 0 20px 20px;padding-left:28px;border-left:3px solid var(--border)}.tl-item{position:relative;padding:0 0 24px 0}.tl-item:last-child{padding-bottom:0}.tl-dot{position:absolute;left:-36px;top:2px;width:16px;height:16px;border-radius:50%;border:3px solid}.tl-dot.dead{border-color:var(--accent);background:rgba(193,68,14,.2)}.tl-dot.find{border-color:var(--accent2);background:rgba(42,110,78,.2)}.tl-dot.key{border-color:var(--purple);background:rgba(122,58,205,.2)}.tl-dot.gold{border-color:var(--yellow);background:rgba(232,160,32,.2)}.tl-dot.final{border-color:var(--teal);background:var(--teal)}.tl-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}.tl-label.dead{color:var(--accent)}.tl-label.find{color:var(--accent2)}.tl-label.key{color:var(--purple)}.tl-label.gold{color:var(--yellow)}.tl-label.final{color:var(--teal)}.tl-title{font-weight:700;font-size:13px;margin-bottom:4px}.tl-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+@media(max-width:720px){.grid,.horas-grid{grid-template-columns:1fr}.plan-row{grid-template-columns:auto 1fr auto}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Guía ejecutiva · Mayo 2026 · TFM BigSchool</div>
+  <h1>FMI <span class="v">V5M/V6M</span><br><em>20 horas</em> al finish</h1>
+  <div class="subtitle">De una app de 2005 a Clean Architecture — sin leer el código, guiado por E2E.<br>El motor multi-agente modela el comportamiento de un buen equipo de arquitectura y lo ejecuta automáticamente.</div>
+  <div class="badge-row">
+    <span class="badge g">✓ Deploy legacy</span>
+    <span class="badge o">E2E como especificación</span>
+    <span class="badge b">TDD-as-Spec</span>
+    <span class="badge p">Agentes paralelos</span>
+    <span class="badge y">Caveman Lite</span>
+    <span class="badge t">20h · todo incluido</span>
+  </div>
+</header>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="st('vision')">🧭 VISIÓN</button>
+  <button class="tab-btn" onclick="st('plan')">📅 PLAN 20H</button>
+  <button class="tab-btn" onclick="st('pasos')">🚀 PASOS</button>
+  <button class="tab-btn" onclick="st('motor')">⚙️ MOTOR</button>
+  <button class="tab-btn" onclick="st('memoria')">📝 MEMORIA</button>
+  <button class="tab-btn" onclick="st('defensa')">🎓 DEFENSA</button>
+</div>
+
+<!-- ═══════════════════════ VISIÓN ═══════════ -->
+<div id="tab-vision" class="tab-panel active">
+
+<div class="sec" data-n="★">LA IDEA — CÓMO HA EVOLUCIONADO</div>
+
+<div class="quote">
+  <div class="quote-t">"La idea era poder refactorizar y migrar aplicaciones web legacy a arquitecturas Clean Code primero, y luego al lenguaje que quisiéramos. El resultado ha sido un motor de agentes que modela el comportamiento de un buen equipo de arquitectura y lo ejecuta automáticamente."</div>
+  <div class="quote-a">La evolución del proyecto</div>
+</div>
+
+<div class="sec" data-n="E">5 DESCUBRIMIENTOS QUE CAMBIARON EL PROYECTO</div>
+
+<div class="timeline">
+  <div class="tl-item">
+    <div class="tl-dot dead"></div>
+    <div class="tl-label dead">Callejón sin salida</div>
+    <div class="tl-title">Tests unitarios generados desde el código legacy</div>
+    <div class="tl-desc">La primera intuición: que la IA lea el espagueti y genere tests unitarios. El problema: los tests reproducían la implementación — incluyendo los bugs. Un test del espagueti solo verifica que el espagueti hace lo que hace, no lo que debería hacer. No captura semántica, captura sintaxis. La idea de generar tests de integración después iba en la misma dirección errónea.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-dot find"></div>
+    <div class="tl-label find">Descubrimiento 1</div>
+    <div class="tl-title">devContainer — para migrar, primero hay que hacer funcionar el original</div>
+    <div class="tl-desc">Con VSCode y <code>.devContainer</code> se puede reproducir el entorno original (JDK 1.5, Tomcat 5.5, PostgreSQL) en Docker. Arrancarlo, depurarlo, verlo funcionar como en 2005. Eso cambia todo: ya no imaginas qué hacía el legacy — lo ves funcionar y observas su comportamiento directamente. Primer principio: <strong>antes de migrar, consigue que funcione exactamente como estaba</strong>.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-dot find"></div>
+    <div class="tl-label find">Descubrimiento 2</div>
+    <div class="tl-title">E2E con Playwright para cartografiar — correcto pero lento</div>
+    <div class="tl-desc">Con el legacy corriendo, la idea de usar tests E2E para cartografiar el comportamiento observable (happy path, errores, límites, roles) era la dirección correcta. Pero hacerlo manualmente — diseñar cada test, ejecutar, analizar HAR — llevaba semanas por servlet. La semántica estaba ahí, la velocidad no.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-dot key"></div>
+    <div class="tl-label key">Descubrimiento 3 — el que lo cambió todo</div>
+    <div class="tl-title">Caveman + agentes paralelos = batch de refactorización TDD</div>
+    <div class="tl-desc">Cada agente funciona mejor con <strong>contexto mínimo aislado</strong>. Esa restricción que parece una limitación es el mecanismo que produce precisión. Con 2 semanas de ajuste de prompts, el sistema se convirtió en un batch que genera tests primero y código después — como TDD pero con agentes especializados: un Architect (Opus) que piensa, Test Workers (Sonnet) que especifican, un GATE que verifica coherencia, Code Workers (Sonnet) que implementan, y un Smoke (Haiku) que valida.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-dot gold"></div>
+    <div class="tl-label gold">Descubrimiento 4</div>
+    <div class="tl-title">Los .har de las pruebas son oro para generar E2E</div>
+    <div class="tl-desc">Los ficheros HAR capturan <em>exactamente</em> el comportamiento real del sistema: requests, responses, headers, cookies, redirects, errores. Eso es semántica pura — no interpretada por una IA leyendo código, sino observada en el sistema vivo. Con el HAR como input, el agente genera E2E que capturan el comportamiento real, no el implementado. La pieza que faltaba para cerrar el ciclo.</div>
+  </div>
+  <div class="tl-item">
+    <div class="tl-dot final"></div>
+    <div class="tl-label final">Resultado</div>
+    <div class="tl-title">V5M/V6M — el motor que modela un equipo de arquitectura</div>
+    <div class="tl-desc">Todo junto: Meta-Architect (Opus) que escanea y planifica, Architect (Opus) que distribuye trabajo, Test Workers (Sonnet ×N) en paralelo, GATE bloqueante de 7 checks, Code Workers (Sonnet ×N) que leen los tests y los satisfacen, Smoke (Haiku) que valida mecánicamente. El motor no inventa nada nuevo — codifica el comportamiento de los buenos equipos de arquitectura y lo hace ejecutable.</div>
+  </div>
+</div>
+
+<div class="sec" data-n="R">LA FRASE DEFINITIVA</div>
+
+<div class="note g">
+  <strong>El motor no inventa una nueva forma de migrar legacy.</strong>
+  Codifica el comportamiento que ya tienen los buenos equipos de arquitectura — escanear, especificar con tests, implementar después, verificar antes de entregar — y lo hace ejecutable mediante agentes de IA especializados, cada uno con el modelo exacto y el contexto mínimo para máxima precisión.
+</div>
+
+<div class="sec" data-n="S">DE DÓNDE VIENE LA SEMÁNTICA</div>
+
+<div class="flow" style="justify-content:center;flex-wrap:wrap">
+  <div class="fbox s">Código legacy<sub>punto de partida</sub></div>
+  <div class="farr">→</div>
+  <div class="fbox o">Agente SCAN<sub>decide qué probar</sub></div>
+  <div class="farr">→</div>
+  <div class="fbox y">HAR<sub>comportamiento real</sub></div>
+  <div class="farr">→</div>
+  <div class="fbox b">E2E tests<sub>especificación ejecutable</sub></div>
+  <div class="farr">→</div>
+  <div class="fbox g">Motor V5M<sub>TDD: tests → código</sub></div>
+  <div class="farr">→</div>
+  <div class="fbox t">Migrado<sub>Clean Architecture</sub></div>
+</div>
+
+<p style="font-size:12px;color:var(--ink2);line-height:1.8;margin-top:14px">El motor de agentes es tan potente que extrae la semántica directamente del código. Pero eso es lo que el código <em>dice</em> que hace. Los E2E capturan lo que el sistema <em>realmente</em> hace. El HAR es la fotografía del comportamiento. Los E2E son esa fotografía convertida en contrato ejecutable. El código fuente es evidencia adicional — no la fuente de verdad.</p>
+
+<div class="sec" data-n="M">LO QUE SE MODELÓ — UN EQUIPO DE ARQUITECTURA</div>
+
+<table class="tbl">
+  <tr><th>Rol humano</th><th>Agente</th><th>Modelo</th><th>Qué hace</th></tr>
+  <tr><td class="cat">Arquitecto senior</td><td>Meta-Architect</td><td>Opus</td><td>Escanea, decide fases, define contratos entre fases</td></tr>
+  <tr><td class="cat">Arquitecto técnico</td><td>Architect</td><td>Opus</td><td>Diseña estructura, asigna trabajo, define SHARED CONTRACTS</td></tr>
+  <tr><td class="cat">Developer senior (TDD)</td><td>Test Worker × N</td><td>Sonnet</td><td>Tests primero. Define el contrato ejecutable de cada componente</td></tr>
+  <tr><td class="cat">Developer</td><td>Code Worker × N</td><td>Sonnet</td><td>Lee los tests, escribe código que los satisface. No inventa contratos.</td></tr>
+  <tr><td class="cat">QA / Code reviewer</td><td>GATE + Smoke</td><td>Haiku</td><td>Verifica coherencia antes de que llegue a producción</td></tr>
+  <tr><td class="cat">Tú</td><td>—</td><td>—</td><td>Ejecutas pruebas sobre el legacy (Paso 2), validas E2E (Paso 4), supervisas</td></tr>
+</table>
+
+<div class="sec" data-n="P">LOS 3 PRINCIPIOS QUE HACEN QUE FUNCIONE</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="card-hd p">Restricción de contexto = precisión</div>
+    <div class="card-bd">Cada worker con contexto mínimo aislado (Caveman Lite). No ve a otros workers, no ve sus tests, no ve historial. Solo su TEST SPEC + DIGEST. Eso impide confusión, fuerza precisión, evita llenar la ventana de contexto y que Claude Code deje de funcionar. Es bajo acoplamiento aplicado a agentes de IA.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd g">TDD-as-Spec</div>
+    <div class="card-bd">Tests antes que código — siempre. Los Test Workers definen el contrato. Los Code Workers leen los tests y los satisfacen. Si el código no pasa el test, el código está mal — nunca el test. El resultado: código que hace exactamente lo especificado, sin más ni menos.</div>
+  </div>
+  <div class="card">
+    <div class="card-hd o">GATE bloqueante</div>
+    <div class="card-bd">7 checks entre las dos oleadas de workers. Si los tests no son coherentes entre sí según SHARED CONTRACTS → ABORT antes de gastar tokens en código. Es el code review automático que impide que errores se propaguen silenciosamente.</div>
+  </div>
+</div>
+
+<div class="sec" data-n="F">FUNDAMENTOS — LOS MISMOS, AUTOMATIZADOS</div>
+
+<table class="tbl">
+  <tr><th>Lo que el motor hace</th><th>Práctica establecida</th><th>Autor</th></tr>
+  <tr><td class="cat">Observar comportamiento antes de tocar</td><td>Characterization Tests / Golden Master</td><td>Feathers (2004)</td></tr>
+  <tr><td class="cat">Tests como especificación ejecutable</td><td>Test-Driven Development</td><td>Beck (2002)</td></tr>
+  <tr><td class="cat">Comportamiento observable = lenguaje de dominio</td><td>Ubiquitous Language</td><td>Evans (2003)</td></tr>
+  <tr><td class="cat">Frontend define contratos, backend implementa</td><td>Consumer-Driven Contracts</td><td>Fowler (2006)</td></tr>
+  <tr><td class="cat">Lo nuevo crece alrededor de lo viejo</td><td>Strangler Fig Pattern</td><td>Fowler (2004)</td></tr>
+  <tr><td class="cat">Caja negra sobre arqueología de código</td><td>"Never rewrite from scratch"</td><td>Spolsky (2000)</td></tr>
+  <tr><td class="cat">3 capas + vocabulario cerrado</td><td>Clean Architecture</td><td>Martin (2017)</td></tr>
+</table>
+
+<div class="insight">
+  <div class="insight-t">💡 La contribución académica</div>
+  <div class="insight-b">El motor demuestra que las prácticas que la industria ha validado durante 25 años son <strong>automatizables con agentes de IA especializados</strong>. La clave es la restricción de contexto + modelo correcto por rol + comunicación por artefactos en disco. El resultado: una migración determinista, reproducible y verificable — los mismos E2E pasan en el legacy y en el migrado.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ PLAN 20H ════════ -->
+<div id="tab-plan" class="tab-panel">
+
+<div class="sec" data-n="⏱">20 HORAS — DISTRIBUCIÓN</div>
+
+<div class="horas-grid">
+  <div class="hora-block"><div class="hora-v" style="color:#888">✓</div><div class="hora-l">Paso 0</div><div class="hora-s">devContainer</div></div>
+  <div class="hora-block"><div class="hora-v o">1h</div><div class="hora-l">Paso 1</div><div class="hora-s">SCAN → batería</div></div>
+  <div class="hora-block"><div class="hora-v o">2h</div><div class="hora-l">Paso 2</div><div class="hora-s">Pruebas → HAR</div></div>
+  <div class="hora-block"><div class="hora-v o">1h</div><div class="hora-l">Paso 3</div><div class="hora-s">HAR → E2E</div></div>
+  <div class="hora-block"><div class="hora-v o">2h</div><div class="hora-l">Paso 4</div><div class="hora-s">Validar E2E</div></div>
+  <div class="hora-block"><div class="hora-v g">4h</div><div class="hora-l">Paso 5</div><div class="hora-s">V6M migra</div></div>
+  <div class="hora-block"><div class="hora-v b">2h</div><div class="hora-l">Paso 6</div><div class="hora-s">Verificar + deploy</div></div>
+  <div class="hora-block"><div class="hora-v p">6h</div><div class="hora-l">Paso 7</div><div class="hora-s">Memoria</div></div>
+  <div class="hora-block"><div class="hora-v t">2h</div><div class="hora-l">Paso 8</div><div class="hora-s">Defensa</div></div>
+</div>
+
+<div class="plan-row"><div class="plan-num done">0</div><div class="plan-body"><div class="plan-title">devContainer + deploy legacy <span class="done-badge">HECHO ✓</span></div><div class="plan-desc">WebDTE legacy corriendo en devContainer. JDK 1.5 + Tomcat 5.5 + PostgreSQL. Depurable en VSCode.</div></div><div class="plan-h done">0h</div></div>
+
+<div class="plan-row"><div class="plan-num o">1</div><div class="plan-body"><div class="plan-title">SCAN código → batería de pruebas de regresión</div><div class="plan-desc">El agente lee el código fuente completo. Genera la lista de pruebas a ejecutar: 7 grupos (happy path, vacíos, inválidos, límites, especiales, roles, secuencias). Output: <code>docs/test-battery.md</code>.</div></div><div class="plan-h o">1h</div></div>
+
+<div class="plan-row"><div class="plan-num o">2</div><div class="plan-body"><div class="plan-title">Ejecutar pruebas en el legacy → HAR + logs back</div><div class="plan-desc">Tú ejecutas la batería con Playwright grabando. <strong>El único paso manual obligatorio</strong> — el legacy está vivo y el HAR captura el comportamiento real. Output: <code>telemetry/har/webdte-legacy.har</code>.</div></div><div class="plan-h o">2h</div></div>
+
+<div class="plan-row"><div class="plan-num o">3</div><div class="plan-body"><div class="plan-title">Motor genera E2E desde HAR + código</div><div class="plan-desc">El agente analiza el HAR cruzado con el código. Genera E2E en <code>tests/e2e/validacion/</code>, extrae <code>docs/contracts.json</code>, documenta divergencias HAR vs código.</div></div><div class="plan-h o">1h</div></div>
+
+<div class="plan-row"><div class="plan-num o">4</div><div class="plan-body"><div class="plan-title">Validar E2E contra el legacy — GATE manual</div><div class="plan-desc">Ejecutas los E2E contra el legacy. Todos en verde = especificación correcta. Los que fallen → corregir test o capturar edge case. <strong>No acortar este paso</strong> — la calidad de los E2E determina todo lo que viene después.</div></div><div class="plan-h o">2h</div></div>
+
+<div class="plan-row"><div class="plan-num g">5</div><div class="plan-body"><div class="plan-title">V6M orquesta la migración completa</div><div class="plan-desc">Lanzas V6M con los E2E como especificación. Meta-Architect planifica fases (Frontend WC → SCAN intermedio → Backend 3 capas → OWASP). V5M ejecuta cada fase: Architect → TEST WORKERS → GATE → CODE WORKERS → SMOKE. Tú supervisas checkpoints.</div></div><div class="plan-h g">4h</div></div>
+
+<div class="plan-row"><div class="plan-num b">6</div><div class="plan-body"><div class="plan-title">E2E verde contra el migrado + deploy en DigitalOcean</div><div class="plan-desc">Mismos E2E contra el sistema migrado. Verde en ambos = equivalencia semántica demostrada. Deploy del migrado. Las dos URLs quedan vivas para la defensa.</div></div><div class="plan-h b">2h</div></div>
+
+<div class="plan-row"><div class="plan-num p">7</div><div class="plan-body"><div class="plan-title">Memoria académica ~25 páginas</div><div class="plan-desc">La memoria cuenta la historia de los descubrimientos, describe el motor V5M/V6M y demuestra que funciona con los logs y las dos URLs. Ver pestaña MEMORIA.</div></div><div class="plan-h p">6h</div></div>
+
+<div class="plan-row"><div class="plan-num t">8</div><div class="plan-body"><div class="plan-title">Slides defensa + ensayo demo</div><div class="plan-desc">15 slides. Demo: E2E verde contra los dos sistemas en vivo. Ver pestaña DEFENSA.</div></div><div class="plan-h t">2h</div></div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ El único riesgo real</div>
+  <div class="danger-b">Si los E2E del Paso 4 no capturan bien el comportamiento, el motor genera un sistema que pasa los tests pero no es equivalente. El Paso 4 es el mejor seguro. No lo acortes.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ PASOS ════════════ -->
+<div id="tab-pasos" class="tab-panel">
+
+<div class="sec" data-n="0">PASO 0 · DEVCONTAINER + DEPLOY ✓</div>
+
+<div class="note g"><strong>Completado.</strong> WebDTE legacy en devContainer (JDK 1.5, Tomcat 5.5, PostgreSQL). Depurable en VSCode. Primer principio: para migrar, primero hacerlo funcionar exactamente como estaba.</div>
+
+<div class="sec" data-n="1">PASO 1 · SCAN → BATERÍA DE PRUEBAS (1h)</div>
+
+<pre><span class="cm"># Prompt para Claude Code</span>
+
+Analiza el código fuente de WebDTE legacy y genera una batería
+de pruebas de regresión para cartografiar su comportamiento.
+
+Lee en orden:
+1. web.xml → endpoints y servlets
+2. DDL tablas → entidades
+3. Cada servlet (doGet/doPost) → lógica
+4. JSPs → contratos de UI
+
+Para CADA funcionalidad, genera 7 grupos de casos:
+  1. Happy path  2. Campos vacíos  3. Valores inválidos
+  4. Límites exactos  5. Caracteres especiales
+  6. Por rol  7. Secuencias de estado
+
+Output: docs/test-battery.md
+NO generar código Playwright todavía. Solo el checklist.</pre>
+
+<div class="sec" data-n="2">PASO 2 · EJECUTAR PRUEBAS → HAR (2h)</div>
+
+<div class="note y"><strong>El único paso manual — y el más valioso.</strong> El HAR es la fotografía del comportamiento real. La diferencia entre lo que el código dice y lo que hace de verdad.</div>
+
+<pre><span class="cm"># playwright.config.ts</span>
+use: {
+  recordHar: {
+    path: <span class="st">'./telemetry/har/webdte-legacy.har'</span>,
+    mode: <span class="st">'full'</span>, content: <span class="st">'embed'</span>,
+  }
+}
+
+<span class="cm"># Ejecutar la batería siguiendo test-battery.md</span>
+npx playwright test --project=cartografia
+<span class="cm"># Marcar cada caso al ejecutarlo. Anotar divergencias.</span></pre>
+
+<div class="sec" data-n="3">PASO 3 · HAR → E2E TESTS (1h)</div>
+
+<pre><span class="cm"># Prompt para Claude Code</span>
+
+Tengo el HAR en telemetry/har/webdte-legacy.har
+y logs del back en logs/backend-session.log.
+
+Analiza el HAR cruzado con el código fuente.
+Para cada endpoint: extrae contrato HTTP del HAR,
+genera E2E que capture el comportamiento REAL (del HAR),
+documenta divergencias HAR vs código.
+
+Output:
+  - tests/e2e/validacion/[servlet].spec.ts
+  - docs/contracts.json
+  - docs/divergencias.md
+
+Prefijo datos: CART_val_  ·  storageState para sesión.</pre>
+
+<div class="sec" data-n="4">PASO 4 · VALIDAR E2E — GATE MANUAL (2h)</div>
+
+<pre><span class="cm"># E2E contra el legacy — todos deben ser VERDE</span>
+BASE_URL=http://localhost:8080 npx playwright test --project=validacion
+
+<span class="cm"># Cuando todo verde:</span>
+git add tests/e2e/ docs/
+git commit -m <span class="st">"e2e: suite validacion verde contra legacy"</span></pre>
+
+<div class="sec" data-n="5">PASO 5 · V6M MIGRA (4h)</div>
+
+<pre><span class="cm"># Invocación V6M</span>
+
+Migra el legacy WebDTE a arquitectura moderna.
+
+Frontend: Web Components (Vanilla JS, cero dependencias)
+Backend: 3 capas (domain / infrastructure / transport)
+  Naming: Finder/Storer/Sender/Renderer/Validator/Calculator/Mapper
+  PROHIBIDO: Service/Manager/Helper/Util/Handler
+Tests: tests/e2e/validacion/ son la especificación
+Contratos: docs/contracts.json
+Knowledge Injection:
+  - titulacion (no especialidad)
+  - nombreProfesor (no getFormatos)
+  - "year" como int, no String
+
+Estrategia Consumer-Driven Contract:
+  FASE 1: Frontend WebComponents
+  FASE 2: SCAN intermedio → contratos exactos
+  FASE 3: Backend 3 capas
+  FASE 4: E2E seguridad OWASP
+
+V5M por fase: Architect → TEST WORKERS → GATE → CODE WORKERS → SMOKE
+Output en: codigo-migrado/</pre>
+
+<div class="sec" data-n="6">PASO 6 · VERIFICAR + DEPLOY (2h)</div>
+
+<pre><span class="cm"># E2E contra el migrado</span>
+BASE_URL=http://localhost:8081 npx playwright test --project=validacion
+<span class="cm"># Verde en ambos = equivalencia demostrada</span>
+
+<span class="cm"># Deploy en DigitalOcean</span>
+docker build -t webdte-migrado .
+docker run -d -p 8081:8080 webdte-migrado
+
+<span class="cm"># Resultado: dos URLs vivas para la defensa</span>
+<span class="cm"># https://webdte-legacy.tudominio.com   ← 2005</span>
+<span class="cm"># https://webdte-migrado.tudominio.com  ← Clean Architecture</span></pre>
+
+</div>
+
+<!-- ═══════════════════════ MOTOR ════════════ -->
+<div id="tab-motor" class="tab-panel">
+
+<div class="sec" data-n="V">V5M/V6M — DOS NIVELES</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd p">V6M — Cerebro</div><div class="card-bd">Meta-Architect <strong>(Opus)</strong> planifica. SCAN → decide fases → define contratos → ejecuta V5M por fase → certifica. Estrategia: <strong>Consumer-Driven Contract</strong> — frontend primero.</div></div>
+  <div class="card"><div class="card-hd g">V5M — Brazo</div><div class="card-bd">Architect <strong>(Opus)</strong> → Blueprint + DIGEST + TEST SPECS → Test Workers <strong>(Sonnet ×N)</strong> → <strong>GATE</strong> bloqueante → Code Workers <strong>(Sonnet ×N)</strong> → Smoke <strong>(Haiku)</strong>.</div></div>
+</div>
+
+<div class="sec" data-n="F">FLUJO V5M</div>
+
+<div class="steps">
+  <div class="step"><div class="step-l"><div class="step-n b">P</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">PRE-FLIGHT</div><div class="step-d">Validar source · <code>_logs/</code> scaffold · <code>00_config.json</code> · Knowledge Injection.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n p">A</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">ARCHITECT (Opus · una vez)</div><div class="step-d">4 artefactos: <strong>Blueprint</strong> (agrupación), <strong>DIGEST</strong> (~2K tokens), <strong>SHARED CONTRACTS</strong> (nombres, constructores, paquetes), <strong>TEST SPECS</strong> (~500 tok/grupo). Workers no leen el legacy — leen el DIGEST.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n o">T</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">OLEADA 1 — TEST WORKERS (Sonnet ×N · paralelo)</div><div class="step-d">Cada worker recibe su TEST SPEC + DIGEST. Escribe tests a disco. <strong>Caveman Lite</strong>: no conoce a otros workers. La restricción de contexto fuerza la precisión.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n y" style="color:var(--ink)">G</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">GATE BLOQUEANTE — 7 CHECKS</div><div class="step-d">≥ N archivos · imports domain.interfaces · Optional.of() · DTOs · constructores · paquetes. <strong>FALLA → ABORT</strong>. Nunca Code Workers con tests incoherentes.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n g">C</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">OLEADA 2 — CODE WORKERS (Sonnet ×N · paralelo)</div><div class="step-d">Cada worker <strong>LEE sus tests primero</strong> → escribe código que los satisfaga. No inventa contratos.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n t">S</div></div><div class="step-body"><div class="step-t">SMOKE (Haiku · 28 checks)</div><div class="step-d">grep · count · exists. Mecánico. Escala a Sonnet si fallo complejo.</div></div></div>
+</div>
+
+<div class="sec" data-n="D">DESPLIEGUE EN CLAUDE CODE</div>
+
+<pre>project-root/
+├── CLAUDE.md                          <span class="cm">← reglas estables</span>
+├── .claude/
+│   ├── skills/
+│   │   ├── fmi-orchestrate-migration/ <span class="cm">← V6M</span>
+│   │   └── fmi-execute-phase/         <span class="cm">← V5M</span>
+│   └── agents/
+│       ├── fmi-scanner.md             <span class="cm">← Sonnet</span>
+│       ├── fmi-meta-architect.md      <span class="cm">← Opus</span>
+│       ├── fmi-architect.md           <span class="cm">← Opus</span>
+│       ├── fmi-test-worker.md         <span class="cm">← Sonnet</span>
+│       ├── fmi-code-worker.md         <span class="cm">← Sonnet</span>
+│       └── fmi-smoke.md               <span class="cm">← Haiku</span>
+├── _logs/                             <span class="cm">← telemetría</span>
+├── tests/e2e/validacion/              <span class="cm">← input del motor</span>
+├── docs/                              <span class="cm">← contracts + divergencias</span>
+└── codigo-migrado/                    <span class="cm">← output del motor</span></pre>
+
+<div class="insight">
+  <div class="insight-t">💡 Por qué Subagents y no todo en CLAUDE.md</div>
+  <div class="insight-b">Cada subagent = su propia ventana de contexto + su propio modelo + tools restringidas. Si todo estuviera en CLAUDE.md: (1) se cargaría en cada conversación aunque solo depures, (2) un solo modelo para todo, (3) los workers se "verían" entre sí — adiós Caveman Lite, adiós precisión. Los subagents son la pieza que hace posible el paralelismo sin llenar la ventana de contexto.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ MEMORIA ══════════ -->
+<div id="tab-memoria" class="tab-panel">
+
+<div class="sec" data-n="M">LA MEMORIA CUENTA LA HISTORIA DE LOS DESCUBRIMIENTOS</div>
+
+<div class="note g"><strong>La memoria no describe un proceso — demuestra un sistema.</strong> Los logs del motor son la evidencia. Las dos URLs son la demo. Los descubrimientos son el hilo narrativo.</div>
+
+<div class="sec" data-n="E">~25 PÁGINAS · 6h</div>
+
+<div class="steps">
+  <div class="step"><div class="step-l"><div class="step-n o">1</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">Introducción + problema <span class="h-badge">45 min · 3 pág</span></div><div class="step-d">Apps legacy críticas sin documentación ni tests. ¿Se puede automatizar la migración preservando equivalencia semántica? WebDTE como caso — una app Java de 2005 que el autor construyó como PFC hace 20 años.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n o">2</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">Marco teórico <span class="h-badge">60 min · 4 pág</span></div><div class="step-d">Feathers (characterization tests), Beck (TDD), Evans (ubiquitous language), Fowler (CDC + Strangler Fig), Spolsky (caja negra), Martin (Clean Architecture). No son referencias de relleno — son las prácticas que el motor codifica.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n g">3</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">FMI y evolución al V5M/V6M <span class="h-badge">90 min · 6 pág</span></div><div class="step-d"><strong>Aquí va la historia de los 5 descubrimientos</strong> — el hilo narrativo del proyecto. Desde los tests unitarios que no capturaban semántica hasta el motor que modela un equipo de arquitectura. DevContainer como primer principio. HAR como fuente de verdad. Caveman como mecanismo de precisión. La arquitectura del motor: V6M, V5M, roles, modelos, GATE, telemetría.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n g">4</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">Caso WebDTE — resultados <span class="h-badge">90 min · 7 pág</span></div><div class="step-d">Los 6 pasos con evidencias de <code>_logs/</code>. Métricas reales: N workers, M archivos, K líneas, coste en $, tiempo. E2E verde contra legacy y migrado (capturas). Las dos URLs. Código legacy (JSP+SQL en doPost) vs migrado (WebComponents + 3 capas). GATE: qué falló en los primeros runs y cómo se corrigió.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n b">5</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">Conclusiones + líneas futuras <span class="h-badge">45 min · 3 pág</span></div><div class="step-d">La equivalencia semántica es automatizable. Los E2E son especificación suficiente pero su calidad es responsabilidad humana. Generalizable (OSCA). Restricción de contexto como principio de diseño para sistemas multi-agente. Líneas futuras: GATE con ejecución real de tests, feedback loop automático.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n b">B</div></div><div class="step-body"><div class="step-t">Bibliografía <span class="h-badge">30 min · 2 pág</span></div><div class="step-d">Feathers (2004), Beck (2002), Evans (2003), Fowler (2004, 2006), Spolsky (2000), Martin (2017), Humble & Farley (2010). APA o ISO 690.</div></div></div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">💡 Los logs del motor como evidencia empírica</div>
+  <div class="insight-b">El capítulo 4 incluye extractos de <code>_logs/v5m_*/05_resumen.md</code>: workers, archivos, tiempos, GATE failures, Knowledge Injection corrections. Evidencia verificable — el evaluador puede ejecutar el motor y reproducir los resultados.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ DEFENSA ══════════ -->
+<div id="tab-defensa" class="tab-panel">
+
+<div class="sec" data-n="S">15 SLIDES · DEMO EN VIVO · 2h</div>
+
+<table class="tbl">
+  <tr><th>#</th><th>Slide</th><th>Contenido</th><th>Min</th></tr>
+  <tr><td class="cat">1</td><td>Portada</td><td>FMI V5M/V6M · Motor multi-agente para migración de legacy</td><td>—</td></tr>
+  <tr><td class="cat">2</td><td>El problema</td><td>WebDTE 2005: JSP, SQL en doPost, sin tests, sin docs. Funciona.</td><td>1</td></tr>
+  <tr><td class="cat">3</td><td>La pregunta</td><td>¿Se puede automatizar la migración con equivalencia semántica?</td><td>0.5</td></tr>
+  <tr><td class="cat">4</td><td>Los descubrimientos</td><td>Timeline: callejón → devContainer → E2E → Caveman → HAR → V5M/V6M</td><td>2</td></tr>
+  <tr><td class="cat">5</td><td>Fundamentos</td><td>Feathers + Beck + Evans + Fowler. "Automatiza lo ya validado"</td><td>1.5</td></tr>
+  <tr><td class="cat">6</td><td>V6M + V5M</td><td>Diagrama completo: Meta-Architect → fases → Architect → Workers → GATE → Smoke</td><td>2</td></tr>
+  <tr><td class="cat">7</td><td>3 principios</td><td>Caveman Lite + TDD-as-Spec + GATE bloqueante</td><td>1.5</td></tr>
+  <tr><td class="cat">8</td><td>E2E como spec</td><td>HAR → contracts.json → E2E → input del motor</td><td>1</td></tr>
+  <tr><td class="cat">9</td><td>Métricas</td><td>N workers · M archivos · K líneas · X min · $Y coste — de los logs</td><td>1</td></tr>
+  <tr><td class="cat">10-13</td><td><strong>DEMO</strong></td><td>1. E2E verde legacy · 2. E2E verde migrado · 3. JSP vs WebComponent · 4. Logs del motor</td><td>5</td></tr>
+  <tr><td class="cat">14</td><td>Limitaciones</td><td>El motor es tan bueno como los E2E. Calidad humana determina resultado.</td><td>1</td></tr>
+  <tr><td class="cat">15</td><td>Conclusiones</td><td>Generalizable (OSCA). Restricción contexto como principio de diseño para agentes IA.</td><td>1</td></tr>
+</table>
+
+<div class="sec" data-n="D">PREPARAR LA DEMO</div>
+
+<pre><span class="cm"># Verificar URLs vivas</span>
+curl -I https://webdte-legacy.tudominio.com    <span class="cm"># 200</span>
+curl -I https://webdte-migrado.tudominio.com   <span class="cm"># 200</span>
+
+<span class="cm"># E2E verde en ambos</span>
+BASE_URL=https://webdte-legacy.tudominio.com  npx playwright test --project=validacion
+BASE_URL=https://webdte-migrado.tudominio.com npx playwright test --project=validacion
+
+<span class="cm"># Tabs listos:</span>
+<span class="cm"># 1: terminal (ejecutar tests)</span>
+<span class="cm"># 2: browser legacy</span>
+<span class="cm"># 3: browser migrado</span>
+<span class="cm"># 4: VSCode WebComponent vs JSP</span>
+<span class="cm"># 5: _logs/05_resumen.md</span></pre>
+
+<div class="danger">
+  <div class="danger-t">⚠️ La demo en 30 segundos</div>
+  <div class="danger-b">"Ejecuto los mismos tests contra los dos sistemas. El legacy los pasa. El migrado los pasa. Son semánticamente equivalentes. La diferencia entre ambos es la contribución de este trabajo."</div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">💡 Lo que el evaluador no puede rebatir</div>
+  <div class="insight-b">Los tests están en verde en los dos sistemas. Eso es un hecho verificable en directo. No es una afirmación teórica — es una demostración ejecutable. El evaluador puede pedir que ejecutes cualquier test contra cualquiera de los dos sistemas y ver el resultado él mismo.</div>
+</div>
+
+</div>
+
+</div>
+<script>function st(id){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');event.target.classList.add('active')}</script>
+</body>
+</html>
