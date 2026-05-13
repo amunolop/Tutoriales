@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Actions · Manual Completo 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8;--surface:#fff;--surface2:#edeae0;--border:#cfc8b4;
+  --ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;
+  --accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;
+  --yellow:#e8a020;--purple:#7a3acd;--teal:#0e7c7b;
+  --gh:#24292f;--gh2:#0969da;--gh3:#1a7f37;
+  --mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+.container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* HEADER */
+header{border-bottom:3px solid var(--ink);padding-bottom:26px;margin-bottom:34px}
+.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-0.7deg)}
+h1{font-family:var(--display);font-size:clamp(28px,5vw,56px);font-weight:800;line-height:1;letter-spacing:-1.5px;margin-bottom:12px}
+h1 em{font-style:normal;color:var(--accent)}
+h1 .gh{color:var(--gh2)}
+.subtitle{font-size:12px;color:var(--muted);line-height:1.8;max-width:700px;margin-bottom:16px}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px}
+.badge{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}
+.badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}.badge.t{color:var(--teal);border-color:var(--teal)}.badge.gh{color:var(--gh2);border-color:var(--gh2)}
+
+/* TABS */
+.tab-nav{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:5px;overflow:hidden;margin-bottom:36px}
+.tab-btn{font-family:var(--mono);font-size:9.5px;font-weight:700;padding:10px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+.tab-btn:last-child{border-right:none}
+.tab-btn:hover{background:var(--surface2);color:var(--ink)}
+.tab-btn.active{background:var(--ink);color:var(--bg)}
+.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s ease both}
+
+/* SECTIONS */
+.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:30px 0 14px;display:flex;align-items:center;gap:12px}
+.sec:first-child{margin-top:0}
+.sec::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:3px;flex-shrink:0}
+
+/* CALLOUTS */
+.note{border-left:4px solid;padding:13px 17px;margin:13px 0;font-size:12px;line-height:1.75;color:var(--ink2);border-radius:0 4px 4px 0}
+.note strong{display:block;margin-bottom:4px}
+.note code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px}
+.note.o{border-color:var(--accent);background:rgba(193,68,14,.05)}.note.o strong{color:var(--accent)}
+.note.g{border-color:var(--accent2);background:rgba(42,110,78,.05)}.note.g strong{color:var(--accent2)}
+.note.b{border-color:var(--accent3);background:rgba(26,74,138,.05)}.note.b strong{color:var(--accent3)}
+.note.y{border-color:var(--yellow);background:rgba(232,160,32,.05)}.note.y strong{color:var(--yellow)}
+.note.p{border-color:var(--purple);background:rgba(122,58,205,.05)}.note.p strong{color:var(--purple)}
+.note.gh{border-color:var(--gh2);background:rgba(9,105,218,.05)}.note.gh strong{color:var(--gh2)}
+.note.t{border-color:var(--teal);background:rgba(14,124,123,.05)}.note.t strong{color:var(--teal)}
+
+/* CODE */
+pre{background:#1e1e1e;color:#d4d4d4;border:2px solid var(--border);border-radius:6px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;margin:13px 0;position:relative}
+pre .lang{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#666;font-weight:600}
+/* YAML syntax */
+.yk{color:#569cd6;font-weight:600}   /* keys */
+.yv{color:#ce9178}                    /* string values */
+.yn{color:#b5cea8}                    /* numbers */
+.yc{color:#6a9955;font-style:italic}  /* comments */
+.ye{color:#4ec9b0;font-weight:600}    /* events/triggers */
+.ya{color:#dcdcaa}                    /* actions */
+.ys{color:#c586c0;font-weight:600}    /* special keywords */
+.yh{background:rgba(255,214,0,.15);border-radius:2px;padding:0 3px}
+.yr{color:#f44747}                    /* red/errors */
+.yg{color:#4ec9b0}                    /* teal/env */
+/* Light pre */
+pre.light{background:#fafaf7;color:var(--ink);border-color:var(--border)}
+pre.light .yk{color:#c1440e;font-weight:600}
+pre.light .yv{color:#8a4a00}
+pre.light .yn{color:#7a3acd}
+pre.light .yc{color:#9a8a75;font-style:italic}
+pre.light .ye{color:#0e7c7b;font-weight:600}
+pre.light .ya{color:#0369a1;font-weight:600}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);overflow:hidden;margin:13px 0;border-radius:4px}
+.tbl th{background:var(--ink);color:var(--bg);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:10px 13px;text-align:left}
+.tbl td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(0,0,0,.015)}
+.tbl td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:10.5px;white-space:nowrap}
+.tbl td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+.tbl td.ok{color:var(--accent2);font-weight:700}.tbl td.bad{color:var(--accent);font-weight:700}.tbl td.warn{color:var(--yellow);font-weight:700}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin:14px 0}
+.card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .2s}
+.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.07)}
+.card-hd{padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.card-hd.g{background:rgba(42,110,78,.1);color:var(--accent2)}.card-hd.o{background:rgba(193,68,14,.1);color:var(--accent)}.card-hd.b{background:rgba(26,74,138,.1);color:var(--accent3)}.card-hd.p{background:rgba(122,58,205,.1);color:var(--purple)}.card-hd.y{background:rgba(232,160,32,.1);color:var(--yellow)}.card-hd.t{background:rgba(14,124,123,.1);color:var(--teal)}.card-hd.gh{background:rgba(9,105,218,.1);color:var(--gh2)}
+.card-bd{padding:13px;font-size:12px;line-height:1.75;color:var(--ink2)}
+
+/* INSIGHT / DANGER */
+.insight{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:17px 21px;margin:17px 0}
+.insight-t{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:7px}
+.insight-b{font-size:12px;color:var(--ink2);line-height:1.75}
+.danger{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:17px 21px;margin:17px 0}
+.danger-t{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:7px}
+.danger-b{font-size:12px;color:var(--ink2);line-height:1.75}
+
+/* WORKFLOW VISUAL */
+.wf{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:18px 0}
+.wf-box{border:2px solid;border-radius:5px;padding:10px 14px;font-size:11px;font-weight:700;text-align:center;min-width:90px}
+.wf-box sub{display:block;font-size:9px;font-weight:400;opacity:.75;margin-top:2px}
+.wf-box.trigger{background:#0969da;color:#fff;border-color:#0969da}
+.wf-box.job{background:#1a7f37;color:#fff;border-color:#1a7f37}
+.wf-box.step{background:var(--surface2);color:var(--ink);border-color:var(--border)}
+.wf-box.act{background:#7a3acd;color:#fff;border-color:#7a3acd}
+.wf-box.env{background:#e8a020;color:var(--ink);border-color:#e8a020}
+.wf-box.gate{background:#c1440e;color:#fff;border-color:#c1440e}
+.wf-arr{font-size:18px;color:var(--muted);padding:0 6px;flex-shrink:0}
+.wf-arr.down{transform:rotate(90deg)}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;margin:14px 0}
+.step{display:flex;align-items:stretch}
+.step-l{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.step-n{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+.step-n.o{background:var(--accent)}.step-n.g{background:var(--accent2)}.step-n.b{background:var(--accent3)}.step-n.p{background:var(--purple)}.step-n.gh{background:var(--gh2)}.step-n.t{background:var(--teal)}
+.step-line{width:2px;background:var(--border);flex:1;margin:4px auto}
+.step:last-child .step-line{display:none}
+.step-body{padding:0 0 18px 14px;flex:1}
+.step-t{font-weight:700;font-size:12.5px;margin-bottom:5px}
+.step-d{font-size:12px;color:var(--ink2);line-height:1.7}
+
+/* ANATOMY */
+.anatomy{background:#1e1e1e;border:2px solid var(--border);border-radius:8px;overflow:hidden;margin:14px 0}
+.anatomy-header{background:#2d2d2d;padding:10px 16px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#888;display:flex;justify-content:space-between;align-items:center}
+.anatomy-header span{font-size:11px;color:#4ec9b0}
+.anatomy-body{padding:18px}
+.anatomy-line{display:flex;gap:12px;font-size:11.5px;font-family:var(--mono);line-height:2}
+.anatomy-line .ln{color:#444;min-width:28px;text-align:right;user-select:none;flex-shrink:0}
+.anatomy-line .code{color:#d4d4d4}
+.anatomy-line .ann{color:#6a9955;font-style:italic;margin-left:8px}
+
+/* METRIC */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:14px 0}
+.metric{background:var(--surface2);border:2px solid var(--border);border-radius:6px;padding:14px;text-align:center}
+.metric-v{font-family:var(--display);font-size:28px;font-weight:800}
+.metric-v.o{color:var(--accent)}.metric-v.g{color:var(--accent2)}.metric-v.b{color:var(--accent3)}.metric-v.p{color:var(--purple)}.metric-v.gh{color:var(--gh2)}.metric-v.t{color:var(--teal)}
+.metric-l{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-top:3px}
+
+@media(max-width:720px){.grid,.metrics{grid-template-columns:1fr}.wf{gap:4px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Manual completo · 2026</div>
+  <h1><span class="gh">GitHub</span><br><em>Actions</em></h1>
+  <div class="subtitle">Workflows · Jobs · Steps · Triggers · Secrets · Environments · CI/CD completo.<br>De la teoría a pipelines reales listos para producción.</div>
+  <div class="badge-row">
+    <span class="badge gh">Workflows YAML</span>
+    <span class="badge g">CI/CD</span>
+    <span class="badge b">Triggers</span>
+    <span class="badge p">Secrets</span>
+    <span class="badge y">Environments</span>
+    <span class="badge o">Casos reales</span>
+    <span class="badge t">Matrix builds</span>
+  </div>
+</header>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="st('conceptos')">🧭 CONCEPTOS</button>
+  <button class="tab-btn" onclick="st('anatomia')">🔬 ANATOMÍA</button>
+  <button class="tab-btn" onclick="st('triggers')">⚡ TRIGGERS</button>
+  <button class="tab-btn" onclick="st('jobs')">⚙️ JOBS</button>
+  <button class="tab-btn" onclick="st('steps')">🪜 STEPS</button>
+  <button class="tab-btn" onclick="st('secrets')">🔐 SECRETS</button>
+  <button class="tab-btn" onclick="st('envs')">🌍 ENVIRONMENTS</button>
+  <button class="tab-btn" onclick="st('matrix')">🔀 MATRIX</button>
+  <button class="tab-btn" onclick="st('casos')">📋 CASOS REALES</button>
+  <button class="tab-btn" onclick="st('referencia')">⚡ REFERENCIA</button>
+</div>
+
+<!-- ═══════════════════════ CONCEPTOS ════════ -->
+<div id="tab-conceptos" class="tab-panel active">
+
+<div class="sec" data-n="★">QUÉ ES GITHUB ACTIONS</div>
+
+<div class="note gh">
+  <strong>GitHub Actions es el sistema de CI/CD integrado en GitHub.</strong>
+  Automatiza cualquier tarea en respuesta a eventos del repositorio — push, pull request, release, cron, llamada manual. Se define en ficheros YAML dentro de <code>.github/workflows/</code>. Gratis para repositorios públicos. Para privados: 2.000 min/mes en el plan Free.
+</div>
+
+<div class="metrics">
+  <div class="metric"><div class="metric-v gh">0</div><div class="metric-l">Instalación</div></div>
+  <div class="metric"><div class="metric-v g">2.000</div><div class="metric-l">Min/mes gratis</div></div>
+  <div class="metric"><div class="metric-v b">20</div><div class="metric-l">Jobs en paralelo</div></div>
+  <div class="metric"><div class="metric-v p">256</div><div class="metric-l">Secrets por repo</div></div>
+</div>
+
+<div class="sec" data-n="J">LA JERARQUÍA — WORKFLOW · JOB · STEP</div>
+
+<svg viewBox="0 0 920 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:920px;margin:18px auto;display:block;font-family:'IBM Plex Mono',monospace">
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#8a7a65"/></marker>
+    <filter id="shadow"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/></filter>
+  </defs>
+
+  <!-- WORKFLOW CONTAINER -->
+  <rect x="10" y="10" width="900" height="500" rx="12" fill="#fff" stroke="#1a1410" stroke-width="2.5" filter="url(#shadow)"/>
+  <rect x="10" y="10" width="900" height="44" rx="12" fill="#24292f"/>
+  <rect x="10" y="42" width="900" height="12" fill="#24292f"/>
+  <text x="30" y="38" fill="#f5f0e8" font-size="13" font-weight="700" letter-spacing="1.5">📁 WORKFLOW</text>
+  <text x="580" y="38" fill="#8a7a65" font-size="10" font-weight="600" letter-spacing="2">.github/workflows/ci.yml</text>
+
+  <!-- TRIGGER -->
+  <rect x="30" y="72" width="860" height="38" rx="6" fill="#0969da" opacity="0.1"/>
+  <text x="48" y="96" fill="#0969da" font-size="11" font-weight="700">⚡ on: push (main) · pull_request · schedule · workflow_dispatch</text>
+
+  <!-- JOB 1: TEST -->
+  <rect x="30" y="128" width="410" height="360" rx="10" fill="#fff" stroke="#1a7f37" stroke-width="2"/>
+  <rect x="30" y="128" width="410" height="36" rx="10" fill="#1a7f37"/>
+  <rect x="30" y="152" width="410" height="12" fill="#1a7f37"/>
+  <text x="50" y="152" fill="#fff" font-size="12" font-weight="700">⚙️ JOB: test</text>
+  <text x="290" y="152" fill="rgba(255,255,255,0.7)" font-size="9" font-weight="600">runs-on: ubuntu-latest</text>
+
+  <!-- Steps inside Job 1 -->
+  <rect x="50" y="180" width="370" height="34" rx="5" fill="#edeae0" stroke="#cfc8b4" stroke-width="1.5"/>
+  <text x="66" y="201" fill="#4a3f30" font-size="11">🪜 <tspan font-weight="700">Step 1:</tspan> actions/checkout@v4</text>
+
+  <line x1="235" y1="214" x2="235" y2="226" stroke="#cfc8b4" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <rect x="50" y="228" width="370" height="34" rx="5" fill="#edeae0" stroke="#cfc8b4" stroke-width="1.5"/>
+  <text x="66" y="249" fill="#4a3f30" font-size="11">🪜 <tspan font-weight="700">Step 2:</tspan> actions/setup-node@v4</text>
+
+  <line x1="235" y1="262" x2="235" y2="274" stroke="#cfc8b4" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <rect x="50" y="276" width="370" height="34" rx="5" fill="#edeae0" stroke="#cfc8b4" stroke-width="1.5"/>
+  <text x="66" y="297" fill="#4a3f30" font-size="11">🪜 <tspan font-weight="700">Step 3:</tspan> run: npm ci</text>
+
+  <line x1="235" y1="310" x2="235" y2="322" stroke="#cfc8b4" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <rect x="50" y="324" width="370" height="34" rx="5" fill="#edeae0" stroke="#cfc8b4" stroke-width="1.5"/>
+  <text x="66" y="345" fill="#4a3f30" font-size="11">🪜 <tspan font-weight="700">Step 4:</tspan> run: npm test</text>
+
+  <line x1="235" y1="358" x2="235" y2="370" stroke="#cfc8b4" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <rect x="50" y="372" width="370" height="34" rx="5" fill="#edeae0" stroke="#cfc8b4" stroke-width="1.5"/>
+  <text x="66" y="393" fill="#4a3f30" font-size="11">🪜 <tspan font-weight="700">Step 5:</tspan> run: npm run build</text>
+
+  <line x1="235" y1="406" x2="235" y2="418" stroke="#cfc8b4" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <rect x="50" y="420" width="370" height="34" rx="5" fill="rgba(122,58,205,0.08)" stroke="#7a3acd" stroke-width="1.5"/>
+  <text x="66" y="441" fill="#7a3acd" font-size="11">🎯 <tspan font-weight="700">Step 6:</tspan> actions/upload-artifact@v4</text>
+
+  <!-- ARROW BETWEEN JOBS -->
+  <line x1="440" y1="308" x2="478" y2="308" stroke="#8a7a65" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="443" y="298" fill="#8a7a65" font-size="9" font-weight="600">needs: test</text>
+
+  <!-- JOB 2: DEPLOY -->
+  <rect x="480" y="128" width="410" height="360" rx="10" fill="#fff" stroke="#c1440e" stroke-width="2"/>
+  <rect x="480" y="128" width="410" height="36" rx="10" fill="#c1440e"/>
+  <rect x="480" y="152" width="410" height="12" fill="#c1440e"/>
+  <text x="500" y="152" fill="#fff" font-size="12" font-weight="700">⚙️ JOB: deploy</text>
+  <text x="720" y="152" fill="rgba(255,255,255,0.7)" font-size="9" font-weight="600">runs-on: ubuntu-latest</text>
+
+  <!-- Environment badge -->
+  <rect x="500" y="176" width="120" height="22" rx="4" fill="rgba(232,160,32,0.15)" stroke="#e8a020" stroke-width="1.5"/>
+  <text x="512" y="191" fill="#e8a020" font-size="9" font-weight="700" letter-spacing="1">🌍 production</text>
+
+  <!-- Steps inside Job 2 -->
+  <rect x="500" y="214" width="370" height="34" rx="5" fill="#edeae0" stroke="#cfc8b4" stroke-width="1.5"/>
+  <text x="516" y="235" fill="#4a3f30" font-size="11">🪜 <tspan font-weight="700">Step 1:</tspan> actions/checkout@v4</text>
+
+  <line x1="685" y1="248" x2="685" y2="260" stroke="#cfc8b4" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <rect x="500" y="262" width="370" height="34" rx="5" fill="#edeae0" stroke="#cfc8b4" stroke-width="1.5"/>
+  <text x="516" y="283" fill="#4a3f30" font-size="11">🪜 <tspan font-weight="700">Step 2:</tspan> docker/login-action@v3</text>
+
+  <line x1="685" y1="296" x2="685" y2="308" stroke="#cfc8b4" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <rect x="500" y="310" width="370" height="34" rx="5" fill="#edeae0" stroke="#cfc8b4" stroke-width="1.5"/>
+  <text x="516" y="331" fill="#4a3f30" font-size="11">🪜 <tspan font-weight="700">Step 3:</tspan> docker/build-push-action@v5</text>
+
+  <line x1="685" y1="344" x2="685" y2="356" stroke="#cfc8b4" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <!-- Gate / approval -->
+  <rect x="500" y="358" width="370" height="34" rx="5" fill="rgba(193,68,14,0.08)" stroke="#c1440e" stroke-width="1.5" stroke-dasharray="6 3"/>
+  <text x="516" y="379" fill="#c1440e" font-size="11">⏸️ <tspan font-weight="700">Approval:</tspan> waiting for reviewer...</text>
+
+  <line x1="685" y1="392" x2="685" y2="404" stroke="#cfc8b4" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <rect x="500" y="406" width="370" height="34" rx="5" fill="#edeae0" stroke="#cfc8b4" stroke-width="1.5"/>
+  <text x="516" y="427" fill="#4a3f30" font-size="11">🪜 <tspan font-weight="700">Step 4:</tspan> appleboy/ssh-action@v1</text>
+
+  <line x1="685" y1="440" x2="685" y2="452" stroke="#cfc8b4" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <rect x="500" y="454" width="370" height="28" rx="5" fill="rgba(42,110,78,0.1)" stroke="#2a6e4e" stroke-width="1.5"/>
+  <text x="516" y="473" fill="#2a6e4e" font-size="11" font-weight="700">✅ Deployed to production</text>
+
+  <!-- LEGEND -->
+  <!-- Already self-explanatory with colors and labels -->
+</svg>
+
+<div class="note gh">
+  <strong>Cómo leer el diagrama:</strong>
+  El <strong style="color:#24292f">Workflow</strong> es el fichero <code>.yml</code> completo. El <strong style="color:#0969da">trigger</strong> (azul) lo dispara. Cada <strong style="color:#1a7f37">Job</strong> (verde) corre en su propio runner aislado. Los <strong>Steps</strong> (gris) se ejecutan secuencialmente dentro del job. Las <strong style="color:#7a3acd">Actions</strong> (morado) son bloques reutilizables del Marketplace. El job <strong style="color:#c1440e">deploy</strong> (rojo) depende de <code>test</code> con <code>needs:</code> y tiene un environment <strong style="color:#e8a020">production</strong> con aprobación humana.
+</div>
+
+<table class="tbl">
+  <tr><th>Concepto</th><th>Qué es</th><th>Dónde vive</th><th>Analogía</th></tr>
+  <tr><td class="cat">Workflow</td><td>El proceso automatizado completo. Un fichero YAML define un workflow.</td><td><code>.github/workflows/ci.yml</code></td><td>El makefile completo</td></tr>
+  <tr><td class="cat">Event / Trigger</td><td>Lo que dispara el workflow: push, PR, cron, manual, etc.</td><td>Sección <code>on:</code> del workflow</td><td>El interruptor que arranca todo</td></tr>
+  <tr><td class="cat">Job</td><td>Grupo de steps que corren en el mismo runner (máquina virtual).</td><td>Sección <code>jobs:</code></td><td>Un contenedor de tareas relacionadas</td></tr>
+  <tr><td class="cat">Step</td><td>Una tarea individual dentro de un job — un comando shell o una Action.</td><td>Sección <code>steps:</code> de un job</td><td>Un comando en el terminal</td></tr>
+  <tr><td class="cat">Action</td><td>Bloque reutilizable publicado en el Marketplace. Se usa con <code>uses:</code>.</td><td>GitHub Marketplace</td><td>Una librería que alguien ya escribió</td></tr>
+  <tr><td class="cat">Runner</td><td>La máquina donde corre el job. Puede ser GitHub-hosted o self-hosted.</td><td><code>runs-on:</code></td><td>El servidor donde ejecutas</td></tr>
+  <tr><td class="cat">Secret</td><td>Variable cifrada para tokens, contraseñas, API keys.</td><td>Repo Settings → Secrets</td><td>Las variables de entorno cifradas</td></tr>
+  <tr><td class="cat">Environment</td><td>Contexto de deploy (staging, production) con sus propios secrets y aprobaciones.</td><td>Repo Settings → Environments</td><td>Los entornos de despliegue</td></tr>
+</table>
+
+<div class="sec" data-n="R">RUNNERS — DÓNDE CORRE EL CÓDIGO</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="card-hd gh">GitHub-hosted (gratis)</div>
+    <div class="card-bd">
+      Máquinas virtuales gestionadas por GitHub. Se destruyen al terminar el job. Opciones:<br><br>
+      <code>ubuntu-latest</code> — Linux Ubuntu (el más usado)<br>
+      <code>windows-latest</code> — Windows Server<br>
+      <code>macos-latest</code> — macOS (consume 10× más minutos)<br><br>
+      Incluyen: Node, Python, Java, Docker, Git, etc. preinstalados.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd b">Self-hosted</div>
+    <div class="card-bd">
+      Tu propio servidor registrado como runner. Instalar el agente de GitHub y arrancarlo. Útil cuando: necesitas hardware específico, acceso a red interna, recursos que no están en los runners de GitHub, o quieres eliminar el límite de minutos.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd p">Larger runners (pago)</div>
+    <div class="card-bd">
+      Runners con más CPU/RAM para builds pesados. 4, 8, 16, 32 cores. Facturación por minuto a precio mayor que el estándar. Útil para compilaciones de proyectos grandes donde el runner estándar (2 cores) es demasiado lento.
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ ANATOMÍA ════════ -->
+<div id="tab-anatomia" class="tab-panel">
+
+<div class="sec" data-n="A">ANATOMÍA DE UN WORKFLOW COMPLETO</div>
+
+<div class="anatomy">
+  <div class="anatomy-header">
+    <span>.github/workflows/ci.yml</span>
+    <span>YAML</span>
+  </div>
+  <div class="anatomy-body">
+<pre style="margin:0;border:none;border-radius:0;padding:0;background:transparent">
+<span class="yc"># ① Nombre del workflow — aparece en la pestaña Actions</span>
+<span class="yk">name</span>: <span class="yv">CI · Build & Test</span>
+
+<span class="yc"># ② Triggers — qué eventos disparan este workflow</span>
+<span class="yk">on</span>:
+  <span class="ye">push</span>:
+    <span class="yk">branches</span>: [<span class="yv">main</span>, <span class="yv">develop</span>]
+  <span class="ye">pull_request</span>:
+    <span class="yk">branches</span>: [<span class="yv">main</span>]
+  <span class="ye">workflow_dispatch</span>: <span class="yc">  # permite lanzarlo manualmente</span>
+
+<span class="yc"># ③ Variables de entorno globales</span>
+<span class="yk">env</span>:
+  <span class="yg">NODE_VERSION</span>: <span class="yv">'20'</span>
+  <span class="yg">REGISTRY</span>: <span class="yv">ghcr.io</span>
+
+<span class="yc"># ④ Los jobs del workflow</span>
+<span class="yk">jobs</span>:
+
+  <span class="yc">  # Nombre del job — puede ser cualquier identificador</span>
+  <span class="yk">build-and-test</span>:
+    <span class="yk">name</span>: <span class="yv">Build & Test</span>
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>   <span class="yc"># ⑤ el runner</span>
+
+    <span class="yc">    # ⑥ Permisos del GITHUB_TOKEN para este job</span>
+    <span class="yk">permissions</span>:
+      <span class="yk">contents</span>: <span class="yv">read</span>
+      <span class="yk">packages</span>: <span class="yv">write</span>
+
+    <span class="yk">steps</span>:
+
+      <span class="yc">      # ⑦ Checkout del código</span>
+      - <span class="yk">name</span>: <span class="yv">Checkout</span>
+        <span class="yk">uses</span>: <span class="ya">actions/checkout@v4</span>   <span class="yc"># Action del Marketplace</span>
+
+      <span class="yc">      # ⑧ Setup del entorno</span>
+      - <span class="yk">name</span>: <span class="yv">Setup Node.js</span>
+        <span class="yk">uses</span>: <span class="ya">actions/setup-node@v4</span>
+        <span class="yk">with</span>:
+          <span class="yk">node-version</span>: <span class="yv">${{ env.NODE_VERSION }}</span>
+          <span class="yk">cache</span>: <span class="yv">npm</span>           <span class="yc"># cachea node_modules</span>
+
+      <span class="yc">      # ⑨ Comandos shell</span>
+      - <span class="yk">name</span>: <span class="yv">Install dependencies</span>
+        <span class="yk">run</span>: <span class="yv">npm ci</span>
+
+      - <span class="yk">name</span>: <span class="yv">Run tests</span>
+        <span class="yk">run</span>: <span class="yv">npm test</span>
+        <span class="yk">env</span>:
+          <span class="yg">DATABASE_URL</span>: <span class="yv">${{ secrets.DATABASE_URL }}</span>  <span class="yc"># ⑩ Secret</span>
+
+      <span class="yc">      # ⑪ Condicional — solo en main</span>
+      - <span class="yk">name</span>: <span class="yv">Build Docker image</span>
+        <span class="yk">if</span>: <span class="yv">github.ref == 'refs/heads/main'</span>
+        <span class="yk">run</span>: <span class="yv">docker build -t myapp .</span>
+
+      <span class="yc">      # ⑫ Outputs — pasar datos al siguiente job</span>
+      - <span class="yk">name</span>: <span class="yv">Set version output</span>
+        <span class="yk">id</span>: <span class="yv">version</span>
+        <span class="yk">run</span>: <span class="yv">echo "tag=$(git describe --tags)" >> $GITHUB_OUTPUT</span>
+</pre>
+  </div>
+</div>
+
+<div class="sec" data-n="C">LAS EXPRESIONES — SINTAXIS ${{ }}</div>
+
+<div class="note b"><strong>Todo lo que va dentro de <code>${{ }}</code> es una expresión de GitHub Actions.</strong> Puede ser una variable, un secreto, un contexto o una función.</div>
+
+<table class="tbl">
+  <tr><th>Expresión</th><th>Qué devuelve</th></tr>
+  <tr><td><code>${{ secrets.MI_TOKEN }}</code></td><td>El secreto <code>MI_TOKEN</code> del repositorio (cifrado, nunca se imprime)</td></tr>
+  <tr><td><code>${{ env.NODE_VERSION }}</code></td><td>Variable de entorno definida en <code>env:</code></td></tr>
+  <tr><td><code>${{ github.ref }}</code></td><td>La rama/tag que disparó el evento: <code>refs/heads/main</code></td></tr>
+  <tr><td><code>${{ github.sha }}</code></td><td>El commit SHA completo</td></tr>
+  <tr><td><code>${{ github.actor }}</code></td><td>El usuario que disparó el workflow</td></tr>
+  <tr><td><code>${{ github.event_name }}</code></td><td>El evento que lo disparó: <code>push</code>, <code>pull_request</code>, etc.</td></tr>
+  <tr><td><code>${{ runner.os }}</code></td><td>El SO del runner: <code>Linux</code>, <code>Windows</code>, <code>macOS</code></td></tr>
+  <tr><td><code>${{ steps.mi-step.outputs.tag }}</code></td><td>Output generado por un step anterior con id <code>mi-step</code></td></tr>
+  <tr><td><code>${{ needs.build.outputs.version }}</code></td><td>Output de un job previo llamado <code>build</code></td></tr>
+  <tr><td><code>${{ matrix.node }}</code></td><td>El valor de la dimensión <code>node</code> en una matrix build</td></tr>
+  <tr><td><code>${{ toJSON(github) }}</code></td><td>El contexto github completo como JSON (útil para debug)</td></tr>
+  <tr><td><code>${{ success() }}</code></td><td>True si todos los steps anteriores tuvieron éxito</td></tr>
+  <tr><td><code>${{ failure() }}</code></td><td>True si algún step anterior falló</td></tr>
+  <tr><td><code>${{ always() }}</code></td><td>Siempre true — para steps que deben ejecutar siempre</td></tr>
+</table>
+
+</div>
+
+<!-- ═══════════════════════ TRIGGERS ═════════ -->
+<div id="tab-triggers" class="tab-panel">
+
+<div class="sec" data-n="T">LOS TRIGGERS MÁS USADOS</div>
+
+<div class="note gh"><strong>El trigger define cuándo se ejecuta el workflow.</strong> Puede haber uno o varios en el mismo fichero. Si hay varios, cualquiera de ellos puede disparar el workflow.</div>
+
+<div class="sec" data-n="P">PUSH Y PULL_REQUEST</div>
+
+<pre>
+<span class="yk">on</span>:
+  <span class="yc">  # Trigger en push — con filtros de rama y path</span>
+  <span class="ye">push</span>:
+    <span class="yk">branches</span>:
+      - <span class="yv">main</span>
+      - <span class="yv">develop</span>
+      - <span class="yv">'release/**'</span>      <span class="yc"># glob: release/1.0, release/2.0...</span>
+    <span class="yk">branches-ignore</span>:
+      - <span class="yv">'docs/**'</span>          <span class="yc"># ignora ramas que empiezan por docs/</span>
+    <span class="yk">paths</span>:
+      - <span class="yv">'src/**'</span>           <span class="yc"># solo si cambia algo en src/</span>
+      - <span class="yv">'package.json'</span>
+    <span class="yk">paths-ignore</span>:
+      - <span class="yv">'**.md'</span>            <span class="yc"># ignora cambios solo en markdown</span>
+    <span class="yk">tags</span>:
+      - <span class="yv">'v*'</span>              <span class="yc"># dispara en tags tipo v1.0, v2.3.1</span>
+
+  <span class="yc">  # Pull request — con tipos de evento</span>
+  <span class="ye">pull_request</span>:
+    <span class="yk">branches</span>: [<span class="yv">main</span>]
+    <span class="yk">types</span>: [<span class="yv">opened</span>, <span class="yv">synchronize</span>, <span class="yv">reopened</span>]
+    <span class="yc">    # opened: PR creada</span>
+    <span class="yc">    # synchronize: nuevo commit en la PR</span>
+    <span class="yc">    # reopened: PR reabierta</span>
+</pre>
+
+<div class="sec" data-n="S">SCHEDULE — CRON</div>
+
+<pre>
+<span class="yk">on</span>:
+  <span class="ye">schedule</span>:
+    <span class="yc">    # Sintaxis cron: min hora día mes día-semana</span>
+    - <span class="yk">cron</span>: <span class="yv">'0 8 * * 1-5'</span>    <span class="yc"># lunes a viernes a las 8:00 UTC</span>
+    - <span class="yk">cron</span>: <span class="yv">'0 0 * * 0'</span>      <span class="yc"># cada domingo a medianoche</span>
+    - <span class="yk">cron</span>: <span class="yv">'*/15 * * * *'</span>   <span class="yc"># cada 15 minutos</span>
+    - <span class="yk">cron</span>: <span class="yv">'0 9 1 * *'</span>      <span class="yc"># el día 1 de cada mes a las 9:00</span>
+
+<span class="yc"># Atención: los workflows inactivos (sin push en 60 días)</span>
+<span class="yc"># son desactivados por GitHub automáticamente</span>
+</pre>
+
+<div class="sec" data-n="M">WORKFLOW_DISPATCH — MANUAL</div>
+
+<pre>
+<span class="yk">on</span>:
+  <span class="ye">workflow_dispatch</span>:
+    <span class="yk">inputs</span>:
+      <span class="yk">environment</span>:
+        <span class="yk">description</span>: <span class="yv">'Entorno de deploy'</span>
+        <span class="yk">required</span>: <span class="yn">true</span>
+        <span class="yk">default</span>: <span class="yv">'staging'</span>
+        <span class="yk">type</span>: <span class="yv">choice</span>
+        <span class="yk">options</span>: [<span class="yv">staging</span>, <span class="yv">production</span>]
+      <span class="yk">version</span>:
+        <span class="yk">description</span>: <span class="yv">'Tag a desplegar'</span>
+        <span class="yk">required</span>: <span class="yn">false</span>
+        <span class="yk">type</span>: <span class="yv">string</span>
+      <span class="yk">debug</span>:
+        <span class="yk">description</span>: <span class="yv">'Activar debug'</span>
+        <span class="yk">required</span>: <span class="yn">false</span>
+        <span class="yk">type</span>: <span class="yv">boolean</span>
+        <span class="yk">default</span>: <span class="yn">false</span>
+
+<span class="yc"># Usar los inputs en el workflow:</span>
+<span class="yk">jobs</span>:
+  <span class="yk">deploy</span>:
+    <span class="yk">steps</span>:
+      - <span class="yk">name</span>: <span class="yv">Deploy</span>
+        <span class="yk">run</span>: <span class="yv">./deploy.sh ${{ inputs.environment }} ${{ inputs.version }}</span>
+</pre>
+
+<div class="sec" data-n="O">OTROS TRIGGERS IMPORTANTES</div>
+
+<table class="tbl">
+  <tr><th>Trigger</th><th>Cuándo</th><th>Caso de uso</th></tr>
+  <tr><td><code>release: [published]</code></td><td>Al publicar un release en GitHub</td><td>Build y deploy de producción al hacer release oficial</td></tr>
+  <tr><td><code>workflow_call</code></td><td>Llamado por otro workflow</td><td>Workflows reutilizables — el patrón DRY para CI/CD</td></tr>
+  <tr><td><code>repository_dispatch</code></td><td>Llamada via API externa</td><td>Trigger desde otro sistema (n8n, webhook externo)</td></tr>
+  <tr><td><code>issues: [opened]</code></td><td>Al abrir una issue</td><td>Auto-asignar, etiquetar, responder con bot</td></tr>
+  <tr><td><code>issue_comment: [created]</code></td><td>Al comentar en issue/PR</td><td>Chatops — ejecutar comandos con comentarios tipo <code>/deploy</code></td></tr>
+  <tr><td><code>create</code></td><td>Al crear una rama o tag</td><td>Provisionar entorno automáticamente al crear rama feature</td></tr>
+  <tr><td><code>delete</code></td><td>Al borrar una rama o tag</td><td>Limpiar entorno de preview al borrar la rama feature</td></tr>
+</table>
+
+</div>
+
+<!-- ═══════════════════════ JOBS ═════════════ -->
+<div id="tab-jobs" class="tab-panel">
+
+<div class="sec" data-n="J">JOBS — UNIDADES DE EJECUCIÓN</div>
+
+<div class="note gh"><strong>Cada job corre en su propio runner, en paralelo por defecto.</strong> Si un job depende de otro, se usa <code>needs:</code> para establecer el orden. Los jobs en paralelo reducen el tiempo total del workflow.</div>
+
+<div class="sec" data-n="D">DEPENDENCIAS ENTRE JOBS — NEEDS</div>
+
+<pre>
+<span class="yk">jobs</span>:
+
+  <span class="yk">test</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">run</span>: <span class="yv">npm test</span>
+
+  <span class="yk">build</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">needs</span>: <span class="yv">test</span>          <span class="yc"># espera a que test termine OK</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">run</span>: <span class="yv">npm run build</span>
+
+  <span class="yk">deploy-staging</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">needs</span>: <span class="yv">build</span>          <span class="yc"># espera a build</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">run</span>: <span class="yv">./deploy.sh staging</span>
+
+  <span class="yk">deploy-production</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">needs</span>: [<span class="yv">test</span>, <span class="yv">build</span>]   <span class="yc"># espera a AMBOS</span>
+    <span class="yk">if</span>: <span class="yv">github.ref == 'refs/heads/main'</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">run</span>: <span class="yv">./deploy.sh production</span>
+</pre>
+
+<div class="note g"><strong>El flujo resultante:</strong> test y build en paralelo → si test pasa, build ejecuta → deploy-staging espera a build → deploy-production espera a test Y build, y solo en main.</div>
+
+<div class="sec" data-n="O">OUTPUTS ENTRE JOBS</div>
+
+<pre>
+<span class="yk">jobs</span>:
+  <span class="yk">build</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yc">    # Declarar los outputs del job</span>
+    <span class="yk">outputs</span>:
+      <span class="yk">image-tag</span>: <span class="yv">${{ steps.tag.outputs.value }}</span>
+      <span class="yk">version</span>: <span class="yv">${{ steps.ver.outputs.value }}</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">id</span>: <span class="yv">tag</span>
+        <span class="yk">run</span>: <span class="yv">echo "value=ghcr.io/myapp:${{ github.sha }}" >> $GITHUB_OUTPUT</span>
+      - <span class="yk">id</span>: <span class="yv">ver</span>
+        <span class="yk">run</span>: <span class="yv">echo "value=$(cat package.json | jq -r .version)" >> $GITHUB_OUTPUT</span>
+
+  <span class="yk">deploy</span>:
+    <span class="yk">needs</span>: <span class="yv">build</span>
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">run</span>: <span class="yv">echo "Desplegando ${{ needs.build.outputs.image-tag }}"</span>
+      - <span class="yk">run</span>: <span class="yv">docker pull ${{ needs.build.outputs.image-tag }}</span>
+</pre>
+
+<div class="sec" data-n="C">CONCURRENCY — CANCELAR RUNS OBSOLETOS</div>
+
+<pre>
+<span class="yc"># Cancelar el run anterior si llega uno nuevo para la misma rama</span>
+<span class="yc"># Evita deploys en paralelo o tests redundantes</span>
+<span class="yk">concurrency</span>:
+  <span class="yk">group</span>: <span class="yv">${{ github.workflow }}-${{ github.ref }}</span>
+  <span class="yk">cancel-in-progress</span>: <span class="yn">true</span>
+
+<span class="yc"># Variante para deploy — no cancelar en production</span>
+<span class="yk">concurrency</span>:
+  <span class="yk">group</span>: <span class="yv">deploy-${{ github.ref }}</span>
+  <span class="yk">cancel-in-progress</span>: <span class="yv">${{ github.ref != 'refs/heads/main' }}</span>
+</pre>
+
+<div class="sec" data-n="S">SERVICES — BASES DE DATOS PARA TESTS</div>
+
+<pre>
+<span class="yk">jobs</span>:
+  <span class="yk">test</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yc">    # Contenedores que se levantan junto al job</span>
+    <span class="yk">services</span>:
+      <span class="yk">postgres</span>:
+        <span class="yk">image</span>: <span class="yv">postgres:15-alpine</span>
+        <span class="yk">env</span>:
+          <span class="yg">POSTGRES_DB</span>: <span class="yv">testdb</span>
+          <span class="yg">POSTGRES_USER</span>: <span class="yv">test</span>
+          <span class="yg">POSTGRES_PASSWORD</span>: <span class="yv">test</span>
+        <span class="yk">ports</span>: [<span class="yv">'5432:5432'</span>]
+        <span class="yk">options</span>: <span class="yv">>-</span>
+          <span class="yv">--health-cmd pg_isready</span>
+          <span class="yv">--health-interval 10s</span>
+          <span class="yv">--health-timeout 5s</span>
+          <span class="yv">--health-retries 5</span>
+      <span class="yk">redis</span>:
+        <span class="yk">image</span>: <span class="yv">redis:7-alpine</span>
+        <span class="yk">ports</span>: [<span class="yv">'6379:6379'</span>]
+
+    <span class="yk">steps</span>:
+      - <span class="yk">name</span>: <span class="yv">Run tests with DB</span>
+        <span class="yk">run</span>: <span class="yv">npm test</span>
+        <span class="yk">env</span>:
+          <span class="yg">DATABASE_URL</span>: <span class="yv">postgresql://test:test@localhost:5432/testdb</span>
+          <span class="yg">REDIS_URL</span>: <span class="yv">redis://localhost:6379</span>
+</pre>
+
+</div>
+
+<!-- ═══════════════════════ STEPS ════════════ -->
+<div id="tab-steps" class="tab-panel">
+
+<div class="sec" data-n="S">STEPS — TIPOS Y OPCIONES</div>
+
+<pre>
+<span class="yk">steps</span>:
+  <span class="yc">  # Tipo 1: Comando shell</span>
+  - <span class="yk">name</span>: <span class="yv">Comando simple</span>
+    <span class="yk">run</span>: <span class="yv">echo "Hola"</span>
+
+  <span class="yc">  # Tipo 1b: Multi-línea</span>
+  - <span class="yk">name</span>: <span class="yv">Múltiples comandos</span>
+    <span class="yk">run</span>: <span class="yv">|</span>
+      <span class="yv">npm ci</span>
+      <span class="yv">npm test</span>
+      <span class="yv">npm run build</span>
+
+  <span class="yc">  # Tipo 2: Action del Marketplace</span>
+  - <span class="yk">name</span>: <span class="yv">Checkout</span>
+    <span class="yk">uses</span>: <span class="ya">actions/checkout@v4</span>
+    <span class="yk">with</span>:
+      <span class="yk">fetch-depth</span>: <span class="yn">0</span>        <span class="yc"># 0 = historial completo</span>
+
+  <span class="yc">  # Tipo 3: Action local (en el mismo repo)</span>
+  - <span class="yk">name</span>: <span class="yv">Mi Action custom</span>
+    <span class="yk">uses</span>: <span class="ya">./.github/actions/mi-action</span>
+
+  <span class="yc">  # Opciones comunes de cualquier step:</span>
+  - <span class="yk">name</span>: <span class="yv">Step con opciones</span>
+    <span class="yk">id</span>: <span class="yv">mi-step</span>              <span class="yc"># para referenciar su output</span>
+    <span class="yk">if</span>: <span class="yv">success()</span>             <span class="yc"># condición de ejecución</span>
+    <span class="yk">continue-on-error</span>: <span class="yn">true</span> <span class="yc"># no falla el job si falla el step</span>
+    <span class="yk">timeout-minutes</span>: <span class="yn">10</span>     <span class="yc"># cancela si tarda más de 10 min</span>
+    <span class="yk">env</span>:
+      <span class="yg">MI_VAR</span>: <span class="yv">valor</span>           <span class="yc"># variable solo para este step</span>
+    <span class="yk">run</span>: <span class="yv">echo "ejecutando"</span>
+</pre>
+
+<div class="sec" data-n="A">ACTIONS MÁS USADAS DEL MARKETPLACE</div>
+
+<table class="tbl">
+  <tr><th>Action</th><th>Para qué</th><th>Uso típico</th></tr>
+  <tr><td><code>actions/checkout@v4</code></td><td>Clonar el repositorio en el runner</td><td>Primer step de casi cualquier workflow</td></tr>
+  <tr><td><code>actions/setup-node@v4</code></td><td>Instalar Node.js con versión específica</td><td>Proyectos React, Angular, Node backends</td></tr>
+  <tr><td><code>actions/setup-java@v4</code></td><td>Instalar JDK con versión específica</td><td>Proyectos Java/Spring/Maven/Gradle</td></tr>
+  <tr><td><code>actions/setup-python@v5</code></td><td>Instalar Python con versión específica</td><td>Scripts Python, FastAPI, ML</td></tr>
+  <tr><td><code>actions/cache@v4</code></td><td>Cachear dependencias entre runs</td><td>node_modules, .m2, .pip-cache</td></tr>
+  <tr><td><code>actions/upload-artifact@v4</code></td><td>Guardar ficheros del build como artefacto</td><td>Subir el JAR, el APK, el dist/</td></tr>
+  <tr><td><code>actions/download-artifact@v4</code></td><td>Descargar artefactos en otro job</td><td>Compartir el build entre jobs</td></tr>
+  <tr><td><code>docker/login-action@v3</code></td><td>Login en Docker registry</td><td>Antes de push/pull de imágenes</td></tr>
+  <tr><td><code>docker/build-push-action@v5</code></td><td>Build y push de imágenes Docker</td><td>Publicar imagen en GHCR o Docker Hub</td></tr>
+  <tr><td><code>github/codeql-action@v3</code></td><td>Análisis de seguridad del código</td><td>Detectar vulnerabilidades automáticamente</td></tr>
+  <tr><td><code>peaceiris/actions-gh-pages@v4</code></td><td>Deploy en GitHub Pages</td><td>Publicar documentación o web estática</td></tr>
+  <tr><td><code>appleboy/ssh-action@v1</code></td><td>Ejecutar comandos via SSH en servidor remoto</td><td>Deploy en VPS, DigitalOcean, etc.</td></tr>
+</table>
+
+<div class="sec" data-n="C">CACHÉ — ACELERAR WORKFLOWS</div>
+
+<pre>
+<span class="yk">steps</span>:
+  - <span class="yk">uses</span>: <span class="ya">actions/checkout@v4</span>
+
+  <span class="yc">  # Opción A: caché manual con actions/cache</span>
+  - <span class="yk">name</span>: <span class="yv">Cache node_modules</span>
+    <span class="yk">uses</span>: <span class="ya">actions/cache@v4</span>
+    <span class="yk">with</span>:
+      <span class="yk">path</span>: <span class="yv">~/.npm</span>
+      <span class="yk">key</span>: <span class="yv">${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}</span>
+      <span class="yk">restore-keys</span>: <span class="yv">|</span>
+        <span class="yv">${{ runner.os }}-node-</span>
+
+  <span class="yc">  # Opción B: caché integrada en setup-node (más simple)</span>
+  - <span class="yk">uses</span>: <span class="ya">actions/setup-node@v4</span>
+    <span class="yk">with</span>:
+      <span class="yk">node-version</span>: <span class="yv">'20'</span>
+      <span class="yk">cache</span>: <span class="yv">'npm'</span>          <span class="yc"># cachea automáticamente ~/.npm</span>
+
+  - <span class="yk">run</span>: <span class="yv">npm ci</span>
+
+  <span class="yc">  # Caché de Maven (Java)</span>
+  - <span class="yk">uses</span>: <span class="ya">actions/setup-java@v4</span>
+    <span class="yk">with</span>:
+      <span class="yk">java-version</span>: <span class="yv">'21'</span>
+      <span class="yk">distribution</span>: <span class="yv">'temurin'</span>
+      <span class="yk">cache</span>: <span class="yv">'maven'</span>       <span class="yc"># cachea ~/.m2/repository</span>
+</pre>
+
+</div>
+
+<!-- ═══════════════════════ SECRETS ══════════ -->
+<div id="tab-secrets" class="tab-panel">
+
+<div class="sec" data-n="S">SECRETS — CREDENCIALES SEGURAS</div>
+
+<div class="note p"><strong>Los secrets son variables cifradas que nunca se imprimen en los logs.</strong> Si intentas hacer <code>echo ${{ secrets.MI_TOKEN }}</code>, GitHub lo reemplaza por <code>***</code> automáticamente. Se definen en el repositorio, en la organización o en un entorno (environment).</div>
+
+<div class="sec" data-n="N">NIVELES DE SECRETS</div>
+
+<table class="tbl">
+  <tr><th>Nivel</th><th>Dónde se define</th><th>Disponible en</th><th>Cuándo usar</th></tr>
+  <tr><td class="cat">Repository secret</td><td>Settings → Secrets → Actions</td><td>Todos los workflows del repo</td><td>Tokens específicos de ese repo</td></tr>
+  <tr><td class="cat">Environment secret</td><td>Settings → Environments → [env] → Secrets</td><td>Solo workflows que usan ese environment</td><td>Credentials de producción vs staging distintas</td></tr>
+  <tr><td class="cat">Organization secret</td><td>Org Settings → Secrets</td><td>Repos de la organización seleccionados</td><td>Tokens compartidos entre múltiples repos</td></tr>
+  <tr><td class="cat">GITHUB_TOKEN</td><td>Automático — no hay que crearlo</td><td>Siempre disponible</td><td>Autenticarse con GitHub API, push al repo, etc.</td></tr>
+</table>
+
+<div class="sec" data-n="U">USO DE SECRETS EN EL WORKFLOW</div>
+
+<pre>
+<span class="yk">jobs</span>:
+  <span class="yk">deploy</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">steps</span>:
+
+      <span class="yc">      # Como variable de entorno del step</span>
+      - <span class="yk">name</span>: <span class="yv">Deploy</span>
+        <span class="yk">env</span>:
+          <span class="yg">DO_TOKEN</span>: <span class="yv">${{ secrets.DIGITALOCEAN_TOKEN }}</span>
+          <span class="yg">DB_URL</span>: <span class="yv">${{ secrets.DATABASE_URL }}</span>
+        <span class="yk">run</span>: <span class="yv">./deploy.sh</span>
+
+      <span class="yc">      # Como parámetro de una Action</span>
+      - <span class="yk">name</span>: <span class="yv">Login Docker</span>
+        <span class="yk">uses</span>: <span class="ya">docker/login-action@v3</span>
+        <span class="yk">with</span>:
+          <span class="yk">registry</span>: <span class="yv">ghcr.io</span>
+          <span class="yk">username</span>: <span class="yv">${{ github.actor }}</span>
+          <span class="yk">password</span>: <span class="yv">${{ secrets.GITHUB_TOKEN }}</span>  <span class="yc"># automático</span>
+
+      <span class="yc">      # SSH a servidor remoto</span>
+      - <span class="yk">name</span>: <span class="yv">Deploy via SSH</span>
+        <span class="yk">uses</span>: <span class="ya">appleboy/ssh-action@v1</span>
+        <span class="yk">with</span>:
+          <span class="yk">host</span>: <span class="yv">${{ secrets.VPS_HOST }}</span>
+          <span class="yk">username</span>: <span class="yv">${{ secrets.VPS_USER }}</span>
+          <span class="yk">key</span>: <span class="yv">${{ secrets.VPS_SSH_KEY }}</span>
+          <span class="yk">script</span>: <span class="yv">|</span>
+            <span class="yv">cd /app</span>
+            <span class="yv">docker compose pull</span>
+            <span class="yv">docker compose up -d</span>
+</pre>
+
+<div class="sec" data-n="T">GITHUB_TOKEN — EL SECRET AUTOMÁTICO</div>
+
+<div class="note b"><strong>GITHUB_TOKEN se genera automáticamente para cada run.</strong> Permite autenticarse con la API de GitHub para hacer operaciones en el propio repo — crear releases, comentar en PRs, publicar packages, etc. Caduca al terminar el workflow.</div>
+
+<pre>
+<span class="yc"># Permisos del GITHUB_TOKEN — declarar los mínimos necesarios</span>
+<span class="yc"># Se puede definir a nivel de workflow o de job</span>
+<span class="yk">permissions</span>:
+  <span class="yk">contents</span>: <span class="yv">write</span>       <span class="yc"># push, crear releases</span>
+  <span class="yk">packages</span>: <span class="yv">write</span>       <span class="yc"># publicar en GHCR</span>
+  <span class="yk">pull-requests</span>: <span class="yv">write</span>  <span class="yc"># comentar en PRs</span>
+  <span class="yk">issues</span>: <span class="yv">write</span>         <span class="yc"># comentar en issues</span>
+  <span class="yk">security-events</span>: <span class="yv">write</span> <span class="yc"># reportes de seguridad</span>
+  <span class="yk">id-token</span>: <span class="yv">write</span>       <span class="yc"># OIDC para AWS/GCP sin secrets</span>
+
+<span class="yc"># Uso del GITHUB_TOKEN en el workflow</span>
+<span class="yk">steps</span>:
+  - <span class="yk">name</span>: <span class="yv">Crear release</span>
+    <span class="yk">uses</span>: <span class="ya">softprops/action-gh-release@v1</span>
+    <span class="yk">with</span>:
+      <span class="yk">files</span>: <span class="yv">dist/*.zip</span>
+      <span class="yk">token</span>: <span class="yv">${{ secrets.GITHUB_TOKEN }}</span>
+</pre>
+
+</div>
+
+<!-- ═══════════════════════ ENVIRONMENTS ═════ -->
+<div id="tab-envs" class="tab-panel">
+
+<div class="sec" data-n="E">ENVIRONMENTS — ENTORNOS DE DEPLOY</div>
+
+<div class="note y"><strong>Los Environments permiten definir reglas de deploy por entorno — staging, production — con sus propios secrets, aprobaciones y tiempos de espera.</strong> Un job que usa un environment espera a que se cumplan las reglas antes de ejecutar.</div>
+
+<div class="sec" data-n="C">CREAR Y CONFIGURAR UN ENVIRONMENT</div>
+
+<div class="steps">
+  <div class="step"><div class="step-l"><div class="step-n gh">1</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">Repo → Settings → Environments → New environment</div><div class="step-d">Crear un environment llamado <code>production</code> o <code>staging</code>.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n gh">2</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">Deployment protection rules</div><div class="step-d"><strong>Required reviewers</strong>: personas que deben aprobar el deploy antes de ejecutar.<br><strong>Wait timer</strong>: minutos de espera obligatoria antes de ejecutar (ej: 5 min para dar tiempo a cancelar).<br><strong>Allowed branches</strong>: solo deploys desde <code>main</code>, por ejemplo.</div></div></div>
+  <div class="step"><div class="step-l"><div class="step-n gh">3</div><div class="step-line"></div></div><div class="step-body"><div class="step-t">Secrets del environment</div><div class="step-d">Añadir secrets específicos de este entorno. Un secret de environment tiene <strong>prioridad sobre el secret del repo</strong> con el mismo nombre — permiten tener <code>DATABASE_URL</code> de staging en staging y de producción en producción.</div></div></div>
+</div>
+
+<div class="sec" data-n="U">USAR ENVIRONMENTS EN EL WORKFLOW</div>
+
+<pre>
+<span class="yk">jobs</span>:
+  <span class="yk">deploy-staging</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">environment</span>:
+      <span class="yk">name</span>: <span class="yv">staging</span>
+      <span class="yk">url</span>: <span class="yv">https://staging.miapp.com</span>  <span class="yc"># se muestra en el UI</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">run</span>: <span class="yv">./deploy.sh staging</span>
+        <span class="yk">env</span>:
+          <span class="yc">          # Este DATABASE_URL viene del environment staging</span>
+          <span class="yg">DATABASE_URL</span>: <span class="yv">${{ secrets.DATABASE_URL }}</span>
+
+  <span class="yk">deploy-production</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">needs</span>: <span class="yv">deploy-staging</span>    <span class="yc"># espera a staging</span>
+    <span class="yk">environment</span>:
+      <span class="yk">name</span>: <span class="yv">production</span>
+      <span class="yk">url</span>: <span class="yv">https://miapp.com</span>
+    <span class="yc">    # ← Si production tiene Required reviewers,</span>
+    <span class="yc">    # el workflow se pausa aquí hasta que alguien apruebe</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">run</span>: <span class="yv">./deploy.sh production</span>
+        <span class="yk">env</span>:
+          <span class="yg">DATABASE_URL</span>: <span class="yv">${{ secrets.DATABASE_URL }}</span>
+          <span class="yc">          # ← El mismo nombre pero ahora viene de production</span>
+</pre>
+
+<div class="insight">
+  <div class="insight-t">💡 El flujo completo con aprobación humana</div>
+  <div class="insight-b">
+    Push a main → CI ejecuta tests → build Docker → deploy en staging automático → el workflow se pausa → GitHub envía notificación al reviewer → el reviewer inspecciona staging y hace click en "Approve" → deploy en producción ejecuta. Sin tocar más código. Sin scripts de aprobación. Todo gestionado por GitHub.
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ MATRIX ═══════════ -->
+<div id="tab-matrix" class="tab-panel">
+
+<div class="sec" data-n="M">MATRIX BUILDS — RUNS EN PARALELO</div>
+
+<div class="note t"><strong>Con matrix puedes ejecutar el mismo job en múltiples combinaciones de variables.</strong> Ideal para testear en varias versiones de Node/Java/Python, en varios sistemas operativos, o cualquier combinación de parámetros.</div>
+
+<div class="sec" data-n="B">MATRIX BÁSICA — MÚLTIPLES VERSIONES</div>
+
+<pre>
+<span class="yk">jobs</span>:
+  <span class="yk">test</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">strategy</span>:
+      <span class="yk">matrix</span>:
+        <span class="yk">node</span>: [<span class="yn">18</span>, <span class="yn">20</span>, <span class="yn">22</span>]   <span class="yc"># genera 3 jobs en paralelo</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">uses</span>: <span class="ya">actions/setup-node@v4</span>
+        <span class="yk">with</span>:
+          <span class="yk">node-version</span>: <span class="yv">${{ matrix.node }}</span>
+      - <span class="yk">run</span>: <span class="yv">npm test</span>
+</pre>
+
+<div class="sec" data-n="M">MATRIX MULTI-DIMENSIONAL</div>
+
+<pre>
+<span class="yk">jobs</span>:
+  <span class="yk">test</span>:
+    <span class="yk">strategy</span>:
+      <span class="yk">fail-fast</span>: <span class="yn">false</span>     <span class="yc"># no cancelar todos si uno falla</span>
+      <span class="yk">max-parallel</span>: <span class="yn">6</span>     <span class="yc"># máximo 6 jobs en paralelo</span>
+      <span class="yk">matrix</span>:
+        <span class="yk">os</span>: [<span class="yv">ubuntu-latest</span>, <span class="yv">windows-latest</span>, <span class="yv">macos-latest</span>]
+        <span class="yk">node</span>: [<span class="yn">18</span>, <span class="yn">20</span>]
+        <span class="yc">        # 3 OS × 2 versiones = 6 jobs en paralelo</span>
+
+    <span class="yk">runs-on</span>: <span class="yv">${{ matrix.os }}</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">uses</span>: <span class="ya">actions/setup-node@v4</span>
+        <span class="yk">with</span>:
+          <span class="yk">node-version</span>: <span class="yv">${{ matrix.node }}</span>
+      - <span class="yk">run</span>: <span class="yv">npm test</span>
+</pre>
+
+<div class="sec" data-n="E">EXCLUDE E INCLUDE — PERSONALIZAR LA MATRIX</div>
+
+<pre>
+<span class="yk">strategy</span>:
+  <span class="yk">matrix</span>:
+    <span class="yk">os</span>: [<span class="yv">ubuntu-latest</span>, <span class="yv">windows-latest</span>, <span class="yv">macos-latest</span>]
+    <span class="yk">node</span>: [<span class="yn">18</span>, <span class="yn">20</span>, <span class="yn">22</span>]
+
+    <span class="yc">    # Excluir combinaciones específicas</span>
+    <span class="yk">exclude</span>:
+      - <span class="yk">os</span>: <span class="yv">windows-latest</span>
+        <span class="yk">node</span>: <span class="yn">18</span>    <span class="yc"># no testear Node 18 en Windows</span>
+      - <span class="yk">os</span>: <span class="yv">macos-latest</span>
+        <span class="yk">node</span>: <span class="yn">18</span>    <span class="yc"># no testear Node 18 en macOS</span>
+
+    <span class="yc">    # Añadir combinaciones extra con propiedades adicionales</span>
+    <span class="yk">include</span>:
+      - <span class="yk">os</span>: <span class="yv">ubuntu-latest</span>
+        <span class="yk">node</span>: <span class="yn">20</span>
+        <span class="yk">coverage</span>: <span class="yn">true</span>   <span class="yc"># propiedad extra solo en esta combinación</span>
+
+<span class="yk">steps</span>:
+  - <span class="yk">name</span>: <span class="yv">Run tests</span>
+    <span class="yk">run</span>: <span class="yv">npm test</span>
+  - <span class="yk">name</span>: <span class="yv">Coverage</span>
+    <span class="yk">if</span>: <span class="yv">matrix.coverage == true</span>
+    <span class="yk">run</span>: <span class="yv">npm run coverage</span>
+</pre>
+
+<div class="sec" data-n="D">MATRIX DINÁMICA — DESDE SCRIPT</div>
+
+<pre>
+<span class="yk">jobs</span>:
+  <span class="yc">  # Job 1: generar la matrix dinámicamente</span>
+  <span class="yk">setup</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">outputs</span>:
+      <span class="yk">matrix</span>: <span class="yv">${{ steps.set-matrix.outputs.matrix }}</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">id</span>: <span class="yv">set-matrix</span>
+        <span class="yk">run</span>: <span class="yv">|</span>
+          <span class="yc">          # Leer los servicios a testear de un fichero</span>
+          <span class="yv">SERVICES=$(cat services.json)</span>
+          <span class="yv">echo "matrix={\"service\":$SERVICES}" >> $GITHUB_OUTPUT</span>
+
+  <span class="yc">  # Job 2: usar la matrix generada</span>
+  <span class="yk">test-services</span>:
+    <span class="yk">needs</span>: <span class="yv">setup</span>
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">strategy</span>:
+      <span class="yk">matrix</span>: <span class="yv">${{ fromJSON(needs.setup.outputs.matrix) }}</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">run</span>: <span class="yv">./test.sh ${{ matrix.service }}</span>
+</pre>
+
+</div>
+
+<!-- ═══════════════════════ CASOS REALES ═════ -->
+<div id="tab-casos" class="tab-panel">
+
+<div class="sec" data-n="1">CASO 1 — CI PARA APP NODE/REACT</div>
+
+<pre>
+<span class="yc"># .github/workflows/ci.yml</span>
+<span class="yk">name</span>: <span class="yv">CI</span>
+<span class="yk">on</span>:
+  <span class="ye">push</span>: { <span class="yk">branches</span>: [<span class="yv">main</span>, <span class="yv">develop</span>] }
+  <span class="ye">pull_request</span>: { <span class="yk">branches</span>: [<span class="yv">main</span>] }
+
+<span class="yk">concurrency</span>:
+  <span class="yk">group</span>: <span class="yv">${{ github.workflow }}-${{ github.ref }}</span>
+  <span class="yk">cancel-in-progress</span>: <span class="yn">true</span>
+
+<span class="yk">jobs</span>:
+  <span class="yk">test</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">uses</span>: <span class="ya">actions/checkout@v4</span>
+      - <span class="yk">uses</span>: <span class="ya">actions/setup-node@v4</span>
+        <span class="yk">with</span>: { <span class="yk">node-version</span>: <span class="yv">'20'</span>, <span class="yk">cache</span>: <span class="yv">'npm'</span> }
+      - <span class="yk">run</span>: <span class="yv">npm ci</span>
+      - <span class="yk">run</span>: <span class="yv">npm run lint</span>
+      - <span class="yk">run</span>: <span class="yv">npm test -- --coverage</span>
+      - <span class="yk">run</span>: <span class="yv">npm run build</span>
+      - <span class="yk">uses</span>: <span class="ya">actions/upload-artifact@v4</span>
+        <span class="yk">with</span>: { <span class="yk">name</span>: <span class="yv">dist</span>, <span class="yk">path</span>: <span class="yv">dist/</span> }
+</pre>
+
+<div class="sec" data-n="2">CASO 2 — CD DEPLOY EN VERCEL</div>
+
+<pre>
+<span class="yc"># .github/workflows/deploy.yml</span>
+<span class="yk">name</span>: <span class="yv">Deploy</span>
+<span class="yk">on</span>:
+  <span class="ye">push</span>: { <span class="yk">branches</span>: [<span class="yv">main</span>] }
+
+<span class="yk">jobs</span>:
+  <span class="yk">deploy</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">environment</span>:
+      <span class="yk">name</span>: <span class="yv">production</span>
+      <span class="yk">url</span>: <span class="yv">https://miapp.vercel.app</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">uses</span>: <span class="ya">actions/checkout@v4</span>
+      - <span class="yk">name</span>: <span class="yv">Deploy to Vercel</span>
+        <span class="yk">run</span>: <span class="yv">npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}</span>
+        <span class="yk">env</span>:
+          <span class="yg">VERCEL_ORG_ID</span>: <span class="yv">${{ secrets.VERCEL_ORG_ID }}</span>
+          <span class="yg">VERCEL_PROJECT_ID</span>: <span class="yv">${{ secrets.VERCEL_PROJECT_ID }}</span>
+</pre>
+
+<div class="sec" data-n="3">CASO 3 — DOCKER BUILD + PUSH A GHCR + DEPLOY EN DIGITALOCEAN</div>
+
+<pre>
+<span class="yc"># .github/workflows/release.yml — el pipeline completo</span>
+<span class="yk">name</span>: <span class="yv">Release</span>
+<span class="yk">on</span>:
+  <span class="ye">push</span>: { <span class="yk">tags</span>: [<span class="yv">'v*'</span>] }
+
+<span class="yk">env</span>:
+  <span class="yg">REGISTRY</span>: <span class="yv">ghcr.io</span>
+  <span class="yg">IMAGE_NAME</span>: <span class="yv">${{ github.repository }}</span>
+
+<span class="yk">jobs</span>:
+  <span class="yk">build-push</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">permissions</span>:
+      <span class="yk">contents</span>: <span class="yv">read</span>
+      <span class="yk">packages</span>: <span class="yv">write</span>
+    <span class="yk">outputs</span>:
+      <span class="yk">image</span>: <span class="yv">${{ steps.meta.outputs.tags }}</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">uses</span>: <span class="ya">actions/checkout@v4</span>
+
+      - <span class="yk">name</span>: <span class="yv">Login GHCR</span>
+        <span class="yk">uses</span>: <span class="ya">docker/login-action@v3</span>
+        <span class="yk">with</span>:
+          <span class="yk">registry</span>: <span class="yv">${{ env.REGISTRY }}</span>
+          <span class="yk">username</span>: <span class="yv">${{ github.actor }}</span>
+          <span class="yk">password</span>: <span class="yv">${{ secrets.GITHUB_TOKEN }}</span>
+
+      - <span class="yk">name</span>: <span class="yv">Metadata</span>
+        <span class="yk">id</span>: <span class="yv">meta</span>
+        <span class="yk">uses</span>: <span class="ya">docker/metadata-action@v5</span>
+        <span class="yk">with</span>:
+          <span class="yk">images</span>: <span class="yv">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}</span>
+          <span class="yk">tags</span>: <span class="yv">|</span>
+            <span class="yv">type=semver,pattern={{version}}</span>
+            <span class="yv">type=semver,pattern={{major}}.{{minor}}</span>
+
+      - <span class="yk">name</span>: <span class="yv">Build & Push</span>
+        <span class="yk">uses</span>: <span class="ya">docker/build-push-action@v5</span>
+        <span class="yk">with</span>:
+          <span class="yk">context</span>: <span class="yv">.</span>
+          <span class="yk">push</span>: <span class="yn">true</span>
+          <span class="yk">tags</span>: <span class="yv">${{ steps.meta.outputs.tags }}</span>
+          <span class="yk">cache-from</span>: <span class="yv">type=gha</span>
+          <span class="yk">cache-to</span>: <span class="yv">type=gha,mode=max</span>
+
+  <span class="yk">deploy</span>:
+    <span class="yk">needs</span>: <span class="yv">build-push</span>
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">environment</span>:
+      <span class="yk">name</span>: <span class="yv">production</span>
+      <span class="yk">url</span>: <span class="yv">https://miapp.com</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">name</span>: <span class="yv">Deploy en DigitalOcean</span>
+        <span class="yk">uses</span>: <span class="ya">appleboy/ssh-action@v1</span>
+        <span class="yk">with</span>:
+          <span class="yk">host</span>: <span class="yv">${{ secrets.DO_HOST }}</span>
+          <span class="yk">username</span>: <span class="yv">root</span>
+          <span class="yk">key</span>: <span class="yv">${{ secrets.DO_SSH_KEY }}</span>
+          <span class="yk">script</span>: <span class="yv">|</span>
+            <span class="yv">docker pull ${{ needs.build-push.outputs.image }}</span>
+            <span class="yv">docker stop app || true</span>
+            <span class="yv">docker rm app || true</span>
+            <span class="yv">docker run -d --name app \</span>
+              <span class="yv">-p 80:8080 \</span>
+              <span class="yv">--env-file /app/.env \</span>
+              <span class="yv">${{ needs.build-push.outputs.image }}</span>
+</pre>
+
+<div class="sec" data-n="4">CASO 4 — CI PARA JAVA / MAVEN</div>
+
+<pre>
+<span class="yc"># .github/workflows/java-ci.yml</span>
+<span class="yk">name</span>: <span class="yv">Java CI</span>
+<span class="yk">on</span>:
+  <span class="ye">push</span>: { <span class="yk">branches</span>: [<span class="yv">main</span>] }
+  <span class="ye">pull_request</span>: { <span class="yk">branches</span>: [<span class="yv">main</span>] }
+
+<span class="yk">jobs</span>:
+  <span class="yk">build</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">uses</span>: <span class="ya">actions/checkout@v4</span>
+
+      - <span class="yk">name</span>: <span class="yv">Setup JDK 21</span>
+        <span class="yk">uses</span>: <span class="ya">actions/setup-java@v4</span>
+        <span class="yk">with</span>:
+          <span class="yk">java-version</span>: <span class="yv">'21'</span>
+          <span class="yk">distribution</span>: <span class="yv">'temurin'</span>
+          <span class="yk">cache</span>: <span class="yv">'maven'</span>     <span class="yc"># cachea ~/.m2/repository</span>
+
+      - <span class="yk">name</span>: <span class="yv">Build con Maven</span>
+        <span class="yk">run</span>: <span class="yv">mvn -B package --file pom.xml</span>
+
+      - <span class="yk">name</span>: <span class="yv">Tests</span>
+        <span class="yk">run</span>: <span class="yv">mvn test</span>
+        <span class="yk">env</span>:
+          <span class="yg">SPRING_DATASOURCE_URL</span>: <span class="yv">jdbc:h2:mem:testdb</span>
+
+      - <span class="yk">name</span>: <span class="yv">Subir JAR como artefacto</span>
+        <span class="yk">uses</span>: <span class="ya">actions/upload-artifact@v4</span>
+        <span class="yk">with</span>:
+          <span class="yk">name</span>: <span class="yv">app-jar</span>
+          <span class="yk">path</span>: <span class="yv">target/*.jar</span>
+</pre>
+
+<div class="sec" data-n="5">CASO 5 — E2E CON PLAYWRIGHT EN CI</div>
+
+<pre>
+<span class="yc"># .github/workflows/e2e.yml</span>
+<span class="yk">name</span>: <span class="yv">E2E Tests</span>
+<span class="yk">on</span>:
+  <span class="ye">push</span>: { <span class="yk">branches</span>: [<span class="yv">main</span>] }
+  <span class="ye">schedule</span>:
+    - <span class="yk">cron</span>: <span class="yv">'0 6 * * *'</span>   <span class="yc"># cada día a las 6:00 UTC</span>
+
+<span class="yk">jobs</span>:
+  <span class="yk">e2e</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">uses</span>: <span class="ya">actions/checkout@v4</span>
+      - <span class="yk">uses</span>: <span class="ya">actions/setup-node@v4</span>
+        <span class="yk">with</span>: { <span class="yk">node-version</span>: <span class="yv">'20'</span>, <span class="yk">cache</span>: <span class="yv">'npm'</span> }
+      - <span class="yk">run</span>: <span class="yv">npm ci</span>
+      - <span class="yk">run</span>: <span class="yv">npx playwright install chromium --with-deps</span>
+
+      - <span class="yk">name</span>: <span class="yv">Run E2E tests</span>
+        <span class="yk">run</span>: <span class="yv">npx playwright test --project=validacion</span>
+        <span class="yk">env</span>:
+          <span class="yg">BASE_URL</span>: <span class="yv">${{ secrets.STAGING_URL }}</span>
+
+      - <span class="yk">name</span>: <span class="yv">Subir reporte Playwright</span>
+        <span class="yk">if</span>: <span class="yv">always()</span>           <span class="yc"># siempre, aunque fallen los tests</span>
+        <span class="yk">uses</span>: <span class="ya">actions/upload-artifact@v4</span>
+        <span class="yk">with</span>:
+          <span class="yk">name</span>: <span class="yv">playwright-report</span>
+          <span class="yk">path</span>: <span class="yv">playwright-report/</span>
+          <span class="yk">retention-days</span>: <span class="yn">7</span>
+</pre>
+
+</div>
+
+<!-- ═══════════════════════ REFERENCIA ═══════ -->
+<div id="tab-referencia" class="tab-panel">
+
+<div class="sec" data-n="R">REFERENCIA RÁPIDA — ESTRUCTURA MÍNIMA</div>
+
+<pre>
+<span class="yk">name</span>: <span class="yv">Nombre del workflow</span>
+<span class="yk">on</span>: [<span class="ye">push</span>, <span class="ye">pull_request</span>]
+
+<span class="yk">jobs</span>:
+  <span class="yk">mi-job</span>:
+    <span class="yk">runs-on</span>: <span class="yv">ubuntu-latest</span>
+    <span class="yk">steps</span>:
+      - <span class="yk">uses</span>: <span class="ya">actions/checkout@v4</span>
+      - <span class="yk">run</span>: <span class="yv">echo "Hola desde GitHub Actions"</span>
+</pre>
+
+<div class="sec" data-n="C">CONTEXTOS DISPONIBLES</div>
+
+<table class="tbl">
+  <tr><th>Contexto</th><th>Variables útiles</th></tr>
+  <tr><td class="cat">github</td><td><code>github.ref</code> · <code>github.sha</code> · <code>github.actor</code> · <code>github.event_name</code> · <code>github.repository</code> · <code>github.run_id</code></td></tr>
+  <tr><td class="cat">env</td><td>Variables definidas en <code>env:</code> del workflow, job o step</td></tr>
+  <tr><td class="cat">secrets</td><td><code>secrets.NOMBRE</code> · <code>secrets.GITHUB_TOKEN</code></td></tr>
+  <tr><td class="cat">runner</td><td><code>runner.os</code> · <code>runner.arch</code> · <code>runner.temp</code></td></tr>
+  <tr><td class="cat">steps</td><td><code>steps.[id].outputs.[name]</code> · <code>steps.[id].outcome</code></td></tr>
+  <tr><td class="cat">needs</td><td><code>needs.[job].outputs.[name]</code> · <code>needs.[job].result</code></td></tr>
+  <tr><td class="cat">matrix</td><td><code>matrix.[dimension]</code></td></tr>
+  <tr><td class="cat">inputs</td><td><code>inputs.[name]</code> (en workflow_dispatch o workflow_call)</td></tr>
+</table>
+
+<div class="sec" data-n="F">FUNCIONES IMPORTANTES</div>
+
+<table class="tbl">
+  <tr><th>Función</th><th>Qué hace</th><th>Ejemplo</th></tr>
+  <tr><td><code>success()</code></td><td>True si todos los steps anteriores fueron exitosos</td><td><code>if: success()</code></td></tr>
+  <tr><td><code>failure()</code></td><td>True si algún step falló</td><td><code>if: failure()</code> para notificar</td></tr>
+  <tr><td><code>always()</code></td><td>Siempre true — para cleanup y reportes</td><td><code>if: always()</code></td></tr>
+  <tr><td><code>cancelled()</code></td><td>True si el workflow fue cancelado</td><td>Raramente necesario</td></tr>
+  <tr><td><code>contains(str, substr)</code></td><td>True si str contiene substr</td><td><code>contains(github.ref, 'hotfix')</code></td></tr>
+  <tr><td><code>startsWith(str, prefix)</code></td><td>True si str empieza por prefix</td><td><code>startsWith(github.ref, 'refs/tags')</code></td></tr>
+  <tr><td><code>endsWith(str, suffix)</code></td><td>True si str termina por suffix</td><td><code>endsWith(matrix.os, 'latest')</code></td></tr>
+  <tr><td><code>hashFiles('path')</code></td><td>Hash de los ficheros — para claves de caché</td><td><code>hashFiles('**/package-lock.json')</code></td></tr>
+  <tr><td><code>toJSON(value)</code></td><td>Serializa a JSON</td><td><code>toJSON(github.event)</code></td></tr>
+  <tr><td><code>fromJSON(string)</code></td><td>Deserializa JSON</td><td><code>fromJSON(needs.setup.outputs.matrix)</code></td></tr>
+</table>
+
+<div class="sec" data-n="D">DEBUG — CUANDO ALGO FALLA</div>
+
+<pre>
+<span class="yk">steps</span>:
+  <span class="yc">  # Ver todos los contextos disponibles</span>
+  - <span class="yk">name</span>: <span class="yv">Debug contextos</span>
+    <span class="yk">run</span>: <span class="yv">|</span>
+      <span class="yv">echo "REF: ${{ github.ref }}"</span>
+      <span class="yv">echo "SHA: ${{ github.sha }}"</span>
+      <span class="yv">echo "EVENT: ${{ github.event_name }}"</span>
+      <span class="yv">echo "ACTOR: ${{ github.actor }}"</span>
+
+  <span class="yc">  # Ver el evento completo</span>
+  - <span class="yk">name</span>: <span class="yv">Dump event</span>
+    <span class="yk">run</span>: <span class="yv">echo '${{ toJSON(github.event) }}'</span>
+
+  <span class="yc">  # Activar debug mode (habilitar secret ACTIONS_STEP_DEBUG=true)</span>
+  <span class="yc">  # En Settings → Secrets → añadir ACTIONS_STEP_DEBUG con valor true</span>
+  <span class="yc">  # GitHub imprimirá todos los logs detallados del runner</span>
+
+  <span class="yc">  # Ver environment completo</span>
+  - <span class="yk">name</span>: <span class="yv">Dump env</span>
+    <span class="yk">run</span>: <span class="yv">env | sort</span>
+</pre>
+
+<div class="sec" data-n="L">LÍMITES A CONOCER</div>
+
+<table class="tbl">
+  <tr><th>Límite</th><th>Valor</th><th>Impacto</th></tr>
+  <tr><td class="cat">Minutos/mes (plan Free)</td><td>2.000 min (Linux) / 200 (macOS)</td><td>macOS consume 10× más minutos — usar ubuntu-latest siempre que sea posible</td></tr>
+  <tr><td class="cat">Duración máxima de un job</td><td>6 horas</td><td>Jobs de larga duración necesitan self-hosted runners</td></tr>
+  <tr><td class="cat">Duración máxima de un workflow</td><td>35 días</td><td>Prácticamente sin límite real</td></tr>
+  <tr><td class="cat">Jobs en paralelo</td><td>20 (plan Free)</td><td>Matrix builds muy grandes pueden encolarse</td></tr>
+  <tr><td class="cat">Secrets por repo</td><td>100</td><td>Para muchos secrets usar un secret manager externo (Vault, AWS Secrets Manager)</td></tr>
+  <tr><td class="cat">Tamaño de los logs</td><td>64 MB</td><td>Builds muy verbosos pueden truncar los logs</td></tr>
+  <tr><td class="cat">Artefactos</td><td>500 MB por artefacto</td><td>Builds pesados necesitan compresión o S3 externo</td></tr>
+  <tr><td class="cat">Retención de artefactos</td><td>90 días (por defecto)</td><td>Configurable con <code>retention-days</code></td></tr>
+</table>
+
+<div class="danger">
+  <div class="danger-t">⚠️ El error más común — pinear versiones de Actions</div>
+  <div class="danger-b">
+    Usar <code>actions/checkout@v4</code> es más seguro que <code>actions/checkout@main</code> porque si el autor de la Action hace un cambio breaking, tu workflow sigue funcionando. Para máxima seguridad en entornos críticos, pinear al SHA completo: <code>actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683</code> — así nadie puede cambiar lo que ejecutas aunque cambie el tag.
+  </div>
+</div>
+
+</div>
+
+</div>
+<script>
+function st(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
