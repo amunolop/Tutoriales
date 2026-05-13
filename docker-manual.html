@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker · Manual Completo 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--surface:#fff;--surface2:#edeae0;--border:#cfc8b4;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--teal:#0e7c7b;--docker:#2496ed;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}.container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+header{border-bottom:3px solid var(--ink);padding-bottom:26px;margin-bottom:34px}.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--docker);border:2px solid var(--docker);padding:3px 10px;margin-bottom:14px;transform:rotate(-0.7deg)}h1{font-family:var(--display);font-size:clamp(32px,6vw,64px);font-weight:800;line-height:1;letter-spacing:-2px;margin-bottom:12px}h1 em{font-style:normal;color:var(--docker)}.subtitle{font-size:12px;color:var(--muted);line-height:1.8;max-width:700px;margin-bottom:16px}.badge-row{display:flex;flex-wrap:wrap;gap:8px}.badge{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}.badge.d{color:var(--docker);border-color:var(--docker)}.badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}.badge.t{color:var(--teal);border-color:var(--teal)}
+.tab-nav{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:5px;overflow:hidden;margin-bottom:36px}.tab-btn{font-family:var(--mono);font-size:9.5px;font-weight:700;padding:10px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}.tab-btn:last-child{border-right:none}.tab-btn:hover{background:var(--surface2);color:var(--ink)}.tab-btn.active{background:var(--ink);color:var(--bg)}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s ease both}
+.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:30px 0 14px;display:flex;align-items:center;gap:12px}.sec:first-child{margin-top:0}.sec::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:3px;flex-shrink:0}
+.note{border-left:4px solid;padding:13px 17px;margin:13px 0;font-size:12px;line-height:1.75;color:var(--ink2);border-radius:0 4px 4px 0}.note strong{display:block;margin-bottom:4px}.note code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px}.note.d{border-color:var(--docker);background:rgba(36,150,237,.05)}.note.d strong{color:var(--docker)}.note.o{border-color:var(--accent);background:rgba(193,68,14,.05)}.note.o strong{color:var(--accent)}.note.g{border-color:var(--accent2);background:rgba(42,110,78,.05)}.note.g strong{color:var(--accent2)}.note.b{border-color:var(--accent3);background:rgba(26,74,138,.05)}.note.b strong{color:var(--accent3)}.note.y{border-color:var(--yellow);background:rgba(232,160,32,.05)}.note.y strong{color:var(--yellow)}.note.p{border-color:var(--purple);background:rgba(122,58,205,.05)}.note.p strong{color:var(--purple)}.note.t{border-color:var(--teal);background:rgba(14,124,123,.05)}.note.t strong{color:var(--teal)}
+pre{background:#1e1e1e;color:#d4d4d4;border:2px solid var(--border);border-radius:6px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;margin:13px 0;position:relative}pre .lang{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#666;font-weight:600}.dk{color:#569cd6;font-weight:600}.dv{color:#ce9178}.dn{color:#b5cea8}.dc{color:#6a9955;font-style:italic}.da{color:#dcdcaa}.ds{color:#c586c0;font-weight:600}.dh{background:rgba(36,150,237,.15);border-radius:2px;padding:0 3px}.dg{color:#4ec9b0}.dr{color:#f44747}
+.tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);overflow:hidden;margin:13px 0;border-radius:4px}.tbl th{background:var(--ink);color:var(--bg);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:10px 13px;text-align:left}.tbl td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(0,0,0,.015)}.tbl td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:10.5px;white-space:nowrap}.tbl td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}.tbl td.ok{color:var(--accent2);font-weight:700}.tbl td.bad{color:var(--accent);font-weight:700}.tbl td.warn{color:var(--yellow);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin:14px 0}.card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .2s}.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.07)}.card-hd{padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}.card-hd.d{background:rgba(36,150,237,.1);color:var(--docker)}.card-hd.g{background:rgba(42,110,78,.1);color:var(--accent2)}.card-hd.o{background:rgba(193,68,14,.1);color:var(--accent)}.card-hd.b{background:rgba(26,74,138,.1);color:var(--accent3)}.card-hd.p{background:rgba(122,58,205,.1);color:var(--purple)}.card-hd.y{background:rgba(232,160,32,.1);color:var(--yellow)}.card-hd.t{background:rgba(14,124,123,.1);color:var(--teal)}.card-bd{padding:13px;font-size:12px;line-height:1.75;color:var(--ink2)}
+.insight{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:17px 21px;margin:17px 0}.insight-t{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:7px}.insight-b{font-size:12px;color:var(--ink2);line-height:1.75}.danger{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:17px 21px;margin:17px 0}.danger-t{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:7px}.danger-b{font-size:12px;color:var(--ink2);line-height:1.75}
+.link-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin:14px 0}.link-card{display:block;text-decoration:none;background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:16px;transition:all .2s;color:var(--ink)}.link-card:hover{border-color:var(--docker);box-shadow:0 4px 14px rgba(36,150,237,.1);transform:translateY(-2px)}.link-card .lc-t{font-weight:700;font-size:13px;margin-bottom:4px;color:var(--docker)}.link-card .lc-d{font-size:11px;color:var(--ink2);line-height:1.6}.link-card .lc-u{font-size:10px;color:var(--muted);margin-top:6px;word-break:break-all}
+@media(max-width:720px){.grid,.link-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Manual completo · 2026</div>
+  <h1><em>Docker</em></h1>
+  <div class="subtitle">Contenedores · Dockerfile · Imágenes · Compose · Multi-stage · Volúmenes · Redes.<br>De la teoría a despliegues reales listos para producción.</div>
+  <div class="badge-row">
+    <span class="badge d">Dockerfile</span>
+    <span class="badge g">Docker Compose</span>
+    <span class="badge b">Imágenes oficiales</span>
+    <span class="badge p">Multi-stage</span>
+    <span class="badge y">Volúmenes</span>
+    <span class="badge o">Redes</span>
+    <span class="badge t">Casos reales</span>
+  </div>
+</header>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="st('conceptos')">🐳 CONCEPTOS</button>
+  <button class="tab-btn" onclick="st('dockerfile')">📄 DOCKERFILE</button>
+  <button class="tab-btn" onclick="st('imagenes')">📦 IMÁGENES</button>
+  <button class="tab-btn" onclick="st('compose')">🔧 COMPOSE</button>
+  <button class="tab-btn" onclick="st('volumes')">💾 VOLÚMENES</button>
+  <button class="tab-btn" onclick="st('multi')">🏗️ MULTI-STAGE</button>
+  <button class="tab-btn" onclick="st('comandos')">⌨️ COMANDOS</button>
+  <button class="tab-btn" onclick="st('casos')">📋 CASOS REALES</button>
+  <button class="tab-btn" onclick="st('enlaces')">🔗 ENLACES</button>
+</div>
+
+<!-- ═══════════════════════ CONCEPTOS ════════ -->
+<div id="tab-conceptos" class="tab-panel active">
+
+<div class="sec" data-n="★">QUÉ ES DOCKER</div>
+
+<div class="note d">
+  <strong>Docker empaqueta una aplicación con todo lo que necesita para correr en un contenedor aislado.</strong>
+  El contenedor incluye el SO base, las librerías, el runtime, las dependencias y el código. Corre igual en tu portátil, en CI/CD y en producción. "Funciona en mi máquina" ya no es excusa.
+</div>
+
+<svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:800px;margin:18px auto;display:block;font-family:'IBM Plex Mono',monospace">
+  <!-- Host OS -->
+  <rect x="10" y="220" width="780" height="50" rx="8" fill="#edeae0" stroke="#cfc8b4" stroke-width="2"/>
+  <text x="370" y="250" text-anchor="middle" fill="#8a7a65" font-size="12" font-weight="700">🖥️ HOST (tu máquina o servidor)</text>
+
+  <!-- Docker Engine -->
+  <rect x="30" y="160" width="740" height="50" rx="8" fill="rgba(36,150,237,0.1)" stroke="#2496ed" stroke-width="2"/>
+  <text x="370" y="190" text-anchor="middle" fill="#2496ed" font-size="12" font-weight="700">🐳 Docker Engine</text>
+
+  <!-- Container 1 -->
+  <rect x="40" y="10" width="220" height="140" rx="8" fill="#fff" stroke="#2496ed" stroke-width="2"/>
+  <rect x="40" y="10" width="220" height="28" rx="8" fill="#2496ed"/>
+  <rect x="40" y="30" width="220" height="8" fill="#2496ed"/>
+  <text x="150" y="30" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">CONTENEDOR 1</text>
+  <text x="60" y="58" fill="#4a3f30" font-size="10">🔷 Node.js 20</text>
+  <text x="60" y="78" fill="#4a3f30" font-size="10">📦 npm packages</text>
+  <text x="60" y="98" fill="#4a3f30" font-size="10">📁 src/ código app</text>
+  <text x="60" y="118" fill="#4a3f30" font-size="10">🌐 Puerto :3000</text>
+  <text x="60" y="138" fill="#8a7a65" font-size="9">alpine linux 3.19</text>
+
+  <!-- Container 2 -->
+  <rect x="290" y="10" width="220" height="140" rx="8" fill="#fff" stroke="#2a6e4e" stroke-width="2"/>
+  <rect x="290" y="10" width="220" height="28" rx="8" fill="#2a6e4e"/>
+  <rect x="290" y="30" width="220" height="8" fill="#2a6e4e"/>
+  <text x="400" y="30" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">CONTENEDOR 2</text>
+  <text x="310" y="58" fill="#4a3f30" font-size="10">🐘 PostgreSQL 16</text>
+  <text x="310" y="78" fill="#4a3f30" font-size="10">💾 /var/lib/postgresql</text>
+  <text x="310" y="98" fill="#4a3f30" font-size="10">📁 init scripts</text>
+  <text x="310" y="118" fill="#4a3f30" font-size="10">🌐 Puerto :5432</text>
+  <text x="310" y="138" fill="#8a7a65" font-size="9">alpine linux 3.19</text>
+
+  <!-- Container 3 -->
+  <rect x="540" y="10" width="220" height="140" rx="8" fill="#fff" stroke="#7a3acd" stroke-width="2"/>
+  <rect x="540" y="10" width="220" height="28" rx="8" fill="#7a3acd"/>
+  <rect x="540" y="30" width="220" height="8" fill="#7a3acd"/>
+  <text x="650" y="30" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">CONTENEDOR 3</text>
+  <text x="560" y="58" fill="#4a3f30" font-size="10">🔴 Redis 7</text>
+  <text x="560" y="78" fill="#4a3f30" font-size="10">💾 /data</text>
+  <text x="560" y="98" fill="#4a3f30" font-size="10">⚡ Cache + sesiones</text>
+  <text x="560" y="118" fill="#4a3f30" font-size="10">🌐 Puerto :6379</text>
+  <text x="560" y="138" fill="#8a7a65" font-size="9">alpine linux 3.19</text>
+</svg>
+
+<div class="sec" data-n="C">IMAGEN · CONTENEDOR · VOLUMEN · RED</div>
+
+<table class="tbl">
+  <tr><th>Concepto</th><th>Qué es</th><th>Analogía</th></tr>
+  <tr><td class="cat">Imagen</td><td>Plantilla de solo lectura con el SO + runtime + dependencias + código. Se construye desde un Dockerfile. Se versiona con tags.</td><td>La receta — no se modifica</td></tr>
+  <tr><td class="cat">Contenedor</td><td>Una instancia ejecutándose de una imagen. Tiene su proceso, su filesystem, su red. Se puede parar, borrar y recrear.</td><td>El plato servido a partir de la receta</td></tr>
+  <tr><td class="cat">Dockerfile</td><td>Fichero de texto con instrucciones para construir la imagen. Cada instrucción crea una capa.</td><td>La receta escrita paso a paso</td></tr>
+  <tr><td class="cat">Volumen</td><td>Almacenamiento persistente que sobrevive al contenedor. Los datos de la BD van aquí.</td><td>El disco duro externo</td></tr>
+  <tr><td class="cat">Red (Network)</td><td>Red virtual que conecta contenedores entre sí. Los contenedores en la misma red se ven por nombre.</td><td>La LAN privada del proyecto</td></tr>
+  <tr><td class="cat">Registry</td><td>Repositorio de imágenes. Docker Hub es el público. GHCR es el de GitHub. Puedes tener uno privado.</td><td>El npm/Maven de imágenes Docker</td></tr>
+  <tr><td class="cat">Compose</td><td>Herramienta para definir y correr multi-contenedor. Un fichero YAML describe todo el stack.</td><td>El docker-compose.yml es el orquestador local</td></tr>
+  <tr><td class="cat">Tag</td><td>Versión de una imagen: <code>node:20-alpine</code>, <code>postgres:16</code>. Sin tag → <code>:latest</code> (peligroso).</td><td>La versión exacta de la dependencia</td></tr>
+</table>
+
+<div class="sec" data-n="F">EL FLUJO COMPLETO</div>
+
+<pre><span class="dc"># 1. Escribir el Dockerfile</span>
+<span class="dk">FROM</span> <span class="dv">node:20-alpine</span>
+<span class="dk">WORKDIR</span> <span class="dv">/app</span>
+<span class="dk">COPY</span> <span class="dv">. .</span>
+<span class="dk">RUN</span> <span class="da">npm ci</span>
+<span class="dk">CMD</span> [<span class="dv">"node"</span>, <span class="dv">"src/index.js"</span>]
+
+<span class="dc"># 2. Construir la imagen</span>
+<span class="da">docker build</span> -t mi-app:1.0 .
+
+<span class="dc"># 3. Correr un contenedor desde la imagen</span>
+<span class="da">docker run</span> -d -p 3000:3000 --name mi-app mi-app:1.0
+
+<span class="dc"># 4. Ver que está corriendo</span>
+<span class="da">docker ps</span>
+
+<span class="dc"># 5. Ver los logs</span>
+<span class="da">docker logs</span> mi-app
+
+<span class="dc"># 6. Parar y borrar</span>
+<span class="da">docker stop</span> mi-app && <span class="da">docker rm</span> mi-app</pre>
+
+</div>
+
+<!-- ═══════════════════════ DOCKERFILE ═══════ -->
+<div id="tab-dockerfile" class="tab-panel">
+
+<div class="sec" data-n="I">INSTRUCCIONES DEL DOCKERFILE</div>
+
+<table class="tbl">
+  <tr><th>Instrucción</th><th>Qué hace</th><th>Ejemplo</th></tr>
+  <tr><td class="cat">FROM</td><td>Imagen base. Siempre primera instrucción.</td><td><code>FROM node:20-alpine</code></td></tr>
+  <tr><td class="cat">WORKDIR</td><td>Directorio de trabajo dentro del contenedor.</td><td><code>WORKDIR /app</code></td></tr>
+  <tr><td class="cat">COPY</td><td>Copia ficheros del host al contenedor.</td><td><code>COPY package*.json .</code></td></tr>
+  <tr><td class="cat">ADD</td><td>Como COPY pero soporta URLs y descomprime .tar.</td><td><code>ADD https://x.com/f.tar.gz /opt/</code></td></tr>
+  <tr><td class="cat">RUN</td><td>Ejecuta un comando al construir la imagen. Cada RUN = nueva capa.</td><td><code>RUN npm ci --only=production</code></td></tr>
+  <tr><td class="cat">CMD</td><td>Comando por defecto al arrancar el contenedor. Solo uno por Dockerfile.</td><td><code>CMD ["node", "src/index.js"]</code></td></tr>
+  <tr><td class="cat">ENTRYPOINT</td><td>Ejecutable principal. CMD pasa como argumentos.</td><td><code>ENTRYPOINT ["python", "app.py"]</code></td></tr>
+  <tr><td class="cat">ENV</td><td>Variable de entorno disponible en build y en runtime.</td><td><code>ENV NODE_ENV=production</code></td></tr>
+  <tr><td class="cat">ARG</td><td>Variable solo en build time (no disponible en runtime).</td><td><code>ARG VERSION=1.0</code></td></tr>
+  <tr><td class="cat">EXPOSE</td><td>Documenta qué puerto usa el contenedor (no abre nada).</td><td><code>EXPOSE 3000</code></td></tr>
+  <tr><td class="cat">VOLUME</td><td>Declara un punto de montaje para datos persistentes.</td><td><code>VOLUME /data</code></td></tr>
+  <tr><td class="cat">USER</td><td>Cambia el usuario que ejecuta los siguientes comandos.</td><td><code>USER node</code></td></tr>
+  <tr><td class="cat">HEALTHCHECK</td><td>Define cómo verificar que el contenedor está healthy.</td><td><code>HEALTHCHECK CMD curl -f http://localhost:3000/health</code></td></tr>
+  <tr><td class="cat">LABEL</td><td>Metadatos de la imagen (autor, versión, descripción).</td><td><code>LABEL maintainer="antonio@mail.com"</code></td></tr>
+</table>
+
+<div class="sec" data-n="N">DOCKERFILE PARA NODE.JS — PRODUCCIÓN</div>
+
+<pre><span class="lang">Dockerfile</span>
+<span class="dk">FROM</span> <span class="dv">node:20-alpine</span>
+
+<span class="dc"># Usuario no-root por seguridad</span>
+<span class="dk">RUN</span> <span class="da">addgroup -S appgroup && adduser -S appuser -G appgroup</span>
+
+<span class="dk">WORKDIR</span> <span class="dv">/app</span>
+
+<span class="dc"># Copiar package.json PRIMERO para cachear npm ci</span>
+<span class="dk">COPY</span> <span class="dv">package*.json</span> <span class="dv">.</span>
+<span class="dk">RUN</span> <span class="da">npm ci --only=production</span>
+
+<span class="dc"># Copiar el resto del código</span>
+<span class="dk">COPY</span> <span class="dv">.</span> <span class="dv">.</span>
+
+<span class="dc"># Cambiar al usuario no-root</span>
+<span class="dk">USER</span> <span class="dv">appuser</span>
+
+<span class="dk">EXPOSE</span> <span class="dn">3000</span>
+
+<span class="dk">HEALTHCHECK</span> --interval=30s --timeout=3s \
+  <span class="dk">CMD</span> <span class="da">wget -qO- http://localhost:3000/health || exit 1</span>
+
+<span class="dk">CMD</span> [<span class="dv">"node"</span>, <span class="dv">"src/index.js"</span>]</pre>
+
+<div class="sec" data-n="P">DOCKERFILE PARA PYTHON / FASTAPI</div>
+
+<pre><span class="lang">Dockerfile</span>
+<span class="dk">FROM</span> <span class="dv">python:3.12-slim</span>
+
+<span class="dk">WORKDIR</span> <span class="dv">/app</span>
+
+<span class="dc"># Copiar requirements PRIMERO para cachear pip install</span>
+<span class="dk">COPY</span> <span class="dv">requirements.txt</span> <span class="dv">.</span>
+<span class="dk">RUN</span> <span class="da">pip install --no-cache-dir -r requirements.txt</span>
+
+<span class="dk">COPY</span> <span class="dv">.</span> <span class="dv">.</span>
+
+<span class="dc"># Usuario no-root</span>
+<span class="dk">RUN</span> <span class="da">useradd -m appuser</span>
+<span class="dk">USER</span> <span class="dv">appuser</span>
+
+<span class="dk">EXPOSE</span> <span class="dn">8000</span>
+
+<span class="dk">CMD</span> [<span class="dv">"uvicorn"</span>, <span class="dv">"main:app"</span>, <span class="dv">"--host"</span>, <span class="dv">"0.0.0.0"</span>, <span class="dv">"--port"</span>, <span class="dv">"8000"</span>]</pre>
+
+<div class="sec" data-n="J">DOCKERFILE PARA JAVA / SPRING BOOT</div>
+
+<pre><span class="lang">Dockerfile</span>
+<span class="dk">FROM</span> <span class="dv">eclipse-temurin:21-jre-alpine</span>
+
+<span class="dk">WORKDIR</span> <span class="dv">/app</span>
+
+<span class="dk">COPY</span> <span class="dv">target/app.jar</span> <span class="dv">app.jar</span>
+
+<span class="dk">RUN</span> <span class="da">addgroup -S spring && adduser -S spring -G spring</span>
+<span class="dk">USER</span> <span class="dv">spring</span>
+
+<span class="dk">EXPOSE</span> <span class="dn">8080</span>
+
+<span class="dk">HEALTHCHECK</span> --interval=30s --timeout=3s \
+  <span class="dk">CMD</span> <span class="da">wget -qO- http://localhost:8080/actuator/health || exit 1</span>
+
+<span class="dk">ENTRYPOINT</span> [<span class="dv">"java"</span>, <span class="dv">"-jar"</span>, <span class="dv">"app.jar"</span>]</pre>
+
+<div class="sec" data-n="D">.DOCKERIGNORE — LO QUE NO SE COPIA</div>
+
+<pre><span class="lang">.dockerignore</span>
+<span class="dc"># Dependencias (se instalan en el build)</span>
+<span class="da">node_modules</span>
+<span class="da">venv</span>
+<span class="da">__pycache__</span>
+<span class="da">target</span>
+
+<span class="dc"># Git y CI</span>
+<span class="da">.git</span>
+<span class="da">.github</span>
+<span class="da">.gitignore</span>
+
+<span class="dc"># Docker dentro de Docker</span>
+<span class="da">Dockerfile</span>
+<span class="da">docker-compose*.yml</span>
+<span class="da">.dockerignore</span>
+
+<span class="dc"># IDE y docs</span>
+<span class="da">.vscode</span>
+<span class="da">.idea</span>
+<span class="da">*.md</span>
+<span class="da">docs</span>
+
+<span class="dc"># Secrets</span>
+<span class="da">.env</span>
+<span class="da">.env.*</span></pre>
+
+<div class="insight">
+  <div class="insight-t">💡 Clave: separar COPY en dos fases</div>
+  <div class="insight-b">Copiar primero <code>package.json</code> / <code>requirements.txt</code> y luego ejecutar <code>npm ci</code> / <code>pip install</code>. Después copiar el resto del código. Docker cachea cada capa — si el código cambia pero las dependencias no, la capa de <code>npm ci</code> se reutiliza del caché. Eso acelera los builds de minutos a segundos.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ IMÁGENES ═════════ -->
+<div id="tab-imagenes" class="tab-panel">
+
+<div class="sec" data-n="B">IMÁGENES BASE MÁS USADAS</div>
+
+<table class="tbl">
+  <tr><th>Imagen</th><th>Tag recomendado</th><th>Tamaño</th><th>Para qué</th></tr>
+  <tr><td class="cat">node</td><td><code>node:20-alpine</code></td><td class="ok">~50MB</td><td>Apps Node.js, React, Angular, Express</td></tr>
+  <tr><td class="cat">python</td><td><code>python:3.12-slim</code></td><td class="ok">~120MB</td><td>FastAPI, Django, Flask, scripts</td></tr>
+  <tr><td class="cat">eclipse-temurin</td><td><code>eclipse-temurin:21-jre-alpine</code></td><td class="ok">~90MB</td><td>Java / Spring Boot / Maven (solo runtime)</td></tr>
+  <tr><td class="cat">golang</td><td><code>golang:1.22-alpine</code></td><td class="warn">~250MB</td><td>Go — el build. Producción con <code>scratch</code></td></tr>
+  <tr><td class="cat">rust</td><td><code>rust:1.77-slim</code></td><td class="warn">~800MB</td><td>Rust — el build. Producción con <code>debian:slim</code></td></tr>
+  <tr><td class="cat">nginx</td><td><code>nginx:1.25-alpine</code></td><td class="ok">~20MB</td><td>Servir frontend estático, reverse proxy</td></tr>
+  <tr><td class="cat">caddy</td><td><code>caddy:2-alpine</code></td><td class="ok">~40MB</td><td>Alternativa a nginx con HTTPS automático</td></tr>
+  <tr><td class="cat">alpine</td><td><code>alpine:3.19</code></td><td class="ok">~5MB</td><td>Base mínima para scripts shell</td></tr>
+  <tr><td class="cat">ubuntu</td><td><code>ubuntu:24.04</code></td><td class="warn">~78MB</td><td>Cuando necesitas apt-get y paquetes Debian</td></tr>
+  <tr><td class="cat">debian</td><td><code>debian:12-slim</code></td><td class="warn">~80MB</td><td>Compatibilidad glibc (algunos paquetes Python)</td></tr>
+  <tr><td class="cat">scratch</td><td><code>scratch</code></td><td class="ok">0MB</td><td>Imagen vacía — para binarios Go/Rust compilados estáticamente</td></tr>
+</table>
+
+<div class="sec" data-n="S">SERVICIOS — BASES DE DATOS Y HERRAMIENTAS</div>
+
+<table class="tbl">
+  <tr><th>Imagen</th><th>Tag recomendado</th><th>Puerto</th><th>Variables de entorno clave</th></tr>
+  <tr><td class="cat">postgres</td><td><code>postgres:16-alpine</code></td><td>5432</td><td><code>POSTGRES_DB</code> · <code>POSTGRES_USER</code> · <code>POSTGRES_PASSWORD</code></td></tr>
+  <tr><td class="cat">mysql</td><td><code>mysql:8.0</code></td><td>3306</td><td><code>MYSQL_ROOT_PASSWORD</code> · <code>MYSQL_DATABASE</code> · <code>MYSQL_USER</code></td></tr>
+  <tr><td class="cat">mariadb</td><td><code>mariadb:11</code></td><td>3306</td><td>Mismas que MySQL. Drop-in replacement.</td></tr>
+  <tr><td class="cat">mongo</td><td><code>mongo:7</code></td><td>27017</td><td><code>MONGO_INITDB_ROOT_USERNAME</code> · <code>MONGO_INITDB_ROOT_PASSWORD</code></td></tr>
+  <tr><td class="cat">redis</td><td><code>redis:7-alpine</code></td><td>6379</td><td>Sin password por defecto. Producción: <code>--requirepass</code></td></tr>
+  <tr><td class="cat">elasticsearch</td><td><code>elasticsearch:8.12.0</code></td><td>9200</td><td><code>discovery.type=single-node</code> · <code>xpack.security.enabled=false</code></td></tr>
+  <tr><td class="cat">rabbitmq</td><td><code>rabbitmq:3-management-alpine</code></td><td>5672/15672</td><td><code>RABBITMQ_DEFAULT_USER</code> · <code>RABBITMQ_DEFAULT_PASS</code></td></tr>
+  <tr><td class="cat">mailhog</td><td><code>mailhog/mailhog</code></td><td>1025/8025</td><td>SMTP falso para testing. Puerto 8025 = web UI.</td></tr>
+  <tr><td class="cat">adminer</td><td><code>adminer:latest</code></td><td>8080</td><td>UI web para cualquier BD (Postgres, MySQL, Mongo).</td></tr>
+  <tr><td class="cat">traefik</td><td><code>traefik:v3.0</code></td><td>80/443/8080</td><td>Reverse proxy con auto-discovery de contenedores.</td></tr>
+  <tr><td class="cat">minio</td><td><code>minio/minio</code></td><td>9000/9001</td><td>S3 compatible. Local development de storage.</td></tr>
+</table>
+
+<div class="sec" data-n="T">ALPINE VS SLIM VS FULL — CUÁNDO USAR CADA UNO</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="card-hd g">:alpine (~5-50MB)</div>
+    <div class="card-bd">
+      Basada en Alpine Linux (musl libc). La más pequeña. Usa <code>apk</code> en vez de <code>apt</code>. Ideal para producción. <strong>Cuidado:</strong> algunos paquetes Python con extensiones C no compilan bien con musl — si falla, usar <code>:slim</code>.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd b">:slim (~80-120MB)</div>
+    <div class="card-bd">
+      Basada en Debian pero sin paquetes innecesarios. Usa glibc (compatibilidad total). Buena opción por defecto para Python. Más grande que alpine pero sin problemas de compilación.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd o">sin sufijo (~300MB+)</div>
+    <div class="card-bd">
+      Imagen Debian completa. Tiene build-essential, gcc, etc. preinstalado. Usar solo para builds que necesitan compilar extensiones nativas. En producción siempre usar <code>:alpine</code> o <code>:slim</code>.
+    </div>
+  </div>
+</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Nunca usar :latest en producción</div>
+  <div class="danger-b"><code>node:latest</code> puede ser Node 20 hoy y Node 22 mañana — rompiéndote el build sin que hayas cambiado nada. Siempre pinear la versión exacta: <code>node:20-alpine</code>, <code>postgres:16-alpine</code>. Es la misma regla que con los paquetes npm — versiones fijas para reproducibilidad.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ COMPOSE ══════════ -->
+<div id="tab-compose" class="tab-panel">
+
+<div class="sec" data-n="C">DOCKER COMPOSE — MULTI-CONTENEDOR EN UN FICHERO</div>
+
+<div class="note d">
+  <strong>Docker Compose define todo el stack en un solo fichero <code>docker-compose.yml</code>.</strong>
+  Un comando (<code>docker compose up</code>) levanta la app, la BD, el caché, el proxy — todo conectado en la misma red. Ideal para desarrollo local y para despliegues sencillos en producción.
+</div>
+
+<div class="sec" data-n="E">EJEMPLO COMPLETO — APP + BD + REDIS + ADMINER</div>
+
+<pre><span class="lang">docker-compose.yml</span>
+<span class="dk">version</span>: <span class="dv">'3.8'</span>
+
+<span class="dk">services</span>:
+
+  <span class="dc"># ── La aplicación ──────────────────────────────</span>
+  <span class="dk">app</span>:
+    <span class="dk">build</span>:
+      <span class="dk">context</span>: <span class="dv">.</span>
+      <span class="dk">dockerfile</span>: <span class="dv">Dockerfile</span>
+    <span class="dk">ports</span>:
+      - <span class="dv">"3000:3000"</span>
+    <span class="dk">environment</span>:
+      <span class="dg">DATABASE_URL</span>: <span class="dv">postgresql://user:pass@db:5432/myapp</span>
+      <span class="dg">REDIS_URL</span>: <span class="dv">redis://redis:6379</span>
+      <span class="dg">NODE_ENV</span>: <span class="dv">development</span>
+    <span class="dk">volumes</span>:
+      - <span class="dv">./src:/app/src</span>               <span class="dc"># bind mount para hot reload</span>
+      - <span class="dv">/app/node_modules</span>             <span class="dc"># proteger node_modules del host</span>
+    <span class="dk">depends_on</span>:
+      <span class="dk">db</span>:
+        <span class="dk">condition</span>: <span class="dv">service_healthy</span>   <span class="dc"># espera a que la BD esté lista</span>
+      <span class="dk">redis</span>:
+        <span class="dk">condition</span>: <span class="dv">service_started</span>
+    <span class="dk">restart</span>: <span class="dv">unless-stopped</span>
+
+  <span class="dc"># ── Base de datos ──────────────────────────────</span>
+  <span class="dk">db</span>:
+    <span class="dk">image</span>: <span class="dv">postgres:16-alpine</span>
+    <span class="dk">environment</span>:
+      <span class="dg">POSTGRES_DB</span>: <span class="dv">myapp</span>
+      <span class="dg">POSTGRES_USER</span>: <span class="dv">user</span>
+      <span class="dg">POSTGRES_PASSWORD</span>: <span class="dv">pass</span>
+    <span class="dk">ports</span>:
+      - <span class="dv">"5432:5432"</span>
+    <span class="dk">volumes</span>:
+      - <span class="dv">pgdata:/var/lib/postgresql/data</span>   <span class="dc"># datos persistentes</span>
+      - <span class="dv">./init.sql:/docker-entrypoint-initdb.d/init.sql</span>  <span class="dc"># seed</span>
+    <span class="dk">healthcheck</span>:
+      <span class="dk">test</span>: [<span class="dv">"CMD-SHELL"</span>, <span class="dv">"pg_isready -U user -d myapp"</span>]
+      <span class="dk">interval</span>: <span class="dv">5s</span>
+      <span class="dk">timeout</span>: <span class="dv">3s</span>
+      <span class="dk">retries</span>: <span class="dn">5</span>
+    <span class="dk">restart</span>: <span class="dv">unless-stopped</span>
+
+  <span class="dc"># ── Cache ──────────────────────────────────────</span>
+  <span class="dk">redis</span>:
+    <span class="dk">image</span>: <span class="dv">redis:7-alpine</span>
+    <span class="dk">ports</span>:
+      - <span class="dv">"6379:6379"</span>
+    <span class="dk">volumes</span>:
+      - <span class="dv">redisdata:/data</span>
+    <span class="dk">restart</span>: <span class="dv">unless-stopped</span>
+
+  <span class="dc"># ── UI para la BD ──────────────────────────────</span>
+  <span class="dk">adminer</span>:
+    <span class="dk">image</span>: <span class="dv">adminer</span>
+    <span class="dk">ports</span>:
+      - <span class="dv">"8080:8080"</span>
+    <span class="dk">depends_on</span>: [<span class="dv">db</span>]
+
+<span class="dc"># ── Volúmenes nombrados ────────────────────────</span>
+<span class="dk">volumes</span>:
+  <span class="dk">pgdata</span>:        <span class="dc"># datos PostgreSQL persistentes</span>
+  <span class="dk">redisdata</span>:     <span class="dc"># datos Redis persistentes</span></pre>
+
+<div class="sec" data-n="U">COMANDOS DE COMPOSE</div>
+
+<pre><span class="dc"># Levantar todo en background</span>
+<span class="da">docker compose up -d</span>
+
+<span class="dc"># Ver logs en tiempo real</span>
+<span class="da">docker compose logs -f</span>
+<span class="da">docker compose logs -f app</span>          <span class="dc"># solo de un servicio</span>
+
+<span class="dc"># Parar todo</span>
+<span class="da">docker compose down</span>
+
+<span class="dc"># Parar y borrar volúmenes (reset BD)</span>
+<span class="da">docker compose down -v</span>
+
+<span class="dc"># Reconstruir la imagen (después de cambiar Dockerfile)</span>
+<span class="da">docker compose build</span>
+<span class="da">docker compose up -d --build</span>         <span class="dc"># build + arrancar</span>
+
+<span class="dc"># Ejecutar un comando dentro de un contenedor corriendo</span>
+<span class="da">docker compose exec app</span> sh           <span class="dc"># shell dentro de app</span>
+<span class="da">docker compose exec db</span> psql -U user -d myapp  <span class="dc"># psql directo</span>
+
+<span class="dc"># Ver el estado de los servicios</span>
+<span class="da">docker compose ps</span></pre>
+
+<div class="sec" data-n="E">ENV_FILE — SEPARAR SECRETOS DEL COMPOSE</div>
+
+<pre><span class="lang">.env</span>
+<span class="dg">POSTGRES_DB</span>=<span class="dv">myapp</span>
+<span class="dg">POSTGRES_USER</span>=<span class="dv">user</span>
+<span class="dg">POSTGRES_PASSWORD</span>=<span class="dv">supersecret</span>
+<span class="dg">REDIS_PASSWORD</span>=<span class="dv">redispass</span>
+
+<span class="lang">docker-compose.yml</span>
+<span class="dk">services</span>:
+  <span class="dk">db</span>:
+    <span class="dk">image</span>: <span class="dv">postgres:16-alpine</span>
+    <span class="dk">env_file</span>: <span class="dv">.env</span>        <span class="dc"># carga todas las variables de .env</span></pre>
+
+</div>
+
+<!-- ═══════════════════════ VOLÚMENES ════════ -->
+<div id="tab-volumes" class="tab-panel">
+
+<div class="sec" data-n="V">VOLÚMENES — DATOS QUE SOBREVIVEN</div>
+
+<div class="note y">
+  <strong>Sin volumen, los datos del contenedor se pierden al borrarlo.</strong>
+  Los volúmenes son el mecanismo para que los datos de la BD, los uploads del usuario, los logs — persistan independientemente del ciclo de vida del contenedor.
+</div>
+
+<div class="sec" data-n="T">TRES TIPOS DE MONTAJE</div>
+
+<table class="tbl">
+  <tr><th>Tipo</th><th>Sintaxis</th><th>Cuándo usar</th></tr>
+  <tr><td class="cat">Named volume</td><td><code>pgdata:/var/lib/postgresql/data</code></td><td>Datos de BD y servicios en producción. Docker gestiona la ubicación. El más seguro.</td></tr>
+  <tr><td class="cat">Bind mount</td><td><code>./src:/app/src</code></td><td>Desarrollo: hot reload del código fuente. Monta una carpeta del host dentro del contenedor.</td></tr>
+  <tr><td class="cat">tmpfs</td><td><code>type=tmpfs,destination=/tmp</code></td><td>Datos temporales que no necesitan persistir ni escribir a disco (logs temporales, caché).</td></tr>
+</table>
+
+<pre><span class="dc"># Named volume — producción</span>
+<span class="da">docker run</span> -v pgdata:/var/lib/postgresql/data postgres:16-alpine
+
+<span class="dc"># Bind mount — desarrollo</span>
+<span class="da">docker run</span> -v $(pwd)/src:/app/src -v /app/node_modules mi-app
+
+<span class="dc"># tmpfs — temporal en memoria</span>
+<span class="da">docker run</span> --tmpfs /tmp:rw,size=100m mi-app
+
+<span class="dc"># Gestionar volúmenes</span>
+<span class="da">docker volume ls</span>                   <span class="dc"># listar</span>
+<span class="da">docker volume inspect</span> pgdata       <span class="dc"># ver detalles</span>
+<span class="da">docker volume rm</span> pgdata            <span class="dc"># borrar</span>
+<span class="da">docker volume prune</span>                <span class="dc"># borrar los no usados</span></pre>
+
+<div class="sec" data-n="R">REDES — CONTENEDORES QUE SE VEN ENTRE SÍ</div>
+
+<div class="note b">
+  <strong>Docker Compose crea una red automáticamente para todos los servicios del fichero.</strong>
+  Los contenedores se ven entre sí por nombre de servicio: <code>db</code> resuelve a la IP del contenedor de PostgreSQL, <code>redis</code> a la de Redis. No necesitas IPs — solo nombres.
+</div>
+
+<pre><span class="dc"># La app se conecta a la BD por nombre de servicio</span>
+<span class="dg">DATABASE_URL</span>=<span class="dv">postgresql://user:pass@<span class="dh">db</span>:5432/myapp</span>
+<span class="dc">#                                    ^^ nombre del servicio en compose</span>
+
+<span class="dc"># Crear una red manualmente</span>
+<span class="da">docker network create</span> mi-red
+<span class="da">docker run</span> --network mi-red --name app mi-app
+<span class="da">docker run</span> --network mi-red --name db postgres
+
+<span class="dc"># Ver las redes</span>
+<span class="da">docker network ls</span>
+
+<span class="dc"># En compose — red con nombre explícito</span>
+<span class="dk">services</span>:
+  <span class="dk">app</span>:
+    <span class="dk">networks</span>: [<span class="dv">frontend</span>, <span class="dv">backend</span>]
+  <span class="dk">db</span>:
+    <span class="dk">networks</span>: [<span class="dv">backend</span>]       <span class="dc"># la BD no es accesible desde frontend</span>
+  <span class="dk">nginx</span>:
+    <span class="dk">networks</span>: [<span class="dv">frontend</span>]
+
+<span class="dk">networks</span>:
+  <span class="dk">frontend</span>:
+  <span class="dk">backend</span>:</pre>
+
+</div>
+
+<!-- ═══════════════════════ MULTI-STAGE ══════ -->
+<div id="tab-multi" class="tab-panel">
+
+<div class="sec" data-n="M">MULTI-STAGE BUILDS — IMÁGENES MÍNIMAS</div>
+
+<div class="note g">
+  <strong>Multi-stage separa el build del runtime.</strong>
+  La primera etapa compila/construye con todas las herramientas. La segunda etapa copia solo el resultado a una imagen mínima. La imagen final no tiene compiladores, headers ni dependencias de build — solo lo necesario para correr.
+</div>
+
+<div class="sec" data-n="N">NODE.JS — MULTI-STAGE</div>
+
+<pre><span class="lang">Dockerfile</span>
+<span class="dc"># ── ETAPA 1: Build ─────────────────────────────</span>
+<span class="dk">FROM</span> <span class="dv">node:20-alpine</span> <span class="ds">AS</span> <span class="dv">builder</span>
+<span class="dk">WORKDIR</span> <span class="dv">/app</span>
+<span class="dk">COPY</span> <span class="dv">package*.json</span> <span class="dv">.</span>
+<span class="dk">RUN</span> <span class="da">npm ci</span>
+<span class="dk">COPY</span> <span class="dv">.</span> <span class="dv">.</span>
+<span class="dk">RUN</span> <span class="da">npm run build</span>                  <span class="dc"># genera dist/</span>
+
+<span class="dc"># ── ETAPA 2: Producción ────────────────────────</span>
+<span class="dk">FROM</span> <span class="dv">node:20-alpine</span> <span class="ds">AS</span> <span class="dv">production</span>
+<span class="dk">WORKDIR</span> <span class="dv">/app</span>
+<span class="dk">COPY</span> <span class="dv">package*.json</span> <span class="dv">.</span>
+<span class="dk">RUN</span> <span class="da">npm ci --only=production</span>       <span class="dc"># solo deps de producción</span>
+<span class="dk">COPY</span> <span class="ds">--from=</span><span class="dv">builder</span> <span class="dv">/app/dist</span> <span class="dv">./dist</span>  <span class="dc"># copia solo el build</span>
+<span class="dk">USER</span> <span class="dv">node</span>
+<span class="dk">EXPOSE</span> <span class="dn">3000</span>
+<span class="dk">CMD</span> [<span class="dv">"node"</span>, <span class="dv">"dist/index.js"</span>]
+
+<span class="dc"># Resultado: imagen sin devDependencies, sin src/, sin herramientas de build</span></pre>
+
+<div class="sec" data-n="R">REACT — BUILD + NGINX</div>
+
+<pre><span class="lang">Dockerfile</span>
+<span class="dc"># ── Build con Node ─────────────────────────────</span>
+<span class="dk">FROM</span> <span class="dv">node:20-alpine</span> <span class="ds">AS</span> <span class="dv">build</span>
+<span class="dk">WORKDIR</span> <span class="dv">/app</span>
+<span class="dk">COPY</span> <span class="dv">package*.json</span> <span class="dv">.</span>
+<span class="dk">RUN</span> <span class="da">npm ci</span>
+<span class="dk">COPY</span> <span class="dv">.</span> <span class="dv">.</span>
+<span class="dk">RUN</span> <span class="da">npm run build</span>                  <span class="dc"># genera dist/ con los HTML/JS/CSS</span>
+
+<span class="dc"># ── Servir con nginx ───────────────────────────</span>
+<span class="dk">FROM</span> <span class="dv">nginx:1.25-alpine</span>
+<span class="dk">COPY</span> <span class="ds">--from=</span><span class="dv">build</span> <span class="dv">/app/dist</span> <span class="dv">/usr/share/nginx/html</span>
+<span class="dk">COPY</span> <span class="dv">nginx.conf</span> <span class="dv">/etc/nginx/conf.d/default.conf</span>
+<span class="dk">EXPOSE</span> <span class="dn">80</span>
+
+<span class="dc"># Imagen final: ~25MB (nginx + HTML estático)</span>
+<span class="dc"># No tiene Node, ni npm, ni node_modules, ni src/</span></pre>
+
+<div class="sec" data-n="G">GO — BUILD + SCRATCH</div>
+
+<pre><span class="lang">Dockerfile</span>
+<span class="dc"># ── Build con Go SDK ───────────────────────────</span>
+<span class="dk">FROM</span> <span class="dv">golang:1.22-alpine</span> <span class="ds">AS</span> <span class="dv">builder</span>
+<span class="dk">WORKDIR</span> <span class="dv">/app</span>
+<span class="dk">COPY</span> <span class="dv">go.mod go.sum</span> <span class="dv">.</span>
+<span class="dk">RUN</span> <span class="da">go mod download</span>
+<span class="dk">COPY</span> <span class="dv">.</span> <span class="dv">.</span>
+<span class="dk">RUN</span> <span class="da">CGO_ENABLED=0 go build -o /server ./cmd/server</span>
+
+<span class="dc"># ── Imagen final: SOLO el binario ──────────────</span>
+<span class="dk">FROM</span> <span class="dv">scratch</span>
+<span class="dk">COPY</span> <span class="ds">--from=</span><span class="dv">builder</span> <span class="dv">/server</span> <span class="dv">/server</span>
+<span class="dk">EXPOSE</span> <span class="dn">8080</span>
+<span class="dk">ENTRYPOINT</span> [<span class="dv">"/server"</span>]
+
+<span class="dc"># Imagen final: ~10-15MB (solo el binario Go compilado)</span>
+<span class="dc"># Sin SO, sin shell, sin nada más. Mínima superficie de ataque.</span></pre>
+
+<div class="insight">
+  <div class="insight-t">💡 Comparativa de tamaño</div>
+  <div class="insight-b">
+    Node sin multi-stage: ~400MB (node_modules + devDependencies + código fuente).<br>
+    Node con multi-stage: ~80MB (solo runtime + producción deps + dist/).<br>
+    React con nginx: ~25MB (solo nginx + HTML/JS/CSS estáticos).<br>
+    Go con scratch: ~12MB (solo el binario compilado).<br><br>
+    Menos tamaño = deploy más rápido + menos superficie de ataque + menos coste de almacenamiento.
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ COMANDOS ═════════ -->
+<div id="tab-comandos" class="tab-panel">
+
+<div class="sec" data-n="I">IMÁGENES</div>
+
+<pre><span class="dc"># Construir imagen desde Dockerfile</span>
+<span class="da">docker build</span> -t mi-app:1.0 .
+<span class="da">docker build</span> -t mi-app:1.0 -f Dockerfile.prod .     <span class="dc"># Dockerfile alternativo</span>
+<span class="da">docker build</span> --no-cache -t mi-app:1.0 .               <span class="dc"># sin caché</span>
+<span class="da">docker build</span> --build-arg VERSION=2.0 -t mi-app:2.0 .  <span class="dc"># con ARG</span>
+
+<span class="dc"># Listar imágenes</span>
+<span class="da">docker images</span>
+<span class="da">docker images</span> | grep mi-app
+
+<span class="dc"># Etiquetar y publicar</span>
+<span class="da">docker tag</span> mi-app:1.0 ghcr.io/usuario/mi-app:1.0
+<span class="da">docker push</span> ghcr.io/usuario/mi-app:1.0
+
+<span class="dc"># Descargar imagen</span>
+<span class="da">docker pull</span> node:20-alpine
+
+<span class="dc"># Borrar imágenes</span>
+<span class="da">docker rmi</span> mi-app:1.0
+<span class="da">docker image prune</span>             <span class="dc"># borrar imágenes huérfanas</span>
+<span class="da">docker image prune -a</span>           <span class="dc"># borrar TODAS las no usadas</span></pre>
+
+<div class="sec" data-n="C">CONTENEDORES</div>
+
+<pre><span class="dc"># Crear y arrancar</span>
+<span class="da">docker run</span> -d -p 3000:3000 --name mi-app mi-app:1.0
+<span class="dc">#  -d         = detached (background)</span>
+<span class="dc">#  -p 3000:3000 = puerto host:contenedor</span>
+<span class="dc">#  --name     = nombre del contenedor</span>
+
+<span class="dc"># Con variables de entorno</span>
+<span class="da">docker run</span> -d -e NODE_ENV=production -e DB_URL=... mi-app:1.0
+<span class="da">docker run</span> -d --env-file .env mi-app:1.0       <span class="dc"># desde fichero</span>
+
+<span class="dc"># Con volumen y red</span>
+<span class="da">docker run</span> -d -v pgdata:/data --network mi-red mi-app:1.0
+
+<span class="dc"># Interactivo (shell dentro del contenedor)</span>
+<span class="da">docker run</span> -it node:20-alpine sh               <span class="dc"># nuevo contenedor</span>
+<span class="da">docker exec</span> -it mi-app sh                      <span class="dc"># contenedor existente</span>
+
+<span class="dc"># Ver estado</span>
+<span class="da">docker ps</span>                                       <span class="dc"># corriendo</span>
+<span class="da">docker ps -a</span>                                    <span class="dc"># todos (incluso parados)</span>
+
+<span class="dc"># Logs</span>
+<span class="da">docker logs</span> mi-app
+<span class="da">docker logs</span> -f mi-app                            <span class="dc"># follow en tiempo real</span>
+<span class="da">docker logs</span> --tail 100 mi-app                   <span class="dc"># últimas 100 líneas</span>
+
+<span class="dc"># Parar / arrancar / reiniciar / borrar</span>
+<span class="da">docker stop</span> mi-app
+<span class="da">docker start</span> mi-app
+<span class="da">docker restart</span> mi-app
+<span class="da">docker rm</span> mi-app                                <span class="dc"># (tiene que estar parado)</span>
+<span class="da">docker rm</span> -f mi-app                              <span class="dc"># forzar borrado</span>
+
+<span class="dc"># Stats en tiempo real (CPU, RAM, red)</span>
+<span class="da">docker stats</span>
+
+<span class="dc"># Copiar ficheros host ↔ contenedor</span>
+<span class="da">docker cp</span> mi-app:/app/logs/error.log ./error.log
+<span class="da">docker cp</span> ./config.json mi-app:/app/config.json
+
+<span class="dc"># Inspeccionar (IP, volúmenes, config completa)</span>
+<span class="da">docker inspect</span> mi-app</pre>
+
+<div class="sec" data-n="L">LIMPIEZA</div>
+
+<pre><span class="dc"># Borrar todo lo no usado (contenedores parados, imágenes huérfanas, redes)</span>
+<span class="da">docker system prune</span>
+
+<span class="dc"># Borrar TODO (incluye imágenes no usadas)</span>
+<span class="da">docker system prune -a</span>
+
+<span class="dc"># Ver cuánto espacio usa Docker</span>
+<span class="da">docker system df</span></pre>
+
+</div>
+
+<!-- ═══════════════════════ CASOS REALES ═════ -->
+<div id="tab-casos" class="tab-panel">
+
+<div class="sec" data-n="1">CASO 1 — STACK FULLSTACK: REACT + NODE + POSTGRES</div>
+
+<pre><span class="lang">docker-compose.yml</span>
+<span class="dk">services</span>:
+  <span class="dk">frontend</span>:
+    <span class="dk">build</span>: <span class="dv">./frontend</span>
+    <span class="dk">ports</span>: [<span class="dv">"3000:80"</span>]
+    <span class="dk">depends_on</span>: [<span class="dv">api</span>]
+
+  <span class="dk">api</span>:
+    <span class="dk">build</span>: <span class="dv">./backend</span>
+    <span class="dk">ports</span>: [<span class="dv">"8000:8000"</span>]
+    <span class="dk">environment</span>:
+      <span class="dg">DATABASE_URL</span>: <span class="dv">postgresql://app:secret@db:5432/myapp</span>
+    <span class="dk">depends_on</span>:
+      <span class="dk">db</span>: { <span class="dk">condition</span>: <span class="dv">service_healthy</span> }
+
+  <span class="dk">db</span>:
+    <span class="dk">image</span>: <span class="dv">postgres:16-alpine</span>
+    <span class="dk">environment</span>:
+      <span class="dg">POSTGRES_DB</span>: <span class="dv">myapp</span>
+      <span class="dg">POSTGRES_USER</span>: <span class="dv">app</span>
+      <span class="dg">POSTGRES_PASSWORD</span>: <span class="dv">secret</span>
+    <span class="dk">volumes</span>: [<span class="dv">pgdata:/var/lib/postgresql/data</span>]
+    <span class="dk">healthcheck</span>:
+      <span class="dk">test</span>: [<span class="dv">"CMD"</span>, <span class="dv">"pg_isready"</span>, <span class="dv">"-U"</span>, <span class="dv">"app"</span>]
+      <span class="dk">interval</span>: <span class="dv">5s</span>
+      <span class="dk">retries</span>: <span class="dn">5</span>
+
+<span class="dk">volumes</span>:
+  <span class="dk">pgdata</span>:</pre>
+
+<div class="sec" data-n="2">CASO 2 — APP LEGACY JAVA (WEBDTE / TOMCAT 5.5)</div>
+
+<pre><span class="lang">Dockerfile</span>
+<span class="dc"># Imagen base con JDK 1.5 + Tomcat 5.5</span>
+<span class="dc"># Para apps legacy que necesitan un entorno antiguo</span>
+<span class="dk">FROM</span> <span class="dv">ubuntu:14.04</span>
+
+<span class="dc"># Instalar JDK 1.5 desde archive</span>
+<span class="dk">RUN</span> <span class="da">apt-get update && apt-get install -y wget</span>
+<span class="dk">ADD</span> <span class="dv">jdk-1_5_0_22.tar.gz /opt/</span>
+<span class="dk">ENV</span> <span class="dg">JAVA_HOME</span>=<span class="dv">/opt/jdk1.5.0_22</span>
+<span class="dk">ENV</span> <span class="dg">PATH</span>=<span class="dv">$JAVA_HOME/bin:$PATH</span>
+
+<span class="dc"># Instalar Tomcat 5.5</span>
+<span class="dk">ADD</span> <span class="dv">apache-tomcat-5.5.36.tar.gz /opt/</span>
+<span class="dk">ENV</span> <span class="dg">CATALINA_HOME</span>=<span class="dv">/opt/apache-tomcat-5.5.36</span>
+
+<span class="dc"># Copiar el WAR del legacy</span>
+<span class="dk">COPY</span> <span class="dv">WebDTE.war</span> <span class="dv">$CATALINA_HOME/webapps/</span>
+
+<span class="dk">EXPOSE</span> <span class="dn">8080</span>
+<span class="dk">CMD</span> [<span class="dv">"catalina.sh"</span>, <span class="dv">"run"</span>]
+
+<span class="dc"># docker-compose.yml con PostgreSQL para el legacy</span>
+<span class="lang">docker-compose.yml</span>
+<span class="dk">services</span>:
+  <span class="dk">legacy</span>:
+    <span class="dk">build</span>: <span class="dv">.</span>
+    <span class="dk">ports</span>: [<span class="dv">"8080:8080"</span>]
+    <span class="dk">depends_on</span>: [<span class="dv">db</span>]
+    <span class="dk">environment</span>:
+      <span class="dg">DB_URL</span>: <span class="dv">jdbc:postgresql://db:5432/webdte</span>
+
+  <span class="dk">db</span>:
+    <span class="dk">image</span>: <span class="dv">postgres:9.6</span>  <span class="dc"># versión compatible con el legacy</span>
+    <span class="dk">environment</span>:
+      <span class="dg">POSTGRES_DB</span>: <span class="dv">webdte</span>
+      <span class="dg">POSTGRES_USER</span>: <span class="dv">webdte</span>
+      <span class="dg">POSTGRES_PASSWORD</span>: <span class="dv">webdte</span>
+    <span class="dk">volumes</span>:
+      - <span class="dv">./seed.sql:/docker-entrypoint-initdb.d/seed.sql</span>
+      - <span class="dv">pgdata:/var/lib/postgresql/data</span>
+
+<span class="dk">volumes</span>:
+  <span class="dk">pgdata</span>:</pre>
+
+<div class="sec" data-n="3">CASO 3 — N8N + OPENCLAW SELF-HOSTED</div>
+
+<pre><span class="lang">docker-compose.yml</span>
+<span class="dk">services</span>:
+  <span class="dk">postgres</span>:
+    <span class="dk">image</span>: <span class="dv">postgres:16-alpine</span>
+    <span class="dk">environment</span>:
+      <span class="dg">POSTGRES_DB</span>: <span class="dv">n8n</span>
+      <span class="dg">POSTGRES_USER</span>: <span class="dv">n8n</span>
+      <span class="dg">POSTGRES_PASSWORD</span>: <span class="dv">${POSTGRES_PASSWORD}</span>
+    <span class="dk">volumes</span>: [<span class="dv">pgdata:/var/lib/postgresql/data</span>]
+
+  <span class="dk">n8n</span>:
+    <span class="dk">image</span>: <span class="dv">n8nio/n8n:latest</span>
+    <span class="dk">ports</span>: [<span class="dv">"5678:5678"</span>]
+    <span class="dk">environment</span>:
+      <span class="dg">DB_TYPE</span>: <span class="dv">postgresdb</span>
+      <span class="dg">DB_POSTGRESDB_HOST</span>: <span class="dv">postgres</span>
+      <span class="dg">DB_POSTGRESDB_USER</span>: <span class="dv">n8n</span>
+      <span class="dg">DB_POSTGRESDB_PASSWORD</span>: <span class="dv">${POSTGRES_PASSWORD}</span>
+      <span class="dg">N8N_HOST</span>: <span class="dv">${N8N_HOST}</span>
+      <span class="dg">WEBHOOK_URL</span>: <span class="dv">https://${N8N_HOST}/</span>
+    <span class="dk">depends_on</span>: [<span class="dv">postgres</span>]
+    <span class="dk">restart</span>: <span class="dv">unless-stopped</span>
+
+  <span class="dk">openclaw</span>:
+    <span class="dk">image</span>: <span class="dv">openclaw/openclaw:latest</span>
+    <span class="dk">ports</span>: [<span class="dv">"3000:3000"</span>]
+    <span class="dk">environment</span>:
+      <span class="dg">ANTHROPIC_API_KEY</span>: <span class="dv">${ANTHROPIC_API_KEY}</span>
+    <span class="dk">volumes</span>:
+      - <span class="dv">./openclaw-data:/root/.openclaw</span>
+    <span class="dk">restart</span>: <span class="dv">unless-stopped</span>
+
+  <span class="dk">nginx</span>:
+    <span class="dk">image</span>: <span class="dv">nginx:1.25-alpine</span>
+    <span class="dk">ports</span>: [<span class="dv">"80:80"</span>, <span class="dv">"443:443"</span>]
+    <span class="dk">volumes</span>:
+      - <span class="dv">./nginx.conf:/etc/nginx/conf.d/default.conf</span>
+      - <span class="dv">./certs:/etc/nginx/certs</span>
+    <span class="dk">depends_on</span>: [<span class="dv">n8n</span>, <span class="dv">openclaw</span>]
+
+<span class="dk">volumes</span>:
+  <span class="dk">pgdata</span>:</pre>
+
+</div>
+
+<!-- ═══════════════════════ ENLACES ══════════ -->
+<div id="tab-enlaces" class="tab-panel">
+
+<div class="sec" data-n="D">DOCUMENTACIÓN OFICIAL</div>
+
+<div class="link-grid">
+  <a href="https://docs.docker.com/" target="_blank" class="link-card">
+    <div class="lc-t">📘 Docker Docs</div>
+    <div class="lc-d">La documentación oficial completa. Referencia de Dockerfile, CLI, Compose, networking, storage.</div>
+    <div class="lc-u">docs.docker.com</div>
+  </a>
+  <a href="https://docs.docker.com/reference/dockerfile/" target="_blank" class="link-card">
+    <div class="lc-t">📄 Dockerfile Reference</div>
+    <div class="lc-d">Todas las instrucciones del Dockerfile con ejemplos detallados. La referencia definitiva.</div>
+    <div class="lc-u">docs.docker.com/reference/dockerfile</div>
+  </a>
+  <a href="https://docs.docker.com/compose/compose-file/" target="_blank" class="link-card">
+    <div class="lc-t">🔧 Compose Specification</div>
+    <div class="lc-d">La especificación completa de docker-compose.yml: services, volumes, networks, configs, secrets.</div>
+    <div class="lc-u">docs.docker.com/compose/compose-file</div>
+  </a>
+  <a href="https://docs.docker.com/build/building/best-practices/" target="_blank" class="link-card">
+    <div class="lc-t">✅ Best Practices</div>
+    <div class="lc-d">Guía oficial de buenas prácticas para Dockerfile: capas, caché, multi-stage, seguridad.</div>
+    <div class="lc-u">docs.docker.com/build/building/best-practices</div>
+  </a>
+</div>
+
+<div class="sec" data-n="R">REGISTRIES — DÓNDE BUSCAR IMÁGENES</div>
+
+<div class="link-grid">
+  <a href="https://hub.docker.com/" target="_blank" class="link-card">
+    <div class="lc-t">🐳 Docker Hub</div>
+    <div class="lc-d">El registry público por defecto. Imágenes oficiales de Node, Python, PostgreSQL, Redis, nginx. Buscar con filtro "Official Image".</div>
+    <div class="lc-u">hub.docker.com</div>
+  </a>
+  <a href="https://github.com/features/packages" target="_blank" class="link-card">
+    <div class="lc-t">📦 GitHub Container Registry (GHCR)</div>
+    <div class="lc-d">Registry de GitHub. Privado gratis para repos privados. Integrado con GitHub Actions. Dominio: <code>ghcr.io</code>.</div>
+    <div class="lc-u">ghcr.io</div>
+  </a>
+  <a href="https://quay.io/" target="_blank" class="link-card">
+    <div class="lc-t">🔴 Quay.io</div>
+    <div class="lc-d">Registry de Red Hat. Análisis de vulnerabilidades integrado. Usado en entornos enterprise.</div>
+    <div class="lc-u">quay.io</div>
+  </a>
+  <a href="https://gallery.ecr.aws/" target="_blank" class="link-card">
+    <div class="lc-t">☁️ Amazon ECR Public</div>
+    <div class="lc-d">Imágenes públicas de AWS. Alternativa a Docker Hub sin límites de pull rate.</div>
+    <div class="lc-u">gallery.ecr.aws</div>
+  </a>
+</div>
+
+<div class="sec" data-n="H">HERRAMIENTAS Y UTILIDADES</div>
+
+<div class="link-grid">
+  <a href="https://www.docker.com/products/docker-desktop/" target="_blank" class="link-card">
+    <div class="lc-t">🖥️ Docker Desktop</div>
+    <div class="lc-d">GUI para gestionar contenedores, imágenes y volúmenes. Incluye Docker Engine, CLI, Compose, Kubernetes. Gratis para uso personal.</div>
+    <div class="lc-u">docker.com/products/docker-desktop</div>
+  </a>
+  <a href="https://podman.io/" target="_blank" class="link-card">
+    <div class="lc-t">🦭 Podman</div>
+    <div class="lc-d">Alternativa a Docker sin daemon. Compatible con la misma CLI y Dockerfiles. Open source. Sin licencia comercial.</div>
+    <div class="lc-u">podman.io</div>
+  </a>
+  <a href="https://orbstack.dev/" target="_blank" class="link-card">
+    <div class="lc-t">🚀 OrbStack (macOS)</div>
+    <div class="lc-d">Alternativa ultrarrápida a Docker Desktop en Mac. Arranque en 2 segundos, menos RAM, mejor rendimiento de filesystem.</div>
+    <div class="lc-u">orbstack.dev</div>
+  </a>
+  <a href="https://lazydocker.com/" target="_blank" class="link-card">
+    <div class="lc-t">🦥 Lazydocker</div>
+    <div class="lc-d">TUI (terminal UI) para gestionar Docker. Ver contenedores, logs, stats, exec — todo desde la terminal sin escribir comandos.</div>
+    <div class="lc-u">github.com/jesseduffield/lazydocker</div>
+  </a>
+  <a href="https://dive.dev/" target="_blank" class="link-card">
+    <div class="lc-t">🔍 Dive</div>
+    <div class="lc-d">Analiza las capas de tu imagen Docker. Ve cuánto espacio ocupa cada instrucción del Dockerfile. Identifica lo que puedes optimizar.</div>
+    <div class="lc-u">github.com/wagoodman/dive</div>
+  </a>
+  <a href="https://docs.docker.com/scout/" target="_blank" class="link-card">
+    <div class="lc-t">🛡️ Docker Scout</div>
+    <div class="lc-d">Análisis de vulnerabilidades de imágenes. Integrado en Docker Desktop y CLI. <code>docker scout quickview mi-imagen</code>.</div>
+    <div class="lc-u">docs.docker.com/scout</div>
+  </a>
+</div>
+
+<div class="sec" data-n="A">APRENDER MÁS</div>
+
+<div class="link-grid">
+  <a href="https://docs.docker.com/get-started/" target="_blank" class="link-card">
+    <div class="lc-t">🎓 Get Started (Docker oficial)</div>
+    <div class="lc-d">Tutorial paso a paso del equipo de Docker. Cubre imagen, contenedor, compose, multi-stage en ~2 horas.</div>
+    <div class="lc-u">docs.docker.com/get-started</div>
+  </a>
+  <a href="https://github.com/veggiemonk/awesome-docker" target="_blank" class="link-card">
+    <div class="lc-t">⭐ Awesome Docker</div>
+    <div class="lc-d">Lista curada de recursos, herramientas, libros y artículos sobre Docker. Actualizada por la comunidad.</div>
+    <div class="lc-u">github.com/veggiemonk/awesome-docker</div>
+  </a>
+  <a href="https://labs.play-with-docker.com/" target="_blank" class="link-card">
+    <div class="lc-t">🎮 Play with Docker</div>
+    <div class="lc-d">Entorno Docker en el navegador sin instalar nada. 4 horas de sesión gratuita. Ideal para practicar sin tocar tu máquina.</div>
+    <div class="lc-u">labs.play-with-docker.com</div>
+  </a>
+</div>
+
+</div>
+
+</div>
+<script>function st(id){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');event.target.classList.add('active')}</script>
+</body>
+</html>
