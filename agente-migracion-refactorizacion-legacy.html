@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente de Migración y Refactorización de Apps Web Legacy - Motor Multi-Agente en Claude Code</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;
+    --ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;
+    --accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;
+    --yellow:#e8a020;--purple:#7a3acd;
+    --mono:'IBM Plex Mono',monospace;
+    --display:'IBM Plex Mono',monospace
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1180px;margin:0 auto;padding:48px 28px 100px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  ::selection{background:var(--accent);color:var(--bg)}
+
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:32px}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--display);font-size:clamp(24px,4.5vw,44px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.8}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}
+  .badge.o{color:var(--accent);border-color:var(--accent)}
+  .badge.g{color:var(--accent2);border-color:var(--accent2)}
+  .badge.b{color:var(--accent3);border-color:var(--accent3)}
+  .badge.p{color:var(--purple);border-color:var(--purple)}
+  .badge.y{color:var(--yellow);border-color:var(--yellow)}
+
+  .tabs-wrap{position:sticky;top:0;background:var(--bg);z-index:50;padding:8px 0;margin-bottom:36px;border-bottom:2px solid var(--ink)}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;width:100%;flex-wrap:wrap;background:var(--surface)}
+  .mode-btn{font-family:var(--mono);font-size:10px;font-weight:600;padding:9px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.6px;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}
+  .mode-panel.active{display:block;animation:fadeUp .4s ease both}
+
+  .sec-title{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+
+  .callout{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout strong{display:block;margin-bottom:4px}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}
+  .callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}
+  .callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}
+  .callout.blue strong{color:var(--accent3)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}
+  .callout.yellow strong{color:var(--yellow)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}
+  .callout.purple strong{color:var(--purple)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:14px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+  .vtable td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td code{background:rgba(0,0,0,.07);padding:1px 6px;border-radius:2px;font-size:11px;white-space:nowrap}
+
+  .comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:14px 0}
+  .comp-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden}
+  .comp-header{padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .comp-header.good{background:rgba(42,110,78,.1);color:var(--accent2)}
+  .comp-header.alt{background:rgba(26,74,138,.1);color:var(--accent3)}
+  .comp-header.bad{background:rgba(193,68,14,.1);color:var(--accent)}
+  .comp-header.purple{background:rgba(122,58,205,.1);color:var(--purple)}
+  .comp-header.yellow{background:rgba(232,160,32,.1);color:var(--yellow)}
+  .comp-content{padding:14px;font-size:12px;line-height:1.7;color:var(--ink2)}
+  .comp-content code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+
+  .step-flow{display:flex;flex-direction:column;gap:0;margin:14px 0}
+  .step{display:flex;gap:0;align-items:stretch}
+  .step-num{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .step-circle{width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+  .step-circle.o{background:var(--accent)}
+  .step-circle.g{background:var(--accent2)}
+  .step-circle.b{background:var(--accent3)}
+  .step-circle.p{background:var(--purple)}
+  .step-circle.y{background:var(--yellow);color:var(--ink)}
+  .step-line{width:2px;background:var(--border);flex:1;margin:4px auto}
+  .step:last-child .step-line{display:none}
+  .step-body{padding:0 0 20px 16px;flex:1}
+  .step-title{font-weight:700;font-size:12.5px;margin-bottom:6px}
+  .step-desc{font-size:12px;color:var(--ink2);line-height:1.7}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:14px 0}
+  .stat-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+  .stat-num{font-family:var(--display);font-size:32px;font-weight:700;line-height:1}
+  .stat-num.o{color:var(--accent)}
+  .stat-num.g{color:var(--accent2)}
+  .stat-num.b{color:var(--accent3)}
+  .stat-num.p{color:var(--purple)}
+  .stat-num.y{color:var(--yellow)}
+  .stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+
+  /* THESIS BOX */
+  .thesis-box{background:var(--ink);color:var(--bg);border-radius:8px;padding:28px 32px;margin:24px 0;position:relative;overflow:hidden}
+  .thesis-box::before{content:'TESIS';position:absolute;top:12px;right:16px;font-size:9px;font-weight:700;letter-spacing:3px;color:var(--accent);opacity:.8}
+  .thesis-box p{font-size:14px;line-height:1.7;color:var(--bg);font-weight:600}
+  .thesis-box .attribution{font-size:10px;color:var(--muted);margin-top:12px;letter-spacing:1px}
+
+  p{font-size:12px;line-height:1.7;color:var(--ink2);margin:10px 0}
+  p code,li code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+  ul,ol{margin:10px 0 10px 20px;font-size:12px;color:var(--ink2);line-height:1.8}
+
+  .scroll-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:var(--ink);color:var(--bg);border:none;border-radius:50%;cursor:pointer;font-size:18px;font-weight:700;display:none;align-items:center;justify-content:center;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:transform .15s}
+  .scroll-top.visible{display:flex}
+  .scroll-top:hover{transform:translateY(-2px)}
+
+  @media print{
+    .tabs-wrap,.scroll-top{display:none!important}
+    .mode-panel{display:block!important;page-break-before:always}
+    .mode-panel:first-child{page-break-before:auto}
+    body::after{display:none}body{background:#fff}
+  }
+  @media(max-width:720px){
+    .comp-grid{grid-template-columns:1fr}
+    .mode-btn{flex:0 0 auto;font-size:9px;padding:7px 9px}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .container{padding:24px 16px 80px}
+  }
+</style>
+<style>
+.flow-box{background:var(--surface);border:2px solid var(--ink);border-radius:6px;padding:12px 16px;margin:8px 0;font-size:12px;line-height:1.6}
+.big-quote{font-family:var(--display);font-size:clamp(15px,2.5vw,22px);line-height:1.5;color:var(--ink);border-left:5px solid var(--accent);padding:16px 22px;margin:20px 0;background:rgba(193,68,14,.04)}
+.num-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+.num-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.num-val{font-family:var(--display);font-size:28px;font-weight:700;line-height:1}
+.num-val.o{color:var(--accent)}.num-val.g{color:var(--accent2)}.num-val.b{color:var(--accent3)}.num-val.p{color:var(--purple)}.num-val.y{color:var(--yellow)}
+.num-lab{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.step-row{display:flex;gap:12px;align-items:flex-start;margin:10px 0}
+.step-dot{width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.step-dot.o{background:var(--accent)}.step-dot.g{background:var(--accent2)}.step-dot.b{background:var(--accent3)}.step-dot.p{background:var(--purple)}.step-dot.y{background:var(--yellow);color:var(--ink)}
+.step-txt{font-size:12px;line-height:1.7;color:var(--ink2);padding-top:4px}
+.step-txt strong{color:var(--ink)}
+.diagram-wrap{background:var(--surface);border:2px solid var(--ink);border-radius:8px;padding:20px;margin:16px 0;overflow-x:auto}
+.diagram-cap{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:700}
+.mermaid{font-family:var(--mono)!important}
+.mermaid text{font-family:var(--mono)!important}
+</style>
+
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">FMI - Framework de Migración de Intención</div>
+  <h1>Agente de Migración y<br>Refactorización de <em>Apps Web Legacy</em></h1>
+  <div class="subtitle">
+    Un motor multi-agente sobre Claude Code para migrar y refactorizar<br>
+    aplicaciones web legacy a partir de su semántica, con calidad por construcción<br>
+    Trabajo Fin de Master - Master en Desarrollo con Inteligencia Artificial
+  </div>
+  <div class="badge-row">
+    <span class="badge o">Semántica</span>
+    <span class="badge g">Planificación</span>
+    <span class="badge b">MOTOR MULTI-AGENTE</span>
+    <span class="badge p">CALIDAD POR Construcción</span>
+    <span class="badge y">CLAUDE CODE</span>
+  </div>
+</header>
+
+<div class="tabs-wrap">
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="sw(this,'p1')">IDEA</button>
+  <button class="mode-btn" onclick="sw(this,'p2')">Semántica</button>
+  <button class="mode-btn" onclick="sw(this,'p3')">PLAN</button>
+  <button class="mode-btn" onclick="sw(this,'p4')">MOTOR</button>
+  <button class="mode-btn" onclick="sw(this,'p5')">CALIDAD</button>
+  <button class="mode-btn" onclick="sw(this,'p6')">RECURSOS</button>
+  <button class="mode-btn" onclick="sw(this,'p7')">ROBUSTEZ</button>
+  <button class="mode-btn" onclick="sw(this,'p8')">VENTAJAS</button>
+  <button class="mode-btn" onclick="sw(this,'p9')">APLICABILIDAD</button>
+  <button class="mode-btn" onclick="sw(this,'p10')">SINTESIS</button>
+</div>
+</div>
+
+<!-- ════════════════ P1 IDEA ════════════════ -->
+<div id="p1" class="mode-panel active">
+  <div class="sec-title" data-n="!">LA IDEA ORIGINAL</div>
+
+  <div class="big-quote">
+    El sistema separa la semántica de la implementación, planifica el proceso según la complejidad del proyecto, y ejecuta cada fase con un motor multi-agente que garantiza calidad por construcción y optimiza recursos por diseño.
+  </div>
+
+  <div class="sec-title" data-n="01">EL PROBLEMA</div>
+
+  <p>Migrar o refactorizar una aplicación web legacy es uno de los problemas más caros y arriesgados de la ingeniería del software. El código legacy tiene la logica de negocio mezclada con la implementación: acceso a datos dentro de los controladores, reglas de negocio junto a la respuesta HTTP, validaciones dispersas. Con el tiempo, nadie sabe ya exactamente que hace el sistema, solo que funciona.</p>
+
+  <p>Los enfoques tradicionales fallan porque intentan migrar el COMO (la implementación) en lugar del QUE (la semántica). Reescriben módulo por módulo copiando el acoplamiento original. El resultado es código nuevo con los problemas viejos.</p>
+
+  <div class="callout orange">
+    <strong>La inversión conceptual</strong>
+    No se migra código. Se extrae la Intención del sistema (que hace, que reglas cumple, que flujos ejecuta) y se reconstruye en el stack destino. El código legacy es solo evidencia de la intención, no la intención misma. De ahi el nombre: FMI, Framework de Migración de Intención.
+  </div>
+
+  <div class="sec-title" data-n="02">QUE ES ESTE SISTEMA</div>
+
+  <p>Es un agente de migración y refactorización que funciona sobre Claude Code. No es una herramienta con interfaz ni un framework con código: es un procedimiento descrito en tres documentos Markdown que Claude Code interpreta y ejecuta. Orquesta multiples subagentes de IA, cada uno especializado, coordinados para producir código migrado con arquitectura limpia, tests y seguridad verificada.</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-cap">Arquitectura de 3 capas de abstracción</div>
+    <div class="mermaid">
+graph TD
+    U[Desarrollador] -->|escribe| PR[Prompt de Lanzamiento<br/>Define stack destino + constraints + seguridad]
+    PR --> PL[Plan de Migración Multi-Fase<br/>Estrategia: escaneo, fases, dependencias]
+    PL -->|invoca por cada fase| MO[Motor de Ejecución<br/>Batch multi-agente paralelo genérico]
+    MO --> AR[Código migrado<br/>arquitectura limpia + tests + seguridad verificados]
+    style PR fill:#f0ebe0,stroke:#c1440e,stroke-width:2px
+    style PL fill:#f0ebe0,stroke:#2a6e4e,stroke-width:2px
+    style MO fill:#f0ebe0,stroke:#1a4a8a,stroke-width:2px
+    style AR fill:#e0e0d0,stroke:#1a1410,stroke-width:2px
+    </div>
+  </div>
+
+  <table class="vtable">
+    <tr><th>Documento</th><th>Nivel</th><th>Responsabilidad</th><th>Agnostico de</th></tr>
+    <tr><td>Prompt de Lanzamiento</td><td>Prompt</td><td>Define stack destino, constraints y reglas de seguridad</td><td>Nada (es el input del usuario)</td></tr>
+    <tr><td>Plan de Migración</td><td>Plan</td><td>Estrategia: escaneo, fases, orden, dependencias</td><td>Lenguaje destino</td></tr>
+    <tr><td>Motor de Ejecución</td><td>Motor</td><td>Ejecuta cada fase con workers supervisados</td><td>Dominio, lenguaje, arquitectura</td></tr>
+  </table>
+
+  <div class="callout green">
+    <strong>Cero infraestructura</strong>
+    Todo el sistema son tres archivos Markdown interpretados por Claude Code. Sin frameworks, sin código de orquestación, sin dependencias que instalar. El sistema es versionable en Git, auditable y reproducible. La arquitectura vive en el lenguaje natural estructurado, no en código de infraestructura.
+  </div>
+
+  <div class="sec-title" data-n="03">LAS TRES Contribuciones</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">1. Semántica SOBRE Implementación</div>
+      <div class="comp-content">
+        Se extrae QUE hace el legacy, no COMO lo hace. El resultado es una representación semántica compacta y re-targeteable a cualquier stack. La implementación destino la decide el prompt, no el legacy.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header alt">2. Planificación POR COMPLEJIDAD</div>
+      <div class="comp-content">
+        El proceso no es fijo. Un escaneo analiza el proyecto y decide las fases según su complejidad real. El plan se adapta al proyecto, no al reves.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">3. MOTOR MULTI-AGENTE</div>
+      <div class="comp-content">
+        Cada fase se ejecuta con un motor batch paralelo que garantiza calidad por construcción (no por revision) y optimiza recursos por diseño (modelo adecuado por rol, contexto mínimo, cero redundancia).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ P2 Semántica ════════════════ -->
+<div id="p2" class="mode-panel">
+  <div class="sec-title" data-n="01">SEPARAR EL QUE DEL COMO</div>
+
+  <p>La primera contribución del sistema es tratar la semántica del legacy como un artefacto extraible e independiente de su implementación. Esto se materializa en un artefacto compacto llamado DIGEST.</p>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">EL COMO (implementación legacy)</div>
+      <div class="comp-content">
+        Código acoplado: acceso a datos concatenando consultas, sesiones gestionadas de forma insegura, credenciales en texto plano, respuestas con redirecciones. Obsoleto e inseguro. <strong>Se descarta.</strong>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">EL QUE (semántica - DIGEST)</div>
+      <div class="comp-content">
+        La intención del sistema: que entidades maneja, que reglas de negocio aplica, que flujos ejecuta, que contratos expone. Independiente de cualquier tecnología. <strong>Se conserva.</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="02">COMO EL PLAN OBTIENE LA Semántica</div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-cap">Pipeline de extracción semántica</div>
+    <div class="mermaid">
+graph LR
+    L[Código legacy<br/>acoplado<br/>sin documentar] -->|escaneo único| S[Estructura<br/>Contexto<br/>Hallazgos de seguridad]
+    S -->|META-ARQUITECTO| LENS{Lente de<br/>4 capas}
+    LENS --> D[DIGEST<br/>semántica pura<br/>re-targeteable]
+    D -->|prompt stack A| A[Migración stack A]
+    D -->|prompt stack B| B[Migración stack B]
+    D -->|prompt stack C| C[Migración stack C]
+    style L fill:#f5d5c5,stroke:#c1440e
+    style D fill:#d5e8d5,stroke:#2a6e4e,stroke-width:3px
+    style LENS fill:#e0d5f0,stroke:#7a3acd
+    </div>
+  </div>
+
+  <p>El proceso de extracción tiene dos pasos. Primero, un escaneo lee el legacy una sola vez y produce tres documentos: la estructura del código, el contexto (esquema de datos, patrones, mapeo de dominio) y los hallazgos de seguridad. Después, un agente META-ARQUITECTO analiza esos documentos y destila la semántica aplicando una lente de clasificación.</p>
+
+  <div class="sec-title" data-n="03">LA LENTE DE 4 CAPAS</div>
+
+  <p>El META-ARQUITECTO clasifica cada fragmento de código del legacy en una de cuatro categorias semanticas. Es fundamental entender que las 4 capas NO son la arquitectura destino: son el método de clasificación, la lente de análisis.</p>
+
+  <table class="vtable">
+    <tr><th>Capa</th><th>Que captura</th><th>Naturaleza</th></tr>
+    <tr><td>DOMAIN</td><td>Negocio puro: entidades, invariantes, reglas, interfaces</td><td>Que ES el sistema</td></tr>
+    <tr><td>APPLICATION</td><td>Orquestación: casos de uso, flujos, coordinación entre entidades</td><td>Que HACE el sistema</td></tr>
+    <tr><td>INFRASTRUCTURE</td><td>Adaptadores: persistencia, hashing, sesión, configuracion</td><td>Con que SE APOYA</td></tr>
+    <tr><td>TRANSPORT</td><td>Interfaz externa: controladores, filtros, respuesta HTTP</td><td>Como SE COMUNICA</td></tr>
+  </table>
+
+  <div class="callout purple">
+    <strong>Por que 4 capas: el DIGEST como Forma Normal</strong>
+    Cuatro capas es la resolucion mínima para capturar la semántica completa sin perdida de información. Es el equivalente conceptual a normalizar una base de datos a la cuarta forma normal. Desde una representación en 4 capas se puede generar cualquier vista derivada (3 capas fusionando, microservicios agrupando por contexto). Pero si la extracción se hace directamente en 3 capas, se fusionan domain y application y se pierde la frontera entre las reglas de negocio y su orquestación. Esa información no se recupera. Extraer en 4 capas es la forma normal: completa y re-targeteable.
+  </div>
+
+  <div class="sec-title" data-n="04">EL DIGEST: Semántica COMPRIMIDA</div>
+
+  <div class="flow-box">
+DOMAIN: Entidades, Interfaces de repositorio, Reglas de negocio, Invariantes<br>
+APPLICATION: Casos de uso, Flujos, Orquestación entre componentes<br>
+INFRASTRUCTURE: Estrategia de persistencia, Gestión de sesión, Seguridad<br>
+TRANSPORT: Endpoints, Forma de la respuesta, Filtros
+  </div>
+
+  <p>El DIGEST es una representación compacta, de aproximadamente 2.000 tokens, que captura toda la semántica del legacy. Es la fuente de verdad que consumen todos los agentes del sistema. Ningun agente necesita volver a leer el código legacy original: el DIGEST contiene la intención destilada.</p>
+
+  <div class="callout green">
+    <strong>Por que la extracción es correcta</strong>
+    La validez de la extracción semántica se demuestra por re-targetabilidad: a partir de un mismo DIGEST, cambiando unicamente el prompt, el sistema produce migraciones completas y funcionales a stacks tecnologicos radicalmente distintos. Si el DIGEST no capturara la semántica de forma correcta y completa, una migración a un stack distinto del original fallaria. Que no falle es la prueba de que la semántica se ha extraido bien: el DIGEST contiene el QUE, el prompt define el COMO.
+  </div>
+</div>
+
+<!-- ════════════════ P3 PLAN ════════════════ -->
+<div id="p3" class="mode-panel">
+  <div class="sec-title" data-n="01">EL PLAN: DECIDIR QUE EJECUTAR Y EN QUE ORDEN</div>
+
+  <p>El Plan de Migración Multi-Fase es la capa de estrategia. No genera código: decide como debe estructurarse la refactorización. Su principio fundamental es que el proceso se adapta a la complejidad del proyecto, no al reves.</p>
+
+  <div class="sec-title" data-n="02">DIAGRAMA DE SECUENCIA DEL PLAN</div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-cap">Estrategia de migración completa</div>
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant P as Plan
+    participant MO as Motor
+    participant DK as Disco
+
+    Note over P,DK: PRE-FLIGHT
+    P->>DK: Crear directorio de ejecución + configuracion
+
+    Note over P,DK: ESCANEO DEL LEGACY (una sola vez)
+    P->>MO: tarea: escanear legacy
+    MO->>DK: estructura + contexto + hallazgos de seguridad
+    MO-->>P: propuesta de fases según complejidad
+
+    Note over P,DK: META-ARQUITECTO (único paso estratégico)
+    P->>MO: tarea: destilar semántica
+    MO->>DK: DIGEST + arquitectura destino + plan de fases
+    MO-->>P: plan de fases + grafo de dependencias
+
+    Note over P,DK: FASES DE INTERFAZ (secuencial por dependencia)
+    P->>MO: fase de interfaz + directorio de tarea
+    MO->>DK: artefactos + registros
+
+    Note over P,DK: ESCANEO INTERMEDIO (obligatorio)
+    P->>DK: leer interfaz real generada, congelar contrato de API
+
+    Note over P,DK: FASES DE NUCLEO (paralelo si son independientes)
+    par Fases concurrentes
+        P->>MO: fase A
+        MO->>DK: artefactos A
+    and
+        P->>MO: fase B
+        MO->>DK: artefactos B
+    end
+
+    Note over P,DK: Certificación FINAL
+    P->>DK: verificar Definición de Terminado + certificación
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="03">EL FLUJO PASO A PASO</div>
+
+  <div class="step-row"><div class="step-dot b">1</div><div class="step-txt"><strong>PRE-FLIGHT.</strong> Validar el código origen. Crear la estructura de trabajo. Escribir la configuracion de la ejecución.</div></div>
+  <div class="step-row"><div class="step-dot g">2</div><div class="step-txt"><strong>ESCANEO DEL LEGACY.</strong> El Motor lee el código legacy una sola vez y produce tres documentos: estructura, contexto y hallazgos de seguridad. El escaneo propone las fases según la complejidad detectada.</div></div>
+  <div class="step-row"><div class="step-dot o">3</div><div class="step-txt"><strong>META-ARQUITECTO.</strong> Único paso estratégico, ejecutado una sola vez con el modelo más capaz. Destila el DIGEST, define la arquitectura destino, prepara la configuracion de compilación base y concreta el plan de fases con sus criterios de calidad.</div></div>
+  <div class="step-row"><div class="step-dot p">4</div><div class="step-txt"><strong>BUCLE DE FASES.</strong> Cada fase es una invocacion al Motor. Las fases sin dependencias entre si se lanzan en paralelo según el grafo de dependencias. Cada fase tiene su propio directorio de trabajo.</div></div>
+  <div class="step-row"><div class="step-dot p">5</div><div class="step-txt"><strong>ESCANEO INTERMEDIO.</strong> Entre la capa de interfaz y la capa de nucleo. Lee la interfaz realmente generada, extrae los contratos exactos y los congela. El nucleo se construye implementando exactamente esos contratos.</div></div>
+  <div class="step-row"><div class="step-dot g">6</div><div class="step-txt"><strong>Certificación FINAL.</strong> Verificación global, compilación completa, arranque, flujos críticos automatizados. La Definición de Terminado exige todas las condiciones cumplidas simultaneamente.</div></div>
+
+  <div class="sec-title" data-n="04">Planificación ADAPTATIVA POR COMPLEJIDAD</div>
+
+  <p>El número y la naturaleza de las fases no están predefinidos. El escaneo analiza el proyecto real y propone una descomposición en fases proporcionada a su complejidad. Un proyecto simple puede resolverse en tres fases; uno complejo puede requerir seis. El sistema se ajusta a lo que encuentra.</p>
+
+  <div class="callout blue">
+    <strong>Paralelismo basado en grafo de dependencias</strong>
+    El META-ARQUITECTO declara las dependencias entre fases como un grafo dirigido acíclico. Las fases sin aristas entre si se lanzan concurrentemente. El sistema verifica el paralelismo real: si dos fases declaradas independientes no presentan intervalos de tiempo solapados en la telemetría, significa que la ejecución degrado a secuencial, y eso se considera un fallo de certificación. El paralelismo no es una sugerencia, es un invariante verificable.
+  </div>
+
+  <div class="sec-title" data-n="05">CONTRATOS DIRIGIDOS POR EL CONSUMIDOR</div>
+
+  <p>El Plan resuelve el problema clasico de desalineacion entre la capa de interfaz y la de nucleo con un orden deliberado: la interfaz se genera primero y define los contratos que necesita. El escaneo intermedio los congela como fuente de verdad. El nucleo se construye implementando exactamente esos contratos. El desacoplamiento entre capas es total y verificado: cambiar una capa no obliga a tocar la otra.</p>
+</div>
+
+<!-- ════════════════ P4 MOTOR ════════════════ -->
+<div id="p4" class="mode-panel">
+  <div class="sec-title" data-n="01">EL MOTOR: EJECUTAR UNA FASE CON GARANTIAS</div>
+
+  <p>El Motor de Ejecución es un motor batch paralelo genérico. No sabe que es una migración, ni un test, ni una capa arquitectonica. Recibe una especificacion de tarea y produce artefactos supervisados. Es la pieza reutilizable del sistema: el mismo Motor ejecuta cualquier fase de cualquier proyecto.</p>
+
+  <div class="sec-title" data-n="02">DIAGRAMA DE SECUENCIA DEL MOTOR</div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-cap">Pipeline del Motor con liberacion de contexto</div>
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant E as Ejecutor
+    participant A as Arquitecto
+    participant W as Workers xN
+    participant SM as Smoke
+    participant V as Verificador
+    participant DK as Disco
+
+    Note over E,DK: PRE-FLIGHT
+    E->>DK: crear directorio de tarea + seguimiento de fase
+
+    Note over E,DK: ARQUITECTO (decide olas + plan de workers)
+    E->>A: especificacion de tarea
+    A->>DK: plano de workers + configuracion de compilación
+    A--xE: contexto del Arquitecto LIBERADO
+
+    Note over E,DK: OLEADA 1 (N workers en paralelo)
+    E->>W: contratos individuales (~500 tokens c/u)
+    W->>DK: artefactos generados
+    W--xE: contexto de cada worker LIBERADO
+
+    Note over E,DK: GATE (solo si hay 2 olas)
+    E->>DK: verificar criterios sobre la especificacion
+    Note over E: un fallo bloquea la Oleada 2
+
+    Note over E,DK: OLEADA 2 (N workers en paralelo)
+    E->>W: contratos + especificacion de la Oleada 1
+    W->>DK: código final
+    W--xE: contexto de cada worker LIBERADO
+
+    Note over E,DK: SMOKE (verificación estática barata)
+    E->>SM: lanzar checks
+    SM->>DK: informe de checks
+    Note over SM: 100% requerido, bloquea al Verificador
+
+    Note over E,DK: VERIFICADOR
+    E->>V: iniciar
+    V->>V: compilar + testear + construir + arrancar
+    V->>DK: informe de verificación
+
+    Note over E,DK: REPORTE
+    E->>DK: verificar registros + resumen final
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="03">LOS 5 ROLES Y SUS MODELOS</div>
+
+  <p>El Motor distribuye el trabajo entre cinco roles, cada uno con un modelo de IA adecuado a su función. Esta es una decisión de optimización: no todos los roles necesitan el modelo más potente.</p>
+
+  <table class="vtable">
+    <tr><th>Rol</th><th>Modelo</th><th>Función</th><th>Contexto</th></tr>
+    <tr><td>Arquitecto</td><td>Opus / Sonnet</td><td>Decide número de olas, plan de workers, contratos y configuracion de compilación</td><td>~35K</td></tr>
+    <tr><td>Capataz</td><td>Sonnet</td><td>Coordina las oleadas, ejecuta el GATE, consolida la telemetría</td><td>~5K</td></tr>
+    <tr><td>Worker</td><td>Sonnet</td><td>Genera un artefacto concreto según su contrato</td><td>~3K</td></tr>
+    <tr><td>Smoke</td><td>Haiku</td><td>Verificación estática sobre el código final</td><td>~600</td></tr>
+    <tr><td>Verificador</td><td>Sonnet</td><td>Compila, testea, construye y arranca</td><td>~2K</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="04">EL FLUJO DEL MOTOR PASO A PASO</div>
+
+  <div class="step-row"><div class="step-dot b">1</div><div class="step-txt"><strong>PRE-FLIGHT.</strong> El Ejecutor crea el directorio de la tarea y el documento de seguimiento de fase.</div></div>
+  <div class="step-row"><div class="step-dot o">2</div><div class="step-txt"><strong>ARQUITECTO.</strong> Lee la especificacion de la tarea. Decide el número de olas, cuantos workers en paralelo, el contrato de cada uno, y los criterios de verificación. Genera la configuracion de compilación.</div></div>
+  <div class="step-row"><div class="step-dot p">3</div><div class="step-txt"><strong>OLEADA 1.</strong> N workers en paralelo, lanzados en un solo despacho. Con una sola ola generan el artefacto final; con dos olas generan la especificacion ejecutable.</div></div>
+  <div class="step-row"><div class="step-dot y">4</div><div class="step-txt"><strong>GATE.</strong> Solo si hay dos olas. Verifica la forma de la especificacion generada. Es bloqueante: la Oleada 2 no arranca sin superar el GATE.</div></div>
+  <div class="step-row"><div class="step-dot p">5</div><div class="step-txt"><strong>OLEADA 2.</strong> Solo si hay dos olas. N workers en paralelo que consumen la especificacion de la Oleada 1 y generan la implementación que la cumple.</div></div>
+  <div class="step-row"><div class="step-dot g">6</div><div class="step-txt"><strong>SMOKE.</strong> Verificación estática barata sobre el código final. Umbral del 100%. Bloquea al Verificador hasta que todos los checks pasen.</div></div>
+  <div class="step-row"><div class="step-dot b">7</div><div class="step-txt"><strong>VERIFICADOR.</strong> Compila, ejecuta todos los conjuntos de tests, construye el artefacto y arranca el servicio con comprobacion de salud.</div></div>
+  <div class="step-row"><div class="step-dot g">8</div><div class="step-txt"><strong>REPORTE.</strong> El Ejecutor verifica que existen todos los registros obligatorios y escribe el resumen. Una fase sin registros se considera fallida.</div></div>
+
+  <div class="sec-title" data-n="05">LA HEURISTICA DE 1 O 2 OLAS</div>
+
+  <table class="vtable">
+    <tr><th>Tipo de artefacto</th><th>Olas</th><th>Justificacion</th></tr>
+    <tr><td>Casos de uso, repositorios, controladores, logica de negocio</td><td>2 olas</td><td>Tienen contrato testeable. La especificacion fija la interfaz antes de implementar.</td></tr>
+    <tr><td>Componentes de interfaz, estilos, configuracion, objetos de transferencia planos</td><td>1 ola</td><td>Estructural o presentacional. La especificacion-como-contrato aporta poco valor.</td></tr>
+  </table>
+
+  <div class="callout purple">
+    <strong>Especificacion ejecutable como contrato</strong>
+    Con dos olas, la primera genera una especificacion que NO se ejecuta: es el contrato formal, la definición exacta que la segunda ola debe cumplir. La especificacion fija la firma, las excepciones y los valores de retorno. La implementación de la segunda ola solo tiene que satisfacer ese contrato. No es un ciclo de prueba tradicional, sino especificacion ejecutable usada como guia de generación.
+  </div>
+</div>
+
+<!-- ════════════════ P5 CALIDAD ════════════════ -->
+<div id="p5" class="mode-panel">
+  <div class="sec-title" data-n="01">CALIDAD POR Construcción, NO POR REVISION</div>
+
+  <div class="big-quote">
+    No es "genera código y luego lo reviso". Es "genera código que no puede no cumplir, porque el pipeline no permite lo contrario".
+  </div>
+
+  <div class="sec-title" data-n="02">EL PRINCIPIO ANTI-ALUCINACION: CONSTRENIR, NO INSTRUIR</div>
+
+  <p>Cuando se dan instrucciones abiertas a un modelo de IA, el modelo tiende a alucinar porque no tiene restricciones que lo acoten. Cuando se establecen barreras infranqueables, el modelo se cine al espacio seguro. El sistema no pide perfeccion: define un perimetro de seguridad y deja que el modelo se mueva libremente dentro de el.</p>
+
+  <table class="vtable">
+    <tr><th>El sistema NO dice</th><th>El sistema dice</th></tr>
+    <tr><td>"implementa correctamente la separacion de responsabilidades"</td><td>si una capa de negocio instancia directamente una clase de infraestructura, la verificación estática lo detecta y el pipeline aborta</td></tr>
+    <tr><td>"escribe tests"</td><td>si la fase usa dos olas, sin la especificacion no se supera el GATE, y sin GATE no arranca la generación de código</td></tr>
+    <tr><td>"escribe código seguro"</td><td>si aparece una función peligrosa o una credencial en texto plano, un check de seguridad falla y bloquea el avance</td></tr>
+    <tr><td>"respeta la arquitectura"</td><td>el worker solo recibe la semántica destilada; si importa una capa que no debe, la verificación lo detecta</td></tr>
+  </table>
+
+  <div class="callout orange">
+    <strong>El enfoque es transferible</strong>
+    Constrenir en lugar de instruir no es especifico de la migración de código. Es ingeniería de prompts defensiva: en cualquier dominio donde se use IA generativa, en lugar de pedir un resultado perfecto, se define un perimetro de invariantes y se deja que el modelo opere dentro de el. La calidad emerge del perimetro, no de la suerte.
+  </div>
+
+  <div class="sec-title" data-n="03">LAS 5 BARRERAS BLOQUEANTES</div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-cap">Defensa en profundidad - 5 barreras encadenadas</div>
+    <div class="mermaid">
+graph LR
+    G[Generación] --> B1[Contrato<br/>restricciones]
+    B1 --> B2[GATE<br/>forma de specs]
+    B2 --> B3[SMOKE<br/>invariantes]
+    B3 --> B4[Verificador<br/>compila+testea+arranca]
+    B4 --> B5[Certificación<br/>Definición de Terminado]
+    B5 --> OK[Código aprobado]
+    style B1 fill:#f5d5c5,stroke:#c1440e
+    style B2 fill:#f5e5c5,stroke:#e8a020
+    style B3 fill:#d5e8d5,stroke:#2a6e4e
+    style B4 fill:#d5e0f0,stroke:#1a4a8a
+    style B5 fill:#e0d5f0,stroke:#7a3acd
+    style OK fill:#e0e0d0,stroke:#1a1410,stroke-width:2px
+    </div>
+  </div>
+
+  <table class="vtable">
+    <tr><th>#</th><th>Barrera</th><th>Que verifica</th><th>Si falla</th></tr>
+    <tr><td>1</td><td>Contrato del worker</td><td>Restricciones explicitas de generación</td><td>Las barreras posteriores lo atrapan</td></tr>
+    <tr><td>2</td><td>GATE</td><td>Forma de la especificacion (imports, mocks, cobertura)</td><td>Bloquea la Oleada 2</td></tr>
+    <tr><td>3</td><td>SMOKE</td><td>Invariantes verificables estaticamente (capas, seguridad, principios)</td><td>Bloquea al Verificador</td></tr>
+    <tr><td>4</td><td>Verificador</td><td>Compilación, tests, construcción y arranque</td><td>Bucle de corrección, aborta si se agota</td></tr>
+    <tr><td>5</td><td>Certificación</td><td>Verificación global y Definición de Terminado</td><td>El proyecto no se da por terminado</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="04">PRINCIPIOS DE Diseño COMO PROPIEDAD EMERGENTE</div>
+
+  <table class="vtable">
+    <tr><th>Principio</th><th>Como lo fuerza el pipeline</th></tr>
+    <tr><td>Responsabilidad única</td><td>Cada worker genera un solo artefacto. Cada caso de uso tiene un solo punto de entrada.</td></tr>
+    <tr><td>Inversión de dependencias</td><td>Los casos de uso reciben interfaces por constructor. La verificación estática comprueba que no hay instanciacion directa de infraestructura.</td></tr>
+    <tr><td>Seguridad</td><td>Las reglas de seguridad son constraints de generación. Es imposible que el código las incumpla porque el pipeline lo bloquea antes de escribir el archivo.</td></tr>
+  </table>
+
+  <div class="callout green">
+    <strong>La diferencia fundamental</strong>
+    En un enfoque convencional, la calidad depende de una revision humana posterior; si el revisor no detecta un defecto, el defecto llega a produccion. En este sistema, el pipeline ES la revision: es automática, bloqueante y exhaustiva. La arquitectura, los tests y la seguridad no son el resultado de revisar el código, son una propiedad emergente del proceso que lo genera.
+  </div>
+</div>
+
+<!-- ════════════════ P6 RECURSOS ════════════════ -->
+<div id="p6" class="mode-panel">
+  <div class="sec-title" data-n="01">Optimización DE RECURSOS POR Diseño</div>
+
+  <p>El coste de ejecutar un modelo de IA es real y la ventana de contexto es finita. El sistema trata ambos como constraints de primer orden, no como detalles de implementación.</p>
+
+  <div class="num-grid">
+    <div class="num-card"><div class="num-val o">3 capas</div><div class="num-lab">Prompt / Plan / Motor independientes</div></div>
+    <div class="num-card"><div class="num-val g">~500</div><div class="num-lab">Tokens por contrato de worker</div></div>
+    <div class="num-card"><div class="num-val b">30-40%</div><div class="num-lab">Tokens ahorrados sin charla superflua</div></div>
+    <div class="num-card"><div class="num-val p">&lt;18%</div><div class="num-lab">Ventana usada por el agente más cargado</div></div>
+  </div>
+
+  <div class="sec-title" data-n="02">MODELO ADECUADO POR ROL</div>
+
+  <p>No todos los roles necesitan el modelo más potente. El sistema asigna a cada rol el modelo justo para su función, evitando el desperdicio de capacidad.</p>
+
+  <table class="vtable">
+    <tr><th>Rol</th><th>Modelo</th><th>Justificacion</th></tr>
+    <tr><td>META-ARQUITECTO</td><td>El más capaz, una sola vez</td><td>Decisiones estrategicas irrepetibles. Justifica el coste.</td></tr>
+    <tr><td>Arquitecto de fase</td><td>Intermedio</td><td>Descomposición táctica, sin estrategia. El modelo más caro sería desperdicio.</td></tr>
+    <tr><td>Workers</td><td>Intermedio</td><td>Generación guiada por un contrato preciso.</td></tr>
+    <tr><td>Smoke</td><td>El más ligero</td><td>Verificación estática. No requiere razonamiento complejo.</td></tr>
+    <tr><td>Verificador</td><td>Intermedio</td><td>Clasificación de errores y corrección.</td></tr>
+  </table>
+
+  <div class="callout green">
+    <strong>El modelo es inyectable</strong>
+    El paso estratégico usa el modelo más potente una sola vez. El resto de la ejecución usa modelos intermedios o ligeros, porque la estrategia ya está decidida. Heredar el modelo del agente padre supondria multiplicar el coste sin ganar nada. La eleccion de modelo es una decisión de configuracion explicita, no una herencia accidental.
+  </div>
+
+  <div class="sec-title" data-n="03">EL SISTEMA RESPIRA: CONTEXTO QUE SE EXPANDE Y SE CONTRAE</div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-cap">Contexto total a lo largo de una fase</div>
+    <div class="mermaid">
+graph TD
+    A["Ejecutor ~15K - constante"] --> B["+ Arquitecto = pico temporal"]
+    B --> C["Arquitecto muere - vuelve a la línea base"]
+    C --> D["+ N Workers en paralelo = pico temporal"]
+    D --> E["Workers mueren - vuelve a la línea base"]
+    E --> F["+ Verificador = pico temporal"]
+    F --> G["Verificador muere - vuelve a la línea base"]
+    style A fill:#d5e8d5,stroke:#2a6e4e
+    style C fill:#d5e8d5,stroke:#2a6e4e
+    style E fill:#d5e8d5,stroke:#2a6e4e
+    style G fill:#d5e8d5,stroke:#2a6e4e
+    style B fill:#f5e5c5,stroke:#e8a020
+    style D fill:#f5e5c5,stroke:#e8a020
+    style F fill:#f5e5c5,stroke:#e8a020
+    </div>
+  </div>
+
+  <div class="callout green">
+    <strong>El contexto nunca se acumula</strong>
+    El contexto total sube cuando un subagente trabaja y baja cuando ese subagente termina y su ventana se libera. El Ejecutor se mantiene en una línea base baja durante toda la ejecución, lejos del limite. Por eso la calidad del resultado no se degrada con la duracion del proceso y el sistema tolera proyectos de cualquier tamano.
+  </div>
+
+  <div class="sec-title" data-n="04">ELIMINACION DE Información REDUNDANTE</div>
+
+  <table class="vtable">
+    <tr><th>Mecanismo</th><th>Como elimina redundancia</th></tr>
+    <tr><td>DIGEST</td><td>Cada worker consume la semántica destilada, no el código legacy completo.</td></tr>
+    <tr><td>Contratos compactos</td><td>El worker recibe solo lo que necesita generar, no el contexto del proyecto entero.</td></tr>
+    <tr><td>Comunicación sin ruido</td><td>Los agentes intercambian comandos y datos estructurados, sin texto superfluo.</td></tr>
+    <tr><td>Comunicación por disco</td><td>El coordinador lee archivos de resultado compactos, no hereda el contexto de trabajo de los workers.</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="05">Telemetría: OBSERVABILIDAD DEL COSTE</div>
+
+  <p>Cada worker emite telemetría estructurada al terminar: tokens consumidos, duracion, divergencias respecto a su contrato, reintentos. El coordinador la consolida. Esto convierte el coste en una metrica observable: permite optimizar los contratos más caros, detectar workers ineficientes y medir la calidad de la planificación. El consumo de recursos no es una caja negra.</p>
+</div>
+
+<!-- ════════════════ P7 ROBUSTEZ ════════════════ -->
+<div id="p7" class="mode-panel">
+  <div class="sec-title" data-n="01">POR QUE EL SISTEMA ES ROBUSTO</div>
+
+  <p>La robustez del sistema no es accidental. Es una propiedad que emerge de tres decisiones de diseño: el estado vive en disco, los agentes son desechables, y las barreras de calidad son bloqueantes.</p>
+
+  <div class="sec-title" data-n="02">ESTADO EN DISCO, NO EN MEMORIA</div>
+
+  <div class="callout green">
+    <strong>La conversación no es la fuente de verdad. El disco lo es.</strong>
+    El estado completo de la ejecución vive en archivos. Si la ventana de contexto se compacta, si la sesión se reinicia, si el proceso se interrumpe, el estado persistido permanece intacto. El sistema lee el documento de seguimiento y retoma desde el ultimo paso completado sin necesitar nada de la conversación previa.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Información</th><th>Donde vive</th><th>Sobrevive a una compactación?</th></tr>
+    <tr><td>En que fase esta el proceso</td><td>Documento de seguimiento</td><td>Si, en disco</td></tr>
+    <tr><td>Semántica del legacy</td><td>DIGEST</td><td>Si, en disco</td></tr>
+    <tr><td>Contratos de la interfaz</td><td>Contrato congelado</td><td>Si, en disco</td></tr>
+    <tr><td>Código ya generado</td><td>Directorio destino</td><td>Si, en disco</td></tr>
+    <tr><td>Conversación con el usuario</td><td>Ventana de contexto</td><td>No, pero no es necesaria para continuar</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="03">ESTRUCTURA DE REGISTROS PERSISTIDOS</div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-cap">Todo el estado persistido y auditable</div>
+    <div class="mermaid">
+graph TD
+    R[Directorio de ejecución] --> C0[Configuracion]
+    R --> PT[Seguimiento de fases]
+    R --> DG[DIGEST]
+    R --> API[Contrato congelado]
+    R --> CE[Certificación]
+    R --> F1[Fase de interfaz]
+    R --> F3[Fase de nucleo]
+    F1 --> F1A[Plano del Arquitecto]
+    F1 --> F1S[Informe de Smoke]
+    F1 --> F1V[Informe de verificación]
+    F1 --> F1T[Telemetría]
+    F3 --> F3A[Plano del Arquitecto]
+    F3 --> F3S[Informe de Smoke]
+    F3 --> F3V[Informe de verificación]
+    F3 --> F3T[Telemetría]
+    style R fill:#e0e0d0,stroke:#1a1410,stroke-width:2px
+    style DG fill:#d5e8d5,stroke:#2a6e4e,stroke-width:2px
+    style PT fill:#f5e5c5,stroke:#e8a020,stroke-width:2px
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="04">AGENTES DESECHABLES E IDEMPOTENTES</div>
+
+  <p>Cada subagente nace con un contrato, ejecuta, escribe su artefacto a disco, emite telemetría y muere. Su ventana de contexto se destruye por completo. Si un worker falla, se relanza con el mismo contrato y produce el mismo resultado: es idempotente. El sistema tolera el fallo de cualquier agente individual sin que ese fallo contamine al resto del proceso.</p>
+
+  <div class="sec-title" data-n="05">EL PROCESO También ES UN INVARIANTE</div>
+
+  <div class="callout orange">
+    <strong>Un sistema robusto verifica el resultado Y el proceso</strong>
+    Un sistema puede producir código perfecto y aún así fallar si el proceso no se ejecuto correctamente: si no genero los registros de trazabilidad, si no ejecuto las fases en paralelo cuando debia, si salto un paso de validación. Por eso el sistema trata el proceso mismo como un invariante bloqueante. Una fase sin sus registros obligatorios se considera fallida aunque su código sea correcto. La trazabilidad y la repetibilidad no son opcionales.
+  </div>
+
+  <div class="sec-title" data-n="06">ANALOGIA CON SISTEMAS DISTRIBUIDOS</div>
+
+  <table class="vtable">
+    <tr><th>Principio de sistemas distribuidos</th><th>Como lo implementa el sistema</th></tr>
+    <tr><td>Estado externalizado</td><td>Disco persistente frente a ventana de contexto volátil</td></tr>
+    <tr><td>Componentes sin estado</td><td>Los workers no guardan estado: el estado esta en los artefactos</td></tr>
+    <tr><td>Idempotencia</td><td>Relanzar un worker con el mismo contrato produce el mismo resultado</td></tr>
+    <tr><td>Registro de eventos</td><td>El documento de seguimiento es un log inmutable de lo ocurrido</td></tr>
+    <tr><td>Defensa en profundidad</td><td>Cinco barreras de calidad encadenadas y bloqueantes</td></tr>
+  </table>
+</div>
+
+<!-- ════════════════ P8 VENTAJAS ════════════════ -->
+<div id="p8" class="mode-panel">
+  <div class="sec-title" data-n="01">VENTAJAS DEL PROCEDIMIENTO</div>
+
+  <div class="sec-title" data-n="02">AHORRO DE TIEMPO: DE SEMANAS A HORAS</div>
+
+  <table class="vtable">
+    <tr><th>Tarea</th><th>Enfoque manual</th><th>Con el sistema</th></tr>
+    <tr><td>Entender el legacy</td><td>Una o dos semanas de lectura de código</td><td>El escaneo lo resuelve en una pasada</td></tr>
+    <tr><td>Diseñar la arquitectura destino</td><td>Aproximadamente una semana</td><td>El META-ARQUITECTO la define en un paso</td></tr>
+    <tr><td>Generar código y tests</td><td>Varias semanas de desarrollo</td><td>El Motor ejecuta las fases en horas</td></tr>
+    <tr><td>Verificar la seguridad</td><td>Una auditoría dedicada</td><td>Integrada en la verificación estática</td></tr>
+    <tr><td>Proyecto completo de tamano medio</td><td>Del orden de meses</td><td>Del orden de un dia</td></tr>
+  </table>
+
+  <div class="callout orange">
+    <strong>El ahorro no es solo de tiempo</strong>
+    Una migración manual produce código nuevo que arrastra el acoplamiento del original y suele introducir defectos en la reescritura. El sistema produce código limpio, con buena arquitectura, tests verdes y seguridad verificada por construcción. El ahorro es doble: las semanas de trabajo Y la calidad que normalmente se sacrifica por la presion de los plazos.
+  </div>
+
+  <div class="sec-title" data-n="03">SE EJECUTA EN CLAUDE CODE, SIN INFRAESTRUCTURA</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header good">CERO MONTAJE</div>
+      <div class="comp-content">
+        No hay que instalar frameworks, configurar servidores ni desplegar nada. Son tres archivos Markdown. Se ejecuta directamente en Claude Code. Cualquier desarrollador con acceso a Claude Code puede usarlo de inmediato.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header alt">VERSIONABLE EN GIT</div>
+      <div class="comp-content">
+        Los tres documentos se versionan como cualquier código fuente. El proceso es auditable, reproducible y mejorable. Cada cambio en el procedimiento queda registrado en el historial.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header purple">TRAZABILIDAD TOTAL</div>
+      <div class="comp-content">
+        Cada ejecución deja registros completos en disco: que agentes intervinieron, cuánto consumieron, que verificaciones pasaron. La migración deja de ser una caja negra.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="04">RESUMEN DE VENTAJAS</div>
+
+  <table class="vtable">
+    <tr><th>Ventaja</th><th>De donde viene</th></tr>
+    <tr><td>Rapidez</td><td>Ejecución multi-agente paralela. El trabajo de semanas se concentra en horas.</td></tr>
+    <tr><td>Calidad garantizada</td><td>Cinco barreras bloqueantes. Es imposible generar código que viole los invariantes.</td></tr>
+    <tr><td>Robustez</td><td>Estado en disco. Tolerante a compactaciones de contexto, reinicios y fallos parciales.</td></tr>
+    <tr><td>Eficiencia de coste</td><td>Modelo adecuado por rol, contratos minimos, comunicación sin ruido, telemetría.</td></tr>
+    <tr><td>Re-targetabilidad</td><td>La misma semántica destilada migra a cualquier stack. Solo cambia el prompt.</td></tr>
+    <tr><td>Sin infraestructura</td><td>Tres archivos Markdown. Se ejecuta en Claude Code sin montaje previo.</td></tr>
+    <tr><td>Seguridad integrada</td><td>Las reglas de seguridad son constraints de generación, no una auditoría posterior.</td></tr>
+    <tr><td>Auditable</td><td>Registros completos en disco por cada fase y cada agente.</td></tr>
+  </table>
+</div>
+
+<!-- ════════════════ P9 APLICABILIDAD ════════════════ -->
+<div id="p9" class="mode-panel">
+  <div class="sec-title" data-n="01">UNA HERRAMIENTA PARA CUALQUIER Migración</div>
+
+  <p>El sistema no está atado a ningun lenguaje ni a ningun tipo de aplicación concreto. Es un procedimiento genérico aplicable a cualquier proyecto de refactorización o migración de código legacy. El Motor es agnostico del dominio; el Plan es agnostico del lenguaje; solo el Prompt conoce el destino concreto.</p>
+
+  <div class="sec-title" data-n="02">QUIEN PUEDE USARLO</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-header bad">EMPRESAS CON SISTEMAS LEGACY</div>
+      <div class="comp-content">
+        Muchas organizaciones mantienen aplicaciones criticas sobre tecnologías obsoletas. El sistema permite modernizarlas hacia stacks actuales sin reescribir a mano, conservando la logica de negocio verificada.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header alt">CONSULTORAS Y EQUIPOS DE SERVICIOS</div>
+      <div class="comp-content">
+        Una consultora que realiza migraciones puede adoptar el sistema como metodología repetible. Cada proyecto reutiliza el Plan y el Motor; solo se escribe un Prompt nuevo. La migración deja de ser un trabajo artesanal.
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-header good">EQUIPOS QUE REFACTORIZAN</div>
+      <div class="comp-content">
+        No solo migraciones de stack. También refactorización pura: convertir un monolito acoplado en una arquitectura limpia con buenos principios de diseño y tests, dentro del mismo lenguaje.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="03">TIPOS DE PROYECTO APLICABLES</div>
+
+  <table class="vtable">
+    <tr><th>Escenario</th><th>Naturaleza del trabajo</th></tr>
+    <tr><td>Modernización de aplicación empresarial</td><td>Pasar de una tecnología web antigua a una pila moderna equivalente</td></tr>
+    <tr><td>Migración de stack tecnologico</td><td>Cambiar el lenguaje y el framework conservando la funcionalidad</td></tr>
+    <tr><td>Refactorización de monolito</td><td>Reorganizar un sistema acoplado en arquitectura limpia, mismo lenguaje</td></tr>
+    <tr><td>Salida de tecnología obsoleta</td><td>Sustituir componentes sin soporte por equivalentes modernos</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="04">POR QUE ES Genérico</div>
+
+  <table class="vtable">
+    <tr><th>Componente</th><th>Agnostico de</th><th>Lo que significa</th></tr>
+    <tr><td>Motor</td><td>Dominio, lenguaje, arquitectura</td><td>Ejecuta cualquier fase de cualquier proyecto</td></tr>
+    <tr><td>Plan</td><td>Lenguaje destino</td><td>La estrategia de migración es universal</td></tr>
+    <tr><td>DIGEST</td><td>Stack destino</td><td>La semántica se re-targetea a cualquier tecnología</td></tr>
+    <tr><td>Prompt</td><td>Nada</td><td>Es el único que define el destino concreto</td></tr>
+  </table>
+
+  <div class="callout green">
+    <strong>El valor de negocio</strong>
+    El mantenimiento de sistemas legacy consume una parte enorme del presupuesto de tecnología de muchas organizaciones. La migración manual es cara, lenta y arriesgada, y por eso a menudo se pospone indefinidamente. Un procedimiento que reduce un proyecto de meses a uno de dias, y que además entrega código verificado en arquitectura, tests y seguridad, transforma la ecuacion: convierte la modernización de un riesgo que se evita en una operacion controlada y repetible.
+  </div>
+</div>
+
+<!-- ════════════════ P10 SINTESIS ════════════════ -->
+<div id="p10" class="mode-panel">
+  <div class="sec-title" data-n="01">LAS Contribuciones DEL SISTEMA</div>
+
+  <table class="vtable">
+    <tr><th>#</th><th>Contribución</th></tr>
+    <tr><td>C1</td><td>Migración a partir de semántica: extraer la intención, no copiar la implementación</td></tr>
+    <tr><td>C2</td><td>DIGEST como forma normal: representación semántica re-targeteable a cualquier stack</td></tr>
+    <tr><td>C3</td><td>Planificación adaptativa: el proceso se ajusta a la complejidad real del proyecto</td></tr>
+    <tr><td>C4</td><td>Motor batch genérico reutilizable: la misma maquinaria para cualquier fase de cualquier proyecto</td></tr>
+    <tr><td>C5</td><td>Calidad por construcción: el pipeline bloquea cualquier resultado que viole un invariante</td></tr>
+    <tr><td>C6</td><td>Principio anti-alucinacion: constrenir mediante invariantes en lugar de instruir</td></tr>
+    <tr><td>C7</td><td>Aislamiento de contexto: ningun agente se acerca al limite de su ventana</td></tr>
+    <tr><td>C8</td><td>Estado en disco: tolerancia total a compactaciones de contexto y reinicios</td></tr>
+    <tr><td>C9</td><td>Optimización de recursos: modelo por rol, contratos minimos, comunicación sin ruido, telemetría</td></tr>
+    <tr><td>C10</td><td>Separacion en tres capas: Prompt, Plan y Motor como abstracciones independientes</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="02">POR QUE CONSIGUE SU OBJETIVO</div>
+
+  <div class="callout green">
+    <strong>El objetivo: migrar código legacy a código limpio, con arquitectura, tests y seguridad, de forma fiable y eficiente.</strong>
+    Lo consigue porque cada parte del sistema ataca una dimension del problema. La extracción semántica garantiza que no se pierde la intención del sistema. La planificación adaptativa garantiza que el proceso encaja con el proyecto. El Motor garantiza que cada fase se ejecuta con calidad. Las barreras bloqueantes garantizan que el código cumple por construcción. El aislamiento de contexto garantiza que la calidad no se degrada con la duracion. El estado en disco garantiza que el proceso es robusto ante fallos. No es una sola idea brillante: son seis decisiones de diseño que se refuerzan mutuamente.
+  </div>
+
+  <div class="sec-title" data-n="03">EL CAMPO QUE ABORDA</div>
+
+  <p>El sistema se situa en la interseccion de tres disciplinas: los sistemas multi-agente, la ingeniería de prompts y la ingeniería del software. No es investigacion sobre modelos de IA, ni ingeniería de prompts en sentido estricto, ni desarrollo de software clasico. Trata un area emergente: como construir sistemas fiables usando modelos de IA como componentes de ejecución, gestionando sus limitaciones inherentes (ventana de contexto finita, tendencia a alucinar, coste) como constraints arquitectonicos, e integrando la ingeniería del software como una propiedad emergente del proceso generativo.</p>
+
+  <div class="sec-title" data-n="04">TESIS FINAL</div>
+
+  <div class="big-quote">
+    Se puede diseñar un proceso generativo multi-agente que tenga la ingeniería del software como propiedad emergente del proceso, no como resultado de una revision posterior.
+  </div>
+
+  <p>El sistema no es una herramienta puntual, ni un framework con código, ni un proceso manual de revision. Es un procedimiento que, dado un prompt, produce código migrado con arquitectura limpia, buenos principios de diseño, tests y seguridad verificada, para cualquier lenguaje y cualquier stack. Y lo hace con tres archivos Markdown ejecutados sobre Claude Code, sin una sola línea de código de infraestructura.</p>
+
+  <div class="callout orange">
+    <strong>El sistema en una frase</strong>
+    Separa la semántica de la implementación, planifica el proceso según la complejidad del proyecto, y ejecuta cada fase con un motor multi-agente que garantiza calidad por construcción y optimiza recursos por diseño.
+  </div>
+</div>
+
+</div>
+<script>
+mermaid.initialize({startOnLoad:true,theme:'base',themeVariables:{primaryColor:'#f5f0e8',primaryTextColor:'#1a1410',primaryBorderColor:'#1a1410',lineColor:'#8a7a65',fontFamily:'IBM Plex Mono, monospace',fontSize:'12px'}});
+function sw(b,id){var bs=document.getElementsByClassName('mode-btn');var ps=document.getElementsByClassName('mode-panel');for(var i=0;i<bs.length;i++)bs[i].classList.remove('active');for(var i=0;i<ps.length;i++)ps[i].classList.remove('active');b.classList.add('active');document.getElementById(id).classList.add('active');setTimeout(function(){mermaid.run()},50)}
+</script>
+</body>
+</html>
