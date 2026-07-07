@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENG-MIG · Plan A2 → B2/B1 en 4 Meses</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:32px}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--mono);font-size:clamp(26px,4vw,46px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.8}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}
+  .badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:36px;width:100%;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:10px;font-weight:600;padding:9px 14px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  .sec-title{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  .callout{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout strong{display:block;margin-bottom:4px}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:14px 0;position:relative;tab-size:2}
+  pre .lang{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}.nu{color:#7a3acd}.an{color:#1a4a8a;font-weight:600}
+  .hl{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px}
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:14px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+  .vtable td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td code{background:rgba(0,0,0,.07);padding:1px 6px;border-radius:2px;font-size:11px;white-space:nowrap}
+  .vtable td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .insight-content code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .flow-row{display:flex;align-items:center;gap:0;margin:14px 0;overflow-x:auto;padding-bottom:4px}
+  .flow-node{background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:8px 14px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0}
+  .flow-node.ia1{border-color:var(--accent);color:var(--accent)}
+  .flow-node.ia2{border-color:var(--accent3);color:var(--accent3)}
+  .flow-node.cap{border-color:var(--accent2);color:var(--accent2)}
+  .flow-node.out{border-color:var(--purple);color:var(--purple)}
+  .flow-node.har{border-color:var(--yellow);color:#8a6000;background:rgba(232,160,32,.08)}
+  .flow-arrow{color:var(--muted);font-size:16px;padding:0 8px;flex-shrink:0}
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:14px 0}
+  .info-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden}
+  .info-header{padding:9px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .info-header.o{background:rgba(193,68,14,.1);color:var(--accent)}
+  .info-header.g{background:rgba(42,110,78,.1);color:var(--accent2)}
+  .info-header.b{background:rgba(26,74,138,.1);color:var(--accent3)}
+  .info-header.p{background:rgba(122,58,205,.1);color:var(--purple)}
+  .info-header.y{background:rgba(232,160,32,.1);color:#8a6000}
+  .info-body{padding:12px 14px;font-size:12px;line-height:1.7;color:var(--ink2)}
+  .info-body code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:10.5px}
+  .week-box{background:var(--surface);border:2px solid var(--ink);border-radius:8px;margin:18px 0;overflow:hidden}
+  .week-head{background:var(--ink);color:var(--bg);padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+  .week-head .wk-tag{color:var(--yellow);font-size:10px}
+  .week-body{padding:16px 18px;font-size:12px;line-height:1.75;color:var(--ink2)}
+  .week-body ul{margin:6px 0 6px 18px}
+  .week-body li{margin:4px 0}
+  .week-body code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  .gm-box{background:rgba(122,58,205,.04);border:2px dashed var(--purple);border-radius:8px;padding:16px 20px;margin:18px 0}
+  .gm-title{color:var(--purple);font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+  .gm-content{font-size:12px;color:var(--ink2);line-height:1.75}
+  .gm-content ul{margin:6px 0 6px 18px}
+  .gm-content code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:14px 0}
+  .kpi{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+  .kpi .num{font-size:26px;font-weight:700;color:var(--accent)}
+  .kpi .lbl{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:4px;line-height:1.5}
+  @media(max-width:720px){.mode-btn{flex:0 0 auto}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">ENG-MIG · PROYECTO PERSONAL · AGO–NOV 2026</div>
+  <h1>Migración <em>A2 → B2/B1</em><br>Inglés técnico en 4 meses</h1>
+  <div class="subtitle">
+    Plan operativo completo · Target: B2 lectura/escritura técnica + B1 speaking/listening en diciembre<br>
+    Perfil: dev full-stack senior, 48 años, entorno IA diario · Presupuesto: ~10h/semana · Metodología: waves mensuales + Golden Master mensual
+  </div>
+  <div class="badge-row">
+    <span class="badge o">4 Waves</span>
+    <span class="badge g">Pipeline Diario</span>
+    <span class="badge b">IA como Sparring</span>
+    <span class="badge p">Golden Master Tests</span>
+    <span class="badge y">Registro Técnico First</span>
+  </div>
+</header>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="switchTab('plan')">📖 EL PLAN</button>
+  <button class="mode-btn" onclick="switchTab('rutina')">⚙️ RUTINA DIARIA</button>
+  <button class="mode-btn" onclick="switchTab('mes1')">🗓 WAVE 1 · AGO</button>
+  <button class="mode-btn" onclick="switchTab('mes2')">🗓 WAVE 2 · SEP</button>
+  <button class="mode-btn" onclick="switchTab('mes3')">🗓 WAVE 3 · OCT</button>
+  <button class="mode-btn" onclick="switchTab('mes4')">🗓 WAVE 4 · NOV</button>
+  <button class="mode-btn" onclick="switchTab('metricas')">📊 MÉTRICAS</button>
+  <button class="mode-btn" onclick="switchTab('arsenal')">🧰 ARSENAL</button>
+</div>
+
+<!-- ══════════ TAB 1: EL PLAN ══════════ -->
+<div id="tab-plan" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">TESIS DEL PLAN</div>
+
+  <div class="callout orange">
+    <strong>El inglés técnico es un subconjunto, no el idioma completo</strong>
+    No migras "el inglés" entero: migras el subconjunto que necesitas. El registro técnico de programación son
+    <code>~2.500 palabras</code>, gramática de baja complejidad (imperativos, presente, condicionales 0/1) y estructuras
+    que llevas 20 años leyendo. La spec real es: <code>escribir prompts precisos</code> + <code>leer docs/respuestas sin fricción</code> +
+    <code>sostener una conversación técnica básica</code>. Eso NO es un B2 general — es un B1+ general con dominio total del registro técnico.
+    Por eso 4 meses es viable donde "aprender inglés" no lo sería.
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">◈ Principio rector: producción con feedback inmediato</div>
+    <div class="insight-content">
+      Tu ventaja única frente a cualquier estudiante de idiomas de la historia: trabajas 8h/día junto a un corrector
+      nativo infinitamente paciente. Cada prompt a Copilot/Claude en inglés es un <code>test de tu inglés</code> —
+      si la IA entiende y responde bien, tu output funcionó. Es el Golden Master aplicado al idioma:
+      no importa si la frase es elegante, importa si <em>preserva la semántica</em>. El plan explota esto:
+      el 60% de tus horas de práctica están embebidas en tu jornada laboral, no añadidas encima.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">DIAGNÓSTICO Y TARGET</div>
+
+  <table class="vtable">
+    <tr><th>Skill</th><th>Estado (A2)</th><th>Target diciembre</th><th>Gap real</th></tr>
+    <tr>
+      <td class="cat">READING</td>
+      <td>Lees docs con diccionario/traductor, frases largas te frenan</td>
+      <td><strong>B2 técnico</strong>: docs, PRs, issues, respuestas de IA sin traducir</td>
+      <td>PEQUEÑO — ya tienes el vocabulario pasivo de 20 años de código</td>
+    </tr>
+    <tr>
+      <td class="cat">WRITING</td>
+      <td>Frases simples, dependes del traductor para prompts largos</td>
+      <td><strong>B2 técnico</strong>: prompts complejos, PRs, commits, mensajes Slack directos</td>
+      <td>MEDIO — necesitas automatizar estructuras, no aprenderlas</td>
+    </tr>
+    <tr>
+      <td class="cat">LISTENING</td>
+      <td>Entiendes palabras sueltas, pierdes el hilo a velocidad real</td>
+      <td><strong>B1 técnico</strong>: charlas de conferencia y meetings técnicos con ~80% comprensión</td>
+      <td>GRANDE — requiere horas de exposición, no hay atajo</td>
+    </tr>
+    <tr>
+      <td class="cat">SPEAKING</td>
+      <td>Frases memorizadas, bloqueo al improvisar</td>
+      <td><strong>B1</strong>: explicar un bug, describir arquitectura, participar en daily</td>
+      <td>EL MAYOR — es el cuello de botella. Solo se resuelve con horas de boca</td>
+    </tr>
+  </table>
+
+  <div class="callout blue">
+    <strong>Estrategia de priorización asimétrica</strong>
+    Reading/Writing se entrenan <em>dentro</em> de tu jornada (coste marginal ≈ 0). Listening se entrena en tiempos
+    muertos (commute, gimnasio, cocina). Speaking es lo ÚNICO que exige tiempo dedicado en bloque:
+    <code>30 min/día, innegociable</code>. Si un día solo puedes hacer una cosa, habla.
+  </div>
+
+  <div class="sec-title" data-n="3">ARQUITECTURA: 4 WAVES</div>
+
+  <div class="flow-row">
+    <div class="flow-node ia1">W1 AGO · Cimientos + Inmersión</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node ia2">W2 SEP · Producción escrita</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node cap">W3 OCT · Speaking Sprint</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node out">W4 NOV · Integración + Simulacros</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node har">DIC · GOLDEN MASTER FINAL</div>
+  </div>
+
+  <table class="vtable">
+    <tr><th>Wave</th><th>Foco dominante</th><th>Gramática target</th><th>Criterio de salida (.DONE)</th></tr>
+    <tr>
+      <td class="cat">W1 · AGO</td>
+      <td>Inmersión de entorno + fundamentos + hábito diario consolidado</td>
+      <td>Present simple/continuous · Past simple · Imperativos · Preguntas (word order)</td>
+      <td>21 días seguidos de rutina · Prompts diarios 100% en inglés · Core 500 palabras</td>
+    </tr>
+    <tr>
+      <td class="cat">W2 · SEP</td>
+      <td>Escritura técnica fluida + listening estructurado</td>
+      <td>Present perfect vs past · Futures (will/going to) · Condicionales 0/1 · Modales (should/must/can/might)</td>
+      <td>PR description sin traductor · Video técnico 10 min con subs EN al 80%</td>
+    </tr>
+    <tr>
+      <td class="cat">W3 · OCT</td>
+      <td>SPEAKING SPRINT — volumen máximo de producción oral</td>
+      <td>Condicional 2 · Pasiva · Relative clauses (which/that/where) · Conectores (however, although, therefore)</td>
+      <td>Monólogo técnico 5 min sin guion · Conversación IA 20 min sin cambiar a español</td>
+    </tr>
+    <tr>
+      <td class="cat">W4 · NOV</td>
+      <td>Integración de skills + simulacros de situaciones reales</td>
+      <td>Consolidación · Phrasal verbs alta frecuencia · Softeners (could you / I was wondering)</td>
+      <td>Simulacro de daily + code review oral · Charla conferencia sin subtítulos al 75%</td>
+    </tr>
+  </table>
+
+  <div class="sec-title" data-n="4">PRESUPUESTO DE HORAS</div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="num">~10h</div><div class="lbl">semana total</div></div>
+    <div class="kpi"><div class="num">3.5h</div><div class="lbl">speaking dedicado</div></div>
+    <div class="kpi"><div class="num">3h</div><div class="lbl">listening (tiempos muertos)</div></div>
+    <div class="kpi"><div class="num">2.5h</div><div class="lbl">reading/writing (embebido en trabajo)</div></div>
+    <div class="kpi"><div class="num">1h</div><div class="lbl">vocabulario + gramática</div></div>
+    <div class="kpi"><div class="num">~170h</div><div class="lbl">total 17 semanas</div></div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠ Los 3 modos de fallo del proyecto</div>
+    <div class="danger-content">
+      <strong>1. Estudiar gramática en vez de producir.</strong> A los 48 y con tu perfil, la trampa es "prepararte" eternamente.
+      La gramática de este plan se aprende en 15 min y se automatiza produciendo, no al revés.<br><br>
+      <strong>2. Consumir pasivamente y llamarlo práctica.</strong> Ver YouTube en inglés con subtítulos en español = 0 horas de práctica.
+      Solo cuenta lo que te cuesta esfuerzo: hablar, escribir sin traductor, escuchar sin red.<br><br>
+      <strong>3. Romper la cadena de speaking.</strong> Saltarte 1 día es ruido; saltarte 3 seguidos mata el hábito.
+      Protocolo de emergencia: día imposible = 5 minutos hablando solo en la ducha describiendo tu día en inglés. La cadena no se rompe.
+    </div>
+  </div>
+
+  <div class="callout green">
+    <strong>Regla del idioma de trabajo (vigente desde el DÍA 1)</strong>
+    A partir de hoy: <code>SO en inglés</code> · <code>IDE en inglés</code> · <code>todos los prompts a IA en inglés</code> ·
+    <code>commits en inglés</code> · <code>móvil en inglés</code> · <code>búsquedas Google en inglés</code>.
+    Sin excepciones. Esto no es una técnica de estudio — es la migración del entorno. El primer día perderás velocidad;
+    en 2 semanas ni lo notarás y habrás acumulado cientos de micro-repeticiones diarias gratis.
+  </div>
+
+</div>
+
+<!-- ══════════ TAB 2: RUTINA DIARIA ══════════ -->
+<div id="tab-rutina" class="mode-panel">
+
+  <div class="sec-title" data-n="1">EL PIPELINE DIARIO (LUNES–VIERNES)</div>
+
+  <div class="callout orange">
+    <strong>Diseño del pipeline</strong>
+    La rutina se ejecuta igual los 4 meses; lo que cambia por wave es el <em>contenido</em> de cada slot, no la estructura.
+    Un hábito con estructura fija y contenido variable sobrevive; uno que cambia de forma cada mes, no.
+    Total diario L–V: <code>~80 min</code>, de los cuales solo ~35 son tiempo "nuevo" — el resto va embebido en jornada y tiempos muertos.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Slot</th><th>Cuándo</th><th>Duración</th><th>Qué haces</th></tr>
+    <tr>
+      <td class="cat">ANKI</td>
+      <td>Café de la mañana</td>
+      <td>10–15 min</td>
+      <td>Repaso SRS del vocabulario capturado. Solo palabras que TÚ has encontrado en tu trabajo/listening — nunca listas genéricas descargadas.</td>
+    </tr>
+    <tr>
+      <td class="cat">WORK-EN</td>
+      <td>Jornada laboral</td>
+      <td>embebido</td>
+      <td>Todos los prompts a Copilot/Claude en inglés. Regla: si un prompt te sale mal 2 veces, no lo traduzcas — pregúntale a la IA <code>how should I have phrased that?</code> y captura la corrección en Anki.</td>
+    </tr>
+    <tr>
+      <td class="cat">LISTENING</td>
+      <td>Commute / gimnasio / cocina</td>
+      <td>30 min</td>
+      <td>Contenido según wave (ver cada mes). Regla de esfuerzo: si entiendes >90%, sube la dificultad; si <60%, bájala. La zona de aprendizaje es 70–85%.</td>
+    </tr>
+    <tr>
+      <td class="cat">SPEAKING</td>
+      <td>Bloque fijo (misma hora siempre)</td>
+      <td>25–30 min</td>
+      <td>Conversación de voz con IA (Claude/ChatGPT modo voz). Temas técnicos que dominas. INNEGOCIABLE — es el único slot que no se puede sustituir.</td>
+    </tr>
+    <tr>
+      <td class="cat">CAPTURE</td>
+      <td>Fin del día</td>
+      <td>5 min</td>
+      <td>Vuelca a Anki las 3–5 palabras/frases del día. Máximo 5: más tarjetas nuevas por día colapsa el SRS en 3 semanas.</td>
+    </tr>
+  </table>
+
+  <div class="sec-title" data-n="2">FIN DE SEMANA (SÁBADO O DOMINGO, 1 SESIÓN)</div>
+
+  <table class="vtable">
+    <tr><th>Bloque</th><th>Duración</th><th>Contenido</th></tr>
+    <tr><td class="cat">GRAMÁTICA</td><td>30 min</td><td>La unidad gramatical de la semana (ver waves). Método: 10 min de teoría (video o unidad de libro) + 20 min produciendo 15–20 frases propias con esa estructura, corregidas por IA.</td></tr>
+    <tr><td class="cat">SPEAKING LARGO</td><td>45 min</td><td>Sesión extendida de conversación: 20 min tema técnico + 15 min tema cotidiano (small talk: fin de semana, planes, familia) + 10 min de repaso de correcciones.</td></tr>
+    <tr><td class="cat">REVIEW</td><td>15 min</td><td>Revisar el log semanal: ¿cuántos días completos? ¿qué errores se repiten? Los errores recurrentes de la semana se convierten en el foco de la siguiente.</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">EL SPARRING: PROMPT MAESTRO DE CONVERSACIÓN</div>
+
+  <div class="callout purple">
+    <strong>Cómo usar la IA como profesor de conversación</strong>
+    No hables con la IA "a pelo": configúrala con un prompt de sistema que la convierta en tutor calibrado a tu nivel.
+    Guarda este prompt y pégalo al inicio de cada sesión de voz (o créate un Project en Claude con esto como instrucción permanente).
+  </div>
+
+  <pre><span class="lang">PROMPT · SPEAKING TUTOR</span><span class="cm"># Paste at the start of every voice session</span>
+
+You are my English conversation tutor. I am a Spanish-speaking senior
+software developer, level A2-B1, preparing for technical conversations.
+
+<span class="kw">RULES:</span>
+1. Speak <span class="hl">slightly slower than natural</span>, but do NOT simplify your vocabulary
+   artificially. I need real English, at reduced speed.
+2. If I make a mistake that <span class="hl">breaks comprehension</span>, stop me and correct it.
+   If the mistake is minor (article, preposition), let me finish and
+   give me a <span class="hl">correction summary at the end</span>.
+3. Ask me follow-up questions constantly. Never let the conversation die.
+4. If I switch to Spanish, respond: <span class="st">"In English, please. Try again."</span>
+5. At the end of the session, give me:
+   - My 3 most frequent errors today
+   - 3 useful phrases I should have used but did not know
+6. Today's topic: <span class="an">[TOPIC]</span> <span class="cm"># rotate: my current project / a bug I fixed /</span>
+   <span class="cm"># explaining an architecture / my weekend / opinions on a tech trend</span></pre>
+
+  <div class="insight-box">
+    <div class="insight-title">◈ Por qué temas que dominas</div>
+    <div class="insight-content">
+      Hablar de FMI, de Clean Architecture o de tu último bug elimina la carga cognitiva del CONTENIDO
+      (ya sabes qué quieres decir) y concentra todo el esfuerzo en la FORMA (cómo decirlo en inglés).
+      Es la separación de responsabilidades aplicada al aprendizaje: un problema cada vez.
+      Bonus directo: cada sesión explicando tu tesis en inglés es ensayo para defenderla ante un tribunal o venderla en una entrevista.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">TÉCNICAS CORE DEL PLAN</div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header o">SHADOWING</div>
+      <div class="info-body">Escuchas una frase de un hablante nativo y la repites EN VOZ ALTA imitando ritmo y entonación, medio segundo por detrás. 10 min/día entrena boca y oído a la vez. Material: videos técnicos con transcripción. Es la técnica con mejor ratio esfuerzo/resultado para pronunciación.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header g">RUBBER DUCK EN</div>
+      <div class="info-body">Tu rubber duck debugging de siempre, pero en inglés y en voz alta. Cada vez que te atasques con un bug, explícaselo al pato en inglés. Cero tiempo extra, práctica de speaking técnico real, y además funciona para el bug.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header b">CAPTURA CONTEXTUAL</div>
+      <div class="info-body">Solo entra en Anki vocabulario que TÚ has encontrado en contexto real (un prompt, un video, una doc). Formato de tarjeta: frase completa con hueco, no palabra suelta. <code>The deployment ___ because of a missing env var (failed)</code> — el contexto es lo que fija la memoria.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header p">WRITE-THEN-COMPARE</div>
+      <div class="info-body">Escribe tu texto (prompt, commit, mensaje) en inglés SIN traductor. Luego pide a la IA: <code>rewrite this in natural English, then list my errors</code>. Comparas tu versión con la suya. El diff es tu lección. Nunca al revés (traducir primero = no aprender).</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header y">MONÓLOGO DE 2 MIN</div>
+      <div class="info-body">Grábate 2 minutos en el móvil hablando de un tema (qué hiciste hoy, qué es un microfrontend). Escúchate 1 vez. Duele, pero es el feedback loop más honesto que existe. 2×/semana desde W2, diario en W3.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header o">ISLAS DE FLUIDEZ</div>
+      <div class="info-body">Prepara y pule hasta la perfección 8–10 "islas": presentarte, describir tu trabajo, explicar tu proyecto actual, tu stack, tu opinión sobre IA. Fragmentos de 30–60 seg que salen automáticos. En conversación real saltas de isla en isla mientras improvisas los puentes.</div>
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠ Protocolo de día imposible</div>
+    <div class="danger-content">
+      Habrá días de incendio en ISOLution o sprint de tesis. El plan degrada con gracia (graceful degradation):
+      <strong>Nivel 1</strong> (día apretado): solo Anki + speaking 15 min. <strong>Nivel 2</strong> (día horrible): solo 5 min de monólogo
+      en la ducha o el coche. <strong>Nivel 0 no existe.</strong> La métrica que importa no es horas/día, es días-con-algo/mes ≥ 26.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ TAB 3: WAVE 1 AGOSTO ══════════ -->
+<div id="tab-mes1" class="mode-panel">
+
+  <div class="sec-title" data-n="1">WAVE 1 · AGOSTO · CIMIENTOS + INMERSIÓN</div>
+
+  <div class="callout orange">
+    <strong>Objetivo de la wave</strong>
+    Al acabar agosto: el hábito diario es automático (21+ días ejecutados), tu entorno digital completo funciona en inglés,
+    escribes prompts simples sin traductor, y tienes las 500 palabras core del inglés técnico activas.
+    Esta wave NO busca fluidez — busca <code>infraestructura + hábito</code>. Como en toda migración: primero el CI/CD, luego el código.
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 1 · SETUP + PRESENT SIMPLE/CONTINUOUS</span><span class="wk-tag">~8h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Día 1 (2h, único setup largo):</strong> SO, IDE, móvil y navegador a inglés. Instalar Anki (+ AnkiDroid/iOS). Crear el Project "English Tutor" en Claude con el prompt maestro. Hacer el test <code>EF SET (50 min, gratis)</code> — guarda el resultado: es tu baseline, tu commit inicial.</li>
+        <li><strong>Speaking diario (20 min):</strong> primera semana con temas fáciles: <code>describe your typical day</code>, <code>describe your job</code>. Se acepta tartamudeo. El objetivo es perder el miedo al slot, no hablar bien.</li>
+        <li><strong>Listening (30 min/día):</strong> podcast <code>Culips</code> o <code>6 Minute English (BBC)</code> — diseñados para tu nivel. En el gimnasio/coche.</li>
+        <li><strong>Gramática del finde:</strong> present simple vs continuous (la base de describir tu trabajo: <code>I work at UST / I'm working on a migration</code>). Produce 20 frases sobre TU vida real.</li>
+        <li><strong>Vocabulario:</strong> arranca el mazo Anki con las 50 palabras de tu primer día de captura contextual.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 2 · PAST SIMPLE + PRIMERA ISLA</span><span class="wk-tag">~9h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Speaking:</strong> cada sesión empieza contando qué hiciste ayer (fuerza el past simple). Construye tu <strong>Isla 1: "Who I am"</strong> — 45 seg de presentación profesional pulida con la IA hasta que salga automática.</li>
+        <li><strong>Gramática:</strong> past simple + los 25 irregulares que cubren el 90% del uso real (<code>went, did, made, got, found, wrote, broke, built, ran, took...</code>). Nada de memorizar la lista de 200.</li>
+        <li><strong>Writing embebido:</strong> desde esta semana, TODOS los commits en inglés con formato imperativo: <code>fix null check in login servlet</code>, <code>add retry logic to fetch client</code>.</li>
+        <li><strong>Listening:</strong> mismo material. Nueva regla: al acabar cada episodio, resume en voz alta en 3 frases lo que has entendido.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 3 · PREGUNTAS (WORD ORDER) + PROMPTS ESTRUCTURADOS</span><span class="wk-tag">~9h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Gramática:</strong> formación de preguntas — el error nº1 de los hispanohablantes (<code>*How I can fix this?</code> → <code>How can I fix this?</code>). Auxiliar SIEMPRE antes del sujeto. 30 preguntas producidas y corregidas.</li>
+        <li><strong>Writing:</strong> plantillas de prompt (ver ARSENAL). Esta semana practicas el patrón <code>CONTEXT → TASK → CONSTRAINTS → OUTPUT FORMAT</code> en inglés en tu trabajo real diario.</li>
+        <li><strong>Speaking:</strong> sesiones donde TÚ preguntas: pide a la IA que te haga explicar y luego interrógala tú sobre un tema técnico. Practicar preguntas orales es lo que necesitarás en cualquier meeting.</li>
+        <li><strong>Isla 2: "My current project"</strong> — 60 seg describiendo la migración WebDTE / tu trabajo en ISOLution.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 4 · CONSOLIDACIÓN + PRIMER GOLDEN MASTER</span><span class="wk-tag">~9h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Repaso activo:</strong> el finde, sesión de 1h mezclando las 3 estructuras (presente, pasado, preguntas) en conversación libre.</li>
+        <li><strong>Listening:</strong> sube un nivel: prueba un video de <code>Fireship</code> (rápido pero corto y visual) con subtítulos EN. Si te pierdes, pausa y relee — es entreno, no examen.</li>
+        <li><strong>Isla 3: "My tech stack & opinions"</strong> — por qué prefieres vanilla JS, qué opinas de los frameworks. Terreno donde tienes MUCHO que decir.</li>
+        <li><strong>Ejecutar GM-1</strong> (abajo) y registrar resultados en el log.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="gm-box">
+    <div class="gm-title">◆ Golden Master 1 · Fin de agosto</div>
+    <div class="gm-content">
+      Tests de aceptación de la wave. Se pasan todos o se repite la semana 4:
+      <ul>
+        <li><code>GM1-T1 HABIT:</code> ≥ 24 días de agosto con al menos rutina Nivel 1 completada.</li>
+        <li><code>GM1-T2 WRITE:</code> escribir un prompt de 5+ líneas a Copilot describiendo una tarea real, sin traductor, y que la IA lo ejecute correctamente a la primera.</li>
+        <li><code>GM1-T3 SPEAK:</code> las 3 islas salen fluidas grabadas en el móvil, sin leer.</li>
+        <li><code>GM1-T4 LISTEN:</code> episodio nuevo de 6 Minute English: resumir sus 3 ideas principales sin releer transcript.</li>
+        <li><code>GM1-T5 VOCAB:</code> mazo Anki con 120+ tarjetas y retención ≥ 85%.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ TAB 4: WAVE 2 SEPTIEMBRE ══════════ -->
+<div id="tab-mes2" class="mode-panel">
+
+  <div class="sec-title" data-n="1">WAVE 2 · SEPTIEMBRE · PRODUCCIÓN ESCRITA + LISTENING ESTRUCTURADO</div>
+
+  <div class="callout blue">
+    <strong>Objetivo de la wave</strong>
+    Al acabar septiembre: escribes cualquier texto técnico de tu día a día (prompt complejo, PR description, mensaje a un
+    compañero) sin traductor y con estructura correcta. Tu listening da el salto de "material para estudiantes" a
+    "material real ralentizado". El speaking mantiene volumen pero aún sin presión — el sprint es en octubre.
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 5 · PRESENT PERFECT VS PAST + PR DESCRIPTIONS</span><span class="wk-tag">~10h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Gramática:</strong> present perfect vs past simple — LA distinción que los hispanohablantes destrozan. Regla operativa: ¿hay fecha/momento concreto? → past (<code>I fixed it yesterday</code>). ¿Importa el resultado presente, no el cuándo? → perfect (<code>I've fixed the bug</code> = ya está arreglado). En contexto dev: <code>Have you tested it? / I deployed it on Friday</code>.</li>
+        <li><strong>Writing:</strong> esta semana escribes 3 PR descriptions reales (o simuladas sobre tu código de tesis) con la plantilla: <code>What / Why / How / Testing</code>. Write-then-compare con IA.</li>
+        <li><strong>Listening:</strong> cambio de material: <code>podcasts técnicos a 0.8x</code> — Syntax.fm o The Changelog. Episodios de 20-30 min, escucha activa 30 min/día.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 6 · FUTURES + CONDICIONALES 0/1</span><span class="wk-tag">~10h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Gramática:</strong> will vs going to (decisión espontánea vs plan) + condicionales 0/1 — el pan de cada día técnico: <code>If the test fails, the pipeline stops</code> (0) · <code>If we use GraalVM, the cold start will improve</code> (1). Son la estructura de TODO razonamiento arquitectónico.</li>
+        <li><strong>Speaking:</strong> sesiones de "planning": explica a la IA qué vas a hacer esta semana en la tesis y por qué (fuerza futures y condicionales de forma natural).</li>
+        <li><strong>Isla 4: "Explaining a technical decision"</strong> — 60 seg justificando una decisión de arquitectura con estructura <code>problem → options → decision → because</code>.</li>
+        <li><strong>Shadowing:</strong> arranca: 10 min/día con un video técnico con buena transcripción. Frase a frase, imitando ritmo.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 7 · MODALES + EMAIL/SLACK REGISTER</span><span class="wk-tag">~10h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Gramática:</strong> should/must/have to/can/could/might — el sistema de opinión y obligación. Crítico para code reviews: <code>You should extract this method</code> · <code>This must not return null</code> · <code>We could use a factory here</code>. La diferencia de tono entre ellos ES la diferencia entre sonar útil o sonar borde.</li>
+        <li><strong>Writing:</strong> mensajes de Slack/Teams simulados: pedir ayuda, reportar un blocker, responder a un code review. 2 por día, corregidos.</li>
+        <li><strong>Listening:</strong> sube a 0.9x. Añade 1 charla de conferencia esta semana (GOTO Conferences en YouTube, tema que domines) con subs EN.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 8 · CONSOLIDACIÓN + GM-2</span><span class="wk-tag">~10h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Writing integrador:</strong> escribe un mini-documento técnico de 300 palabras en inglés (p.ej. el abstract de tu TFM, o un README de un módulo). Es tu primer texto "largo". Write-then-compare, y guarda ambas versiones — en noviembre reescribirás el mismo texto y compararás.</li>
+        <li><strong>Monólogos:</strong> desde ahora 2×/semana: 2 min grabados, tema técnico, escuchar y anotar 3 errores.</li>
+        <li><strong>Ejecutar GM-2</strong> y decidir ajustes para el sprint de octubre.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="gm-box">
+    <div class="gm-title">◆ Golden Master 2 · Fin de septiembre</div>
+    <div class="gm-content">
+      <ul>
+        <li><code>GM2-T1 WRITE:</code> PR description completa (What/Why/How/Testing) sin traductor en <15 min; la IA la puntúa ≥ 7/10 en claridad.</li>
+        <li><code>GM2-T2 WRITE:</code> texto técnico de 300 palabras con <10 errores marcados por la IA.</li>
+        <li><code>GM2-T3 LISTEN:</code> episodio de podcast técnico a 0.9x: comprensión ≥ 75% (autoevaluada resumiendo y contrastando con el transcript).</li>
+        <li><code>GM2-T4 SPEAK:</code> conversación de 15 min con IA sin cambiar a español ni una vez.</li>
+        <li><code>GM2-T5 GRAMMAR:</code> test rápido generado por IA: 20 frases con huecos de perfect/past/condicionales/modales, ≥ 16 correctas.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ TAB 5: WAVE 3 OCTUBRE ══════════ -->
+<div id="tab-mes3" class="mode-panel">
+
+  <div class="sec-title" data-n="1">WAVE 3 · OCTUBRE · SPEAKING SPRINT</div>
+
+  <div class="callout green">
+    <strong>Objetivo de la wave</strong>
+    Este es el mes que decide si llegas a B1 oral o te quedas en A2+. Se sube el volumen de producción oral a
+    <code>~45 min/día</code> y se introduce lo que ningún tutor IA te da del todo: <code>presión humana real</code>.
+    Reading/writing pasan a mantenimiento (ya van embebidos en tu jornada). Todo el tiempo dedicado va a la boca y al oído.
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠ El componente humano es obligatorio en esta wave</div>
+    <div class="danger-content">
+      La IA es el sparring perfecto: paciente, disponible, sin juicio. Pero precisamente por eso no genera el estrés
+      de la conversación real — y el estrés es parte del skill. En octubre añades <strong>2 sesiones/semana de 25 min con humanos</strong>:
+      la opción más eficiente es <code>italki</code> o <code>Preply</code> (tutores de conversación desde ~8-10€/sesión; elige tutor,
+      no profesor académico — quieres hablar, no estudiar). Alternativa gratis: intercambios en <code>Tandem/HelloTalk</code>
+      (menos fiables para agendar, válidos si el presupuesto manda). Son ~80-100€ el mes. Es la mejor inversión de todo el plan.
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 9 · CONDICIONAL 2 + ARRANQUE DE TUTORÍAS</span><span class="wk-tag">~11h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Gramática:</strong> condicional 2 (hipótesis): <code>If we didn't use Docker, deployment would be a nightmare</code>. Es la estructura del debate arquitectónico — comparar mundos posibles.</li>
+        <li><strong>Speaking IA (30 min/día):</strong> nuevo formato: la IA te da un escenario y lo resuelves hablando (<code>your deployment failed at 6pm, explain to your manager what happened</code>).</li>
+        <li><strong>Tutoría humana 1 y 2:</strong> primera sesión = presentarte y hablar de tu trabajo (tus islas 1-4 en combate real). No prepares nada más: quieres medir tu improvisación.</li>
+        <li><strong>Monólogo:</strong> ahora DIARIO: 2 min grabados cada día.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 10 · PASIVA + DESCRIBIR SISTEMAS</span><span class="wk-tag">~11h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Gramática:</strong> voz pasiva — omnipresente en inglés técnico: <code>the request is validated, then routed to the handler</code> · <code>the data was corrupted during migration</code>. Practica describiendo TU pipeline FMI en pasiva: es literalmente describir el SCHEDULER DAG en inglés.</li>
+        <li><strong>Speaking IA:</strong> ejercicio estrella del mes: <strong>explica la arquitectura de tu tesis en inglés, de memoria, con la IA interrumpiendo con preguntas</strong>. Repite cada semana; graba la primera y la última para medir la delta.</li>
+        <li><strong>Listening:</strong> charlas de conferencia a velocidad real (1x) con subs EN. 1 charla de 30-40 min por semana + podcasts diarios a 1x.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 11 · RELATIVE CLAUSES + CONECTORES</span><span class="wk-tag">~11h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Gramática:</strong> relative clauses (<code>the service that handles auth</code>, <code>the table where we store sessions</code>) + conectores de discurso (<code>however, although, therefore, that's why, on the other hand</code>). Son lo que convierte frases sueltas A2 en discurso B1.</li>
+        <li><strong>Speaking:</strong> ejercicio "opinión + defensa": la IA toma la postura contraria a la tuya (frameworks vs vanilla, monolito vs microservicios) y debates 15 min. Debatir es tu formato natural — úsalo.</li>
+        <li><strong>Tutorías:</strong> pide al tutor que simule small talk de oficina (5 min) antes del tema técnico. El small talk es el terreno donde más se sufre y menos se practica.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 12 · FLUIDEZ BAJO PRESIÓN + GM-3</span><span class="wk-tag">~11h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Ejercicio de presión:</strong> respuestas con timer — la IA pregunta, tienes 10 seg para empezar a responder y 60 seg máximo. Entrena la respuesta espontánea, que es lo que separa B1 de "sé inglés pero me bloqueo".</li>
+        <li><strong>Islas 5-8:</strong> completa el set: <code>describing a bug and its fix</code> · <code>giving an estimate and its risks</code> · <code>disagreeing politely</code> · <code>asking for clarification</code>.</li>
+        <li><strong>Ejecutar GM-3.</strong> Es el checkpoint más importante del plan: mide el cuello de botella.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="gm-box">
+    <div class="gm-title">◆ Golden Master 3 · Fin de octubre</div>
+    <div class="gm-content">
+      <ul>
+        <li><code>GM3-T1 SPEAK:</code> monólogo de 5 min sin guion explicando tu proyecto de tesis, grabado. Comprensible de principio a fin (validado pasando el audio a la IA para transcribir: si la transcripción es fiel, tu pronunciación funciona).</li>
+        <li><code>GM3-T2 SPEAK:</code> conversación de 20 min con IA de voz, sin español, con <5 bloqueos largos (>10 seg).</li>
+        <li><code>GM3-T3 HUMAN:</code> 8 sesiones de tutoría humana completadas en el mes; el tutor confirma que mantienes conversación B1.</li>
+        <li><code>GM3-T4 LISTEN:</code> charla de conferencia nueva de 20 min a 1x CON subs: comprensión ≥ 80%.</li>
+        <li><code>GM3-T5 PRESSURE:</code> ronda de 10 preguntas con timer: respondes 8+ sin bloqueo total.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ TAB 6: WAVE 4 NOVIEMBRE ══════════ -->
+<div id="tab-mes4" class="mode-panel">
+
+  <div class="sec-title" data-n="1">WAVE 4 · NOVIEMBRE · INTEGRACIÓN + SIMULACROS</div>
+
+  <div class="callout purple">
+    <strong>Objetivo de la wave</strong>
+    Nada nuevo entra en noviembre: se integra, se pule y se valida bajo condiciones reales. La gramática nueva se congela
+    (feature freeze) y todo el esfuerzo va a simulacros de las situaciones exactas para las que te preparas.
+    Si octubre fue el sprint de construcción, noviembre es la fase de E2E testing.
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 13 · SIMULACRO: DAILY STANDUP</span><span class="wk-tag">~10h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Simulacro diario (10 min):</strong> cada mañana, ANTES de tu trabajo real, haz tu daily en inglés grabado: <code>yesterday I... / today I will... / I'm blocked on...</code>. Sobre tu trabajo REAL de ese día. En 5 días el formato es automático.</li>
+        <li><strong>Phrasal verbs de supervivencia:</strong> los ~30 de altísima frecuencia en oficina: <code>set up, roll back, figure out, look into, follow up, sort out, break down, come up with, carry out, point out</code>. Uno integrado por día en tus conversaciones.</li>
+        <li><strong>Listening:</strong> QUITAR SUBTÍTULOS. Charlas y podcasts a 1x sin red. La comprensión cae al principio — es esperado y necesario.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 14 · SIMULACRO: CODE REVIEW ORAL + REUNIÓN</span><span class="wk-tag">~10h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Simulacro:</strong> comparte pantalla mental con la IA: pega un fragmento de código tuyo y coméntalo EN VOZ ALTA como si presentaras en una review: qué hace, por qué así, qué mejorarías. 15 min/día.</li>
+        <li><strong>Softeners:</strong> el registro diplomático que marca la diferencia profesional: <code>I was wondering if... / Could we maybe... / I see your point, but... / It might be worth trying...</code>. Sin esto suenas más brusco de lo que eres.</li>
+        <li><strong>Tutoría humana (continúa 2×/semana):</strong> pide simulacro de reunión: el tutor hace de PM que pregunta estimaciones y plazos.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 15 · SIMULACRO: ENTREVISTA / DEFENSA TÉCNICA</span><span class="wk-tag">~10h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Simulacro estrella:</strong> defensa de tu tesis en inglés (o entrevista técnica, según tu objetivo real de diciembre). La IA hace de tribunal/entrevistador hostil: 30 min, preguntas difíciles, interrupciones. 3 veces esta semana.</li>
+        <li><strong>Re-test de escritura:</strong> reescribe SIN mirar el original el texto de 300 palabras de la semana 8. Compara las dos versiones: esa delta es tu progreso objetivo en writing.</li>
+        <li><strong>Listening extremo:</strong> 1 video de un hablante con acento no nativo (indio, alemán, francés) — el inglés real de la industria es mayoritariamente entre no nativos.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="week-box">
+    <div class="week-head"><span>SEMANA 16-17 · GOLDEN MASTER FINAL</span><span class="wk-tag">~10h</span></div>
+    <div class="week-body">
+      <ul>
+        <li><strong>Semana 16:</strong> repaso de las islas (las 8 pulidas), ronda final de errores recurrentes del log, última semana de tutorías del plan.</li>
+        <li><strong>Semana 17 (fin nov / inicio dic):</strong> ejecutar el GM-FINAL completo en 2 días. Repetir el <code>EF SET</code> y comparar con el baseline de agosto — tu diff objetivo de 4 meses.</li>
+        <li><strong>Retrospectiva:</strong> qué mantener en régimen de mantenimiento desde diciembre (mínimo sostenible: speaking 3×/semana + todo el entorno en inglés para siempre).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="gm-box">
+    <div class="gm-title">◆ Golden Master FINAL · Primeros de diciembre</div>
+    <div class="gm-content">
+      La validación E2E del proyecto completo:
+      <ul>
+        <li><code>GMF-T1 READ:</code> leer una doc técnica nueva de 2 páginas y explicar su contenido — sin traductor, a velocidad de trabajo. <strong>[B2 técnico]</strong></li>
+        <li><code>GMF-T2 WRITE:</code> prompt complejo multi-restricción + PR description + mensaje Slack delicado, los tres en <30 min total, puntuación IA ≥ 8/10. <strong>[B2 técnico]</strong></li>
+        <li><code>GMF-T3 LISTEN:</code> charla de conferencia desconocida, 20 min, 1x, SIN subtítulos: resumir ideas principales, ≥ 75%. <strong>[B1 sólido]</strong></li>
+        <li><code>GMF-T4 SPEAK:</code> 30 min de conversación técnica con humano (tutor) cubriendo: presentación, proyecto, debate de una decisión, preguntas imprevistas. El tutor evalúa con rúbrica B1. <strong>[B1]</strong></li>
+        <li><code>GMF-T5 EXTERNAL:</code> EF SET ≥ B1 alto en comprensión (el test no mide speaking; es tu métrica externa contrastable).</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ TAB 7: MÉTRICAS ══════════ -->
+<div id="tab-metricas" class="mode-panel">
+
+  <div class="sec-title" data-n="1">SISTEMA DE MEDICIÓN</div>
+
+  <div class="callout yellow">
+    <strong>Principio: medir ejecución, no sensación</strong>
+    "Siento que no avanzo" es el estado emocional por defecto de todo aprendiz de idiomas adulto, y es un sensor roto:
+    la mejora en idiomas es logarítmica-perceptiva (avanzas más de lo que notas). Por eso el plan solo confía en
+    métricas de ejecución (¿hiciste los slots?) y en los Golden Masters mensuales (¿pasas los tests?). Lo demás es ruido.
+  </div>
+
+  <div class="sec-title" data-n="2">KPIs SEMANALES (EL LOG)</div>
+
+  <table class="vtable">
+    <tr><th>KPI</th><th>Target</th><th>Cómo se mide</th></tr>
+    <tr><td class="cat">DÍAS ACTIVOS</td><td>≥ 6/7</td><td>Días con al menos rutina Nivel 1. Un simple check en un markdown o calendario.</td></tr>
+    <tr><td class="cat">MIN SPEAKING</td><td>≥ 150/sem (W1-2) · ≥ 250/sem (W3-4)</td><td>Suma de sesiones IA + tutorías + monólogos.</td></tr>
+    <tr><td class="cat">MIN LISTENING</td><td>≥ 180/sem</td><td>Solo escucha activa (con resumen posterior). Lo pasivo no cuenta.</td></tr>
+    <tr><td class="cat">ANKI RETENTION</td><td>≥ 85%</td><td>Estadística nativa de Anki. Si baja: demasiadas tarjetas nuevas o mal formato.</td></tr>
+    <tr><td class="cat">ERRORES RECURRENTES</td><td>lista viva ≤ 10 items</td><td>El resumen de errores de cada sesión IA va a una lista. Un error 3 semanas en la lista = foco de la semana siguiente.</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">EL LOG SEMANAL (PLANTILLA)</div>
+
+  <pre><span class="lang">MARKDOWN</span><span class="cm"># english-log/week-NN.md</span>
+
+<span class="kw">## Week NN · Wave N</span>
+<span class="an">days_active:</span> 6/7
+<span class="an">speaking_min:</span> 170
+<span class="an">listening_min:</span> 195
+<span class="an">anki_retention:</span> 88%
+
+<span class="kw">## Recurring errors</span>
+- <span class="st">word order in questions</span> (week 3 on the list → FOCUS next week)
+- <span class="st">for/since confusion</span>
+- <span class="st">pronunciation: "focus" /ˈfoʊkəs/ not "focus" a la española</span>
+
+<span class="kw">## Wins</span>
+- <span class="cl">First prompt chain fully in English, worked first try</span>
+
+<span class="kw">## Next week focus</span>
+- <span class="cl">Question word order drills in every speaking session</span></pre>
+
+  <div class="sec-title" data-n="4">ESCALA DE REFERENCIA CEFR (PARA AUTOEVALUARTE SIN ENGAÑARTE)</div>
+
+  <table class="vtable">
+    <tr><th>Nivel</th><th>Speaking: qué significa DE VERDAD</th><th>Listening: qué significa DE VERDAD</th></tr>
+    <tr><td class="cat">A2</td><td>Frases preparadas, presente mayormente, bloqueos frecuentes al improvisar</td><td>Entiendes si te hablan despacio, directo y sobre temas conocidos</td></tr>
+    <tr><td class="cat">B1</td><td>Mantienes conversación sobre temas conocidos, con errores pero sin romper la comunicación; puedes narrar, opinar y justificar simple</td><td>Sigues el hilo de una charla clara sobre tu campo a velocidad casi normal; pierdes detalles, no el argumento</td></tr>
+    <tr><td class="cat">B2</td><td>Interactúas con fluidez y espontaneidad; debates con matices; el interlocutor no tiene que esforzarse</td><td>Entiendes discurso extenso, acentos variados, TV sin subtítulos en general</td></tr>
+  </table>
+
+  <div class="insight-box">
+    <div class="insight-title">◈ Expectativa honesta de diciembre</div>
+    <div class="insight-content">
+      Si ejecutas ≥ 85% del plan: <strong>B2 funcional en lectura/escritura técnica</strong> (alta confianza),
+      <strong>B1 sólido en listening técnico</strong> (alta confianza), <strong>B1 en speaking sobre tus temas</strong>
+      (confianza media-alta — depende casi linealmente de los minutos de boca de octubre-noviembre).
+      Lo que NO tendrás: B1 cómodo en temas alejados de tu mundo (cine, política) ni comprensión de nativos hablando rápido entre ellos.
+      No pasa nada: no era la spec.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ TAB 8: ARSENAL ══════════ -->
+<div id="tab-arsenal" class="mode-panel">
+
+  <div class="sec-title" data-n="1">HERRAMIENTAS</div>
+
+  <table class="vtable">
+    <tr><th>Herramienta</th><th>Rol</th><th>Coste</th><th>Notas</th></tr>
+    <tr><td class="cat">Claude (voz)</td><td>Sparring diario de speaking + corrector de writing</td><td>ya lo tienes (Max)</td><td>Crea un Project "English Tutor" con el prompt maestro como instrucción permanente.</td></tr>
+    <tr><td class="cat">Anki</td><td>SRS de vocabulario contextual</td><td>gratis (iOS 30€ único)</td><td>Un solo mazo. Tarjetas = frase con hueco. Máx 5 nuevas/día.</td></tr>
+    <tr><td class="cat">italki / Preply</td><td>Tutorías humanas de conversación (oct-nov)</td><td>~8-12€/sesión</td><td>Filtro: "community tutor" para conversación, no profesor certificado. Prueba 2-3 hasta encontrar encaje.</td></tr>
+    <tr><td class="cat">EF SET</td><td>Test externo baseline + final</td><td>gratis</td><td>50 min, mide reading+listening con escala CEFR. Agosto y diciembre.</td></tr>
+    <tr><td class="cat">YouGlish</td><td>Pronunciación de palabras en contexto real</td><td>gratis</td><td>Escribes una palabra, te da cientos de clips de nativos diciéndola. Para las dudas de pronunciación del día.</td></tr>
+    <tr><td class="cat">Language Reactor</td><td>Extensión: subtítulos duales + diccionario en YouTube/Netflix</td><td>gratis</td><td>Útil en W1-2; retírala en W3-4 (es una red que hay que quitar).</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">DIETA DE LISTENING POR WAVE</div>
+
+  <table class="vtable">
+    <tr><th>Wave</th><th>Material</th><th>Configuración</th></tr>
+    <tr><td class="cat">W1</td><td>6 Minute English (BBC) · Culips · videos Fireship cortos</td><td>Velocidad normal (material ya adaptado) · subs EN si hace falta</td></tr>
+    <tr><td class="cat">W2</td><td>Syntax.fm · The Changelog · 1ª charla GOTO</td><td>0.8x → 0.9x · subs EN · resumen oral tras cada sesión</td></tr>
+    <tr><td class="cat">W3</td><td>Charlas GOTO/NDC/Devoxx completas · podcasts a velocidad real</td><td>1x · subs EN · 1 charla larga/semana</td></tr>
+    <tr><td class="cat">W4</td><td>Lo mismo SIN subtítulos + acentos no nativos + algún video no técnico</td><td>1x · sin red · esto es el entorno de producción</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">PLANTILLAS DE PROMPT EN INGLÉS (TU WRITING DIARIO)</div>
+
+  <pre><span class="lang">TEMPLATE · CODING PROMPT</span><span class="cm"># The structure you practice from week 3</span>
+
+<span class="kw">CONTEXT:</span> I have a <span class="an">[Java 21 servlet / Angular 19 component / ...]</span>
+that <span class="an">[what it currently does]</span>.
+
+<span class="kw">TASK:</span> <span class="an">[imperative verb]</span> <span class="cm"># refactor / add / extract / fix / migrate</span>
+the <span class="an">[target]</span> so that <span class="an">[desired behavior]</span>.
+
+<span class="kw">CONSTRAINTS:</span>
+- Do not modify <span class="an">[...]</span>
+- Keep <span class="an">[...]</span> unchanged
+- Zero external dependencies
+
+<span class="kw">OUTPUT:</span> <span class="an">[the full file / a diff / step-by-step plan first]</span></pre>
+
+  <pre><span class="lang">TEMPLATE · WRITE-THEN-COMPARE</span><span class="cm"># For any text you write in English</span>
+
+Here is a text I wrote in English:
+<span class="st">"""[your text]"""</span>
+
+1. Rewrite it in natural, professional English.
+2. List my errors in a table: <span class="an">error | correction | rule (one line)</span>.
+3. Tell me the ONE recurring pattern I should focus on.
+Do NOT simplify my ideas — only fix the English.</pre>
+
+  <pre><span class="lang">TEMPLATE · PRESSURE DRILL (W3-4)</span>
+
+Ask me 10 rapid-fire questions about software development, one at a
+time. Mix technical and workplace situations. After each answer:
+score 1-5 for fluency, note the main error, next question.
+I have max 60 seconds per answer. Be strict. Start now.</pre>
+
+  <div class="sec-title" data-n="4">LAS 8 ISLAS DE FLUIDEZ (CHECKLIST)</div>
+
+  <table class="vtable">
+    <tr><th>#</th><th>Isla</th><th>Wave</th><th>Duración target</th></tr>
+    <tr><td class="cat">1</td><td>Who I am — presentación profesional</td><td>W1</td><td>45 seg</td></tr>
+    <tr><td class="cat">2</td><td>My current project — qué haces ahora y para qué</td><td>W1</td><td>60 seg</td></tr>
+    <tr><td class="cat">3</td><td>My tech stack & opinions — tu filosofía vanilla/anti-framework</td><td>W1</td><td>60 seg</td></tr>
+    <tr><td class="cat">4</td><td>Explaining a technical decision — problem→options→decision→because</td><td>W2</td><td>60 seg</td></tr>
+    <tr><td class="cat">5</td><td>Describing a bug and its fix — narración en pasado</td><td>W3</td><td>60 seg</td></tr>
+    <tr><td class="cat">6</td><td>Giving an estimate and its risks — futures + condicionales</td><td>W3</td><td>45 seg</td></tr>
+    <tr><td class="cat">7</td><td>Disagreeing politely — softeners + argumento</td><td>W3</td><td>30 seg</td></tr>
+    <tr><td class="cat">8</td><td>Asking for clarification — las 5 frases de supervivencia en meetings</td><td>W3</td><td>frases sueltas</td></tr>
+  </table>
+
+  <div class="callout green">
+    <strong>Frases de supervivencia (Isla 8 — memorízalas la semana 1, úsalas siempre)</strong>
+    <code>Sorry, could you say that again?</code> · <code>Could you speak a bit slower, please?</code> ·
+    <code>Just to confirm: you mean X, right?</code> · <code>I'm not sure I follow — do you mean A or B?</code> ·
+    <code>Let me rephrase that.</code> — Saber pedir aclaración con naturalidad ES una competencia B1, no una derrota.
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠ Anti-patrones de herramienta</div>
+    <div class="danger-content">
+      <strong>Duolingo:</strong> gamificación sin transferencia a conversación real; a tu nivel y con tu objetivo, es coste de oportunidad puro.
+      <strong>Traductor como primera opción:</strong> cada uso es una repetición que no haces; permitido solo como verificación DESPUÉS de producir.
+      <strong>Coleccionar recursos:</strong> un curso más, una app más, un canal más = procrastinación con apariencia de progreso. El plan ya está cerrado: ejecútalo.
+    </div>
+  </div>
+
+</div>
+
+<footer style="margin-top:60px;border-top:3px solid var(--ink);padding-top:20px;font-size:10.5px;color:var(--muted);line-height:1.8">
+  ENG-MIG v1.0 · Plan personal A2 → B2/B1 · Agosto–Noviembre 2026 · Golden Master final: diciembre 2026<br>
+  Regla de oro: si un día solo puedes hacer una cosa, <strong style="color:var(--accent)">habla</strong>. La cadena no se rompe.
+</footer>
+
+</div>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

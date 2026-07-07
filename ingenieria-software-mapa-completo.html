@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingeniería de Software · El Mapa Completo</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:32px}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--mono);font-size:clamp(26px,4vw,46px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.8}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}
+  .badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}
+  /* TABS */
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:36px;width:100%;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:10px;font-weight:600;padding:9px 14px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  /* SECTIONS */
+  .sec-title{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  /* CALLOUTS */
+  .callout{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout strong{display:block;margin-bottom:4px}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  /* CODE */
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:14px 0;position:relative;tab-size:2}
+  pre .lang{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kw{color:#c1440e;font-weight:600}
+  .cl{color:#2a6e4e;font-weight:600}
+  .fn{color:#0369a1;font-weight:600}
+  .st{color:#8a4a00}
+  .cm{color:#9a8a75;font-style:italic}
+  .nu{color:#7a3acd}
+  .an{color:#1a4a8a;font-weight:600}
+  .hl{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px}
+  /* TABLES */
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:14px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+  .vtable td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td code{background:rgba(0,0,0,.07);padding:1px 6px;border-radius:2px;font-size:11px;white-space:nowrap}
+  .vtable td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+  /* TREE */
+  .tree-box{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:20px 24px;margin:14px 0;font-size:12px;line-height:2}
+  .tree-root{color:var(--ink);font-weight:700}
+  .tree-dir{color:var(--accent3);font-weight:600}
+  .tree-file-xml{color:var(--accent);font-weight:600}
+  .tree-file-md{color:var(--accent2);font-weight:600}
+  .tree-file-ts{color:var(--purple);font-weight:600}
+  .tree-file-java{color:var(--yellow);font-weight:600}
+  .tree-file-feat{color:#2a6e4e}
+  .tree-conn{color:var(--muted)}
+  .tree-note{color:var(--muted);font-size:10.5px;font-style:italic;margin-left:6px}
+  /* INSIGHT */
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .insight-content code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+  /* DANGER */
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  /* FLOW */
+  .flow-row{display:flex;align-items:center;gap:0;margin:14px 0;overflow-x:auto;padding-bottom:4px}
+  .flow-node{background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:8px 14px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0}
+  .flow-node.ia1{border-color:var(--accent);color:var(--accent)}
+  .flow-node.ia2{border-color:var(--accent3);color:var(--accent3)}
+  .flow-node.cap{border-color:var(--accent2);color:var(--accent2)}
+  .flow-node.out{border-color:var(--purple);color:var(--purple)}
+  .flow-node.har{border-color:var(--yellow);color:#8a6000;background:rgba(232,160,32,.08)}
+  .flow-arrow{color:var(--muted);font-size:16px;padding:0 8px;flex-shrink:0}
+  .flow-parallel{display:flex;flex-direction:column;gap:8px}
+  /* GRID */
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:14px 0}
+  .info-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden}
+  .info-header{padding:9px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .info-header.o{background:rgba(193,68,14,.1);color:var(--accent)}
+  .info-header.g{background:rgba(42,110,78,.1);color:var(--accent2)}
+  .info-header.b{background:rgba(26,74,138,.1);color:var(--accent3)}
+  .info-header.p{background:rgba(122,58,205,.1);color:var(--purple)}
+  .info-header.y{background:rgba(232,160,32,.1);color:#8a6000}
+  .info-body{padding:12px 14px;font-size:12px;line-height:1.7;color:var(--ink2)}
+  .info-body code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:10.5px}
+  .mermaid{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:18px;margin:14px 0;display:flex;justify-content:center;overflow-x:auto}
+  .mermaid svg{max-width:100%;height:auto}
+  @media(max-width:720px){.mode-btn{flex:0 0 auto}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">MÁSTER DESARROLLO CON IA · REPASO INTEGRAL</div>
+  <h1>Ingeniería de Software<br><em>El Mapa Completo</em></h1>
+  <div class="subtitle">
+    Principios · Arquitecturas · Diseño y DDD · Testing · Proceso · Calidad y Seguridad · La capa IA<br>
+    Documento de repaso — cada pestaña es un dominio, cada diagrama una relación entre conceptos
+  </div>
+  <div class="badge-row">
+    <span class="badge o">SOLID</span>
+    <span class="badge g">Clean Architecture</span>
+    <span class="badge b">TDD</span>
+    <span class="badge p">DDD</span>
+    <span class="badge y">OWASP</span>
+  </div>
+</header>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="switchTab('principios')">🧭 PRINCIPIOS</button>
+  <button class="mode-btn" onclick="switchTab('arquitecturas')">🏛️ ARQUITECTURAS</button>
+  <button class="mode-btn" onclick="switchTab('diseno')">🧩 DISEÑO + DDD</button>
+  <button class="mode-btn" onclick="switchTab('testing')">🧪 TESTING</button>
+  <button class="mode-btn" onclick="switchTab('proceso')">🔁 PROCESO</button>
+  <button class="mode-btn" onclick="switchTab('calidad')">🔐 CALIDAD + SEGURIDAD</button>
+  <button class="mode-btn" onclick="switchTab('ia')">🤖 LA CAPA IA</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 1: PRINCIPIOS                                      -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-principios" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">SOLID — LOS CINCO, CON SU PORQUÉ</div>
+
+  <table class="vtable">
+    <tr><th>Principio</th><th>Enunciado operativo</th><th>Olor que lo delata</th></tr>
+    <tr><td class="cat">S · Single Responsibility</td><td>Una clase, un motivo de cambio. No "hace una cosa": <em>cambia por una razón</em> (un actor de negocio).</td><td>Clase que tocas para cambios de negocio Y de persistencia. Nombres tipo Manager/Handler.</td></tr>
+    <tr><td class="cat">O · Open/Closed</td><td>Abierta a extensión, cerrada a modificación: comportamiento nuevo = código nuevo, no editar el estable.</td><td>Cadenas de <code>if/switch</code> sobre tipos que crecen con cada feature.</td></tr>
+    <tr><td class="cat">L · Liskov Substitution</td><td>Un subtipo debe poder sustituir al padre sin sorpresas: mismos contratos, sin fortalecer precondiciones ni debilitar postcondiciones.</td><td>Overrides que lanzan <code>UnsupportedOperationException</code>. Cuadrado extiende Rectángulo.</td></tr>
+    <tr><td class="cat">I · Interface Segregation</td><td>Interfaces pequeñas por cliente: nadie depende de métodos que no usa.</td><td>Implementaciones con métodos vacíos "porque la interfaz obliga".</td></tr>
+    <tr><td class="cat">D · Dependency Inversion</td><td>Alto nivel y bajo nivel dependen ambos de abstracciones. El dominio define la interfaz; la infraestructura la implementa.</td><td><code>new JdbcXxx()</code> dentro de la lógica de negocio. Import de librería de BD en el dominio.</td></tr>
+  </table>
+
+  <div class="callout blue">
+    <strong>D es el principio arquitectónico</strong>
+    Los otros cuatro son de clase; DIP es el que genera arquitecturas enteras: hexagonal y Clean Architecture son
+    DIP aplicado sistemáticamente — todas las flechas de dependencia apuntan hacia dentro, hacia el dominio.
+    Si solo retienes uno, retén este.
+  </div>
+
+  <div class="sec-title" data-n="2">LOS PRINCIPIOS DE ECONOMÍA</div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header o">DRY — Don't Repeat Yourself</div>
+      <div class="info-body">Cada pieza de CONOCIMIENTO tiene una representación única. Matiz crítico: código parecido no es conocimiento duplicado — unificar dos cosas que evolucionan por razones distintas crea el acoplamiento que DRY quería evitar. Duplicación accidental &lt; abstracción incorrecta.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header g">KISS — Keep It Simple</div>
+      <div class="info-body">La solución más simple que resuelve el problema ACTUAL. La complejidad es el coste que se paga en cada lectura futura; se contrae solo con retorno demostrable.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header b">YAGNI — You Aren't Gonna Need It</div>
+      <div class="info-body">No construir para necesidades hipotéticas. La flexibilidad especulativa casi nunca coincide con la necesidad real cuando llega — y mientras tanto se paga su mantenimiento.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header p">Ley de Demeter</div>
+      <div class="info-body">Habla solo con tus vecinos inmediatos: <code>a.getB().getC().hacer()</code> acopla A a la estructura interna de B y C. Cada punto extra en la cadena es un motivo de rotura futuro.</div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">COHESIÓN Y ACOPLAMIENTO — EL EJE MAESTRO</div>
+
+  <div class="mermaid">
+flowchart LR
+  subgraph MAL["❌ Baja cohesión · Alto acoplamiento"]
+    A1[Utils] --- B1[GodClass] --- C1[Helper]
+    B1 --- D1[Manager]
+    A1 --- D1
+    C1 --- D1
+  end
+  subgraph BIEN["✔ Alta cohesión · Bajo acoplamiento"]
+    A2[Clientes] -->|interfaz| B2[Contratos]
+    B2 -->|interfaz| C2[Facturación]
+  end
+  MAL -.->|refactoring| BIEN
+  </div>
+
+  <div class="callout green">
+    <strong>Todo lo demás deriva de aquí</strong>
+    Cohesión: cuánto pertenece junto lo que está junto. Acoplamiento: cuánto sabe una pieza de otras.
+    SOLID, las capas, los bounded contexts, los microservicios — todos son estrategias para maximizar cohesión
+    y minimizar acoplamiento a distintas escalas. Si un principio no se puede justificar en estos términos, es dogma.
+  </div>
+
+  <div class="sec-title" data-n="4">CLEAN CODE — LO QUE SOBREVIVE DEL LIBRO</div>
+
+  <table class="vtable">
+    <tr><th>Área</th><th>Regla práctica</th></tr>
+    <tr><td class="cat">Naming</td><td>Intention-revealing: el nombre dice QUÉ y POR QUÉ, nunca CÓMO. <code>clientesConDeuda()</code>, no <code>filterList2()</code>. Vocabulario del dominio (Ubiquitous Language), consistente en todo el sistema. Prohibidos los comodines semánticos: Service, Manager, Helper, Util, Handler — nombres que permiten meter cualquier cosa dentro.</td></tr>
+    <tr><td class="cat">Funciones</td><td>Pequeñas, un nivel de abstracción por función, pocos argumentos (0-2; 3 ya pide un objeto). Sin efectos ocultos: si consulta, no muta (Command-Query Separation).</td></tr>
+    <tr><td class="cat">Comentarios</td><td>El comentario compensa un fallo de expresividad del código. Válidos: el POR QUÉ no evidente, decisiones, advertencias. Inválidos: parafrasear el código, código muerto comentado.</td></tr>
+    <tr><td class="cat">Errores</td><td>Excepciones antes que códigos de retorno; excepciones de negocio distintas de las técnicas; fallar rápido y con contexto. Nunca capturar-y-tragar.</td></tr>
+    <tr><td class="cat">Boy Scout</td><td>Deja el código un poco mejor de como lo encontraste. El mecanismo real contra la entropía: mejora continua a coste marginal, en vez de "gran refactor" que nunca llega.</td></tr>
+  </table>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 2: ARQUITECTURAS                                   -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-arquitecturas" class="mode-panel">
+
+  <div class="sec-title" data-n="1">LA REGLA DE LA DEPENDENCIA</div>
+
+  <div class="mermaid">
+flowchart TB
+  subgraph T["TRANSPORT / UI — frameworks, HTTP, CLI"]
+    subgraph I["INFRASTRUCTURE — BD, email, ficheros, APIs externas"]
+      subgraph D["DOMAIN — entidades, casos de uso, interfaces"]
+        E[Entidades + Reglas de negocio]
+        U[Casos de uso]
+        P[Puertos / Interfaces]
+      end
+    end
+  end
+  T -->|depende de| I -->|depende de| D
+  </div>
+
+  <div class="callout orange">
+    <strong>Una sola regla genera toda la familia</strong>
+    Las dependencias del código fuente apuntan SOLO hacia dentro. El dominio no sabe que existe la web, ni JPA, ni JSON.
+    Clean Architecture (Martin), Hexagonal/Ports &amp; Adapters (Cockburn) y Onion (Palermo) son la misma regla con
+    distinto vocabulario. Consecuencia práctica: el dominio se testea sin arrancar nada, y el framework es reemplazable
+    porque es un detalle de la capa externa.
+  </div>
+
+  <div class="sec-title" data-n="2">LAS TRES CAPAS OPERATIVAS</div>
+
+  <table class="vtable">
+    <tr><th>Capa</th><th>Contiene</th><th>Puede importar</th><th>Test típico</th></tr>
+    <tr><td class="cat">DOMAIN</td><td>Entidades puras, casos de uso, interfaces (Finder, Store, Sender…), validadores de negocio</td><td>Solo el lenguaje (Java/TS puro)</td><td>Unit puro, sin mocks de framework</td></tr>
+    <tr><td class="cat">INFRASTRUCTURE</td><td>Implementaciones: JdbcXxxFinder, SmtpXxxSender, FileXxxStore. Mappers hacia el dominio</td><td>Domain + drivers/librerías</td><td>Integración (BD real o Testcontainers)</td></tr>
+    <tr><td class="cat">TRANSPORT</td><td>Controllers/Servlets delgados, DTOs, serialización, mapeo HTTP↔dominio</td><td>Domain (+ el framework web)</td><td>Test de contrato HTTP (@WebMvcTest, REST Assured)</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">ESTILOS ARQUITECTÓNICOS — CUÁNDO CADA UNO</div>
+
+  <table class="vtable">
+    <tr><th>Estilo</th><th>Qué optimiza</th><th>Su coste</th><th>Cuándo</th></tr>
+    <tr><td class="cat">Monolito modular</td><td>Simplicidad operativa, refactoring barato, transacciones locales</td><td>Escalado conjunto, un despliegue</td><td>Default correcto para casi todo. Los límites de módulo bien trazados son la opción de migrar después.</td></tr>
+    <tr><td class="cat">Microservicios</td><td>Despliegue y escalado independiente por equipo/servicio</td><td>Red como frontera: latencia, consistencia eventual, observabilidad distribuida, coste operativo enorme</td><td>Cuando el cuello es ORGANIZATIVO (muchos equipos pisándose), no técnico. Nunca como punto de partida.</td></tr>
+    <tr><td class="cat">Event-driven</td><td>Desacoplamiento temporal: productor no conoce consumidores</td><td>Flujo difícil de seguir, debugging no lineal, garantías de entrega</td><td>Integraciones entre contextos, cascadas donde el emisor no debe conocer los efectos.</td></tr>
+    <tr><td class="cat">CQRS</td><td>Modelos separados para escribir (consistente) y leer (rápido/desnormalizado)</td><td>Duplicación de modelos, sincronización</td><td>Solo cuando lecturas y escrituras tienen formas realmente incompatibles. Con Event Sourcing solo si el histórico ES el negocio.</td></tr>
+  </table>
+
+  <div class="mermaid">
+flowchart LR
+  M[Monolito modular] -->|"cuello organizativo real"| MS[Microservicios]
+  M -->|"cascadas entre módulos"| ED[+ Eventos internos]
+  MS -->|"integración entre servicios"| ED2[+ Broker de eventos]
+  M -.->|"❌ moda"| MS
+  </div>
+
+  <div class="sec-title" data-n="4">MIGRACIÓN DE LEGACY — EL PATRÓN CANÓNICO</div>
+
+  <div class="mermaid">
+flowchart LR
+  U[Usuarios] --> F[Fachada / Proxy]
+  F -->|"rutas migradas"| N[Sistema nuevo]
+  F -->|"resto"| L[Sistema legacy]
+  N -.->|"crece"| N
+  L -.->|"se estrangula"| L
+  </div>
+
+  <div class="callout purple">
+    <strong>Strangler Fig (Fowler) + red de seguridad (Feathers)</strong>
+    Nunca big-bang: una fachada enruta tráfico, cada flujo migra individualmente y el legacy se apaga por
+    estrangulamiento. Precondición innegociable: tests de caracterización ANTES de tocar nada — congelan el
+    comportamiento observado (no el deseado) como Golden Master, y son el detector de regresión durante toda la migración.
+  </div>
+
+</div>
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 3: DISEÑO + DDD                                    -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-diseno" class="mode-panel">
+
+  <div class="sec-title" data-n="1">PATRONES GOF — LOS QUE SE USAN DE VERDAD</div>
+
+  <table class="vtable">
+    <tr><th>Patrón</th><th>Problema que resuelve</th><th>Señal de uso correcto</th></tr>
+    <tr><td class="cat">Factory</td><td>La creación tiene lógica (elegir implementación, validar invariantes al nacer)</td><td>El <code>new</code> con decisiones sale de la lógica de negocio</td></tr>
+    <tr><td class="cat">Strategy</td><td>Algoritmo intercambiable en runtime</td><td>Sustituye al switch que crece — es Open/Closed hecho patrón</td></tr>
+    <tr><td class="cat">Adapter</td><td>Traducir una interfaz externa a tu puerto del dominio</td><td>Vive en infraestructura; el dominio nunca ve la API de terceros</td></tr>
+    <tr><td class="cat">Decorator</td><td>Añadir responsabilidad sin tocar la clase (caché, retry, logging)</td><td>Composición de comportamientos, cada uno testeable solo</td></tr>
+    <tr><td class="cat">Observer / Listener</td><td>Notificar sin conocer a los interesados</td><td>Cascadas entre módulos sin dependencia directa</td></tr>
+    <tr><td class="cat">Repository</td><td>Colección de agregados con apariencia de memoria</td><td>Interfaz en dominio, implementación en infra — DIP aplicado a persistencia</td></tr>
+  </table>
+
+  <div class="danger-box">
+    <div class="danger-title">El anti-patrón de los patrones</div>
+    <div class="danger-content">
+      Un patrón es el NOMBRE de una solución que emerge de un problema — no un objetivo. Código con AbstractSingletonProxyFactoryBean
+      es el resultado de coleccionar patrones sin problema. La pregunta correcta nunca es "¿qué patrón meto?" sino
+      "¿qué fuerza en tensión tengo?" — y a veces la respuesta es un if.
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <strong>Composición sobre herencia</strong>
+    La herencia acopla al detalle de implementación del padre y es la relación más rígida del lenguaje (se decide en compilación,
+    no se cambia en runtime, y es 1-a-1). Composición + interfaces da lo mismo con piezas intercambiables y testeables.
+    Herencia solo para verdaderas relaciones es-un con LSP intacto — que son muchas menos de las que parecen.
+  </div>
+
+  <div class="sec-title" data-n="2">DDD — EL MODELO ES EL LENGUAJE</div>
+
+  <table class="vtable">
+    <tr><th>Bloque</th><th>Definición operativa</th><th>Ejemplo</th></tr>
+    <tr><td class="cat">Ubiquitous Language</td><td>Un solo vocabulario compartido negocio↔código. Si el experto dice "póliza", la clase se llama Poliza — la traducción mental es donde nacen los bugs de concepto.</td><td>Código, tests, specs y conversaciones usan las mismas palabras</td></tr>
+    <tr><td class="cat">Entity</td><td>Identidad continua en el tiempo: es la misma aunque cambien sus atributos</td><td><code>Cliente</code> (por NIF), <code>Contrato</code> (por número)</td></tr>
+    <tr><td class="cat">Value Object</td><td>Sin identidad: ES sus valores. Inmutable, con validación al construir — un NIF inválido no puede existir</td><td><code>Nif</code>, <code>Dinero</code>, <code>Periodo</code></td></tr>
+    <tr><td class="cat">Aggregate</td><td>Grupo de entidades con una raíz que garantiza invariantes. Frontera transaccional: se carga y guarda entero, se referencia por id de la raíz</td><td><code>Contrato</code> + sus líneas; nadie toca una línea sin pasar por Contrato</td></tr>
+    <tr><td class="cat">Domain Event</td><td>Algo que pasó, en pasado, relevante para el negocio</td><td><code>ClienteSuspendido</code>, <code>ContratoFinalizado</code></td></tr>
+    <tr><td class="cat">Bounded Context</td><td>Frontera dentro de la cual el modelo y el lenguaje son consistentes. "Cliente" significa cosas DISTINTAS en Ventas y en Facturación — y está bien: son dos modelos</td><td>Un contexto = candidato natural a módulo o servicio</td></tr>
+  </table>
+
+  <div class="mermaid">
+flowchart TB
+  subgraph BC1["Bounded Context: CONTRATACIÓN"]
+    AR1["Aggregate Root: Contrato"] --> L1[Línea]
+    AR1 --> L2[Línea]
+    AR1 --> VO1["VO: Periodo"]
+  end
+  subgraph BC2["Bounded Context: FACTURACIÓN"]
+    AR2["Aggregate Root: Factura"] --> VO2["VO: Dinero"]
+  end
+  AR1 -->|"Domain Event: ContratoActivado"| AR2
+  BC1 ---|"mismo término 'Cliente', DOS modelos"| BC2
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">La síntesis de las tres cosas</div>
+    <div class="insight-content">
+      Clean Architecture dice DÓNDE va cada cosa (capas). DDD dice QUÉ es cada cosa (bloques del modelo).
+      Los patrones dicen CÓMO resolver tensiones locales. No compiten: el agregado vive en la capa de dominio,
+      el Repository es su puerto, el Adapter JDBC su implementación en infraestructura. Un sistema bien diseñado
+      responde a las tres preguntas a la vez.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 4: TESTING                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-testing" class="mode-panel">
+
+  <div class="sec-title" data-n="1">LA PIRÁMIDE — Y POR QUÉ TIENE ESA FORMA</div>
+
+  <div class="mermaid">
+flowchart TB
+  E2E["E2E / UI — pocos<br>lentos · frágiles · máxima fidelidad"]
+  INT["INTEGRACIÓN — algunos<br>BD real, HTTP real, contratos entre piezas"]
+  UNIT["UNITARIOS — muchos<br>milisegundos · aislados · localizan el fallo exacto"]
+  E2E --> INT --> UNIT
+  </div>
+
+  <div class="callout orange">
+    <strong>La forma es una función de coste</strong>
+    Cada nivel hacia arriba gana fidelidad (se parece más a producción) y pierde velocidad, estabilidad y capacidad de
+    localizar el fallo. La pirámide dice: cubre la LÓGICA abajo (barato, preciso) y reserva arriba la verificación de que
+    las piezas conectan. Invertirla (cono de helado: todo E2E) da suites de horas que fallan por flakiness y no dicen dónde.
+  </div>
+
+  <div class="sec-title" data-n="2">TDD — EL CICLO Y SU FUNCIÓN REAL</div>
+
+  <div class="mermaid">
+flowchart LR
+  R["🔴 RED<br>test que falla<br>= especificación ejecutable"] --> G["🟢 GREEN<br>mínimo código<br>que lo pasa"]
+  G --> RF["🔵 REFACTOR<br>mejorar diseño<br>con la red en verde"]
+  RF --> R
+  </div>
+
+  <table class="vtable">
+    <tr><th>Fase</th><th>Regla</th><th>Error típico</th></tr>
+    <tr><td class="cat">RED</td><td>El test se escribe ANTES y se VE fallar. Define el contrato: nombre = comportamiento esperado, no método testeado.</td><td>Escribir el test después y verlo pasar a la primera — no prueba nada, retrata lo que ya hay.</td></tr>
+    <tr><td class="cat">GREEN</td><td>El código MÍNIMO que pasa. Resistir la tentación de diseñar aquí.</td><td>Implementar tres casos futuros "ya que estamos".</td></tr>
+    <tr><td class="cat">REFACTOR</td><td>Ahora sí diseño: nombres, duplicación, estructura — con los tests como red.</td><td>Saltárselo siempre. TDD sin refactor produce código verde y feo.</td></tr>
+  </table>
+
+  <div class="callout green">
+    <strong>Lo que TDD es en realidad</strong>
+    No es una técnica de testing — es una técnica de DISEÑO con tests como subproducto. Escribir el test primero fuerza
+    a diseñar la interfaz desde el punto de vista del consumidor, castiga el acoplamiento (lo difícil de testear está mal
+    diseñado) y produce una especificación ejecutable que no puede desincronizarse del código.
+  </div>
+
+  <div class="sec-title" data-n="3">DOBLES DE TEST — EL VOCABULARIO EXACTO</div>
+
+  <table class="vtable">
+    <tr><th>Doble</th><th>Qué hace</th><th>Cuándo</th></tr>
+    <tr><td class="cat">Dummy</td><td>Se pasa pero no se usa (rellena firmas)</td><td>Argumentos irrelevantes al caso</td></tr>
+    <tr><td class="cat">Stub</td><td>Respuestas predefinidas a llamadas</td><td>Controlar el ESTADO de entrada: "el finder devuelve este cliente"</td></tr>
+    <tr><td class="cat">Fake</td><td>Implementación funcional simplificada</td><td>Repositorio en memoria, H2 — comportamiento real sin coste real</td></tr>
+    <tr><td class="cat">Mock</td><td>Verifica INTERACCIONES: que se llamó a X con Y</td><td>Cuando el efecto ES la llamada saliente (se envió el email)</td></tr>
+    <tr><td class="cat">Spy</td><td>Objeto real que además registra llamadas</td><td>Verificación parcial sobre comportamiento real</td></tr>
+  </table>
+
+  <div class="danger-box">
+    <div class="danger-title">Sobre-mockeo: la enfermedad de las suites corporativas</div>
+    <div class="danger-content">
+      Test que mockea todo y verifica cada interacción = retrato de la IMPLEMENTACIÓN, no del comportamiento.
+      Cualquier refactor lo rompe sin que haya bug: la suite castiga mejorar el diseño. Regla: testea estado y resultados
+      donde puedas (stubs/fakes); verifica interacciones solo cuando la interacción ES el requisito.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">TESTS DE CARACTERIZACIÓN — LEGACY</div>
+
+  <div class="callout purple">
+    <strong>Feathers: congelar lo que HAY, no lo que debería haber</strong>
+    En legacy sin tests, el primer test no valida corrección — DOCUMENTA el comportamiento actual, bugs incluidos.
+    Se ejecuta el sistema, se captura la salida real (Golden Master, idealmente a nivel HTTP), y esa captura se convierte
+    en la aserción. Función: detector de cambios durante el refactoring. La definición operativa de legacy es justamente
+    esa: <em>código sin tests</em> — no código viejo.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Concepto complementario</th><th>Idea</th></tr>
+    <tr><td class="cat">Cobertura</td><td>Métrica de LO NO TESTEADO, no de calidad: 100% de cobertura con aserciones vacías = 0 protección. Útil como detector de huecos, tóxica como objetivo.</td></tr>
+    <tr><td class="cat">Test de contrato</td><td>Verifica que productor y consumidor de una API acuerdan el esquema — el pegamento entre servicios sin E2E conjunto.</td></tr>
+    <tr><td class="cat">Mutation testing</td><td>Muta el código (invierte un if) y comprueba que algún test muere. Mide la calidad de las ASERCIONES, lo que la cobertura no ve.</td></tr>
+    <tr><td class="cat">FIRST</td><td>Fast, Independent (orden irrelevante), Repeatable (sin red/reloj/random), Self-validating, Timely (se escriben con el código, no después).</td></tr>
+  </table>
+
+</div>
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 5: PROCESO                                         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-proceso" class="mode-panel">
+
+  <div class="sec-title" data-n="1">GIT — LA ESTRATEGIA DE RAMAS ES UNA DECISIÓN DE INTEGRACIÓN</div>
+
+  <table class="vtable">
+    <tr><th>Modelo</th><th>Cómo</th><th>Trade-off</th></tr>
+    <tr><td class="cat">Trunk-based</td><td>Ramas de horas/días, integración continua a main, feature flags para lo incompleto</td><td>Exige suite rápida y disciplina; minimiza el infierno de merges. El estándar de los equipos de alto rendimiento (DORA).</td></tr>
+    <tr><td class="cat">Feature branches + PR</td><td>Rama por feature, review en PR, merge al terminar</td><td>Review natural y trazable; ramas largas = integración diferida = conflictos acumulados. Funciona si las ramas viven poco.</td></tr>
+    <tr><td class="cat">GitFlow</td><td>develop + release + hotfix + feature</td><td>Ceremonia justificada solo con releases versionadas mantenidas en paralelo (software instalable). Para despliegue continuo, es sobrepeso.</td></tr>
+  </table>
+
+  <div class="callout blue">
+    <strong>Commits como historia legible</strong>
+    Atómicos (un cambio lógico), con mensaje que explica el POR QUÉ (el diff ya dice el qué). Convención tipo
+    Conventional Commits (<code>feat:</code>, <code>fix:</code>, <code>refactor:</code>) da changelog y semántica gratis.
+    <code>git log</code> de un buen repo se lee como el diario de decisiones del proyecto.
+  </div>
+
+  <div class="sec-title" data-n="2">CI/CD — EL PIPELINE COMO GATE OBJETIVO</div>
+
+  <div class="mermaid">
+flowchart LR
+  C[commit/PR] --> B[build + unit] --> A["análisis estático<br>+ seguridad deps"] --> I["integración<br>Testcontainers"] --> E["E2E smoke"] --> D1["CD: deploy staging"] --> D2["deploy prod<br>(continuous deployment)"]
+  B -.->|"falla → feedback en minutos"| C
+  </div>
+
+  <table class="vtable">
+    <tr><th>Término</th><th>Distinción exacta</th></tr>
+    <tr><td class="cat">Continuous Integration</td><td>Integrar a diario contra main con build+tests automáticos. Es una PRÁCTICA de equipo; Jenkins/Actions solo la automatizan.</td></tr>
+    <tr><td class="cat">Continuous Delivery</td><td>Cada commit que pasa el pipeline PODRÍA desplegarse — el botón existe siempre; pulsar es decisión de negocio.</td></tr>
+    <tr><td class="cat">Continuous Deployment</td><td>El botón no existe: pasa el pipeline → producción. Exige madurez de tests y observabilidad.</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">REFACTORING Y DEUDA TÉCNICA</div>
+
+  <div class="callout orange">
+    <strong>Definición estricta de refactoring</strong>
+    Cambiar la estructura SIN cambiar el comportamiento observable — en pasos pequeños, con tests en verde entre cada uno.
+    Si cambia comportamiento, no es refactoring: es un cambio funcional disfrazado, y merece su propio test y su propio commit.
+    Los dos sombreros (Fowler) nunca a la vez: o añades funcionalidad o reestructuras.
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header g">Deuda deliberada</div>
+      <div class="info-body">"Lo hacemos simple ahora, sabiendo el coste, y lo anotamos". Palanca legítima: velocidad hoy pagada con intereses conocidos. La metáfora original de Ward Cunningham es esta — deuda como préstamo consciente.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header o">Deuda inadvertida</div>
+      <div class="info-body">La producida por no saber hacerlo mejor. No es deuda: es desconocimiento capitalizado. Se combate con formación y review, no con sprints de pago.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header b">El interés</div>
+      <div class="info-body">No se paga al saldar: se paga en CADA cambio que roza la zona endeudada. Por eso la deuda en código caliente (se toca cada semana) es urgente y la de código congelado puede no pagarse jamás — priorización por frecuencia de cambio, no por fealdad.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header p">Code review — qué mirar</div>
+      <div class="info-body">Por orden de valor: ¿resuelve el problema correcto? ¿el diseño encaja con el sistema? ¿los tests cubren los criterios? ¿legibilidad? El estilo lo discute un linter, no una persona. Review de intención &gt; review de sintaxis.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 6: CALIDAD + SEGURIDAD                             -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-calidad" class="mode-panel">
+
+  <div class="sec-title" data-n="1">OWASP TOP 10 — AGRUPADO PARA RETENERLO</div>
+
+  <table class="vtable">
+    <tr><th>Familia</th><th>Riesgos que agrupa</th><th>Defensa nuclear</th></tr>
+    <tr><td class="cat">Confianza en la entrada</td><td>Injection (SQL, command, LDAP) · SSRF</td><td>NUNCA concatenar entrada en intérpretes: prepared statements, validación en frontera con allowlist, parametrización total.</td></tr>
+    <tr><td class="cat">Quién eres y qué puedes</td><td>Broken Access Control (nº1 histórico) · fallos de identificación/autenticación</td><td>Autorización en servidor por recurso (no ocultar botones), deny-by-default, sesiones bien gestionadas, MFA. El IDOR — cambiar el id de la URL y ver datos ajenos — sigue siendo el fallo más común del mundo real.</td></tr>
+    <tr><td class="cat">Criptografía y secretos</td><td>Cryptographic failures · secretos en repos</td><td>TLS en tránsito, hashing de contraseñas con algoritmo de coste (bcrypt/argon2), secretos en vault — jamás en código ni en Git.</td></tr>
+    <tr><td class="cat">Diseño y configuración</td><td>Insecure design · security misconfiguration</td><td>Amenazas modeladas en la fase de DISEÑO (la seguridad no se parchea después), defaults endurecidos, superficies mínimas.</td></tr>
+    <tr><td class="cat">Cadena de suministro</td><td>Componentes vulnerables · fallos de integridad software/datos</td><td>Inventario de dependencias (SBOM), escaneo automático en CI, actualización continua. Tu código es el 10% del código que ejecutas.</td></tr>
+    <tr><td class="cat">Visibilidad</td><td>Logging &amp; monitoring failures</td><td>Los ataques que no se ven duran meses: log de eventos de seguridad, alertas, trazabilidad — sin volcar datos sensibles al log.</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">MÉTRICAS DE CÓDIGO — LAS QUE SIGNIFICAN ALGO</div>
+
+  <table class="vtable">
+    <tr><th>Métrica</th><th>Qué mide de verdad</th><th>Umbral operativo</th></tr>
+    <tr><td class="cat">Complejidad ciclomática</td><td>Caminos independientes por función = casos de test mínimos para cubrirla</td><td>&gt;10 por función: descomponer. Es la métrica que mejor predice defectos por unidad.</td></tr>
+    <tr><td class="cat">Complejidad cognitiva</td><td>Coste de LEER (anidamiento penalizado sobre secuencia) — mejor proxy de mantenibilidad que la ciclomática</td><td>El if dentro del for dentro del if es el enemigo, no el switch plano</td></tr>
+    <tr><td class="cat">Acoplamiento (afferent/efferent)</td><td>Quién depende de mí / de quién dependo. Alto Ca = pieza crítica, estabilízala; alto Ce = pieza frágil</td><td>Dominio: Ca alto, Ce ~0. Infra: al revés. Si no, las capas están rotas.</td></tr>
+    <tr><td class="cat">Churn × complejidad</td><td>Ficheros que cambian mucho Y son complejos = los hotspots donde vive el riesgo real</td><td>El criterio de priorización de refactoring con mejor retorno conocido</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">OBSERVABILIDAD — LOS TRES PILARES</div>
+
+  <div class="mermaid">
+flowchart LR
+  subgraph OBS["Observabilidad"]
+    L["LOGS<br>qué pasó — eventos discretos<br>estructurados JSON"]
+    M["MÉTRICAS<br>cuánto/cuántas — agregados<br>latencia p99, tasa de error"]
+    T["TRAZAS<br>por dónde — el viaje de UNA<br>petición entre servicios"]
+  end
+  L --- M --- T
+  T -->|"correlation id une los tres"| L
+  </div>
+
+  <div class="callout green">
+    <strong>Monitorización ≠ observabilidad</strong>
+    Monitorizar = vigilar fallos CONOCIDOS (dashboards y alertas de lo previsto). Observabilidad = poder preguntar
+    lo IMPREVISTO al sistema desde fuera sin desplegar código nuevo. La segunda es propiedad del diseño:
+    logs estructurados, ids de correlación y cardinalidad útil se deciden al escribir, no al operar.
+  </div>
+
+</div>
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 7: LA CAPA IA                                      -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-ia" class="mode-panel">
+
+  <div class="sec-title" data-n="1">POR QUÉ EL MÁSTER ENSEÑA TODO LO ANTERIOR ANTES QUE LA IA</div>
+
+  <div class="callout orange">
+    <strong>La tesis del temario</strong>
+    El objetivo no es enseñar a programar con IA — es enseñar a programar BIEN para que la IA pueda funcionar.
+    Un LLM es un pair programmer literal: amplifica el criterio de quien lo dirige. Sin las seis pestañas anteriores,
+    la IA produce más código malo más rápido; con ellas, cada concepto clásico se convierte en un mecanismo de control del agente.
+  </div>
+
+  <div class="sec-title" data-n="2">EL MAPA DE CORRESPONDENCIAS — CADA CONCEPTO, SU FUNCIÓN CON AGENTES</div>
+
+  <table class="vtable">
+    <tr><th>Concepto clásico</th><th>Su función original</th><th>Su función con agentes IA</th></tr>
+    <tr><td class="cat">SOLID / capas</td><td>Mantenibilidad para humanos</td><td>Resuelve DÓNDE está y DÓNDE va cada cosa: el agente clasifica sin ambigüedad en qué capa opera un cambio. Menos grados de libertad = menos alucinación estructural.</td></tr>
+    <tr><td class="cat">Naming intention-revealing + Ubiquitous Language</td><td>Legibilidad</td><td>El nombre ES el prompt: <code>ClienteConDeudaFinder</code> le dice al modelo qué puede y no puede hacer ahí dentro. Un vocabulario cerrado de roles elimina los cajones de sastre (Service, Util) donde el agente mete cualquier cosa.</td></tr>
+    <tr><td class="cat">TDD</td><td>Diseño + red de seguridad</td><td>Mecanismo anti-alucinación: el test escrito primero es un contrato formal que el agente no puede rodear — o pasa o no pasa. Invierte la generación: de "código y esperanza" a "especificación ejecutable y cumplimiento".</td></tr>
+    <tr><td class="cat">Tests de caracterización</td><td>Red para refactorizar legacy</td><td>Golden Master (HTTP/HAR) como verdad absoluta del comportamiento: el agente migra contra una referencia objetiva, no contra su interpretación del código viejo.</td></tr>
+    <tr><td class="cat">OWASP / seguridad por diseño</td><td>Reducir superficie de ataque</td><td>El modelo reproduce los patrones inseguros de su entrenamiento (concatenar SQL existe millones de veces en su corpus). Las reglas de seguridad como gate explícito compensan ese prior.</td></tr>
+    <tr><td class="cat">Refactoring en pasos + commits atómicos</td><td>Cambios seguros</td><td>Unidades de trabajo pequeñas y verificables = ciclos agénticos cortos con validación entre pasos. El agente que hace 40 cambios sin checkpoint es no-auditable.</td></tr>
+    <tr><td class="cat">CI/CD</td><td>Integración objetiva</td><td>El gate que no negocia: el pipeline valida el output del agente con los mismos criterios que el de un humano. La revisión deja de depender de leer todo el diff generado.</td></tr>
+    <tr><td class="cat">Arquitectura documentada (specs, ADRs, constitution)</td><td>Conocimiento compartido</td><td>Contexto persistente del agente: la intención escrita es lo único que sobrevive entre sesiones sin memoria. La spec pasa de documentación a código fuente de mayor nivel.</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">LA CONDICIÓN MULTIPLICATIVA</div>
+
+  <div class="mermaid">
+flowchart LR
+  S["SOLID + Capas<br><b>DÓNDE</b> está cada cosa"] --> P["Agente<br>fiable"]
+  T["TDD<br><b>QUE</b> es correcto"] --> P
+  O["OWASP<br><b>QUE</b> es seguro"] --> P
+  N["Naming + UL<br><b>QUÉ</b> significa"] --> P
+  P -.->|"falla UNO → falla el producto:<br>son factores, no sumandos"| X["❌"]
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">Por qué multiplicativa y no aditiva</div>
+    <div class="insight-content">
+      Cada práctica resuelve una dimensión de ambigüedad distinta e imprescindible: dónde (arquitectura), qué significa
+      (lenguaje), que es correcto (tests), que es seguro (OWASP). Un sistema con tres de cuatro no es 75% apto para agentes:
+      la dimensión ausente contamina las demás — tests perfectos sobre naming ambiguo verifican comportamientos que
+      nadie sabe interpretar. De ahí que quitar cualquiera de los factores acerque el producto a cero.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">LAS PRÁCTICAS NUEVAS (LAS ÚNICAS REALMENTE NUEVAS)</div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header o">Spec-Driven Development</div>
+      <div class="info-body">La intención como fuente de verdad; el código como artefacto regenerable de última milla. Cadena de destilación qué→cómo→pasos con gates humanos entre artefactos (spec-kit como implementación de referencia).</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header g">Context engineering</div>
+      <div class="info-body">Diseñar QUÉ ve el modelo: reglas estables separadas del trabajo por ciclo, artefactos en disco como canal entre agentes, ventana de contexto como recurso escaso a presupuestar. El sucesor serio del "prompt engineering".</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header b">Validación de outputs no deterministas</div>
+      <div class="info-body">El mismo prompt no da el mismo código dos veces: la calidad se asegura con contratos verificables (tests, esquemas, gates de pipeline), nunca con la esperanza de reproducibilidad.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header p">Orquestación multi-agente</div>
+      <div class="info-body">Descomponer en roles (planificador/ejecutor/validador) con protocolos de comunicación explícitos y barreras de sincronización. La ingeniería de procesos aplicada a trabajadores estocásticos.</div>
+    </div>
+  </div>
+
+  <div class="callout green">
+    <strong>El cierre del mapa</strong>
+    Nótese que las cuatro "prácticas nuevas" son reediciones: SDD es specification-by-example + waterfall-iterativo bien entendido;
+    context engineering es gestión de configuración; la validación de no-determinismo es TDD llevado a su conclusión lógica;
+    la orquestación es teoría de procesos. La ingeniería de software no quedó obsoleta con los LLMs —
+    <em>se volvió el prerrequisito</em>. Ese es el repaso entero en una frase.
+  </div>
+
+</div>
+
+</div><!-- .container -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  themeVariables: {
+    fontFamily: "'IBM Plex Mono', monospace",
+    fontSize: '13px',
+    primaryColor: '#fff',
+    primaryTextColor: '#1a1410',
+    primaryBorderColor: '#1a1410',
+    lineColor: '#4a3f30',
+    clusterBkg: '#f0ebe0',
+    clusterBorder: '#d4c9b0',
+    edgeLabelBackground: '#f5f0e8'
+  },
+  flowchart: { curve: 'linear', padding: 12 }
+});
+
+function renderMermaidIn(panel) {
+  const nodes = panel.querySelectorAll('.mermaid:not([data-processed])');
+  if (nodes.length) mermaid.run({ nodes });
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('tab-' + id);
+  panel.classList.add('active');
+  (btn || event.target).classList.add('active');
+  renderMermaidIn(panel);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const btns = [...document.querySelectorAll('.mode-btn')];
+  const idx = btns.findIndex(b => b.classList.contains('active'));
+  if (e.key === 'ArrowRight' && idx < btns.length - 1) btns[idx + 1].click();
+  if (e.key === 'ArrowLeft' && idx > 0) btns[idx - 1].click();
+});
+
+// Render del panel inicial
+renderMermaidIn(document.querySelector('.mode-panel.active'));
+</script>
+</body>
+</html>

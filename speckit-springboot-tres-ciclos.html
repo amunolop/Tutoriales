@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spec Kit + Spring Boot · Tres Ciclos</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:32px}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--mono);font-size:clamp(26px,4vw,46px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.8}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}
+  .badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}
+  /* TABS */
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:36px;width:100%;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:10px;font-weight:600;padding:9px 14px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  /* SECTIONS */
+  .sec-title{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  /* CALLOUTS */
+  .callout{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout strong{display:block;margin-bottom:4px}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  /* CODE */
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:14px 0;position:relative;tab-size:2}
+  pre .lang{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kw{color:#c1440e;font-weight:600}
+  .cl{color:#2a6e4e;font-weight:600}
+  .fn{color:#0369a1;font-weight:600}
+  .st{color:#8a4a00}
+  .cm{color:#9a8a75;font-style:italic}
+  .nu{color:#7a3acd}
+  .an{color:#1a4a8a;font-weight:600}
+  .hl{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px}
+  /* TABLES */
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:14px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+  .vtable td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td code{background:rgba(0,0,0,.07);padding:1px 6px;border-radius:2px;font-size:11px;white-space:nowrap}
+  .vtable td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+  /* TREE */
+  .tree-box{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:20px 24px;margin:14px 0;font-size:12px;line-height:2}
+  .tree-root{color:var(--ink);font-weight:700}
+  .tree-dir{color:var(--accent3);font-weight:600}
+  .tree-file-xml{color:var(--accent);font-weight:600}
+  .tree-file-md{color:var(--accent2);font-weight:600}
+  .tree-file-ts{color:var(--purple);font-weight:600}
+  .tree-file-java{color:var(--yellow);font-weight:600}
+  .tree-file-feat{color:#2a6e4e}
+  .tree-conn{color:var(--muted)}
+  .tree-note{color:var(--muted);font-size:10.5px;font-style:italic;margin-left:6px}
+  /* INSIGHT */
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .insight-content code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+  /* DANGER */
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  /* FLOW */
+  .flow-row{display:flex;align-items:center;gap:0;margin:14px 0;overflow-x:auto;padding-bottom:4px}
+  .flow-node{background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:8px 14px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0}
+  .flow-node.ia1{border-color:var(--accent);color:var(--accent)}
+  .flow-node.ia2{border-color:var(--accent3);color:var(--accent3)}
+  .flow-node.cap{border-color:var(--accent2);color:var(--accent2)}
+  .flow-node.out{border-color:var(--purple);color:var(--purple)}
+  .flow-node.har{border-color:var(--yellow);color:#8a6000;background:rgba(232,160,32,.08)}
+  .flow-arrow{color:var(--muted);font-size:16px;padding:0 8px;flex-shrink:0}
+  .flow-parallel{display:flex;flex-direction:column;gap:8px}
+  /* GRID */
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:14px 0}
+  .info-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden}
+  .info-header{padding:9px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .info-header.o{background:rgba(193,68,14,.1);color:var(--accent)}
+  .info-header.g{background:rgba(42,110,78,.1);color:var(--accent2)}
+  .info-header.b{background:rgba(26,74,138,.1);color:var(--accent3)}
+  .info-header.p{background:rgba(122,58,205,.1);color:var(--purple)}
+  .info-header.y{background:rgba(232,160,32,.1);color:#8a6000}
+  .info-body{padding:12px 14px;font-size:12px;line-height:1.7;color:var(--ink2)}
+  .info-body code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:10.5px}
+  @media(max-width:720px){.mode-btn{flex:0 0 auto}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">SPEC KIT · CASO PRÁCTICO SPRING BOOT</div>
+  <h1>Spec Kit <em>+ Spring Boot</em><br>Tres Ciclos de Vida</h1>
+  <div class="subtitle">
+    Ciclo 1: proyecto + Servicio Clientes · Ciclo 2: añadir Servicio Contratos · Ciclo 3: modificar ambos<br>
+    Spring Boot 3.4 · Java 21 · Maven · JPA · JUnit 5 + Mockito · Testcontainers
+  </div>
+  <div class="badge-row">
+    <span class="badge o">Greenfield</span>
+    <span class="badge g">Brownfield aditivo</span>
+    <span class="badge b">Brownfield modificativo</span>
+    <span class="badge p">Constitution</span>
+    <span class="badge y">Converge</span>
+  </div>
+</header>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="switchTab('escenario')">📖 ESCENARIO</button>
+  <button class="mode-btn" onclick="switchTab('setup')">📜 SETUP + CONSTITUTION</button>
+  <button class="mode-btn" onclick="switchTab('ciclo1')">🚀 CICLO 1 · CREAR</button>
+  <button class="mode-btn" onclick="switchTab('ciclo2')">➕ CICLO 2 · AÑADIR</button>
+  <button class="mode-btn" onclick="switchTab('ciclo3')">🔧 CICLO 3 · MODIFICAR</button>
+  <button class="mode-btn" onclick="switchTab('mapa')">🗺️ MAPA + CHEATSHEET</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 1: ESCENARIO                                       -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-escenario" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">QUÉ VAMOS A CONSTRUIR</div>
+
+  <div class="callout orange">
+    <strong>Aplicación: gestión de contratos de telecomunicaciones</strong>
+    Una app Spring Boot con servicios de negocio incrementales.
+    <code>Ciclo 1</code> crea el proyecto entero con el <strong>Servicio de Clientes</strong> (CRUD + validación de NIF).
+    <code>Ciclo 2</code> añade el <strong>Servicio de Contratos</strong>, que depende de Clientes.
+    <code>Ciclo 3</code> modifica ambos: baja lógica de cliente con contratos activos.
+    Tres ciclos = los tres modos de trabajo reales de spec-kit sobre un mismo repo.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Ciclo</th><th>Modo</th><th>Rama</th><th>Qué cambia en el pipeline</th></tr>
+    <tr><td class="cat">1 · CREAR</td><td>Greenfield puro</td><td><code>001-servicio-clientes</code></td><td>La primera feature monta el proyecto entero: pom.xml, Application, estructura de paquetes, CI. El plan ES el diseño del sistema.</td></tr>
+    <tr><td class="cat">2 · AÑADIR</td><td>Brownfield aditivo</td><td><code>002-servicio-contratos</code></td><td>El plan debe LEER lo existente y reutilizarlo (entidad Cliente, manejo de errores, convenciones). La constitution evita que reinvente.</td></tr>
+    <tr><td class="cat">3 · MODIFICAR</td><td>Brownfield modificativo</td><td><code>003-baja-cliente-contratos</code></td><td>No hay código nuevo aislado: se toca comportamiento existente. Entran en juego las specs anteriores como historia + /speckit.converge.</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">DECISIONES PREVIAS (ANTES DE TOCAR SPEC-KIT)</div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header o">Granularidad de "servicio"</div>
+      <div class="info-body">
+        Un servicio = un agregado de negocio con su vertical completa: <code>@RestController → @Service → Repository → Entity</code>.
+        Un módulo de paquete por servicio (<code>clientes/</code>, <code>contratos/</code>), no microservicios. Una feature spec-kit = un servicio o un cambio transversal.
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header g">Qué va en la constitution vs en cada spec</div>
+      <div class="info-body">
+        Constitution: stack, estructura de paquetes, TDD, convenciones de error, naming. UNA vez.
+        Spec de cada ciclo: solo comportamiento de negocio. Si te descubres repitiendo algo en varias specs → pertenece a la constitution.
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header b">El QUÉ nunca menciona Spring</div>
+      <div class="info-body">
+        En las specs no aparece @Service ni JPA ni REST: aparecen clientes, contratos, NIF, estados.
+        El stack vive en constitution (fijo) y en el argumento de /speckit.plan (por feature). Disciplina clave del método.
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header p">Gates humanos obligatorios</div>
+      <div class="info-body">
+        Tras specify: leer spec.md completo. Tras plan: auditar plan.md contra el código existente.
+        Tras implement: converge + revisión de PR. Saltarse los gates = vibe coding con papeleo.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">FLUJO DE LOS TRES CICLOS</div>
+
+  <div class="flow-row">
+    <div class="flow-node cap">constitution<br><span style="font-weight:400;font-size:10px">1 vez</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node ia1">CICLO 1<br><span style="font-weight:400;font-size:10px">specify→implement</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node har">PR + merge</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node ia2">CICLO 2<br><span style="font-weight:400;font-size:10px">specify→implement</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node har">PR + merge</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node out">CICLO 3<br><span style="font-weight:400;font-size:10px">+converge</span></div>
+  </div>
+
+  <div class="callout green">
+    <strong>Invariante entre ciclos</strong>
+    El pipeline de comandos es idéntico en los tres. Lo que cambia es el CONTENIDO del plan:
+    en el ciclo 1 propone estructura nueva; en el 2 debe integrarse con la existente; en el 3 debe modificarla sin romper
+    los contratos que las specs 001 y 002 congelaron. La dificultad crece hacia abajo — como en cualquier migración.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 2: SETUP + CONSTITUTION                            -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-setup" class="mode-panel">
+
+  <div class="sec-title" data-n="1">BOOTSTRAP</div>
+
+<pre><span class="lang">bash</span><span class="cm"># Proyecto nuevo — spec-kit primero, Spring Initializr NO:</span>
+<span class="cm"># el esqueleto Spring lo generará el implement del ciclo 1 según el plan</span>
+<span class="fn">specify</span> init gestion-contratos --integration <span class="st">claude</span>
+<span class="fn">cd</span> gestion-contratos
+<span class="fn">git</span> init && <span class="fn">git</span> add -A && <span class="fn">git</span> commit -m <span class="st">"chore: spec-kit scaffolding"</span></pre>
+
+  <div class="callout blue">
+    <strong>¿Por qué no arrancar con Spring Initializr?</strong>
+    Puedes (init sobre proyecto existente con <code>--force</code>), pero pierdes la trazabilidad: el esqueleto quedaría fuera
+    de toda spec. Dejando que el ciclo 1 lo genere, hasta el pom.xml tiene una intención documentada que lo justifica.
+    En un brownfield real (proyecto Spring ya vivo) sí: <code>specify init . --force</code> y la constitution DESCRIBE lo que hay.
+  </div>
+
+  <div class="sec-title" data-n="2">LA CONSTITUTION — SE ESCRIBE UNA VEZ, GOBIERNA LOS TRES CICLOS</div>
+
+<pre><span class="lang">agente</span><span class="kw">/speckit.constitution</span> Crea la constitution de este proyecto con estos principios:
+
+STACK (innegociable):
+- Spring Boot 3.4.x, Java 21, Maven. Postgres en producción, Testcontainers en tests.
+- Prohibido añadir starters no justificados en un plan. Cada dependencia nueva
+  requiere justificación explícita en research.md.
+
+ARQUITECTURA:
+- Paquete por servicio de negocio: com.acme.contratos.{clientes|contratos|shared}
+- Vertical por servicio: Controller (solo HTTP) → Service (lógica) → Repository (JPA).
+- Los Controllers no contienen lógica: validan entrada, delegan, mapean salida.
+- DTOs en el borde: las entidades JPA NUNCA salen por el Controller.
+- Comunicación ENTRE servicios: siempre a través del Service del otro paquete,
+  nunca Repository ajeno ni join JPA cruzando agregados.
+
+TESTING (NON-NEGOTIABLE):
+- TDD estricto: test rojo aprobado antes de cualquier código de producción.
+- Unit: JUnit 5 + Mockito para Services. Web: @WebMvcTest para Controllers.
+- Integración: @SpringBootTest + Testcontainers para Repositories y flujos.
+- Cobertura de las reglas de negocio de la spec: 100% de criterios de aceptación
+  con test que los referencia por identificador (AC-01, AC-02...).
+
+ERRORES Y API:
+- Manejo de errores centralizado: @RestControllerAdvice + ProblemDetail (RFC 7807).
+- Códigos: 404 recurso inexistente, 409 conflicto de negocio, 422 validación.
+- Versionado de API bajo /api/v1. Breaking changes requieren nueva spec, no parche.
+
+GOBERNANZA:
+- /speckit.analyze debe rechazar cualquier plan que viole estos artículos
+  citando el artículo violado.</pre>
+
+  <div class="insight-box">
+    <div class="insight-title">Qué está haciendo realmente esta constitution</div>
+    <div class="insight-content">
+      Fija los <em>grados de libertad</em> que el plan de cada ciclo NO puede tocar. En el ciclo 2 será lo que impida
+      que el agente acceda a <code>ClienteRepository</code> desde el servicio de contratos (regla de comunicación entre servicios).
+      En el ciclo 3, lo que fuerce un 409 en vez de un 500 al dar de baja un cliente con contratos.
+      Cada regla aquí es un error futuro que ya no hay que revisar en código.
+    </div>
+  </div>
+
+  <div class="callout yellow">
+    <strong>Gate humano #0</strong>
+    Lee la constitution generada completa antes de continuar. Es el único artefacto cuyo error se propaga a TODAS
+    las features. Verifica especialmente que no haya metido principios que no pediste (over-engineering del propio agente).
+  </div>
+
+</div>
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 3: CICLO 1 · CREAR                                 -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-ciclo1" class="mode-panel">
+
+  <div class="sec-title" data-n="1">SPECIFY — EL QUÉ (CERO SPRING)</div>
+
+<pre><span class="lang">agente</span><span class="kw">/speckit.specify</span> Servicio de Clientes para gestión de contratos de telecomunicaciones.
+
+Un cliente tiene: NIF (identificador de negocio, único), razón social, email,
+teléfono, dirección fiscal y estado (ACTIVO | SUSPENDIDO | BAJA).
+
+Operaciones:
+- Alta de cliente. El NIF se valida con el algoritmo oficial (letra de control).
+  NIF duplicado es un conflicto de negocio, no un error técnico.
+- Consulta por NIF y listado paginado con filtro por estado y por texto
+  en razón social.
+- Modificación de datos de contacto (email, teléfono, dirección).
+  El NIF es inmutable tras el alta.
+- Suspensión y reactivación. Un cliente en BAJA no puede reactivarse.
+
+Casos límite que importan:
+- Alta con NIF sintácticamente inválido → rechazo con detalle del motivo.
+- Modificación de un cliente en estado BAJA → no permitida.
+- Listado sin resultados → lista vacía, no error.
+
+Usuarios: operadores de back-office vía API interna. Sin autenticación
+en esta fase (la gestionará el gateway corporativo).</pre>
+
+  <div class="callout orange">
+    <strong>Qué genera</strong>
+    Rama <code>001-servicio-clientes</code> + <code>specs/001-servicio-clientes/spec.md</code> con user stories,
+    criterios de aceptación numerados (AC-01...AC-N) y edge cases que la plantilla obliga a explicitar
+    (¿qué pasa al suspender un suspendido? ¿case-sensitivity del NIF?). <strong>Gate humano #1: leerlo entero.</strong>
+    Lo que no corrijas aquí lo corregirás en código, más caro.
+  </div>
+
+<pre><span class="lang">agente</span><span class="cm"># Interrogatorio de huecos — SIEMPRE antes de plan</span>
+<span class="kw">/speckit.clarify</span>
+
+<span class="cm"># Preguntas típicas que hará sobre esta spec:</span>
+<span class="cm">#  · ¿El email es único o puede repetirse entre clientes?</span>
+<span class="cm">#  · ¿"suspendido" bloquea solo modificaciones o también consultas?</span>
+<span class="cm">#  · ¿Tamaño de página por defecto y máximo del listado?</span>
+<span class="cm"># Las respuestas quedan registradas en la sección Clarifications de spec.md</span></pre>
+
+  <div class="sec-title" data-n="2">PLAN — EL CÓMO (AQUÍ ENTRA SPRING)</div>
+
+<pre><span class="lang">agente</span><span class="kw">/speckit.plan</span> Proyecto Spring Boot 3.4 nuevo con Maven, Java 21.
+Genera el proyecto completo: pom.xml con spring-boot-starter-web,
+data-jpa, validation; Postgres driver + Testcontainers en test.
+Estructura de paquetes según constitution. Flyway para el esquema.
+API REST bajo /api/v1/clientes. Sin seguridad en esta fase.</pre>
+
+  <div class="callout blue">
+    <strong>Artefactos que produce el plan del ciclo 1</strong>
+    <code>plan.md</code> (estructura completa del proyecto: es el ÚNICO ciclo donde el plan diseña el sistema entero),
+    <code>research.md</code> (versiones concretas elegidas y por qué), <code>data-model.md</code> (entidad Cliente, estados y transiciones),
+    <code>contracts/api-clientes.yaml</code> (OpenAPI de los endpoints), <code>quickstart.md</code> (cómo arrancar y validar).
+    <strong>Gate humano #2:</strong> auditar el árbol de ficheros propuesto y las dependencias del pom contra la constitution.
+  </div>
+
+  <div class="tree-box">
+    <div><span class="tree-root">plan.md → estructura propuesta</span></div>
+    <div><span class="tree-conn">├── </span><span class="tree-file-md">pom.xml</span><span class="tree-note">← 4 starters justificados en research.md</span></div>
+    <div><span class="tree-conn">├── </span><span class="tree-dir">src/main/java/com/acme/contratos/</span></div>
+    <div><span class="tree-conn">│   ├── </span><span class="tree-file-java">Application.java</span></div>
+    <div><span class="tree-conn">│   ├── </span><span class="tree-dir">clientes/</span><span class="tree-note">← vertical completa del servicio</span></div>
+    <div><span class="tree-conn">│   │   ├── </span><span class="tree-file-java">ClienteController.java</span><span class="tree-note">← solo HTTP + DTOs</span></div>
+    <div><span class="tree-conn">│   │   ├── </span><span class="tree-file-java">ClienteService.java</span><span class="tree-note">← reglas AC-01..AC-N</span></div>
+    <div><span class="tree-conn">│   │   ├── </span><span class="tree-file-java">ClienteRepository.java</span></div>
+    <div><span class="tree-conn">│   │   ├── </span><span class="tree-file-java">Cliente.java</span><span class="tree-note">← entidad JPA, no sale del paquete</span></div>
+    <div><span class="tree-conn">│   │   ├── </span><span class="tree-file-java">NifValidator.java</span></div>
+    <div><span class="tree-conn">│   │   └── </span><span class="tree-file-java">dto/ ClienteRequest · ClienteResponse</span></div>
+    <div><span class="tree-conn">│   └── </span><span class="tree-dir">shared/</span><span class="tree-note">← ApiExceptionHandler (ProblemDetail RFC 7807)</span></div>
+    <div><span class="tree-conn">├── </span><span class="tree-dir">src/main/resources/db/migration/</span><span class="tree-note">← V1__clientes.sql (Flyway)</span></div>
+    <div><span class="tree-conn">└── </span><span class="tree-dir">src/test/java/.../clientes/</span><span class="tree-note">← unit + @WebMvcTest + Testcontainers</span></div>
+  </div>
+
+  <div class="sec-title" data-n="3">TASKS + ANALYZE + IMPLEMENT</div>
+
+<pre><span class="lang">agente</span><span class="kw">/speckit.tasks</span>
+<span class="cm"># Salida típica (extracto de tasks.md):</span>
+<span class="cm">#  T01     Esqueleto Maven + Application + Flyway V1        [setup]</span>
+<span class="cm">#  T02 [P] Test NifValidator (casos AC-01, inválidos)       [red]</span>
+<span class="cm">#  T03 [P] Test ClienteService alta + duplicado (AC-02)     [red]</span>
+<span class="cm">#  T04     NifValidator hasta verde                          </span>
+<span class="cm">#  T05     ClienteService.alta hasta verde                   </span>
+<span class="cm">#  T06     @WebMvcTest ClienteController (404/409/422)      [red]</span>
+<span class="cm">#  T07     Controller + DTOs + ExceptionHandler hasta verde  </span>
+<span class="cm">#  T08     Testcontainers: flujo alta→consulta→suspensión    </span>
+
+<span class="kw">/speckit.analyze</span>   <span class="cm"># gate: ¿cada AC de la spec tiene tarea y test? ¿plan viola constitution?</span>
+<span class="kw">/speckit.implement</span> <span class="cm"># ejecuta en orden, corre mvn test en cada checkpoint</span></pre>
+
+  <div class="callout green">
+    <strong>Cierre del ciclo 1</strong>
+    Revisión local (<code>mvn verify</code>, probar quickstart.md) → PR de <code>001-servicio-clientes</code> a main.
+    El PR contiene spec + plan + código: quien revisa compara implementación contra contrato escrito, no contra memoria.
+    Merge manual — implement nunca mergea. El repo queda con su primer servicio y, más importante,
+    con las convenciones ya materializadas que el ciclo 2 tendrá que respetar.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 4: CICLO 2 · AÑADIR                                -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-ciclo2" class="mode-panel">
+
+  <div class="sec-title" data-n="1">LO QUE CAMBIA: EL PLAN YA NO DISEÑA — SE INTEGRA</div>
+
+  <div class="callout purple">
+    <strong>Brownfield aditivo</strong>
+    Ahora existe código. El riesgo ya no es que el agente diseñe mal desde cero, sino que <em>reinvente</em>:
+    otro estilo de error, otro patrón de DTO, acceso directo al repositorio de clientes.
+    Tres defensas: la constitution (reglas), el código existente (que el agente explora), y tu auditoría del plan
+    (verificar REUTILIZACIÓN, no solo corrección).
+  </div>
+
+<pre><span class="lang">agente</span><span class="cm"># Sobre main actualizado tras el merge del ciclo 1</span>
+<span class="kw">/speckit.specify</span> Servicio de Contratos.
+
+Un contrato pertenece a UN cliente existente y tiene: número de contrato
+(generado, formato C-AAAA-NNNNNN), tipo (FIBRA | MOVIL | CONVERGENTE),
+fecha de alta, fecha de fin (opcional) y estado (ACTIVO | SUSPENDIDO | FINALIZADO).
+
+Operaciones:
+- Alta de contrato para un cliente. Reglas:
+  · El cliente debe existir y estar ACTIVO. Cliente SUSPENDIDO o BAJA → conflicto.
+  · Un cliente puede tener máximo 5 contratos ACTIVOS.
+- Consulta por número y listado de contratos de un cliente.
+- Finalización de contrato (fija fecha de fin, estado FINALIZADO, irreversible).
+
+Casos límite:
+- Alta para cliente inexistente → error de recurso, no de validación.
+- Sexto contrato activo → conflicto de negocio con mensaje del límite.
+- Finalizar un FINALIZADO → conflicto.
+
+<span class="kw">/speckit.clarify</span>
+<span class="cm">#  · ¿SUSPENDER cliente suspende sus contratos? → NO en este ciclo (se decide y REGISTRA)</span>
+<span class="cm">#  · ¿el límite de 5 cuenta suspendidos? → solo ACTIVOS</span></pre>
+
+  <div class="callout yellow">
+    <strong>Detalle importante del clarify</strong>
+    La pregunta "¿suspender cliente afecta a contratos?" queda respondida con "no, fuera de alcance" EN LA SPEC.
+    Ese registro es oro en el ciclo 3: cuando toque implementar exactamente eso, la decisión de posponerlo está documentada
+    con fecha — no es un olvido, es alcance explícito.
+  </div>
+
+  <div class="sec-title" data-n="2">EL PLAN QUE REUTILIZA</div>
+
+<pre><span class="lang">agente</span><span class="kw">/speckit.plan</span> Nuevo paquete contratos/ en el proyecto existente siguiendo
+la vertical del paquete clientes/. REUTILIZAR: ApiExceptionHandler de shared,
+convención ProblemDetail, patrón DTO existente. La validación de cliente
+(existe + ACTIVO) se hace vía ClienteService — nunca ClienteRepository —
+según el artículo de comunicación entre servicios de la constitution.
+Nueva migración Flyway V2__contratos.sql. Generador del número de contrato
+como componente propio con secuencia en BD.</pre>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header o">Qué auditar en este plan (gate #2)</div>
+      <div class="info-body">
+        ✔ ¿Añade dependencias al pom? (no debería — sospecha si lo hace)<br>
+        ✔ ¿ContratoService llama a ClienteService, no al repo ajeno?<br>
+        ✔ ¿Reusa ApiExceptionHandler o crea otro? <br>
+        ✔ ¿V2 de Flyway, sin tocar V1?
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header g">Por qué la constitution trabaja aquí</div>
+      <div class="info-body">
+        Sin el artículo "comunicación entre servicios vía Service", lo estadísticamente probable es que el agente
+        inyecte <code>ClienteRepository</code> en <code>ContratoService</code> — compila, funciona, y acopla los agregados.
+        <code>/speckit.analyze</code> lo rechaza citando el artículo. Ese es el retorno de la ceremonia.
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header b">data-model.md incremental</div>
+      <div class="info-body">
+        El del ciclo 2 modela Contrato y su relación con Cliente (FK por id, unicidad de número, índice por cliente+estado
+        para el límite de 5). No re-modela Cliente: referencia al data-model de 001.
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header p">Tests de no-regresión gratis</div>
+      <div class="info-body">
+        Los tests del ciclo 1 siguen en el repo: implement del ciclo 2 los ejecuta en cada checkpoint.
+        Si integrar contratos rompe clientes, se detecta en la tarea que lo rompió, no en el PR.
+      </div>
+    </div>
+  </div>
+
+<pre><span class="lang">agente</span><span class="kw">/speckit.tasks</span> && <span class="kw">/speckit.analyze</span> && <span class="kw">/speckit.implement</span>
+<span class="cm"># tasks.md del ciclo 2 — nótese la primera tarea:</span>
+<span class="cm">#  T01     Test de caracterización: suite completa del ciclo 1 en verde (baseline)</span>
+<span class="cm">#  T02 [P] Test generador número contrato                     [red]</span>
+<span class="cm">#  T03 [P] Test ContratoService: alta OK / cliente BAJA / 6º  [red]</span>
+<span class="cm">#  ...</span></pre>
+
+  <div class="callout green">
+    <strong>Cierre del ciclo 2</strong>
+    PR de <code>002-servicio-contratos</code>. El repo tiene ahora DOS specs vivas en <code>specs/</code> que documentan
+    el comportamiento comprometido del sistema. Esa acumulación es la materia prima del ciclo 3.
+  </div>
+
+</div>
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 5: CICLO 3 · MODIFICAR                             -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-ciclo3" class="mode-panel">
+
+  <div class="sec-title" data-n="1">EL CASO MÁS DIFÍCIL: CAMBIAR COMPORTAMIENTO EXISTENTE</div>
+
+  <div class="callout orange">
+    <strong>La feature transversal</strong>
+    Requisito nuevo: <em>"dar de baja un cliente debe estar bloqueado si tiene contratos activos; y suspender
+    un cliente debe suspender en cascada sus contratos activos"</em>. Toca los DOS servicios y CAMBIA reglas que
+    las specs 001 y 002 dejaron escritas (recuerda: en el clarify del ciclo 2 se pospuso exactamente esto).
+    Aquí es donde spec-kit se distingue de "pedirle el cambio a Copilot": el cambio se negocia contra la historia escrita.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Pregunta</th><th>Respuesta spec-kit</th></tr>
+    <tr><td class="cat">¿Nueva spec o editar las viejas?</td><td><strong>Nueva feature</strong> <code>003-baja-cliente-contratos</code>. Las specs 001/002 son historia inmutable de lo que se decidió entonces; la 003 declara qué reglas de aquellas MODIFICA, referenciándolas. El diff de intención queda explícito.</td></tr>
+    <tr><td class="cat">¿Y si el cambio invalida un AC antiguo?</td><td>La spec 003 lo lista en una sección de impactos: "AC-07 de 001 (baja siempre permitida) queda sustituido por AC-01 de esta spec". Los tests que referencian AC-07 se MODIFICAN en una tarea explícita, nunca se borran en silencio.</td></tr>
+    <tr><td class="cat">¿Cómo evita romper lo demás?</td><td>Baseline: toda la suite existente en verde antes de tocar nada (tarea T01, igual que en el ciclo 2) + analyze verificando que solo los AC declarados como impactados cambian de test.</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">EL CICLO</div>
+
+<pre><span class="lang">agente</span><span class="kw">/speckit.specify</span> Cambio de reglas de ciclo de vida de cliente por sus contratos.
+
+Reglas nuevas:
+- BAJA de cliente: prohibida si tiene contratos ACTIVOS o SUSPENDIDOS.
+  Debe indicarse cuántos y cuáles bloquean la baja.
+- SUSPENSIÓN de cliente: suspende en cascada todos sus contratos ACTIVOS,
+  registrando el motivo CASCADA_CLIENTE en cada uno.
+- REACTIVACIÓN de cliente: reactiva SOLO los contratos suspendidos por
+  CASCADA_CLIENTE, no los suspendidos individualmente antes.
+
+Impactos sobre specs anteriores:
+- Sustituye el comportamiento de baja de 001-servicio-clientes.
+- Resuelve la decisión pospuesta en Clarifications de 002-servicio-contratos.
+
+Casos límite:
+- Suspensión de cliente sin contratos → opera igual que antes.
+- Reactivar cliente cuyo contrato en cascada fue FINALIZADO entretanto → se ignora.
+
+<span class="kw">/speckit.clarify</span>
+<span class="cm">#  · ¿la baja bloqueada devuelve la lista de contratos o solo el conteo? → lista de números</span>
+<span class="cm">#  · ¿la cascada es transaccional (todo o nada)? → sí, una transacción</span>
+
+<span class="kw">/speckit.plan</span> Sin dependencias nuevas. La cascada requiere que ClienteService
+invoque a ContratoService — INVERSIÓN de la dependencia actual (contratos→clientes).
+Para evitar el ciclo de dependencias entre paquetes: eventos de aplicación
+(ApplicationEventPublisher) — ClienteService publica ClienteSuspendido,
+un listener en contratos/ ejecuta la cascada en la misma transacción.
+Motivo de suspensión: nueva columna via Flyway V3. Transaccionalidad con
+@Transactional en el caso de uso completo.</pre>
+
+  <div class="danger-box">
+    <div class="danger-title">El momento de máxima atención del gate #2</div>
+    <div class="danger-content">
+      Este plan contiene una decisión arquitectónica REAL (romper el ciclo de dependencias con eventos vs. extraer
+      interfaz a shared vs. aceptar la dependencia bidireccional). El agente elegirá una; tu trabajo es evaluar si es
+      la correcta para TU sistema. Es el punto donde "requiere nociones de arquitectura" deja de ser teórico:
+      quien no pueda evaluar esta decisión, firmará una arquitectura que no eligió.
+      Los tres caminos son defendibles — pero uno de ellos condicionará los siguientes diez ciclos.
+    </div>
+  </div>
+
+<pre><span class="lang">agente</span><span class="kw">/speckit.tasks</span>
+<span class="cm">#  T01     Baseline: suite completa en verde</span>
+<span class="cm">#  T02     Modificar tests de baja (referencian nuevo AC, sustituyen AC-07/001)  [red]</span>
+<span class="cm">#  T03 [P] Test cascada suspensión (transaccional, motivo)                      [red]</span>
+<span class="cm">#  T04 [P] Test reactivación selectiva por motivo                               [red]</span>
+<span class="cm">#  T05     Flyway V3 + campo motivo</span>
+<span class="cm">#  T06     Evento ClienteSuspendido + listener en contratos hasta verde</span>
+<span class="cm">#  T07     Bloqueo de baja con lista de contratos hasta verde</span>
+<span class="cm">#  T08     Integración Testcontainers: flujo completo suspensión→reactivación</span>
+
+<span class="kw">/speckit.analyze</span>
+<span class="kw">/speckit.implement</span>
+<span class="kw">/speckit.converge</span>   <span class="cm"># ← en modificaciones, NO opcional (ver abajo)</span></pre>
+
+  <div class="sec-title" data-n="3">CONVERGE: EL COMANDO QUE JUSTIFICA EL CICLO 3</div>
+
+  <div class="insight-box">
+    <div class="insight-title">Por qué converge importa más al modificar que al crear</div>
+    <div class="insight-content">
+      En greenfield, el drift código↔spec es pequeño: no había nada antes. En una modificación transversal, implement
+      toca ficheros de dos servicios y es fácil que quede trabajo invisible: un endpoint de listado que aún no expone
+      el motivo de suspensión, un DTO sin el campo nuevo, documentación OpenAPI desincronizada.
+      <code>/speckit.converge</code> re-audita el código resultante contra spec+plan+tasks y <strong>appendea</strong> lo que falta
+      como tareas nuevas en vez de dar el ciclo por bueno. Es la inspección de gate final, mecanizada.
+    </div>
+  </div>
+
+  <div class="callout green">
+    <strong>Estado final del repo tras los tres ciclos</strong>
+    <code>specs/001</code> + <code>specs/002</code> + <code>specs/003</code> = la historia completa de intención del sistema,
+    con las sustituciones de reglas trazadas entre specs. Un desarrollador nuevo (o un agente nuevo) puede reconstruir
+    POR QUÉ el sistema se comporta como se comporta leyendo tres documentos — sin arqueología. Ese es el activo real:
+    el código es regenerable; esa historia, no.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 6: MAPA + CHEATSHEET                               -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-mapa" class="mode-panel">
+
+  <div class="sec-title" data-n="1">MAPA GIT DE LOS TRES CICLOS</div>
+
+  <div class="tree-box">
+    <div><span class="tree-root">main</span></div>
+    <div><span class="tree-conn">│</span></div>
+    <div><span class="tree-conn">├─● </span><span class="tree-file-md">chore: spec-kit scaffolding + constitution</span></div>
+    <div><span class="tree-conn">│</span></div>
+    <div><span class="tree-conn">├─┬ </span><span class="tree-dir">001-servicio-clientes</span><span class="tree-note">← rama = carpeta specs/001-*</span></div>
+    <div><span class="tree-conn">│ ├─● </span>spec.md + clarifications</div>
+    <div><span class="tree-conn">│ ├─● </span>plan.md + research + data-model + contracts</div>
+    <div><span class="tree-conn">│ ├─● </span>tasks.md</div>
+    <div><span class="tree-conn">│ └─● </span>implement: proyecto Spring completo + servicio clientes <span class="tree-note">→ PR → merge</span></div>
+    <div><span class="tree-conn">│</span></div>
+    <div><span class="tree-conn">├─┬ </span><span class="tree-dir">002-servicio-contratos</span></div>
+    <div><span class="tree-conn">│ └─● </span>… <span class="tree-note">→ PR → merge (suite 001 como red de seguridad)</span></div>
+    <div><span class="tree-conn">│</span></div>
+    <div><span class="tree-conn">└─┬ </span><span class="tree-dir">003-baja-cliente-contratos</span></div>
+    <div><span class="tree-conn">  └─● </span>… + converge <span class="tree-note">→ PR → merge (modifica reglas de 001 y 002, trazado)</span></div>
+  </div>
+
+  <div class="sec-title" data-n="2">QUÉ CAMBIA ENTRE CICLOS — RESUMEN OPERATIVO</div>
+
+  <table class="vtable">
+    <tr><th></th><th>Ciclo 1 · Crear</th><th>Ciclo 2 · Añadir</th><th>Ciclo 3 · Modificar</th></tr>
+    <tr><td class="cat">El plan…</td><td>Diseña el sistema entero</td><td>Se integra con lo existente</td><td>Cambia lo existente sin romper contratos</td></tr>
+    <tr><td class="cat">Riesgo dominante</td><td>Sobre-ingeniería inicial</td><td>Reinvención de convenciones</td><td>Regresión + decisión arquitectónica mal evaluada</td></tr>
+    <tr><td class="cat">Tu foco en el gate</td><td>pom + estructura de paquetes</td><td>Reutilización (handler, DTOs, vía Service)</td><td>Sección de impactos de la spec + la decisión de diseño del plan</td></tr>
+    <tr><td class="cat">Primera tarea</td><td>Esqueleto Maven</td><td>Baseline suite en verde</td><td>Baseline + tests antiguos modificados EXPLÍCITAMENTE</td></tr>
+    <tr><td class="cat">Converge</td><td>Opcional</td><td>Recomendado</td><td>Obligatorio en la práctica</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="3">CHEATSHEET</div>
+
+<pre><span class="lang">bash + agente</span><span class="cm"># ── Setup (una vez) ──────────────────────────────────────</span>
+<span class="fn">specify</span> init gestion-contratos --integration claude
+<span class="kw">/speckit.constitution</span> [stack + arquitectura + testing + errores]
+
+<span class="cm"># ── Por cada feature (crear / añadir / modificar) ────────</span>
+<span class="kw">/speckit.specify</span>  [negocio, cero Spring]     → LEER spec.md
+<span class="kw">/speckit.clarify</span>                             → responder, queda registrado
+<span class="kw">/speckit.plan</span>     [aquí sí Spring + reuso]   → AUDITAR plan.md
+<span class="kw">/speckit.tasks</span>
+<span class="kw">/speckit.analyze</span>                             → gate automático vs constitution
+<span class="kw">/speckit.implement</span>
+<span class="kw">/speckit.converge</span>                            → drift → tareas nuevas
+<span class="cm"># mvn verify local → PR → merge MANUAL</span></pre>
+
+  <div class="callout yellow">
+    <strong>Cuándo NO usar este flujo en el mismo proyecto</strong>
+    Bugfix, ajuste de estilo, cambio de 1-3 ficheros sin regla de negocio nueva: prompt directo al agente.
+    La constitution sigue trabajando (el agente la lee), pero sin la ceremonia. Regla rápida: si el cambio cabe entero
+    en el título del commit, no hay intención que negociar — no abras feature.
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">El patrón de fondo</div>
+    <div class="insight-content">
+      Los tres ciclos son el mismo pipeline con un plan cada vez más restringido: en el 1 el plan tiene todos los grados
+      de libertad; en el 2 la constitution + el código existente le quitan la mayoría; en el 3 además las specs anteriores
+      actúan como contratos que solo se cambian declarando el impacto. Spec-kit no gestiona esa restricción creciente por
+      ti — la hace <em>visible y auditable</em>. Quien restringe eres tú, en los gates.
+    </div>
+  </div>
+
+</div>
+
+</div><!-- .container -->
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  (btn || event.target).classList.add('active');
+}
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const btns = [...document.querySelectorAll('.mode-btn')];
+  const idx = btns.findIndex(b => b.classList.contains('active'));
+  if (e.key === 'ArrowRight' && idx < btns.length - 1) btns[idx + 1].click();
+  if (e.key === 'ArrowLeft' && idx > 0) btns[idx - 1].click();
+});
+</script>
+</body>
+</html>

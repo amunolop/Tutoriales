@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMI · Plantillas Multi-Agente XML</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f5f0e8;--surface:#fff;--surface2:#f0ebe0;--border:#d4c9b0;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--mono:'IBM Plex Mono',monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.5}
+  .container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  header{border-bottom:3px solid var(--ink);padding-bottom:24px;margin-bottom:32px}
+  .stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-1deg)}
+  h1{font-family:var(--mono);font-size:clamp(26px,4vw,46px);font-weight:700;line-height:1.1}
+  h1 em{font-style:normal;color:var(--accent);border-bottom:3px solid var(--accent)}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.8}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}
+  .badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}
+  /* TABS */
+  .mode-toggle{display:flex;gap:0;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:36px;width:100%;flex-wrap:wrap}
+  .mode-btn{font-family:var(--mono);font-size:10px;font-weight:600;padding:9px 14px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}
+  .mode-btn:last-child{border-right:none}
+  .mode-btn:hover{background:var(--surface2);color:var(--ink)}
+  .mode-btn.active{background:var(--ink);color:var(--bg)}
+  .mode-panel{display:none}.mode-panel.active{display:block;animation:fadeUp .4s ease both}
+  /* SECTIONS */
+  .sec-title{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+  .sec-title:first-child{margin-top:0}
+  .sec-title::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:2px;flex-shrink:0}
+  /* CALLOUTS */
+  .callout{border-left:4px solid;padding:14px 18px;margin:14px 0;font-size:12px;line-height:1.7;color:var(--ink2);border-radius:0 4px 4px 0}
+  .callout strong{display:block;margin-bottom:4px}
+  .callout.orange{border-color:var(--accent);background:rgba(193,68,14,.05)}.callout.orange strong{color:var(--accent)}
+  .callout.green{border-color:var(--accent2);background:rgba(42,110,78,.05)}.callout.green strong{color:var(--accent2)}
+  .callout.blue{border-color:var(--accent3);background:rgba(26,74,138,.05)}.callout.blue strong{color:var(--accent3)}
+  .callout.purple{border-color:var(--purple);background:rgba(122,58,205,.05)}.callout.purple strong{color:var(--purple)}
+  .callout.yellow{border-color:var(--yellow);background:rgba(232,160,32,.05)}.callout.yellow strong{color:var(--yellow)}
+  .callout code{background:rgba(0,0,0,.06);padding:1px 6px;border-radius:2px;font-size:11px}
+  /* CODE */
+  pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:14px 0;position:relative;tab-size:2}
+  pre .lang{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kw{color:#c1440e;font-weight:600}
+  .cl{color:#2a6e4e;font-weight:600}
+  .fn{color:#0369a1;font-weight:600}
+  .st{color:#8a4a00}
+  .cm{color:#9a8a75;font-style:italic}
+  .nu{color:#7a3acd}
+  .an{color:#1a4a8a;font-weight:600}
+  .hl{background:rgba(193,68,14,.12);border-radius:2px;padding:0 3px}
+  /* TABLES */
+  .vtable{width:100%;border-collapse:collapse;border:2px solid var(--ink);border-radius:4px;overflow:hidden;margin:14px 0}
+  .vtable th{background:var(--ink);color:var(--bg);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;text-align:left}
+  .vtable td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}
+  .vtable tr:last-child td{border-bottom:none}
+  .vtable tr:hover td{background:rgba(0,0,0,.02)}
+  .vtable td code{background:rgba(0,0,0,.07);padding:1px 6px;border-radius:2px;font-size:11px;white-space:nowrap}
+  .vtable td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+  /* TREE */
+  .tree-box{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:20px 24px;margin:14px 0;font-size:12px;line-height:2}
+  .tree-root{color:var(--ink);font-weight:700}
+  .tree-dir{color:var(--accent3);font-weight:600}
+  .tree-file-xml{color:var(--accent);font-weight:600}
+  .tree-file-md{color:var(--accent2);font-weight:600}
+  .tree-file-ts{color:var(--purple);font-weight:600}
+  .tree-file-java{color:var(--yellow);font-weight:600}
+  .tree-file-feat{color:#2a6e4e}
+  .tree-conn{color:var(--muted)}
+  .tree-note{color:var(--muted);font-size:10.5px;font-style:italic;margin-left:6px}
+  /* INSIGHT */
+  .insight-box{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .insight-title{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:8px}
+  .insight-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  .insight-content code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:11px}
+  /* DANGER */
+  .danger-box{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:18px 22px;margin:18px 0}
+  .danger-title{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:8px}
+  .danger-content{font-size:12px;color:var(--ink2);line-height:1.7}
+  /* FLOW */
+  .flow-row{display:flex;align-items:center;gap:0;margin:14px 0;overflow-x:auto;padding-bottom:4px}
+  .flow-node{background:var(--surface);border:2px solid var(--border);border-radius:6px;padding:8px 14px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0}
+  .flow-node.ia1{border-color:var(--accent);color:var(--accent)}
+  .flow-node.ia2{border-color:var(--accent3);color:var(--accent3)}
+  .flow-node.cap{border-color:var(--accent2);color:var(--accent2)}
+  .flow-node.out{border-color:var(--purple);color:var(--purple)}
+  .flow-node.har{border-color:var(--yellow);color:#8a6000;background:rgba(232,160,32,.08)}
+  .flow-arrow{color:var(--muted);font-size:16px;padding:0 8px;flex-shrink:0}
+  .flow-parallel{display:flex;flex-direction:column;gap:8px}
+  /* GRID */
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:14px 0}
+  .info-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden}
+  .info-header{padding:9px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+  .info-header.o{background:rgba(193,68,14,.1);color:var(--accent)}
+  .info-header.g{background:rgba(42,110,78,.1);color:var(--accent2)}
+  .info-header.b{background:rgba(26,74,138,.1);color:var(--accent3)}
+  .info-header.p{background:rgba(122,58,205,.1);color:var(--purple)}
+  .info-header.y{background:rgba(232,160,32,.1);color:#8a6000}
+  .info-body{padding:12px 14px;font-size:12px;line-height:1.7;color:var(--ink2)}
+  .info-body code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:2px;font-size:10.5px}
+  @media(max-width:720px){.mode-btn{flex:0 0 auto}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">SPEC-DRIVEN DEVELOPMENT · GITHUB</div>
+  <h1>Spec Kit <em>a fondo</em><br>de la Spec al Código</h1>
+  <div class="subtitle">
+    Anatomía completa del toolkit · Specify CLI · Pipeline /speckit.* · Constitution · Extensiones<br>
+    github/spec-kit · v0.12.2 (jun 2026) · 117k ★ · MIT · basado en la investigación de John Lam
+  </div>
+  <div class="badge-row">
+    <span class="badge o">Specify CLI</span>
+    <span class="badge g">SDD</span>
+    <span class="badge b">30+ Agentes</span>
+    <span class="badge p">Constitution</span>
+    <span class="badge y">Markdown como IR</span>
+  </div>
+</header>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="switchTab('quees')">📖 QUÉ ES</button>
+  <button class="mode-btn" onclick="switchTab('instalacion')">⚡ INSTALACIÓN</button>
+  <button class="mode-btn" onclick="switchTab('estructura')">📁 ESTRUCTURA</button>
+  <button class="mode-btn" onclick="switchTab('pipeline')">▶ PIPELINE</button>
+  <button class="mode-btn" onclick="switchTab('constitution')">📜 CONSTITUTION</button>
+  <button class="mode-btn" onclick="switchTab('extensiones')">🧩 EXTENSIONES</button>
+  <button class="mode-btn" onclick="switchTab('fmi')">⚖️ SPEC-KIT VS FMI</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 1: QUÉ ES                                          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-quees" class="mode-panel active">
+
+  <div class="sec-title" data-n="1">LA INVERSIÓN DE PODER</div>
+
+  <div class="callout orange">
+    <strong>Tesis central de spec-kit</strong>
+    Durante décadas el código fue el rey: las specs eran andamiaje que se tiraba cuando empezaba el "trabajo real".
+    SDD invierte la relación de poder: <code>el código sirve a la especificación</code>. La spec no guía la implementación —
+    la <em>genera</em>. Mantener software pasa a ser evolucionar specs; el código es la última milla, regenerable.
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header o">El problema: vibe coding</div>
+      <div class="info-body">
+        Describes el objetivo, recibes un bloque de código que <em>parece</em> correcto y no funciona del todo.
+        Compila pero pierde la intención. GitHub lo diagnostica así: tratamos a los agentes como buscadores
+        cuando son <code>pair programmers literales</code> — excelentes en reconocimiento de patrones, pésimos leyendo mentes.
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header g">La solución: intención como fuente de verdad</div>
+      <div class="info-body">
+        Separar el <code>QUÉ</code> estable (spec) del <code>CÓMO</code> flexible (plan + código).
+        Requisitos de seguridad, design system y restricciones organizativas van en la spec desde el día uno,
+        no como parches posteriores. Cambiar de rumbo = actualizar spec, regenerar plan, dejar que el agente reconstruya.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">QUÉ ES EXACTAMENTE (Y QUÉ NO)</div>
+
+  <div class="callout blue">
+    <strong>Dos componentes, cero magia</strong>
+    <code>1)</code> <strong>Specify CLI</strong>: bootstrapper Python que descarga plantillas oficiales para tu agente y monta el scaffolding SDD.
+    <code>2)</code> <strong>Plantillas + scripts helper</strong> (bash/PowerShell): definen qué es una spec, qué es un plan, cómo se trocea en tareas.
+    Puedes prescindir del CLI y copiar las plantillas a mano desde Releases. No hay runtime, no hay servidor, no hay lock-in:
+    son prompts estructurados + convenciones de ficheros Markdown versionables en Git.
+  </div>
+
+  <div class="callout yellow">
+    <strong>Estatus: experimento declarado</strong>
+    GitHub lo etiqueta explícitamente como experimento para validar hipótesis: que SDD es independiente de stack,
+    que sirve para apps mission-critical, que soporta exploración paralela de implementaciones (proceso 0→1, 1', 2, 3, N).
+    Evoluciona rápido — 178 releases desde sept-2025.
+  </div>
+
+  <div class="sec-title" data-n="3">TRES ESCENARIOS DE USO</div>
+
+  <table class="vtable">
+    <tr><th>Fase</th><th>Foco</th><th>Qué aporta SDD</th></tr>
+    <tr>
+      <td class="cat">GREENFIELD (0→1)</td>
+      <td>Generar desde cero</td>
+      <td>Trabajo upfront mínimo (spec + plan) garantiza que la IA construye tu intención, no una solución genérica basada en patrones comunes.</td>
+    </tr>
+    <tr>
+      <td class="cat">EXPLORACIÓN CREATIVA</td>
+      <td>Implementaciones paralelas</td>
+      <td>Misma spec → N implementaciones con stacks/arquitecturas/UX distintos. Comparar y diffear variantes.</td>
+    </tr>
+    <tr>
+      <td class="cat">BROWNFIELD</td>
+      <td>Modernización legacy</td>
+      <td>Capturar la lógica de negocio esencial en una spec moderna, diseñar arquitectura fresca en el plan, reconstruir sin arrastrar deuda técnica heredada.</td>
+    </tr>
+  </table>
+
+  <div class="insight-box">
+    <div class="insight-title">El insight que te interesa para el TFM</div>
+    <div class="insight-content">
+      El escenario brownfield de spec-kit es <em>exactamente</em> el problema de FMI: "la intención original se perdió en el tiempo".
+      Pero su mecanismo de extracción es opuesto — spec-kit asume que un humano escribe la spec del sistema legacy;
+      FMI la <em>extrae</em> mecánicamente (HAR + clasificación forzada por Clean Architecture). Ver pestaña ⚖️.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">FLUJO CONCEPTUAL</div>
+
+  <div class="flow-row">
+    <div class="flow-node cap">CONSTITUTION<br><span style="font-weight:400;font-size:10px">principios</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node ia1">SPEC<br><span style="font-weight:400;font-size:10px">qué + por qué</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node ia2">PLAN<br><span style="font-weight:400;font-size:10px">cómo + stack</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node out">TASKS<br><span style="font-weight:400;font-size:10px">pasos ordenados</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node har">IMPLEMENT<br><span style="font-weight:400;font-size:10px">código</span></div>
+  </div>
+
+  <div class="callout green">
+    <strong>Cada fase produce un artefacto Markdown que alimenta a la siguiente</strong>
+    El agente nunca trabaja con prompts ad-hoc: trabaja con contexto estructurado y versionado.
+    Debuggear = arreglar la spec o el plan que generó código incorrecto. Refactorizar = reestructurar la spec para claridad.
+  </div>
+
+</div>
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 2: INSTALACIÓN                                     -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-instalacion" class="mode-panel">
+
+  <div class="sec-title" data-n="1">PRERREQUISITOS</div>
+
+  <table class="vtable">
+    <tr><th>Requisito</th><th>Detalle</th></tr>
+    <tr><td class="cat">SO</td><td>Linux / macOS / Windows (scripts en bash y PowerShell)</td></tr>
+    <tr><td class="cat">Python</td><td><code>3.11+</code></td></tr>
+    <tr><td class="cat">Gestor</td><td><code>uv</code> (recomendado) o <code>pipx</code></td></tr>
+    <tr><td class="cat">Git</td><td>Obligatorio — el flujo crea ramas por feature</td></tr>
+    <tr><td class="cat">Agente IA</td><td>Uno de los 30+ soportados: Claude Code, Copilot, Gemini CLI, Codex CLI, Cursor, Windsurf, Zed, Goose, Roo Code…</td></tr>
+  </table>
+
+  <div class="danger-box">
+    <div class="danger-title">⚠ No instalar desde PyPI</div>
+    <div class="danger-content">
+      El único paquete oficial se publica directamente desde el repo de GitHub. Cualquier paquete en PyPI
+      con el mismo nombre <strong>no está mantenido por el equipo de Spec Kit</strong>. Instala siempre desde <code>git+https://github.com/github/spec-kit.git</code>.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="2">INSTALACIÓN DEL CLI</div>
+
+<pre><span class="lang">bash</span><span class="cm"># Instalación persistente (fija la versión al último tag de Releases)</span>
+<span class="fn">uv</span> tool install specify-cli --from git+https://github.com/github/spec-kit.git@<span class="nu">vX.Y.Z</span>
+
+<span class="cm"># Alternativa efímera (estilo npx — ejecuta sin instalar)</span>
+<span class="fn">uvx</span> --from git+https://github.com/github/spec-kit.git specify init mi-proyecto
+
+<span class="cm"># Autogestión del CLI</span>
+<span class="fn">specify</span> self check              <span class="cm"># ¿hay release nueva? (read-only)</span>
+<span class="fn">specify</span> self upgrade --dry-run  <span class="cm"># preview sin tocar nada</span>
+<span class="fn">specify</span> self upgrade            <span class="cm"># upgrade in-place (detecta uv tool vs pipx)</span></pre>
+
+  <div class="sec-title" data-n="3">INICIALIZAR PROYECTO</div>
+
+<pre><span class="lang">bash</span><span class="cm"># Proyecto nuevo</span>
+<span class="fn">specify</span> init mi-proyecto --integration <span class="st">claude</span>
+
+<span class="cm"># En el directorio actual (proyecto existente = brownfield)</span>
+<span class="fn">specify</span> init . --force --integration <span class="st">claude</span>
+
+<span class="cm"># Claude Code en MODO SKILLS: instala skills en .claude/skills/</span>
+<span class="cm"># en lugar de slash-commands como ficheros de prompt</span>
+<span class="fn">specify</span> init . --integration <span class="st">claude</span> --integration-options=<span class="st">"--skills"</span>
+
+<span class="cm"># Sin verificar que el CLI del agente esté instalado</span>
+<span class="fn">specify</span> init mi-proyecto --integration <span class="st">copilot</span> --ignore-agent-tools
+
+<span class="cm"># Ver integraciones disponibles en tu versión instalada</span>
+<span class="fn">specify</span> integration list</pre>
+
+  <div class="callout blue">
+    <strong>Qué hace init exactamente</strong>
+    Descarga las plantillas del release, escribe los command files del agente elegido
+    (p.ej. <code>.claude/commands/</code> o <code>.claude/skills/</code>), crea <code>.specify/</code> con memoria,
+    scripts y plantillas, y añade el fichero de contexto del agente (<code>CLAUDE.md</code>, <code>AGENTS.md</code>…).
+    En sesiones no interactivas (CI) el default es Copilot salvo <code>--integration</code> explícito.
+  </div>
+
+  <div class="callout purple">
+    <strong>Claude Code: slash-commands vs skills</strong>
+    Con la integración estándar obtienes <code>/speckit.constitution</code>, <code>/speckit.specify</code>, etc. como comandos.
+    Con <code>--skills</code> obtienes agent skills (<code>speckit-specify</code>…) bajo <code>.claude/skills/</code> — el agente los
+    activa por relevancia semántica sin invocación explícita. Codex CLI en modo skills los expone como <code>$speckit-&lt;cmd&gt;</code>.
+  </div>
+
+  <div class="sec-title" data-n="4">VERIFICACIÓN</div>
+
+  <div class="callout green">
+    <strong>Sabes que está bien configurado si…</strong>
+    Al lanzar tu agente en el directorio del proyecto ves disponibles <code>/speckit.constitution</code>,
+    <code>/speckit.specify</code>, <code>/speckit.plan</code>, <code>/speckit.tasks</code> y <code>/speckit.implement</code>.
+    El agente pedirá <code>chmod</code> sobre los scripts helper la primera vez — es normal: los prompts invocan
+    esos scripts para aplicar el scaffolding de forma determinista.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 3: ESTRUCTURA                                      -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-estructura" class="mode-panel">
+
+  <div class="sec-title" data-n="1">ANATOMÍA DEL PROYECTO TRAS INIT + PRIMER CICLO</div>
+
+  <div class="tree-box">
+    <div><span class="tree-root">mi-proyecto/</span></div>
+    <div><span class="tree-conn">│</span></div>
+    <div><span class="tree-conn">├── </span><span class="tree-file-md">CLAUDE.md</span><span class="tree-note">← contexto del agente · generado/actualizado por /speckit.plan</span></div>
+    <div><span class="tree-conn">│</span></div>
+    <div><span class="tree-conn">├── </span><span class="tree-dir">.claude/</span><span class="tree-note">← (o .github/, .gemini/… según integración)</span></div>
+    <div><span class="tree-conn">│   └── </span><span class="tree-dir">commands/</span><span class="tree-note">← prompts /speckit.* — o skills/ en modo --skills</span></div>
+    <div><span class="tree-conn">│</span></div>
+    <div><span class="tree-conn">├── </span><span class="tree-dir">.specify/</span><span class="tree-note">← el corazón del toolkit</span></div>
+    <div><span class="tree-conn">│   ├── </span><span class="tree-dir">memory/</span></div>
+    <div><span class="tree-conn">│   │   └── </span><span class="tree-file-md">constitution.md</span><span class="tree-note">← principios innegociables · se escribe UNA vez</span></div>
+    <div><span class="tree-conn">│   ├── </span><span class="tree-dir">scripts/bash/</span><span class="tree-note">← (+ powershell/) helpers deterministas</span></div>
+    <div><span class="tree-conn">│   │   ├── </span><span class="tree-file-ts">create-new-feature.sh</span><span class="tree-note">← crea rama + carpeta specs/NNN-*</span></div>
+    <div><span class="tree-conn">│   │   ├── </span><span class="tree-file-ts">setup-plan.sh</span></div>
+    <div><span class="tree-conn">│   │   ├── </span><span class="tree-file-ts">setup-tasks.sh</span></div>
+    <div><span class="tree-conn">│   │   └── </span><span class="tree-file-ts">check-prerequisites.sh</span><span class="tree-note">← valida que existan spec/plan antes de avanzar</span></div>
+    <div><span class="tree-conn">│   └── </span><span class="tree-dir">templates/</span><span class="tree-note">← definen la forma de cada artefacto</span></div>
+    <div><span class="tree-conn">│       ├── </span><span class="tree-file-md">spec-template.md</span></div>
+    <div><span class="tree-conn">│       ├── </span><span class="tree-file-md">plan-template.md</span></div>
+    <div><span class="tree-conn">│       ├── </span><span class="tree-file-md">tasks-template.md</span></div>
+    <div><span class="tree-conn">│       └── </span><span class="tree-dir">overrides/</span><span class="tree-note">← ajustes locales (prioridad máxima)</span></div>
+    <div><span class="tree-conn">│</span></div>
+    <div><span class="tree-conn">└── </span><span class="tree-dir">specs/</span><span class="tree-note">← un directorio por feature, numerado</span></div>
+    <div><span class="tree-conn">    └── </span><span class="tree-dir">001-create-taskify/</span><span class="tree-note">← rama git homónima: 001-create-taskify</span></div>
+    <div><span class="tree-conn">        ├── </span><span class="tree-file-md">spec.md</span><span class="tree-note">← output de /speckit.specify · user stories + requisitos funcionales</span></div>
+    <div><span class="tree-conn">        ├── </span><span class="tree-file-md">plan.md</span><span class="tree-note">← output de /speckit.plan · arquitectura + stack</span></div>
+    <div><span class="tree-conn">        ├── </span><span class="tree-file-md">research.md</span><span class="tree-note">← decisiones de stack investigadas + versiones concretas</span></div>
+    <div><span class="tree-conn">        ├── </span><span class="tree-file-md">data-model.md</span><span class="tree-note">← entidades y relaciones</span></div>
+    <div><span class="tree-conn">        ├── </span><span class="tree-dir">contracts/</span><span class="tree-note">← api-spec.json, contratos de eventos…</span></div>
+    <div><span class="tree-conn">        ├── </span><span class="tree-file-md">quickstart.md</span><span class="tree-note">← cómo arrancar/validar la feature</span></div>
+    <div><span class="tree-conn">        └── </span><span class="tree-file-md">tasks.md</span><span class="tree-note">← output de /speckit.tasks · roadmap de /speckit.implement</span></div>
+  </div>
+
+  <div class="sec-title" data-n="2">DECISIONES DE DISEÑO RELEVANTES</div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header o">Feature = rama + carpeta numerada</div>
+      <div class="info-body">
+        <code>/speckit.specify</code> invoca <code>create-new-feature.sh</code>: crea la rama <code>001-nombre</code> y
+        <code>specs/001-nombre/</code>. La numeración da orden cronológico y trazabilidad de intención a implementación en el historial Git.
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header g">Scripts fuera del LLM</div>
+      <div class="info-body">
+        Todo lo que debe ser determinista (crear ramas, validar prerrequisitos, montar carpetas) es shell script invocado
+        desde el prompt — no se le pide al modelo. Misma filosofía que tus launchers POSIX con <code>jq</code>: el LLM decide, el script ejecuta.
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header b">Markdown como representación intermedia</div>
+      <div class="info-body">
+        Cada artefacto es Markdown plano: diffeable, revisable en PR, legible por humano y agente.
+        La spec es el fichero fuente; el código es artefacto derivado.
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header p">Memoria vs trabajo</div>
+      <div class="info-body">
+        <code>.specify/memory/</code> (constitution) cambia casi nunca; <code>specs/</code> cambia por feature.
+        Idéntica separación a tu CLAUDE.md (sistema) vs task prompts (trabajo): las reglas no se tocan en cada ciclo.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout yellow">
+    <strong>Brownfield: dos ciclos de vida separados</strong>
+    En proyectos existentes la guía oficial (Evolving Specs) recomienda no mezclar: los ficheros gestionados por el toolkit
+    se refrescan al hacer upgrade de spec-kit; los artefactos de <code>specs/</code> solo cambian cuando cambia el comportamiento
+    pretendido del software. Tooling y de intención evolucionan por raíles independientes.
+  </div>
+
+</div>
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 4: PIPELINE                                        -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-pipeline" class="mode-panel">
+
+  <div class="sec-title" data-n="1">EL PIPELINE COMPLETO</div>
+
+  <div style="margin:14px 0">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:700;letter-spacing:1px">FLUJO CORE (+ GATES OPCIONALES EN AMARILLO)</div>
+    <div class="flow-row">
+      <div class="flow-node cap">constitution</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node ia1">specify</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node har">clarify</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node ia2">plan</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node out">tasks</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node har">analyze</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node cap">implement</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node ia1">converge</div>
+    </div>
+  </div>
+
+  <table class="vtable">
+    <tr><th>Comando</th><th>Tipo</th><th>Qué hace</th></tr>
+    <tr><td><code>/speckit.constitution</code></td><td class="cat">CORE</td><td>Crea/actualiza los principios de gobierno del proyecto (<code>.specify/memory/constitution.md</code>). Se ejecuta una vez por proyecto, no por feature.</td></tr>
+    <tr><td><code>/speckit.specify</code></td><td class="cat">CORE</td><td>Define el QUÉ y el POR QUÉ: user stories + requisitos funcionales. Crea rama y <code>specs/NNN-*/spec.md</code>. Prohibido hablar de stack aquí.</td></tr>
+    <tr><td><code>/speckit.clarify</code></td><td class="cat">OPCIONAL</td><td>Interrogatorio estructurado y secuencial basado en cobertura; registra respuestas en una sección Clarifications de la spec. Recomendado SIEMPRE antes de plan (antes se llamaba <code>/quizme</code>).</td></tr>
+    <tr><td><code>/speckit.plan</code></td><td class="cat">CORE</td><td>El CÓMO: aquí sí entra el stack. Genera <code>plan.md</code> + <code>research.md</code> + <code>data-model.md</code> + <code>contracts/</code> + <code>quickstart.md</code>, verificando contra la constitution.</td></tr>
+    <tr><td><code>/speckit.tasks</code></td><td class="cat">CORE</td><td>Trocea el plan en <code>tasks.md</code>: fases por user story, dependencias ordenadas, marcadores <code>[P]</code> de paralelismo, rutas de fichero exactas, tests antes de implementación.</td></tr>
+    <tr><td><code>/speckit.analyze</code></td><td class="cat">OPCIONAL</td><td>Gate de consistencia cruzada: spec ↔ plan ↔ tasks ↔ constitution. Detecta cobertura incompleta y contradicciones. Ejecutar después de tasks, antes de implement.</td></tr>
+    <tr><td><code>/speckit.checklist</code></td><td class="cat">OPCIONAL</td><td>Genera checklists de calidad personalizadas para validar completitud, claridad y consistencia de requisitos — "unit tests para inglés".</td></tr>
+    <tr><td><code>/speckit.taskstoissues</code></td><td class="cat">CORE</td><td>Convierte tasks.md en GitHub Issues para tracking y ejecución distribuida.</td></tr>
+    <tr><td><code>/speckit.implement</code></td><td class="cat">CORE</td><td>Valida prerrequisitos (constitution+spec+plan+tasks), parsea tasks.md, ejecuta en orden respetando dependencias y <code>[P]</code>, siguiendo TDD. Ejecuta CLIs locales reales (npm, dotnet, mvn…).</td></tr>
+    <tr><td><code>/speckit.converge</code></td><td class="cat">CORE</td><td>Post-implementación: audita el código contra spec/plan/tasks y añade el trabajo restante como tareas nuevas. Cierra el bucle drift código↔spec.</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">EJEMPLO REAL DE CICLO (WALKTHROUGH OFICIAL)</div>
+
+<pre><span class="lang">agente</span><span class="cm"># 1 · Una vez por proyecto</span>
+<span class="kw">/speckit.constitution</span> Principios de calidad de código, estándares de testing,
+consistencia de UX y requisitos de rendimiento. Incluye gobernanza de cómo estos
+principios guían decisiones técnicas.
+
+<span class="cm"># 2 · El QUÉ — cero stack. Cuanto más explícito, menos alucina el plan</span>
+<span class="kw">/speckit.specify</span> Desarrolla Taskify, plataforma de productividad. Proyectos,
+miembros, tareas Kanban con columnas To Do / In Progress / In Review / Done.
+5 usuarios predefinidos (1 PM, 4 ingenieros), sin login en esta fase.
+Drag &amp; drop entre columnas. Comentarios ilimitados por tarjeta, editables
+solo por su autor...
+
+<span class="cm"># 3 · Interrogatorio de huecos ANTES de plan (reduce retrabajo aguas abajo)</span>
+<span class="kw">/speckit.clarify</span>
+
+<span class="cm"># 4 · El CÓMO — ahora sí el stack</span>
+<span class="kw">/speckit.plan</span> .NET Aspire con Postgres. Frontend Blazor Server con tableros
+drag-and-drop y actualizaciones en tiempo real. REST API: projects, tasks,
+notifications.
+
+<span class="cm"># 5 · Trocear · 6 · Gate de consistencia · 7 · Ejecutar</span>
+<span class="kw">/speckit.tasks</span>
+<span class="kw">/speckit.analyze</span>
+<span class="kw">/speckit.implement</span></pre>
+
+  <div class="sec-title" data-n="3">ANATOMÍA DE TASKS.MD</div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header o">Fases por user story</div>
+      <div class="info-body">Cada user story es una fase de implementación independiente con checkpoint de validación propio → entrega incremental, cada historia funciona por sí sola.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header g">Dependencias explícitas</div>
+      <div class="info-body">Orden forzado: models → services → endpoints. El agente no puede implementar el endpoint antes que el modelo que consume.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header b">Marcador [P] de paralelismo</div>
+      <div class="info-body">Tareas sin dependencias mutuas se marcan <code>[P]</code>. Equivalente conceptual a tus waves de workers en el SCHEDULER DAG — pero declarativo, no orquestado con procesos.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header p">Rutas de fichero exactas</div>
+      <div class="info-body">Cada tarea especifica exactamente en qué ficheros se implementa. Elimina la ambigüedad de "dónde va esto" — el mismo problema que resuelves con las 3 capas.</div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">FAILURE MODES DOCUMENTADOS Y SUS CORRECCIONES</div>
+
+  <div class="danger-box">
+    <div class="danger-title">El agente sobre-ingenieriza</div>
+    <div class="danger-content">
+      El propio README lo advierte: "Claude Code puede ser over-eager y añadir componentes que no pediste".
+      Corrección oficial: antes de implement, pedirle que cross-checkee el plan buscando piezas sobre-ingenierizadas
+      y justifique el origen de cada cambio, con la constitution como árbitro.
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="danger-title">Research sin objetivo</div>
+    <div class="danger-content">
+      Patrón anti-fallo del walkthrough: si el agente investiga ".NET Aspire en general", pararlo y forzar descomposición —
+      lista de dudas concretas primero, luego una tarea de research paralela por duda. Research sin pregunta específica que resolver = ruido.
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">La primera spec nunca es final</div>
+    <div class="insight-content">
+      El proceso asume iteración explícita en cada gate: revisar spec.md, ejecutar el Review &amp; Acceptance Checklist,
+      auditar plan.md ("¿la secuencia de tareas es obvia leyendo esto?"), y solo entonces implementar.
+      Los gates humanos son parte del diseño, no burocracia añadida.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 5: CONSTITUTION                                    -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-constitution" class="mode-panel">
+
+  <div class="sec-title" data-n="1">QUÉ ES LA CONSTITUTION</div>
+
+  <div class="callout orange">
+    <strong>Principios innegociables del proyecto</strong>
+    <code>.specify/memory/constitution.md</code> establece las reglas que TODOS los comandos posteriores consultan:
+    <code>/speckit.plan</code> verifica el plan contra ella, <code>/speckit.analyze</code> la usa como árbitro de consistencia.
+    Es la herramienta de las organizaciones para imponer stacks opinados: "toda app de este equipo es CLI-first",
+    "testing así, siempre". Se escribe antes de cualquier iteración SDD y rara vez cambia.
+  </div>
+
+  <div class="sec-title" data-n="2">ESTRUCTURA DE NUEVE ARTÍCULOS</div>
+
+  <div class="callout blue">
+    <strong>Artículos fijos + slots del proyecto</strong>
+    La plantilla define una estructura de nueve artículos. Los primeros codifican los principios core de SDD;
+    los artículos IV, V y VI son intencionadamente <em>placeholders</em> que cada proyecto rellena con sus propios
+    innegociables (testing de integración, observabilidad, versionado, breaking changes…). La estructura es estable;
+    el contenido es tuyo.
+  </div>
+
+<pre><span class="lang">markdown · extracto conceptual</span><span class="cm"># Constitution — artículo de testing (spec-driven.md)</span>
+
+<span class="kw">This is NON-NEGOTIABLE:</span> All implementation MUST follow strict
+Test-Driven Development. <span class="hl">No implementation code shall be written before:</span>
+  1. Unit tests are written
+  2. Tests are validated and approved by the user
+  3. Tests are confirmed to <span class="kw">FAIL</span> (Red phase)</pre>
+
+  <div class="insight-box">
+    <div class="insight-title">TDD como inversión del flujo de generación — tu misma tesis</div>
+    <div class="insight-content">
+      La justificación literal del proyecto: "esto invierte completamente la generación de código con IA.
+      En lugar de generar código y esperar que funcione, el LLM debe primero generar tests que definen el comportamiento,
+      conseguir aprobación, y solo entonces generar implementación". Es exactamente tu mecanismo anti-alucinación de FMI:
+      <code>test primero = contrato formal que el agente no puede rodear</code>. Dos proyectos independientes convergen
+      en el mismo principio — cita fuerte para la memoria del TFM.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">CONSTITUTION VS CLAUDE.MD — NO SON LO MISMO</div>
+
+  <table class="vtable">
+    <tr><th>Aspecto</th><th>constitution.md</th><th>CLAUDE.md / AGENTS.md</th></tr>
+    <tr><td class="cat">Naturaleza</td><td>Principios normativos del PROYECTO (qué es aceptable construir y cómo)</td><td>Contexto operativo del AGENTE (qué stack hay, cómo compilar, convenciones activas)</td></tr>
+    <tr><td class="cat">Quién lo escribe</td><td>Humano, vía /speckit.constitution, una vez</td><td>Generado/actualizado por /speckit.plan en cada feature</td></tr>
+    <tr><td class="cat">Frecuencia de cambio</td><td>Casi nunca</td><td>Con cada plan que introduce tecnología nueva</td></tr>
+    <tr><td class="cat">Rol en el pipeline</td><td>Árbitro: plan y analyze validan contra ella</td><td>Memoria de trabajo: el agente lo lee al arrancar sesión</td></tr>
+  </table>
+
+  <div class="callout green">
+    <strong>Equivalencia con tu sistema</strong>
+    Tu CLAUDE.md de FMI cumple AMBOS roles a la vez (reglas de arquitectura + contexto operativo).
+    Spec-kit los separa: normativa en <code>memory/</code>, operativa en el fichero del agente.
+    La separación permite que la normativa sobreviva a cambios de agente — la constitution es agnóstica de si ejecuta Claude, Copilot o Gemini.
+  </div>
+
+  <div class="sec-title" data-n="4">EJEMPLO DE USO</div>
+
+<pre><span class="lang">agente</span><span class="kw">/speckit.constitution</span> Crea principios enfocados en:
+- Cero dependencias externas: Java 21 puro en backend, Vanilla JS + Web Components en frontend
+- Naming Intention-Revealing con vocabulario cerrado de roles (Finder, Store, Renderer...)
+- Aislamiento estricto Dominio vs Infraestructura vs Transporte
+- TDD estricto: ningún código de producción sin test rojo previo aprobado
+- OWASP Top 10 como gate de seguridad en cada plan
+Incluye gobernanza: cualquier plan que viole estos principios debe ser
+rechazado por /speckit.analyze con referencia al artículo violado.</pre>
+
+  <div class="callout yellow">
+    <strong>Nota práctica</strong>
+    Si generas la constitution con IA, la guía oficial insiste: léela completa de arriba abajo antes de continuar.
+    Es el único artefacto donde un error se propaga a TODAS las features futuras.
+  </div>
+
+</div>
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 6: EXTENSIONES                                     -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-extensiones" class="mode-panel">
+
+  <div class="sec-title" data-n="1">EL STACK DE RESOLUCIÓN DE PLANTILLAS</div>
+
+  <div class="callout blue">
+    <strong>Cuatro niveles, prioridad descendente, primer match gana</strong>
+    Spec Kit resuelve plantillas en runtime recorriendo el stack de arriba a abajo.
+    Los comandos de extensiones/presets se aplican en install-time (se escriben en <code>.claude/commands/</code> etc.);
+    si varios proveen el mismo comando, gana el de mayor prioridad y al desinstalar se restaura automáticamente el siguiente.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Prioridad</th><th>Nivel</th><th>Ubicación</th><th>Para qué</th></tr>
+    <tr><td class="cat">⬆ 1</td><td>Overrides locales</td><td><code>.specify/templates/overrides/</code></td><td>Ajuste puntual de un solo proyecto sin crear preset</td></tr>
+    <tr><td class="cat">2</td><td>Presets</td><td><code>.specify/presets/templates/</code></td><td>Cambiar CÓMO funciona lo existente</td></tr>
+    <tr><td class="cat">3</td><td>Extensiones</td><td><code>.specify/extensions/templates/</code></td><td>Añadir capacidades NUEVAS</td></tr>
+    <tr><td class="cat">⬇ 4</td><td>Core</td><td><code>.specify/templates/</code></td><td>Comandos y plantillas SDD de fábrica</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">EXTENSIONES · PRESETS · BUNDLES</div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header o">Extensiones — capacidad nueva</div>
+      <div class="info-body">
+        Comandos y fases que el core no tiene: integración Jira/Azure DevOps, code review post-implementación,
+        trazabilidad de tests V-Model, diagnósticos de salud del proyecto. Ecosistema comunitario de 70+ extensiones.
+        <br><br><code>specify extension search</code> · <code>specify extension add &lt;n&gt;</code>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header g">Presets — cambiar el cómo</div>
+      <div class="info-body">
+        Sobrescriben plantillas del core Y de extensiones instaladas: formato de spec con trazabilidad regulatoria,
+        gates de seguridad obligatorios en planes, orden test-first forzado, terminología de dominio,
+        o localizar TODO el workflow a otro idioma. Apilables con orden de prioridad.
+        <br><br><code>specify preset search</code> · <code>specify preset add &lt;n&gt;</code>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header p">Bundles — setup por rol</div>
+      <div class="info-body">
+        Manifiesto <code>bundle.yml</code> que empaqueta extensiones + presets + workflows versionados para un rol completo
+        (PM, business analyst, security researcher, developer). Provisiona una persona de equipo con un comando.
+        Instalación idempotente, confinada al proyecto, funciona offline contra fuentes pinneadas.
+        <br><br><code>specify bundle install &lt;id&gt;</code>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-header y">Cuál usar</div>
+      <div class="info-body">
+        Comando nuevo o herramienta externa → <strong>extensión</strong>.
+        Formato/estándar organizativo → <strong>preset</strong>.
+        Setup completo de rol en un comando → <strong>bundle</strong>.
+        Ajuste de un solo proyecto → <strong>override local</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">Lectura arquitectónica</div>
+    <div class="insight-content">
+      Es un sistema de theming para procesos: el core define el pipeline, los presets lo visten, las extensiones lo amplían —
+      resolución por prioridad tipo CSS cascade aplicada a prompts. La consecuencia interesante: podrías empaquetar
+      <strong>FMI como preset + extensión de spec-kit</strong> (preset que impone tu vocabulario cerrado y las 3 capas en las
+      plantillas de plan, extensión que añade la fase de cartografía HAR). Vía de adopción para OSCA sin construir tooling propio.
+    </div>
+  </div>
+
+  <div class="callout orange">
+    <strong>Advertencia de la propia GitHub</strong>
+    Las contribuciones comunitarias son independientes: "revisa el código fuente antes de instalar y úsalo bajo tu criterio".
+    Una extensión es un prompt + scripts que tu agente ejecutará con tus permisos — mismo vector de riesgo que un plugin de CI.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 7: SPEC-KIT VS FMI                                 -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div id="tab-fmi" class="mode-panel">
+
+  <div class="sec-title" data-n="1">MISMO DIAGNÓSTICO, MECANISMOS OPUESTOS</div>
+
+  <div class="callout purple">
+    <strong>Convergencia independiente</strong>
+    Ambos parten del mismo diagnóstico ("la intención es la fuente de verdad, el código es última milla") y del mismo
+    anti-patrón (vibe coding). Ambos usan TDD como contrato anti-alucinación, artefactos Markdown versionados,
+    scripts deterministas fuera del LLM, y separación reglas-estables/trabajo-por-ciclo. La diferencia está en
+    <em>de dónde sale la intención</em>.
+  </div>
+
+  <table class="vtable">
+    <tr><th>Dimensión</th><th>Spec Kit</th><th>FMI</th></tr>
+    <tr><td class="cat">Origen de la intención</td><td>Humano escribe la spec (greenfield-first)</td><td>Extraída mecánicamente del sistema legacy: HAR como verdad absoluta + clasificación forzada por Clean Architecture</td></tr>
+    <tr><td class="cat">Escenario óptimo</td><td>0→1 y features grandes; brownfield asume que alguien puede REDACTAR la lógica esencial</td><td>Brownfield puro: la intención se perdió y nadie puede redactarla — hay que arqueologizarla</td></tr>
+    <tr><td class="cat">Verdad de comportamiento</td><td>La spec escrita (validada por checklists y analyze)</td><td>Golden Master HTTP: el comportamiento observado ES la spec; los tests de caracterización la congelan</td></tr>
+    <tr><td class="cat">Reglas estables</td><td>constitution.md (normativa) + CLAUDE.md (operativa), separados</td><td>CLAUDE.md unificado con arquitectura FMI</td></tr>
+    <tr><td class="cat">Unidad de trabajo</td><td>Feature → rama <code>NNN-*</code> + carpeta specs/</td><td>Flujo/Servlet → task prompt XML por ciclo</td></tr>
+    <tr><td class="cat">Orquestación</td><td>Un agente, secuencial; paralelismo declarativo <code>[P]</code> dentro de implement</td><td>Multi-agente jerárquico (Arquitecto/Capataz/Workers), procesos <code>claude -p</code> reales, sentinelas FASE.DONE, SCHEDULER DAG</td></tr>
+    <tr><td class="cat">Validación</td><td>analyze (consistencia entre artefactos) + converge (drift código↔spec)</td><td>Playwright E2E como Juez Supremo + métricas vectoriales coseno 0.95 con suelos por eje</td></tr>
+    <tr><td class="cat">Formato de prompts</td><td>Markdown templado</td><td>XML con atributos parseables (XPath sin leer body)</td></tr>
+    <tr><td class="cat">Target arquitectónico</td><td>Agnóstico — el plan acepta cualquier stack</td><td>Opinado — 3 capas + vocabulario cerrado ES el mecanismo de extracción semántica, no una preferencia</td></tr>
+  </table>
+
+  <div class="sec-title" data-n="2">LO QUE SPEC-KIT NO RESUELVE (Y FMI SÍ)</div>
+
+  <div class="danger-box">
+    <div class="danger-title">El hueco brownfield</div>
+    <div class="danger-content">
+      Spec-kit dice: "captura la lógica de negocio esencial en una spec moderna". No dice CÓMO capturarla cuando el
+      conocimiento no existe — ni en documentación ni en cabezas. Ese "cómo" es exactamente FMI/OSCA: extracción vía
+      caja negra (web.xml + vistas como guía), caracterización HTTP, y clasificación línea-a-línea forzada por el target
+      de Clean Architecture. Spec-kit asume la spec; FMI la fabrica. Son complementarios, no competidores:
+      <strong>FMI produce el input que /speckit.specify necesita en brownfield</strong>.
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="3">LO QUE FMI PUEDE ROBARLE A SPEC-KIT</div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-header g">/speckit.clarify</div>
+      <div class="info-body">Interrogatorio secuencial basado en cobertura, con registro formal de respuestas en el artefacto. Versión sistematizada de tu regla ANTI-ALUCINACIÓN "detente y pregunta" — pero como fase con protocolo, no como cláusula.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header b">/speckit.converge</div>
+      <div class="info-body">Auditoría post-implementación del drift código↔spec que APPENDEA tareas en vez de fallar. FMI valida con gates binarios (0.95 o rechazo); converge modela la reconciliación continua. Útil para las fases largas del orquestador.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header o">Checklists como "tests para inglés"</div>
+      <div class="info-body">Validar la CALIDAD DEL ARTEFACTO DE INTENCIÓN antes de gastarlo en generación. FMI valida outputs de código; spec-kit también valida los inputs textuales. Barato de adoptar en tus 00-orden.md.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-header p">taskstoissues</div>
+      <div class="info-body">Puente artefacto→tracker. Tu equivalente sería volcar el DAG del SCHEDULER a issues — trazabilidad de la migración visible para stakeholders no técnicos sin abrir el repo.</div>
+    </div>
+  </div>
+
+  <div class="sec-title" data-n="4">CRÍTICA EXTERNA — PARA LA DISCUSIÓN DEL TFM</div>
+
+  <div class="callout yellow">
+    <strong>¿La venganza del Waterfall?</strong>
+    Gojko Adzic (referente en specification-by-example) señala que SDD construye sobre las mismas ideas intent-first
+    que BDD, pero advierte que su estructura podría reintroducir la rigidez de la que huyeron las metodologías ágiles —
+    "las peores partes del Waterfall bajo un nombre más brillante". El contraargumento de GitHub: la spec es viva y
+    regenerable, no un documento congelado de fase. Tensión real y citable: la respuesta depende de si el equipo trata
+    la spec como artefacto vivo (loop converge) o como contrato firmado.
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-title">Posicionamiento sugerido para la memoria</div>
+    <div class="insight-content">
+      Spec-kit (GitHub, 117k★) valida a escala industrial las tres apuestas nucleares de FMI: intención como fuente de verdad,
+      TDD como contrato formal para agentes, y artefactos intermedios estructurados en lugar de prompting ad-hoc.
+      FMI se diferencia donde spec-kit delega en el humano: la <strong>extracción</strong> de intención desde sistemas
+      cuyo conocimiento se perdió. Frase para la defensa: <em>"Spec-kit ejecuta specs; FMI las excava."</em>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- .container -->
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  (btn || event.target).classList.add('active');
+}
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const btns = [...document.querySelectorAll('.mode-btn')];
+  const idx = btns.findIndex(b => b.classList.contains('active'));
+  if (e.key === 'ArrowRight' && idx < btns.length - 1) btns[idx + 1].click();
+  if (e.key === 'ArrowLeft' && idx > 0) btns[idx - 1].click();
+});
+</script>
+</body>
+</html>
