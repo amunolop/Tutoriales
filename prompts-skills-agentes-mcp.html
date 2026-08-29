@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompts, Skills, Agentes y MCP · Visión completa para VS Code + Copilot</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--surface:#fff;--surface2:#edeae0;--border:#cfc8b4;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--teal:#0e7c7b;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}.container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+header{border-bottom:3px solid var(--ink);padding-bottom:26px;margin-bottom:34px}.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-0.7deg)}h1{font-family:var(--display);font-size:clamp(28px,5vw,50px);font-weight:800;line-height:1;letter-spacing:-1.5px;margin-bottom:12px}h1 em{font-style:normal;color:var(--accent)}h1 .v{color:var(--accent2)}.subtitle{font-size:12px;color:var(--muted);line-height:1.8;max-width:700px;margin-bottom:16px}.badge-row{display:flex;flex-wrap:wrap;gap:8px}.badge{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}.badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}.badge.t{color:var(--teal);border-color:var(--teal)}
+.tab-nav{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:5px;overflow:hidden;margin-bottom:36px}.tab-btn{font-family:var(--mono);font-size:10px;font-weight:700;padding:10px 13px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}.tab-btn:last-child{border-right:none}.tab-btn:hover{background:var(--surface2);color:var(--ink)}.tab-btn.active{background:var(--ink);color:var(--bg)}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s ease both}
+.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:30px 0 14px;display:flex;align-items:center;gap:12px}.sec:first-child{margin-top:0}.sec::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:3px;flex-shrink:0}
+.note{border-left:4px solid;padding:13px 17px;margin:13px 0;font-size:12px;line-height:1.75;color:var(--ink2);border-radius:0 4px 4px 0}.note strong{display:block;margin-bottom:4px}.note code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px}.note.o{border-color:var(--accent);background:rgba(193,68,14,.05)}.note.o strong{color:var(--accent)}.note.g{border-color:var(--accent2);background:rgba(42,110,78,.05)}.note.g strong{color:var(--accent2)}.note.b{border-color:var(--accent3);background:rgba(26,74,138,.05)}.note.b strong{color:var(--accent3)}.note.y{border-color:var(--yellow);background:rgba(232,160,32,.05)}.note.y strong{color:var(--yellow)}.note.p{border-color:var(--purple);background:rgba(122,58,205,.05)}.note.p strong{color:var(--purple)}.note.t{border-color:var(--teal);background:rgba(14,124,123,.05)}.note.t strong{color:var(--teal)}
+a{color:var(--accent3)}a:hover{color:var(--accent)}
+pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:16px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:13px 0}.kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}
+.tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);overflow:hidden;margin:13px 0;border-radius:4px}.tbl th{background:var(--ink);color:var(--bg);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:10px 13px;text-align:left}.tbl td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(0,0,0,.015)}.tbl td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:10.5px}.tbl td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin:14px 0}.card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .2s}.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.07)}.card-hd{padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px}.card-hd.g{background:rgba(42,110,78,.1);color:var(--accent2)}.card-hd.o{background:rgba(193,68,14,.1);color:var(--accent)}.card-hd.b{background:rgba(26,74,138,.1);color:var(--accent3)}.card-hd.p{background:rgba(122,58,205,.1);color:var(--purple)}.card-hd.y{background:rgba(232,160,32,.1);color:var(--yellow)}.card-hd.t{background:rgba(14,124,123,.1);color:var(--teal)}.card-bd{padding:13px;font-size:12px;line-height:1.75;color:var(--ink2)}
+.insight{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:17px 21px;margin:17px 0}.insight-t{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:7px}.insight-b{font-size:12px;color:var(--ink2);line-height:1.75}.danger{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:17px 21px;margin:17px 0}.danger-t{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:7px}.danger-b{font-size:12px;color:var(--ink2);line-height:1.75}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:16px 0}.fbox{border:2px solid var(--ink);border-radius:5px;padding:9px 13px;font-size:11px;font-weight:700;text-align:center;min-width:90px}.fbox sub{display:block;font-size:9px;opacity:.75;font-weight:400;margin-top:2px}.fbox.o{background:var(--accent);color:#fff;border-color:var(--accent)}.fbox.g{background:var(--accent2);color:#fff;border-color:var(--accent2)}.fbox.b{background:var(--accent3);color:#fff;border-color:var(--accent3)}.fbox.p{background:var(--purple);color:#fff;border-color:var(--purple)}.farr{font-size:18px;color:var(--muted);flex-shrink:0}
+.steps{counter-reset:step;margin:14px 0}.step{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)}.step:last-child{border-bottom:none}.step::before{counter-increment:step;content:counter(step);flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}.step-b{font-size:12px;line-height:1.7;color:var(--ink2);padding-top:3px}.step-b strong{color:var(--ink)}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Visión completa · Aplicado a VS Code + GitHub Copilot</div>
+  <h1>Prompts, Skills, <span class="v">Agentes</span> y MCP<br><em>Los 4 conceptos que lo explican todo</em></h1>
+  <div class="subtitle">Cada uno se apoya en el anterior: un prompt es la unidad mínima, una skill empaqueta prompts reutilizables, un agente ejecuta un bucle autónomo usando skills y herramientas, y MCP conecta ese agente con el mundo exterior. Con esto tienes el 90% — al final te digo el 10% que falta.</div>
+  <div class="badge-row">
+    <span class="badge o">4 conceptos</span>
+    <span class="badge b">Aplicado a VS Code + Copilot</span>
+    <span class="badge g">Mismo estándar que Claude</span>
+    <span class="badge p">Qué te falta para el 100%</span>
+  </div>
+</header>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="st('vision')">🧭 VISIÓN GENERAL</button>
+  <button class="tab-btn" onclick="st('prompts')">💬 PROMPTS</button>
+  <button class="tab-btn" onclick="st('skills')">🧩 SKILLS</button>
+  <button class="tab-btn" onclick="st('agentes')">🤖 AGENTES</button>
+  <button class="tab-btn" onclick="st('mcp')">🔌 MCP</button>
+  <button class="tab-btn" onclick="st('falta')">➕ QUÉ TE FALTARÍA</button>
+</div>
+
+<!-- ═══════════════════════ VISIÓN ═══════════ -->
+<div id="tab-vision" class="tab-panel active">
+
+<div class="sec" data-n="★">LOS 4 CONCEPTOS, DE MENOR A MAYOR COMPLEJIDAD</div>
+
+<div class="flow">
+  <div class="fbox o">Prompt<sub>instrucción puntual</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox b">Skill<sub>prompt empaquetado y reutilizable</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox g">Agente<sub>bucle autónomo con herramientas</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox p">MCP<sub>conexión con el mundo exterior</sub></div>
+</div>
+
+<div class="note b">
+  <strong>Ninguno sustituye al anterior — cada uno lo usa por debajo.</strong> Un agente no es "magia nueva": es un modelo que recibe prompts (a veces empaquetados en skills) y decide, en un bucle, cuándo usar una herramienta — y MCP es simplemente el estándar con el que esa herramienta puede vivir fuera de tu proyecto (una base de datos, GitHub, Notion...).
+</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">Prompt</div><div class="card-bd">Lo que le escribes al modelo. Puede ser una pregunta suelta o una instrucción persistente (custom instructions) que aplica siempre.</div></div>
+  <div class="card"><div class="card-hd b">Skill</div><div class="card-bd">Un prompt — o conjunto de instrucciones — guardado como archivo <code>SKILL.md</code> reutilizable, para no reescribir lo mismo cada vez.</div></div>
+  <div class="card"><div class="card-hd g">Agente</div><div class="card-bd">El modelo en modo "actúa, no solo respondas": inspecciona tu workspace, edita archivos, ejecuta comandos, corre tests, y repite hasta terminar la tarea.</div></div>
+  <div class="card"><div class="card-hd p">MCP</div><div class="card-bd">El protocolo que deja a ese agente conectarse a sistemas externos (bases de datos, GitHub, documentación) sin que cada integración sea código a medida.</div></div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ Dato clave para VS Code</div>
+  <div class="insight-b">Estos 4 conceptos no son exclusivos de Claude: en 2026, <strong>GitHub Copilot los implementa con el mismo vocabulario y, en el caso de Skills y MCP, con el mismo formato de archivo</strong>. Aprenderlos una vez te sirve para los dos ecosistemas.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ PROMPTS ══════════ -->
+<div id="tab-prompts" class="tab-panel">
+
+<div class="sec" data-n="1">QUÉ ES UN PROMPT</div>
+
+<div class="note o">
+  La instrucción en lenguaje natural que le das al modelo. Puede ser de un solo uso (una pregunta en el chat) o persistente (una instrucción que se aplica siempre, en cada interacción).
+</div>
+
+<div class="sec" data-n="2">CÓMO SE VE ESTO EN VS CODE + COPILOT</div>
+
+<table class="tbl">
+  <tr><th>Forma</th><th>Qué es</th><th>Cuándo se aplica</th></tr>
+  <tr><td class="cat">Chat normal</td><td>Escribes una pregunta o petición puntual en el panel de Copilot Chat</td><td>Solo esa conversación</td></tr>
+  <tr><td class="cat"><code>.github/copilot-instructions.md</code></td><td>"Custom instructions" — el equivalente al <code>system</code> prompt, pero para todo el repositorio</td><td>Siempre, en cualquier chat o sugerencia dentro de ese proyecto</td></tr>
+  <tr><td class="cat">Prompt files (<code>.prompt.md</code>)</td><td>Plantillas de prompt reutilizables para tareas concretas ("generar tests", "revisar PR"), invocables con <code>/nombre</code></td><td>Cuando tú decides invocarlas</td></tr>
+  <tr><td class="cat">Chat modes</td><td>Modos que cambian el comportamiento del chat: <em>Ask</em> (solo responde), <em>Edit</em> (propone cambios), <em>Agent</em> (actúa por su cuenta)</td><td>Según el modo que selecciones en el desplegable del chat</td></tr>
+</table>
+
+<div class="insight">
+  <div class="insight-t">✅ El truco que ya conoces de los conectores/preposiciones</div>
+  <div class="insight-b">Un buen prompt técnico sigue la misma lógica que ya practicaste en la plantilla de inglés: <strong>decisión + contexto + resultado esperado</strong>. "Genera tests" es un prompt pobre. "Genera tests unitarios con pytest para esta función, cubriendo los casos límite de valores negativos y nulos" es un prompt que un agente puede ejecutar sin adivinar.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ SKILLS ═══════════ -->
+<div id="tab-skills" class="tab-panel">
+
+<div class="sec" data-n="1">QUÉ ES UNA SKILL</div>
+
+<div class="note b">
+  Un conjunto de instrucciones reutilizables que le enseñan a un agente <strong>cómo</strong> hacer una tarea concreta — no es una pregunta puntual, es un manual de procedimiento que el agente consulta cuando lo necesita.
+</div>
+
+<div class="sec" data-n="2">EL FORMATO: SKILL.MD</div>
+
+<div class="note g">
+  Una skill es normalmente una carpeta con un archivo <code>SKILL.md</code> (metadatos + instrucciones en Markdown) y, opcionalmente, scripts o plantillas de apoyo. El agente no carga todo de golpe: solo lee el detalle completo de la skill <strong>cuando la tarea la necesita</strong> — así no gasta contexto en instrucciones irrelevantes.
+</div>
+
+<pre><span class="cm"># Estructura típica de una skill</span>
+mi-skill/
+├── SKILL.md          <span class="cm"># nombre, descripción, cuándo usarla</span>
+├── ejemplos/
+└── scripts/</pre>
+
+<div class="insight">
+  <div class="insight-t">✅ Interoperabilidad real (no solo teoría)</div>
+  <div class="insight-b">Desde 2026, <strong>el mismo archivo <code>SKILL.md</code> que usa Claude Code funciona también en Copilot agent mode</strong>, a través de <code>.github/copilot-instructions.md</code> y archivos <code>SKILL.md</code> a nivel de proyecto. No es una coincidencia de nombres — es el mismo estándar abierto, adoptado por los dos ecosistemas.</div>
+</div>
+
+<div class="sec" data-n="3">EJEMPLOS DE SKILLS ÚTILES EN DESARROLLO</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">code-review-checklist</div><div class="card-bd">Enseña al agente tu checklist concreto de revisión de PRs: convenciones de tu equipo, qué patrones evitar, qué comentar siempre.</div></div>
+  <div class="card"><div class="card-hd b">generate-tests</div><div class="card-bd">Cómo estructurar tests para tu stack concreto (framework, mocks, cobertura mínima esperada).</div></div>
+  <div class="card"><div class="card-hd g">db-migration-runner</div><div class="card-bd">Procedimiento paso a paso para generar y validar una migración de base de datos siguiendo tus convenciones.</div></div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ AGENTES ══════════ -->
+<div id="tab-agentes" class="tab-panel">
+
+<div class="sec" data-n="1">QUÉ ES UN AGENTE</div>
+
+<div class="note p">
+  Un modelo que no solo responde texto: ejecuta un <strong>bucle</strong> — percibe el estado (tu código, un error), decide qué herramienta usar, actúa, observa el resultado, y repite hasta terminar la tarea o pedir tu confirmación.
+</div>
+
+<div class="flow">
+  <div class="fbox b">Percibe<sub>workspace, error</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox o">Decide<sub>qué tool usar</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox g">Actúa<sub>edita, ejecuta</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox p">Observa<sub>resultado</sub></div>
+</div>
+
+<div class="sec" data-n="2">CÓMO SE VE ESTO EN VS CODE + COPILOT</div>
+
+<table class="tbl">
+  <tr><th>Función</th><th>Qué hace</th></tr>
+  <tr><td class="cat">Agent mode</td><td>Convierte Copilot de autocompletado a asistente que inspecciona el workspace, edita varios archivos a la vez, ejecuta comandos de terminal, corre tests, lee errores y se auto-corrige</td></tr>
+  <tr><td class="cat">Custom agents (<code>.agent.md</code>)</td><td>Agentes especializados que defines en tu propio repositorio, con acceso a herramientas concretas, el modelo que prefieras y conexiones MCP — aparecen en el selector de agentes para todo el equipo</td></tr>
+  <tr><td class="cat">Niveles de autonomía</td><td>Tú decides cuánto puede hacer sin pedir confirmación: desde "propón el cambio y espera mi aprobación" hasta "ejecuta y corrige solo"</td></tr>
+</table>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Un agente no es infalible por ser autónomo</div>
+  <div class="danger-b">Cuanta más autonomía le das, más importante es que sepas leer lo que hizo — un agente puede completar una tarea "con éxito" y haberlo hecho mal. La autonomía multiplica la velocidad, no sustituye tu criterio.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ MCP ══════════════ -->
+<div id="tab-mcp" class="tab-panel">
+
+<div class="sec" data-n="1">QUÉ ES MCP (MODEL CONTEXT PROTOCOL)</div>
+
+<div class="note t">
+  Un protocolo abierto que estandariza cómo un agente se conecta a herramientas y datos externos — bases de datos, GitHub, Notion, navegadores — sin que cada integración sea código a medida. Modelo cliente-servidor: el agente es el <strong>cliente MCP</strong>, y cada sistema externo expone un <strong>servidor MCP</strong> con un contrato común.
+</div>
+
+<div class="flow">
+  <div class="fbox g">Agente<sub>cliente MCP</sub></div>
+  <span class="farr">↔</span>
+  <div class="fbox p">Servidor MCP<sub>GitHub, DB, docs...</sub></div>
+</div>
+
+<div class="sec" data-n="2">CÓMO SE VE ESTO EN VS CODE + COPILOT</div>
+
+<div class="note b">
+  Soporte de MCP disponible para todos los usuarios de VS Code desde julio de 2025, con gobernanza empresarial (listas de servidores permitidos) añadida en 2026 para entornos corporativos.
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ La mayoría de servidores MCP son universales</div>
+  <div class="insight-b">Un servidor MCP construido para Claude Code normalmente también funciona en Copilot agent mode — es el mismo protocolo, y el servidor no distingue quién lo llama. Ejemplos habituales: el servidor MCP de GitHub (open source), servidores de bases de datos, servidores de documentación interna.</div>
+</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Más capacidad = más superficie de riesgo</div>
+  <div class="danger-b">Cada servidor MCP que conectas le da al agente acceso a un sistema real. La recomendación general: empieza con <strong>un solo servidor, bien acotado</strong>, antes de conectar varios a la vez — MCP no es obligatorio para usar agent mode, es una capa adicional que añades cuando la necesitas.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ QUÉ FALTA ════════ -->
+<div id="tab-falta" class="tab-panel">
+
+<div class="sec" data-n="★">CON ESTO TIENES EL 90% — EL 10% QUE FALTA ES OFICIO, NO CONCEPTOS NUEVOS</div>
+
+<div class="note g">
+  Ninguno de estos 6 puntos es "otro concepto que aprender desde cero" — son habilidades prácticas que se construyen usando los 4 pilares de arriba, no añadiendo un quinto pilar.
+</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">1 · Gestión del contexto</div><div class="card-bd">Cómo VS Code indexa tu proyecto (búsqueda semántica del código) para que el agente encuentre lo relevante sin que tú se lo señales todo a mano.</div></div>
+  <div class="card"><div class="card-hd b">2 · Permisos y seguridad</div><div class="card-bd">Quién aprueba qué ejecuta el agente — listas de servidores MCP permitidos, confirmación de comandos antes de ejecutarlos, evitar dar acceso a sistemas sensibles sin control.</div></div>
+  <div class="card"><div class="card-hd g">3 · Evaluar el resultado</div><div class="card-bd">No puedes confiar ciegamente en lo que produce el agente. Necesitas criterio propio para revisar y testear su output — esto es exactamente el "Discernment" del framework 4D que ya viste en AI Fluency.</div></div>
+  <div class="card"><div class="card-hd p">4 · Depurar un agente que falla</div><div class="card-bd">Entender por qué se atasca en un bucle, por qué elige mal una herramienta, o por qué "termina con éxito" habiendo hecho algo distinto de lo que pediste.</div></div>
+  <div class="card"><div class="card-hd y">5 · Conciencia de coste</div><div class="card-bd">Con modelos premium y planes de uso por créditos, entender qué tipo de tarea consume más — un agente que itera mucho no es gratis.</div></div>
+  <div class="card"><div class="card-hd t">6 · Versionar tus instrucciones</div><div class="card-bd">Tratar tus custom instructions y skills como código: revisarlas, mejorarlas y versionarlas con el tiempo, no escribirlas una vez y olvidarlas.</div></div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ En resumen</div>
+  <div class="insight-b">Prompts + Skills + Agentes + MCP te dan el <strong>vocabulario y las piezas</strong>. El 10% restante es <strong>criterio de uso</strong> — y ese criterio solo se construye usándolo de verdad en tu día a día con VS Code, no leyendo un concepto más.</div>
+</div>
+
+</div>
+
+</div>
+
+<script>
+function st(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
