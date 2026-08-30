@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copilot en VS Code · Guía completa de Prompts, Skills, Agentes y MCP</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--surface:#fff;--surface2:#edeae0;--border:#cfc8b4;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--teal:#0e7c7b;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}.container{max-width:1180px;margin:0 auto;padding:48px 28px 100px}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+header{border-bottom:3px solid var(--ink);padding-bottom:26px;margin-bottom:34px}.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-0.7deg)}h1{font-family:var(--display);font-size:clamp(26px,4.5vw,48px);font-weight:800;line-height:1;letter-spacing:-1.5px;margin-bottom:12px}h1 em{font-style:normal;color:var(--accent)}h1 .v{color:var(--accent2)}.subtitle{font-size:12px;color:var(--muted);line-height:1.8;max-width:720px;margin-bottom:16px}.badge-row{display:flex;flex-wrap:wrap;gap:8px}.badge{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}.badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}.badge.t{color:var(--teal);border-color:var(--teal)}
+.tab-nav{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:5px;overflow:hidden;margin-bottom:36px}.tab-btn{font-family:var(--mono);font-size:9.5px;font-weight:700;padding:10px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}.tab-btn:last-child{border-right:none}.tab-btn:hover{background:var(--surface2);color:var(--ink)}.tab-btn.active{background:var(--ink);color:var(--bg)}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s ease both}
+.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:30px 0 14px;display:flex;align-items:center;gap:12px}.sec:first-child{margin-top:0}.sec::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:3px;flex-shrink:0}
+.note{border-left:4px solid;padding:13px 17px;margin:13px 0;font-size:12px;line-height:1.75;color:var(--ink2);border-radius:0 4px 4px 0}.note strong{display:block;margin-bottom:4px}.note code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px}.note.o{border-color:var(--accent);background:rgba(193,68,14,.05)}.note.o strong{color:var(--accent)}.note.g{border-color:var(--accent2);background:rgba(42,110,78,.05)}.note.g strong{color:var(--accent2)}.note.b{border-color:var(--accent3);background:rgba(26,74,138,.05)}.note.b strong{color:var(--accent3)}.note.y{border-color:var(--yellow);background:rgba(232,160,32,.05)}.note.y strong{color:var(--yellow)}.note.p{border-color:var(--purple);background:rgba(122,58,205,.05)}.note.p strong{color:var(--purple)}.note.t{border-color:var(--teal);background:rgba(14,124,123,.05)}.note.t strong{color:var(--teal)}
+a{color:var(--accent3)}a:hover{color:var(--accent)}
+pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:16px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.8;color:var(--ink);margin:13px 0}.kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}
+.tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);overflow:hidden;margin:13px 0;border-radius:4px}.tbl th{background:var(--ink);color:var(--bg);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:10px 13px;text-align:left}.tbl td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(0,0,0,.015)}.tbl td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:10.5px}.tbl td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin:14px 0}.card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .2s}.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.07)}.card-hd{padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px}.card-hd.g{background:rgba(42,110,78,.1);color:var(--accent2)}.card-hd.o{background:rgba(193,68,14,.1);color:var(--accent)}.card-hd.b{background:rgba(26,74,138,.1);color:var(--accent3)}.card-hd.p{background:rgba(122,58,205,.1);color:var(--purple)}.card-hd.y{background:rgba(232,160,32,.1);color:var(--yellow)}.card-hd.t{background:rgba(14,124,123,.1);color:var(--teal)}.card-bd{padding:13px;font-size:12px;line-height:1.75;color:var(--ink2)}
+.insight{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:17px 21px;margin:17px 0}.insight-t{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:7px}.insight-b{font-size:12px;color:var(--ink2);line-height:1.75}.danger{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:17px 21px;margin:17px 0}.danger-t{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:7px}.danger-b{font-size:12px;color:var(--ink2);line-height:1.75}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:16px 0}.fbox{border:2px solid var(--ink);border-radius:5px;padding:9px 13px;font-size:11px;font-weight:700;text-align:center;min-width:90px}.fbox sub{display:block;font-size:9px;opacity:.75;font-weight:400;margin-top:2px}.fbox.o{background:var(--accent);color:#fff;border-color:var(--accent)}.fbox.g{background:var(--accent2);color:#fff;border-color:var(--accent2)}.fbox.b{background:var(--accent3);color:#fff;border-color:var(--accent3)}.fbox.p{background:var(--purple);color:#fff;border-color:var(--purple)}.farr{font-size:18px;color:var(--muted);flex-shrink:0}
+.steps{counter-reset:step;margin:14px 0}.step{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)}.step:last-child{border-bottom:none}.step::before{counter-increment:step;content:counter(step);flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}.step-b{font-size:12px;line-height:1.7;color:var(--ink2);padding-top:3px}.step-b strong{color:var(--ink)}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Guía completa · GitHub Copilot en VS Code · Agosto 2026</div>
+  <h1>Copilot en VS Code<br><span class="v">Prompts</span>, <em>Skills</em>, Agentes y MCP</h1>
+  <div class="subtitle">Sintaxis real, rutas de archivo exactas y ejemplos funcionales — no solo el concepto. Cada archivo que verás aquí lo puedes crear tal cual en tu proyecto y funciona.</div>
+  <div class="badge-row">
+    <span class="badge o">4 tipos de archivo</span>
+    <span class="badge b">Sintaxis verificada</span>
+    <span class="badge g">Flujo de trabajo real</span>
+    <span class="badge p">Buenas prácticas</span>
+    <span class="badge t">Cheatsheet de rutas</span>
+  </div>
+</header>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="st('vision')">🧭 VISIÓN</button>
+  <button class="tab-btn" onclick="st('setup')">⚙️ SETUP INICIAL</button>
+  <button class="tab-btn" onclick="st('config')">🔧 CONFIGURAR EN VS CODE</button>
+  <button class="tab-btn" onclick="st('prompts')">💬 PROMPTS</button>
+  <button class="tab-btn" onclick="st('skills')">🧩 SKILLS</button>
+  <button class="tab-btn" onclick="st('agentes')">🤖 AGENTES</button>
+  <button class="tab-btn" onclick="st('mcp')">🔌 MCP</button>
+  <button class="tab-btn" onclick="st('flujo')">🛠️ FLUJO REAL</button>
+  <button class="tab-btn" onclick="st('cheatsheet')">📋 CHEATSHEET</button>
+</div>
+
+<!-- ═══════════════════════ VISIÓN ═══════════ -->
+<div id="tab-vision" class="tab-panel active">
+
+<div class="sec" data-n="★">LOS 4 PILARES, DE MENOR A MAYOR AUTONOMÍA</div>
+
+<div class="flow">
+  <div class="fbox o">Prompt<sub>instrucción puntual</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox b">Skill<sub>SKILL.md reutilizable</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox g">Agente<sub>agent mode / .agent.md</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox p">MCP<sub>mcp.json → mundo exterior</sub></div>
+</div>
+
+<div class="note b">
+  Cada uno se apoya en el anterior: un prompt es la unidad mínima; una skill empaqueta prompts reutilizables en un archivo <code>SKILL.md</code>; un agente ejecuta un bucle autónomo que puede usar skills y herramientas; y MCP es el protocolo que le da a ese agente acceso a sistemas externos (GitHub, bases de datos, documentación).
+</div>
+
+<div class="sec" data-n="1">DÓNDE VIVE CADA COSA EN TU REPOSITORIO</div>
+
+<pre>tu-proyecto/
+├── .github/
+│   ├── copilot-instructions.md      <span class="cm"># Prompt persistente, todo el repo</span>
+│   ├── instructions/
+│   │   └── react.instructions.md    <span class="cm"># Prompt persistente, solo ciertos archivos</span>
+│   ├── prompts/
+│   │   └── generar-tests.prompt.md  <span class="cm"># Prompt reutilizable, bajo demanda (/nombre)</span>
+│   ├── agents/
+│   │   └── code-reviewer.agent.md   <span class="cm"># Agente especializado</span>
+│   └── skills/
+│       └── api-conventions/
+│           └── SKILL.md             <span class="cm"># Skill: procedimiento reutilizable</span>
+└── .vscode/
+    └── mcp.json                     <span class="cm"># Conexiones a servidores MCP</span></pre>
+
+<div class="insight">
+  <div class="insight-t">✅ Todo esto se versiona como código</div>
+  <div class="insight-b">Estos archivos van en tu repositorio Git, se revisan en PR y se comparten con tu equipo — no son configuración personal escondida en ajustes de la aplicación. Esa es la clave de por qué escalan bien en un equipo.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ SETUP ════════════ -->
+<div id="tab-setup" class="tab-panel">
+
+<div class="sec" data-n="★">PUESTA EN MARCHA — 15 MINUTOS</div>
+
+<div class="steps">
+  <div class="step"><div class="step-b">Instala la extensión <strong>GitHub Copilot</strong> desde el Marketplace de VS Code e inicia sesión desde la barra de estado.</div></div>
+  <div class="step"><div class="step-b">Abre Copilot Chat y ejecuta <code>/init</code>. Genera automáticamente un <code>.github/copilot-instructions.md</code> a partir de las convenciones reales de tu proyecto (no un genérico) — revísalo y ajústalo a mano.</div></div>
+  <div class="step"><div class="step-b">Añade al menos un servidor MCP para que el agente pueda usar herramientas reales, no solo generar texto (lo ves en detalle en la pestaña 🔌 MCP).</div></div>
+  <div class="step"><div class="step-b">Cambia el desplegable de modo del chat de <strong>Ask</strong> a <strong>Agent</strong>, elige el modelo que prefieras, y ya tienes tareas multi-paso ejecutándose de principio a fin.</div></div>
+</div>
+
+<div class="note y">
+  Con esto, en menos de 15 minutos, Copilot deja de ser autocompletado de una línea y pasa a ser un asistente que conoce tus convenciones, tiene herramientas reales y actúa de forma autónoma.
+</div>
+
+</div>
+
+<!-- ═══════════════════════ CONFIGURAR ═══════ -->
+<div id="tab-config" class="tab-panel">
+
+<div class="sec" data-n="★">EL EDITOR UNIFICADO — UN SOLO SITIO PARA LOS 4</div>
+
+<div class="note b">
+  Comando: <code>Chat: Open Customizations</code> (Command Palette). Abre el <strong>Agent Customizations editor</strong>, con pestañas separadas para Instructions, Prompts, Agents y Skills — puedes crear, editar y ver todos tus archivos de configuración desde un único sitio, sin ir carpeta por carpeta.
+</div>
+
+<div class="sec" data-n="1">CONFIGURAR PROMPTS</div>
+
+<table class="tbl">
+  <tr><th>Acción</th><th>Cómo</th></tr>
+  <tr><td class="cat">Crear un prompt file nuevo</td><td>Command Palette → <code>Chat: New Prompt File</code></td></tr>
+  <tr><td class="cat">Que la IA te lo genere</td><td>Escribe <code>/create-prompt</code> en el chat y describe la tarea — te hace preguntas y genera el <code>.prompt.md</code> con el frontmatter correcto</td></tr>
+  <tr><td class="cat">Ver y activar/desactivar prompts</td><td>Escribe <code>/prompts</code> en el chat para abrir el menú de configuración</td></tr>
+  <tr><td class="cat">Añadir ubicaciones extra</td><td>Setting <code>chat.promptFilesLocations</code> en <code>settings.json</code></td></tr>
+</table>
+
+<pre><span class="cm">// settings.json</span>
+{
+  <span class="st">"chat.promptFilesLocations"</span>: {
+    <span class="st">".github/prompts"</span>: <span class="kw">true</span>,
+    <span class="st">"team/prompts"</span>: <span class="kw">true</span>
+  }
+}</pre>
+
+<div class="sec" data-n="2">CONFIGURAR SKILLS</div>
+
+<table class="tbl">
+  <tr><th>Acción</th><th>Cómo</th></tr>
+  <tr><td class="cat">Crear una skill nueva</td><td>Icono de engranaje ⚙️ en el panel de Chat → <strong>Configure Chat</strong> → pestaña <strong>Skills</strong> → <code>New Skill (Workspace)</code> o <code>New Skill (User)</code></td></tr>
+  <tr><td class="cat">Que la IA te la genere</td><td>Escribe <code>/create-skill</code> y describe la tarea — o pide "crea una skill a partir de esta conversación" tras depurar algo juntos</td></tr>
+  <tr><td class="cat">Ver y activar/desactivar skills</td><td><code>/skills</code> en el chat</td></tr>
+  <tr><td class="cat">Añadir ubicaciones extra</td><td>Setting <code>chat.agentSkillsLocations</code> en <code>settings.json</code></td></tr>
+</table>
+
+<pre><span class="cm">// settings.json</span>
+{
+  <span class="st">"chat.agentSkillsLocations"</span>: {
+    <span class="st">".github/skills/**"</span>: <span class="kw">true</span>,
+    <span class="st">".agents/skills/**"</span>: <span class="kw">true</span>
+  }
+}</pre>
+
+<div class="note y">
+  <strong>Ojo con la ubicación por defecto:</strong> VS Code busca skills en <code>.agents/skills/</code> de fábrica, mientras que GitHub Copilot CLI/cloud reconoce también <code>.github/skills/</code> y <code>.claude/skills/</code>. Los tres funcionan — elige uno como convención de equipo y decláralo explícitamente en el setting para evitar dudas.
+</div>
+
+<div class="sec" data-n="3">CONFIGURAR AGENTES</div>
+
+<table class="tbl">
+  <tr><th>Acción</th><th>Cómo</th></tr>
+  <tr><td class="cat">Verificar que agent mode esté activo</td><td>Setting <code>chat.agent.enabled</code> — si tu organización lo bloqueó, lo gestiona el admin de GitHub</td></tr>
+  <tr><td class="cat">Crear un agente personalizado</td><td>Command Palette → <code>Chat: New Custom Agent</code></td></tr>
+  <tr><td class="cat">Elegir el agente activo</td><td>Selector de agentes en la parte inferior del panel de Chat</td></tr>
+  <tr><td class="cat">Añadir ubicaciones extra</td><td>Setting <code>chat.agentFilesLocations</code> en <code>settings.json</code></td></tr>
+</table>
+
+<pre><span class="cm">// settings.json</span>
+{
+  <span class="st">"chat.agent.enabled"</span>: <span class="kw">true</span>,
+  <span class="st">"chat.agentFilesLocations"</span>: {
+    <span class="st">".github/agents"</span>: <span class="kw">true</span>
+  }
+}</pre>
+
+<div class="sec" data-n="4">CONFIGURAR MCP</div>
+
+<table class="tbl">
+  <tr><th>Acción</th><th>Cómo</th></tr>
+  <tr><td class="cat">Añadir un servidor guiado</td><td>Command Palette → <code>MCP: Add Server</code> (con IntelliSense para validar el JSON)</td></tr>
+  <tr><td class="cat">Gestionar servidores existentes</td><td>Command Palette → <code>MCP: List Servers</code> → iniciar, detener o ver logs</td></tr>
+  <tr><td class="cat">Autodescubrir servidores de Claude Desktop</td><td>Activa el setting <code>chat.mcp.discovery.enabled</code></td></tr>
+  <tr><td class="cat">Editar la configuración directamente</td><td>Abrir <code>.vscode/mcp.json</code> — VS Code muestra botones inline para iniciar/detener cada servidor desde el propio editor</td></tr>
+</table>
+
+<pre><span class="cm">// settings.json</span>
+{
+  <span class="st">"chat.mcp.discovery.enabled"</span>: <span class="kw">true</span>
+}</pre>
+
+<div class="insight">
+  <div class="insight-t">✅ Todos comparten el mismo patrón</div>
+  <div class="insight-b">Un comando para <strong>crear</strong> (Chat: New...), un slash command para <strong>gestionar</strong> (<code>/prompts</code>, <code>/skills</code>), y un setting <code>chat.*Locations</code> para <strong>ampliar dónde busca</strong>. Aprendido una vez, se repite para los cuatro.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ PROMPTS ══════════ -->
+<div id="tab-prompts" class="tab-panel">
+
+<div class="sec" data-n="★">LAS 4 FORMAS DE UN PROMPT EN COPILOT</div>
+
+<table class="tbl">
+  <tr><th>Forma</th><th>Ruta</th><th>Cuándo se activa</th></tr>
+  <tr><td class="cat">Chat normal</td><td>—</td><td>Solo esa conversación puntual</td></tr>
+  <tr><td class="cat">Custom instructions</td><td><code>.github/copilot-instructions.md</code></td><td>Siempre, en todo el repositorio</td></tr>
+  <tr><td class="cat">Instructions con ámbito</td><td><code>.github/instructions/*.instructions.md</code></td><td>Solo en archivos que coincidan con su patrón <code>applyTo</code></td></tr>
+  <tr><td class="cat">Prompt files</td><td><code>.github/prompts/*.prompt.md</code></td><td>Solo cuando tú lo invocas con <code>/nombre</code></td></tr>
+</table>
+
+<div class="sec" data-n="1">CUSTOM INSTRUCTIONS — SIEMPRE ACTIVAS</div>
+
+<div class="note o">
+  Markdown plano, sin frontmatter obligatorio. Se genera con <code>/init</code> o se crea a mano. Se aplica en cada chat y cada sugerencia dentro de ese proyecto.
+</div>
+
+<pre><span class="cm"># .github/copilot-instructions.md</span>
+
+# Estándares del proyecto
+
+## Reglas generales
+- Usa TypeScript para todo el código nuevo
+- Prioriza composición sobre herencia
+- Documenta las APIs públicas con JSDoc
+
+## Tests
+- Framework: Jest
+- Cobertura mínima: 80%
+- Todo endpoint nuevo necesita test de integración</pre>
+
+<div class="sec" data-n="2">INSTRUCTIONS CON ÁMBITO — SOLO PARA CIERTOS ARCHIVOS</div>
+
+<div class="note b">
+  El campo <code>applyTo</code> es obligatorio y usa sintaxis glob. Si lo omites, el archivo no hace nada. Cuando varios <code>.instructions.md</code> coinciden a la vez (por ejemplo un <code>.tsx</code> dentro de <code>src/api/</code>), Copilot combina todas las capas que apliquen.
+</div>
+
+<pre><span class="cm"># .github/instructions/security.instructions.md</span>
+---
+<span class="kw">applyTo</span>: <span class="st">"src/api/**"</span>
+<span class="kw">description</span>: <span class="st">"Reglas de seguridad para el backend"</span>
+---
+
+Valida siempre la entrada del usuario antes de usarla en una query.
+Nunca construyas SQL con concatenación de strings — usa siempre
+parámetros preparados. Registra los errores con logging estructurado,
+nunca con print().</pre>
+
+<div class="sec" data-n="3">PROMPT FILES — REUTILIZABLES, BAJO DEMANDA</div>
+
+<div class="note g">
+  Se invocan escribiendo <code>/nombre-del-archivo</code> en el chat. Admiten variables como <code>${file}</code>, <code>${selection}</code> o <code>${input:variable}</code> para pedirte un dato antes de ejecutarse. El frontmatter soporta estos campos: <code>agent</code> (qué modo/agente lo ejecuta: <code>ask</code>, <code>agent</code>, <code>plan</code>, o el nombre de un agente personalizado), <code>description</code>, <code>model</code>, <code>name</code>, <code>tools</code> y <code>argument-hint</code>. No existe un campo <code>mode</code> — es un error habitual heredado de versiones antiguas de la documentación.
+</div>
+
+<pre><span class="cm"># .github/prompts/generar-tests.prompt.md</span>
+---
+<span class="kw">agent</span>: agent
+<span class="kw">description</span>: <span class="st">"Genera tests unitarios para el archivo seleccionado"</span>
+---
+
+Genera tests unitarios con Jest para ${file}, cubriendo:
+- El caso feliz
+- Al menos dos casos límite (valores nulos, vacíos o negativos)
+- Un caso de error esperado
+
+Sigue el estilo de test ya existente en el proyecto.</pre>
+
+<div class="insight">
+  <div class="insight-t">✅ El mismo truco de "decisión + contexto + resultado esperado"</div>
+  <div class="insight-b">Un prompt file vago ("genera tests") da resultados mediocres. Uno específico como el de arriba — con casos concretos a cubrir — es lo que marca la diferencia entre un test superficial y uno útil.</div>
+</div>
+
+<div class="sec" data-n="4">MÁS EJEMPLOS — INSTRUCTIONS CON ÁMBITO</div>
+
+<div class="note p">
+  Ejemplo adaptado a un stack Angular como ISOLution: solo se activa en componentes, no en todo el proyecto.
+</div>
+
+<pre><span class="cm"># .github/instructions/angular.instructions.md</span>
+---
+<span class="kw">applyTo</span>: <span class="st">"**/*.component.ts"</span>
+<span class="kw">description</span>: <span class="st">"Convenciones de componentes Angular"</span>
+---
+
+Usa componentes standalone, nunca NgModules para código nuevo.
+Los inputs y outputs se declaran con las funciones signal-based
+input() y output(), no con los decoradores @Input()/@Output().
+El nombre del selector siempre lleva el prefijo "iso-".</pre>
+
+<div class="sec" data-n="5">MÁS EJEMPLOS — PROMPT FILES</div>
+
+<pre><span class="cm"># .github/prompts/mensaje-commit.prompt.md</span>
+---
+<span class="kw">description</span>: <span class="st">"Genera un mensaje de commit siguiendo Conventional Commits"</span>
+---
+
+Analiza los cambios en staging (${selection} si hay algo seleccionado,
+si no usa el diff completo) y redacta un mensaje de commit siguiendo
+Conventional Commits: tipo(ámbito): descripción en imperativo, máximo
+72 caracteres en la primera línea. Añade el cuerpo solo si el cambio
+no es trivial.</pre>
+
+<pre><span class="cm"># .github/prompts/triage-incidencia.prompt.md</span>
+---
+<span class="kw">agent</span>: agent
+<span class="kw">description</span>: <span class="st">"Clasifica una incidencia de producción y propone primeros pasos"</span>
+---
+
+Con la descripción de incidencia: ${input:descripcion}
+
+1. Clasifica la severidad (crítica / alta / media / baja)
+2. Busca en el código errores o logs relacionados con los términos clave
+3. Propón 2-3 hipótesis de causa raíz, ordenadas por probabilidad
+4. Sugiere el primer paso de diagnóstico para cada hipótesis</pre>
+
+</div>
+
+<!-- ═══════════════════════ SKILLS ═══════════ -->
+<div id="tab-skills" class="tab-panel">
+
+<div class="sec" data-n="1">FORMATO Y UBICACIÓN</div>
+
+<div class="note b">
+  Una skill vive en <code>.github/skills/&lt;nombre-skill&gt;/SKILL.md</code> (proyecto) o <code>~/.copilot/skills/</code> (personal, reutilizable entre proyectos). El frontmatter exige <code>name</code> y <code>description</code> — la <code>description</code> es lo que Copilot lee para decidir si esa skill es relevante para tu petición.
+</div>
+
+<pre><span class="cm"># .github/skills/api-conventions/SKILL.md</span>
+---
+<span class="kw">name</span>: api-conventions
+<span class="kw">description</span>: >-
+  Usa esta skill cuando el usuario cree o modifique un endpoint REST.
+  Aplica las convenciones de nombrado, versionado y manejo de errores
+  del equipo.
+---
+
+## Procedimiento
+1. Prefija toda ruta nueva con /api/v1/
+2. Usa códigos de estado HTTP estándar — nunca 200 con un error en el body
+3. Todo error de validación devuelve {"error": {"code", "message"}}
+4. Añade el endpoint a docs/api-reference.md</pre>
+
+<div class="sec" data-n="2">PROGRESSIVE DISCLOSURE — POR QUÉ NO SATURA EL CONTEXTO</div>
+
+<div class="flow">
+  <div class="fbox o">L1 · Discovery<sub>solo name + description</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox b">L2 · Instrucciones<sub>el cuerpo del SKILL.md</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox g">L3 · Recursos<sub>scripts/referencias, solo si hacen falta</sub></div>
+</div>
+
+<div class="note g">
+  Copilot solo carga el <code>name</code>+<code>description</code> de todas las skills instaladas por defecto (barato en tokens). El cuerpo completo del <code>SKILL.md</code> solo se carga cuando decide que esa skill es relevante para la tarea. Los archivos de referencia o scripts que la skill mencione solo se leen si de verdad hacen falta. Por eso puedes tener decenas de skills instaladas sin saturar el contexto.
+</div>
+
+<div class="sec" data-n="3">CÓMO SE USA</div>
+
+<table class="tbl">
+  <tr><th>Acción</th><th>Cómo</th></tr>
+  <tr><td class="cat">Invocar una skill a propósito</td><td><code>/nombre-skill</code> al principio del prompt</td></tr>
+  <tr><td class="cat">Dejar que Copilot la elija sola</td><td>No hace falta nada — si la <code>description</code> encaja con tu petición, se activa automáticamente</td></tr>
+  <tr><td class="cat">Ver skills disponibles</td><td><code>/skills list</code> en el chat</td></tr>
+  <tr><td class="cat">Activar/desactivar una skill</td><td><code>/skills</code> y usar las flechas + barra espaciadora</td></tr>
+</table>
+
+<div class="insight">
+  <div class="insight-t">✅ No tienes que escribir SKILL.md desde cero</div>
+  <div class="insight-b">Anthropic publica <code>skill-creator</code>, una skill de referencia (en <a href="https://github.com/anthropics/skills" target="_blank">github.com/anthropics/skills</a>) que funciona igual en Copilot: le pides "crea una nueva skill" y te hace preguntas guiadas hasta generar la estructura completa por ti.</div>
+</div>
+
+<div class="note y">
+  <strong>Regla práctica:</strong> mantén el <code>SKILL.md</code> por debajo de 500 líneas. Si necesitas más detalle, muévelo a una carpeta <code>references/</code> dentro de la skill — así solo se carga cuando de verdad se usa (nivel L3).
+</div>
+
+<div class="sec" data-n="4">MÁS EJEMPLOS DE SKILL.MD COMPLETAS</div>
+
+<div class="note b">
+  Una skill de triaje de incidentes — encaja con el dominio de ISOLution (gestión de alertas e incidencias).
+</div>
+
+<pre><span class="cm"># .github/skills/incident-triage/SKILL.md</span>
+---
+<span class="kw">name</span>: incident-triage
+<span class="kw">description</span>: >-
+  Usa esta skill cuando el usuario reporte una alerta o incidencia
+  de producción y necesite clasificarla y diagnosticarla.
+---
+
+## Procedimiento
+1. Pide la severidad reportada por el usuario si no la ha dado
+2. Busca en /logs y en el código fuentes de error relacionadas
+   con los términos clave de la incidencia
+3. Clasifica según la matriz de severidad del equipo:
+   - Crítica: afecta a todos los usuarios, sin workaround
+   - Alta: afecta a un subconjunto, existe workaround manual
+   - Media/Baja: degradación menor o cosmética
+4. Documenta el hallazgo en references/formato-postmortem.md</pre>
+
+<div class="note g">
+  Una skill de generación de componentes Angular con los recursos bundled (plantilla) que referencia.
+</div>
+
+<pre><span class="cm"># .github/skills/angular-component/SKILL.md</span>
+---
+<span class="kw">name</span>: angular-component
+<span class="kw">description</span>: >-
+  Usa esta skill al crear un componente Angular nuevo para que
+  siga la estructura y convenciones exactas de ISOLution.
+---
+
+## Procedimiento
+1. Usa la plantilla en templates/component.template.ts como base
+2. El selector siempre lleva el prefijo "iso-"
+3. Genera también el archivo .spec.ts con al menos un test
+   de renderizado básico
+4. Registra el componente en el índice de exports del módulo
+   correspondiente
+
+<span class="cm">## Ver también: templates/component.template.ts</span></pre>
+
+</div>
+
+<!-- ═══════════════════════ AGENTES ══════════ -->
+<div id="tab-agentes" class="tab-panel">
+
+<div class="sec" data-n="1">AGENT MODE — EL MODO GENERAL</div>
+
+<div class="note p">
+  El desplegable de Copilot Chat tiene actualmente tres modos: <strong>Ask</strong> (solo responde, no toca archivos), <strong>Plan</strong> (analiza y propone un plan de implementación antes de tocar nada, útil para tareas grandes), y <strong>Agent</strong> (inspecciona el workspace, edita, ejecuta comandos de terminal, corre tests, lee errores y se auto-corrige hasta terminar). El antiguo modo <strong>Edit</strong> —que proponía cambios en varios archivos seleccionados a mano— ha quedado absorbido dentro de Agent: si ves documentación que aún lo menciona como modo independiente, está desactualizada.
+</div>
+
+<div class="sec" data-n="2">AGENTES PERSONALIZADOS — .AGENT.MD</div>
+
+<div class="note b">
+  Un agente personalizado es una persona con nombre, con su propia lista de herramientas permitidas y, opcionalmente, un modelo preferido. Vive en <code>.github/agents/&lt;nombre&gt;.agent.md</code> (compartido con el equipo) o a nivel de usuario (personal).
+</div>
+
+<pre><span class="cm"># .github/agents/code-reviewer.agent.md</span>
+---
+<span class="kw">name</span>: code-reviewer
+<span class="kw">description</span>: <span class="st">"Revisa PRs contra los estándares del equipo, sin modificar código"</span>
+<span class="kw">tools</span>: [<span class="st">'search'</span>, <span class="st">'read'</span>]
+---
+
+Eres un revisor de código senior para este equipo.
+
+Cuando te invoquen:
+1. Inspecciona los archivos modificados antes de opinar
+2. Busca: secretos hardcodeados, riesgos de inyección,
+   validación de entrada ausente, tests que faltan
+3. Clasifica cada hallazgo: crítico / aviso / sugerencia
+4. No modifiques archivos salvo que se te pida explícitamente</pre>
+
+<div class="note g">
+  Si omites <code>tools</code>, el agente tiene acceso a <strong>todas</strong> las herramientas — hazlo solo cuando de verdad las necesite todas (por ejemplo, un agente de testing que debe leer código, escribir tests, ejecutar el build y correr los tests). Si omites <code>model</code>, el usuario elige el modelo desde el selector.
+</div>
+
+<div class="sec" data-n="3">ENCADENAR AGENTES — HANDOFFS</div>
+
+<pre><span class="cm"># .github/agents/plan.agent.md</span>
+---
+<span class="kw">description</span>: <span class="st">"Genera un plan de implementación"</span>
+<span class="kw">tools</span>: [<span class="st">'search'</span>, <span class="st">'web'</span>]
+<span class="kw">handoffs</span>:
+  - label: <span class="st">"Empezar implementación"</span>
+    agent: implementation
+    prompt: <span class="st">"Implementa ahora el plan descrito arriba."</span>
+    send: false
+---
+
+Genera un plan de implementación detallado antes de escribir código.</pre>
+
+<div class="note y">
+  Cuando el usuario ve el botón de handoff y lo pulsa, cambia al agente <code>implementation</code> con el prompt ya rellenado. Con <code>send: true</code> se enviaría automáticamente sin esperar confirmación.
+</div>
+
+<div class="sec" data-n="4">DEPURAR UN AGENTE QUE FALLA</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Cuando el agente hace algo raro</div>
+  <div class="danger-b">Abre el menú <strong>···</strong> del panel de chat → <strong>Show Chat Debug View</strong>. Verás el system prompt completo que recibió, el contexto exacto enviado al modelo, y cada llamada a herramienta que hizo — es la forma más rápida de entender por qué se desvió.</div>
+</div>
+
+<div class="sec" data-n="5">MÁS EJEMPLOS DE AGENTES ESPECIALIZADOS</div>
+
+<div class="note g">
+  Un agente de testing con acceso a todas las herramientas (necesita ejecutar el build y los tests, no solo leer).
+</div>
+
+<pre><span class="cm"># .github/agents/test-specialist.agent.md</span>
+---
+<span class="kw">name</span>: test-specialist
+<span class="kw">description</span>: <span class="st">"Analiza cobertura y genera tests, nunca toca código de producción"</span>
+---
+
+Eres un especialista en testing para este proyecto.
+
+Tu único objetivo es la cobertura de tests, nunca modificar
+lógica de negocio:
+1. Analiza qué ramas del código no tienen test
+2. Genera tests unitarios e integración siguiendo los patrones
+   ya existentes en el proyecto
+3. Ejecuta la suite completa y confirma que todo pasa
+4. Si un test falla por un bug real, repórtalo — no lo "arregles"
+   cambiando el test para que pase</pre>
+
+<div class="note p">
+  Un agente de seguridad, con herramientas de solo lectura — nunca modifica nada.
+</div>
+
+<pre><span class="cm"># .github/agents/security-reviewer.agent.md</span>
+---
+<span class="kw">name</span>: security-reviewer
+<span class="kw">description</span>: <span class="st">"Revisa vulnerabilidades y patrones de riesgo sin modificar código"</span>
+<span class="kw">tools</span>: [<span class="st">'search'</span>, <span class="st">'read'</span>]
+---
+
+Eres un revisor de seguridad.
+
+Al ser invocado:
+1. Inspecciona las rutas de código relevantes antes de opinar
+2. Busca: secretos hardcodeados, riesgos de inyección, validación
+   de entrada ausente, comprobaciones de auth incompletas
+3. Reporta cada hallazgo por severidad: crítico / aviso / sugerencia
+4. No modifiques archivos salvo que se te pida explícitamente
+   arreglar algo</pre>
+
+</div>
+
+<!-- ═══════════════════════ MCP ══════════════ -->
+<div id="tab-mcp" class="tab-panel">
+
+<div class="sec" data-n="1">EL ARCHIVO DE CONFIGURACIÓN</div>
+
+<div class="note t">
+  Se define en <code>.vscode/mcp.json</code> (por proyecto) o en el perfil de usuario (global, para todos tus workspaces). Cada servidor puede ser de tipo <code>stdio</code> (proceso local), <code>http</code> o <code>sse</code> (remoto).
+</div>
+
+<pre><span class="cm">// .vscode/mcp.json</span>
+{
+  <span class="st">"inputs"</span>: [
+    {
+      <span class="st">"type"</span>: <span class="st">"promptString"</span>,
+      <span class="st">"id"</span>: <span class="st">"github_token"</span>,
+      <span class="st">"description"</span>: <span class="st">"GitHub Personal Access Token"</span>,
+      <span class="st">"password"</span>: <span class="kw">true</span>
+    }
+  ],
+  <span class="st">"servers"</span>: {
+    <span class="st">"github"</span>: {
+      <span class="st">"type"</span>: <span class="st">"http"</span>,
+      <span class="st">"url"</span>: <span class="st">"https://api.githubcopilot.com/mcp"</span>
+    },
+    <span class="st">"filesystem-local"</span>: {
+      <span class="st">"type"</span>: <span class="st">"stdio"</span>,
+      <span class="st">"command"</span>: <span class="st">"npx"</span>,
+      <span class="st">"args"</span>: [<span class="st">"-y"</span>, <span class="st">"@modelcontextprotocol/server-filesystem"</span>]
+    }
+  }
+}</pre>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Nunca hardcodees claves en el JSON</div>
+  <div class="danger-b">Usa el bloque <code>inputs</code> con <code>${input:id}</code> como referencia dentro de <code>env</code> — VS Code te pedirá el valor una vez, de forma enmascarada (<code>password: true</code>), y no queda escrito en texto plano en el repositorio.</div>
+</div>
+
+<div class="sec" data-n="2">FORMAS DE AÑADIR UN SERVIDOR</div>
+
+<table class="tbl">
+  <tr><th>Método</th><th>Cuándo usarlo</th></tr>
+  <tr><td class="cat">Editar <code>.vscode/mcp.json</code> a mano</td><td>Cuando necesitas control total, variables de entorno o inputs seguros</td></tr>
+  <tr><td class="cat">Comando <code>MCP: Add Server</code></td><td>Vía guiada, con plantilla, para no escribir el JSON de memoria</td></tr>
+  <tr><td class="cat">Galería de MCP</td><td>Para servidores populares ya empaquetados</td></tr>
+  <tr><td class="cat"><code>MCP: List Servers</code></td><td>Para arrancar, parar o ver logs de un servidor ya configurado</td></tr>
+</table>
+
+<div class="sec" data-n="3">SERVIDORES HABITUALES EN DESARROLLO</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">GitHub</div><div class="card-bd">Issues, PRs, repos — remoto en <code>https://api.githubcopilot.com/mcp</code>, sin instalar nada local.</div></div>
+  <div class="card"><div class="card-hd b">Filesystem</div><div class="card-bd">Acceso controlado a archivos fuera del workspace actual.</div></div>
+  <div class="card"><div class="card-hd g">Playwright</div><div class="card-bd">Automatización de navegador — útil para que el agente verifique un cambio de UI por sí mismo.</div></div>
+  <div class="card"><div class="card-hd p">Bases de datos</div><div class="card-bd">Consultar esquemas y datos reales sin salir del chat.</div></div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ Portabilidad real</div>
+  <div class="insight-b">La mayoría de servidores MCP construidos para Claude Code funcionan igual aquí — es el mismo protocolo. VS Code incluso puede <strong>autodescubrir</strong> servidores ya configurados en Claude Desktop si activas <code>chat.mcp.discovery.enabled</code>.</div>
+</div>
+
+<div class="note b">
+  <strong>Gobernanza en empresa:</strong> los administradores pueden fijar una lista de servidores MCP permitidos a nivel de organización — si trabajas en UST, es probable que esa política ya exista o se defina pronto.
+</div>
+
+<div class="sec" data-n="4">MÁS EJEMPLOS DE MCP.JSON</div>
+
+<div class="note p">
+  Un servidor de Postgres para que el agente consulte el esquema real de la base de datos, con la cadena de conexión pedida de forma segura.
+</div>
+
+<pre><span class="cm">// .vscode/mcp.json</span>
+{
+  <span class="st">"inputs"</span>: [
+    {
+      <span class="st">"type"</span>: <span class="st">"promptString"</span>,
+      <span class="st">"id"</span>: <span class="st">"pg_connection"</span>,
+      <span class="st">"description"</span>: <span class="st">"Cadena de conexión PostgreSQL"</span>,
+      <span class="st">"password"</span>: <span class="kw">true</span>
+    }
+  ],
+  <span class="st">"servers"</span>: {
+    <span class="st">"postgres"</span>: {
+      <span class="st">"type"</span>: <span class="st">"stdio"</span>,
+      <span class="st">"command"</span>: <span class="st">"npx"</span>,
+      <span class="st">"args"</span>: [<span class="st">"-y"</span>, <span class="st">"@modelcontextprotocol/server-postgres"</span>, <span class="st">"${input:pg_connection}"</span>]
+    }
+  }
+}</pre>
+
+<div class="note g">
+  Un servidor Playwright para que el agente verifique visualmente un cambio de UI antes de darlo por terminado.
+</div>
+
+<pre><span class="cm">// .vscode/mcp.json</span>
+{
+  <span class="st">"servers"</span>: {
+    <span class="st">"playwright"</span>: {
+      <span class="st">"type"</span>: <span class="st">"stdio"</span>,
+      <span class="st">"command"</span>: <span class="st">"npx"</span>,
+      <span class="st">"args"</span>: [<span class="st">"-y"</span>, <span class="st">"@microsoft/mcp-server-playwright"</span>]
+    }
+  }
+}</pre>
+
+</div>
+
+<!-- ═══════════════════════ FLUJO REAL ═══════ -->
+<div id="tab-flujo" class="tab-panel">
+
+<div class="sec" data-n="★">EJEMPLO END-TO-END: AÑADIR UN ENDPOINT NUEVO</div>
+
+<div class="steps">
+  <div class="step"><div class="step-b"><strong>Base siempre activa:</strong> <code>copilot-instructions.md</code> ya define que usas TypeScript, Jest y JSDoc — Copilot lo aplica sin que se lo pidas.</div></div>
+  <div class="step"><div class="step-b"><strong>Prompt file:</strong> escribes <code>/generar-endpoint</code> y te pide el nombre del recurso (<code>${input:recurso}</code>).</div></div>
+  <div class="step"><div class="step-b"><strong>Skill auto-detectada:</strong> como la tarea es "crear un endpoint REST", Copilot carga solo, sin que lo invoques, la skill <code>api-conventions</code> con tus reglas de versionado y manejo de errores.</div></div>
+  <div class="step"><div class="step-b"><strong>Agent mode actúa:</strong> crea el archivo de la ruta, el controlador, el test, ejecuta <code>npm test</code>, lee el fallo si lo hay, y corrige — todo en el mismo turno.</div></div>
+  <div class="step"><div class="step-b"><strong>MCP de GitHub:</strong> antes de terminar, consulta el issue original para verificar que no falta ningún requisito mencionado allí.</div></div>
+  <div class="step"><div class="step-b"><strong>Handoff opcional:</strong> al terminar, ofrece un botón para pasar el resultado al agente <code>code-reviewer</code> y hacer una segunda pasada antes de abrir el PR.</div></div>
+</div>
+
+<div class="sec" data-n="★">BUENAS PRÁCTICAS</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">Mínimo privilegio en agentes</div><div class="card-bd">No des <code>tools</code> ilimitadas a un agente que solo necesita leer código. El mismo principio de seguridad que ya viste en el examen CCDV-F.</div></div>
+  <div class="card"><div class="card-hd b">copilot-instructions.md ligero</div><div class="card-bd">Se carga siempre, en cada request. Cuanto más grande, más contexto consume de fondo — mueve reglas específicas de un path a un <code>.instructions.md</code> con <code>applyTo</code>.</div></div>
+  <div class="card"><div class="card-hd g">Un servidor MCP a la vez</div><div class="card-bd">Empieza con uno bien acotado antes de conectar varios — cada servidor es una superficie de acceso real a un sistema.</div></div>
+  <div class="card"><div class="card-hd p">Versiona todo esto en Git</div><div class="card-bd">Instructions, agentes, skills y <code>mcp.json</code> son código de equipo — revísalos en PR igual que revisarías cualquier otro cambio.</div></div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ CHEATSHEET ═══════ -->
+<div id="tab-cheatsheet" class="tab-panel">
+
+<div class="sec" data-n="★">TODAS LAS RUTAS Y COMANDOS — REFERENCIA RÁPIDA</div>
+
+<table class="tbl">
+  <tr><th>Elemento</th><th>Ruta / comando</th></tr>
+  <tr><td class="cat">Custom instructions (todo el repo)</td><td><code>.github/copilot-instructions.md</code></td></tr>
+  <tr><td class="cat">Instructions con ámbito</td><td><code>.github/instructions/*.instructions.md</code> (frontmatter <code>applyTo</code>)</td></tr>
+  <tr><td class="cat">Prompt files reutilizables</td><td><code>.github/prompts/*.prompt.md</code> → invocar con <code>/nombre</code></td></tr>
+  <tr><td class="cat">Skills de proyecto</td><td><code>.github/skills/&lt;nombre&gt;/SKILL.md</code></td></tr>
+  <tr><td class="cat">Skills personales</td><td><code>~/.copilot/skills/&lt;nombre&gt;/SKILL.md</code></td></tr>
+  <tr><td class="cat">Agentes personalizados</td><td><code>.github/agents/&lt;nombre&gt;.agent.md</code></td></tr>
+  <tr><td class="cat">Configuración MCP (proyecto)</td><td><code>.vscode/mcp.json</code></td></tr>
+  <tr><td class="cat">Generar instructions automáticamente</td><td><code>/init</code> en Copilot Chat</td></tr>
+  <tr><td class="cat">Listar skills disponibles</td><td><code>/skills list</code></td></tr>
+  <tr><td class="cat">Activar/desactivar skills</td><td><code>/skills</code></td></tr>
+  <tr><td class="cat">Añadir servidor MCP guiado</td><td>Command Palette → <code>MCP: Add Server</code></td></tr>
+  <tr><td class="cat">Gestionar servidores MCP</td><td>Command Palette → <code>MCP: List Servers</code></td></tr>
+  <tr><td class="cat">Autodescubrir MCP de Claude Desktop</td><td>Ajuste <code>chat.mcp.discovery.enabled</code></td></tr>
+  <tr><td class="cat">Depurar un agente</td><td>Menú ··· del chat → <code>Show Chat Debug View</code></td></tr>
+  <tr><td class="cat">Skill de referencia para crear skills</td><td><a href="https://github.com/anthropics/skills" target="_blank">github.com/anthropics/skills</a> (skill-creator)</td></tr>
+</table>
+
+</div>
+
+</div>
+
+<script>
+function st(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
