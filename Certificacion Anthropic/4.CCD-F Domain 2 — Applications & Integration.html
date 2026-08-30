@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<!-- saved from url=(0170)https://cdn2.percipio.com/rustici/us/custom-content/2167600c-3cdb-48a7-8b98-57b3ebf412cb/rustici/course-packages/courses/b62170a3-f605-446a-ba03-51adc1c15796/0/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CCD-F Domain 2 — Applications &amp; Integration</title>
+<style>
+:root{--dt:#006E74;--lt:#0097AC;--pet:#003C51;--pur:#881E87;--grn:#01B27C;--org:#FC6A59;--sand:#ECECE1;--wh:#FFFFFF;--tx:#1A2A33;--txl:#4A5C68;--brd:#D1D5DB;--bg:#F4F5F7;--side-w:280px;--code-bg:#0D1B2A;--code-fg:#E0E7EE;--cyan:#64DFDF;--amber:#F9A825;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,sans-serif;font-size:14.5px;line-height:1.7;color:var(--tx);background:var(--bg);display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:var(--side-w);background:var(--pet);color:var(--wh);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+.sb-header{padding:20px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.sb-header h1{font-size:13px;font-weight:700;letter-spacing:0.5px;opacity:0.7;text-transform:uppercase;}
+.sb-header h2{font-size:15px;font-weight:600;margin-top:4px;line-height:1.3;}
+.sb-header .weight{display:inline-block;background:var(--lt);padding:2px 10px;border-radius:12px;font-size:11px;margin-top:8px;font-weight:600;}
+.sb-nav{flex:1;overflow-y:auto;padding:8px 0;}.sb-nav::-webkit-scrollbar{width:4px;}.sb-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px;}
+.nav-group{margin-bottom:2px;}.nav-group-title{display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;opacity:0.6;cursor:default;}
+.nav-item{display:block;padding:7px 16px 7px 28px;font-size:12.5px;color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;text-decoration:none;line-height:1.4;}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:var(--wh);}
+.nav-item.active{background:rgba(0,151,172,0.25);color:var(--wh);border-left-color:var(--lt);font-weight:600;}
+.nav-item .nav-icon{margin-right:6px;font-size:11px;}
+.sb-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.1);}
+.sb-progress{height:4px;background:rgba(255,255,255,0.15);border-radius:2px;overflow:hidden;}
+.sb-progress-fill{height:100%;background:linear-gradient(90deg,var(--lt),var(--grn));width:0%;transition:width 0.4s;}
+.sb-progress-label{font-size:10px;opacity:0.6;margin-top:4px;display:flex;justify-content:space-between;}
+.content{flex:1;overflow-y:auto;scroll-behavior:smooth;}
+.section{display:none;padding:32px 40px 80px;max-width:960px;margin:0 auto;}.section.active{display:block;}
+h2.sec-title{font-size:24px;font-weight:700;color:var(--pet);margin-bottom:6px;}
+h3{font-size:17px;font-weight:700;color:var(--dt);margin:24px 0 10px;}
+h4{font-size:14.5px;font-weight:700;color:var(--pet);margin:18px 0 8px;}
+p{margin-bottom:12px;}.subtitle{font-size:14px;color:var(--lt);font-weight:600;margin-bottom:24px;}
+.card{background:var(--wh);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:28px 32px;margin-bottom:20px;}
+.card-sm{padding:20px 24px;}
+.tag{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:1.4px;padding:3px 10px;border-radius:16px;font-weight:600;margin-bottom:10px;}
+.tag-def{background:#E3F2FD;color:#1565C0;}.tag-tech{background:#E8EAF6;color:#283593;}.tag-cert{background:#FFF8E1;color:#E65100;}.tag-case{background:#F3E5F5;color:var(--pur);}.tag-apply{background:#E0F7EC;color:#007A4D;}.tag-assess{background:#FFF0ED;color:#C4402A;}
+.info-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;}
+.info-table th{background:var(--pet);color:var(--wh);padding:10px 14px;text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:0.5px;}
+.info-table td{padding:10px 14px;border-bottom:1px solid var(--brd);vertical-align:top;}.info-table tr:nth-child(even) td{background:#F8F9FA;}
+.callout{border-radius:8px;padding:16px 20px;margin:14px 0;font-size:13.5px;line-height:1.6;}
+.callout-key{background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border-left:4px solid var(--amber);}.callout-key strong{color:#E65100;}
+.callout-best{background:#E0F7EC;border-left:4px solid var(--grn);}.callout-best strong{color:#1A5C3A;}
+.callout-anti{background:#FFF0ED;border-left:4px solid var(--org);}.callout-anti strong{color:#C4402A;}
+.callout-exam{background:#E3F2FD;border-left:4px solid #1565C0;}.callout-exam strong{color:#1565C0;}
+.source{margin-top:16px;padding-top:10px;border-top:1px dashed var(--brd);font-size:0;}
+.source a{display:inline-block;font-size:11px;color:var(--lt);margin-right:12px;margin-bottom:4px;word-break:break-all;}.source a:hover{color:var(--dt);}
+pre.code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:18px 20px;font-family:"Cascadia Code","Fira Code","Consolas",monospace;font-size:12.5px;line-height:1.6;overflow-x:auto;margin:12px 0;white-space:pre;}
+code{background:rgba(0,110,116,0.08);padding:1px 6px;border-radius:4px;font-family:"Cascadia Code","Fira Code","Consolas",monospace;font-size:12.5px;color:var(--dt);}
+.def-block{background:linear-gradient(135deg,#E3F2FD,#F5F8FF);border-left:4px solid #1565C0;border-radius:0 10px 10px 0;padding:18px 22px;margin:14px 0;font-size:14px;line-height:1.7;}.def-block .def-term{font-size:16px;font-weight:700;color:#1565C0;margin-bottom:6px;}
+ul.deep{padding-left:20px;margin:10px 0;}ul.deep li{margin-bottom:6px;font-size:13.5px;}
+.nav-btn-row{display:flex;justify-content:space-between;position:sticky;bottom:0;background:var(--bg);padding:12px 0;border-top:1px solid var(--brd);margin-top:24px;}
+.btn{padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.btn-primary{background:var(--dt);color:var(--wh);}.btn-primary:hover{background:var(--lt);}
+.btn-secondary{background:var(--sand);color:var(--tx);}.btn-secondary:hover{background:#DDDDD2;}
+.btn-success{background:var(--grn);color:var(--wh);}.btn-success:hover{background:#019A6B;}
+.submit-assess-btn{display:none;}
+.ide{background:var(--code-bg);border-radius:10px;overflow:hidden;margin:16px 0;border:1px solid #1B2D45;}
+.ide-tabs{display:flex;background:#111D2E;border-bottom:1px solid #1B2D45;}
+.ide-tab{padding:8px 16px;font-size:11.5px;color:rgba(224,231,238,0.5);cursor:pointer;border-bottom:2px solid transparent;font-family:"Cascadia Code","Consolas",monospace;transition:all 0.15s;}
+.ide-tab:hover{color:var(--code-fg);}.ide-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);background:var(--code-bg);}
+.ide-panel{display:none;padding:16px 20px;color:var(--code-fg);font-family:"Cascadia Code","Consolas",monospace;font-size:12px;line-height:1.65;min-height:200px;max-height:400px;overflow-y:auto;}.ide-panel.active{display:block;}
+.ide-panel .kw{color:#FF79C6;}.ide-panel .str{color:#F1FA8C;}.ide-panel .cm{color:#6272A4;font-style:italic;}.ide-panel .fn{color:#50FA7B;}.ide-panel .num{color:#BD93F9;}.ide-panel .cyan{color:var(--cyan);}.ide-panel .hl{background:rgba(100,223,223,0.1);display:block;margin:0 -20px;padding:0 20px;border-left:3px solid var(--cyan);}
+/* Before/After Fixer (C1 sim) */
+.ba-container{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;}
+.ba-panel{border-radius:10px;padding:18px 22px;font-size:13px;line-height:1.6;}
+.ba-before{background:#FFF0ED;border:2px solid var(--org);}.ba-before h4{color:var(--org);}
+.ba-after{background:#E0F7EC;border:2px solid var(--grn);}.ba-after h4{color:var(--grn);}
+.ba-highlight{background:rgba(1,178,124,0.15);padding:2px 6px;border-radius:4px;font-weight:600;}
+/* Error Triage (C2 sim) */
+.triage-item{background:var(--wh);border:2px solid var(--brd);border-radius:10px;padding:16px 20px;margin:10px 0;transition:all 0.2s;}
+.triage-item.answered{opacity:0.7;}
+.triage-error{font-family:"Cascadia Code",monospace;font-size:12px;background:#F8F9FA;padding:10px 14px;border-radius:6px;margin-bottom:10px;color:var(--org);}
+.triage-opts{display:flex;gap:6px;flex-wrap:wrap;}
+.triage-btn{padding:6px 14px;border:2px solid var(--brd);border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;background:var(--wh);transition:all 0.15s;}
+.triage-btn:hover{border-color:var(--lt);background:#F0FAFA;}
+.triage-btn.correct-t{background:#E0F7EC;border-color:var(--grn);color:var(--grn);}
+.triage-btn.wrong-t{background:#FFF0ED;border-color:var(--org);color:var(--org);}
+.triage-expl{display:none;font-size:12px;margin-top:8px;padding:8px 12px;border-radius:6px;background:#F8F9FA;line-height:1.5;}
+/* Code gap-fill */
+.code-fill{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:20px 24px;font-family:"Cascadia Code","Consolas",monospace;font-size:12.5px;line-height:2.2;margin:16px 0;overflow-x:auto;}
+.code-blank{display:inline-block;min-width:180px;border-bottom:2px dashed var(--cyan);color:var(--cyan);cursor:pointer;padding:2px 8px;margin:0 4px;transition:all 0.2s;position:relative;}
+.code-blank:hover{background:rgba(100,223,223,0.15);}.code-blank.filled{border-bottom-style:solid;color:#50FA7B;}
+.code-blank.correct-fill{border-bottom-color:var(--grn);color:var(--grn);background:rgba(1,178,124,0.1);}
+.code-blank.wrong-fill{border-bottom-color:var(--org);color:var(--org);background:rgba(252,106,89,0.1);}
+.cf-dropdown{position:absolute;top:100%;left:0;background:#1B2D45;border:1px solid var(--cyan);border-radius:6px;z-index:100;min-width:240px;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+.cf-option{padding:8px 14px;cursor:pointer;font-size:12px;color:var(--code-fg);transition:background 0.1s;}.cf-option:hover{background:rgba(100,223,223,0.15);}
+/* Category sorter */
+.sort-container{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:16px 0;}
+.sort-bucket{background:#F8F9FA;border:2px dashed var(--brd);border-radius:10px;min-height:180px;padding:12px;transition:all 0.2s;}
+.sort-bucket.over{border-color:var(--lt);background:rgba(0,151,172,0.06);}
+.sort-bucket h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--txl);margin-bottom:10px;text-align:center;padding-bottom:8px;border-bottom:1px solid var(--brd);}
+.sort-bucket .bucket-items{min-height:100px;}
+.sort-bucket.correct-bucket{border-color:var(--grn);border-style:solid;background:#F0FFF6;}
+.sort-bucket.wrong-bucket{border-color:var(--org);border-style:solid;background:#FFF8F6;}
+.sort-item{padding:10px 14px;border:2px solid var(--brd);border-radius:8px;margin:6px 0;cursor:grab;font-size:12px;background:var(--wh);transition:all 0.2s;user-select:none;}
+.sort-item:hover{border-color:var(--lt);}.sort-item.placed{opacity:0.3;pointer-events:none;}.sort-item.in-bucket{cursor:grab;opacity:1;pointer-events:auto;margin:4px 0;}
+/* Verdict/Quick-fire */
+.verdict-card{background:var(--wh);border:2px solid var(--brd);border-radius:12px;padding:20px 24px;margin:12px 0;transition:all 0.3s;}.verdict-card.revealed{border-color:var(--lt);}
+.verdict-req{font-size:14px;font-weight:500;color:var(--pet);margin-bottom:14px;line-height:1.5;}
+.verdict-btns{display:flex;gap:10px;}
+.verdict-btn{flex:1;padding:12px;border:2px solid var(--brd);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;text-align:center;transition:all 0.15s;background:var(--wh);}
+.verdict-btn:hover{background:#F0FAFA;border-color:var(--lt);}
+.verdict-btn.v-correct{background:#E0F7EC;border-color:var(--grn);color:var(--grn);}
+.verdict-btn.v-wrong{background:#FFF0ED;border-color:var(--org);color:var(--org);}
+.verdict-expl{display:none;padding:10px 14px;border-radius:8px;margin-top:10px;font-size:12.5px;line-height:1.6;background:#F8F9FA;border-left:3px solid var(--lt);}
+.verdict-score{text-align:center;padding:16px;background:linear-gradient(135deg,#E3F2FD,#F5F8FF);border-radius:10px;margin-top:16px;display:none;}
+/* Investigator */
+.invest-scenario{background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border:2px solid var(--amber);border-radius:10px;padding:18px 22px;margin:12px 0;}
+.invest-scenario h4{color:#E65100;font-size:14px;margin-bottom:8px;}
+.invest-scenario p{font-size:13px;color:var(--tx);line-height:1.6;}
+.invest-opts{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+.invest-opt{border:2px solid var(--brd);border-radius:10px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.15s;}
+.invest-opt:hover{border-color:var(--lt);background:#F0FAFA;}.invest-opt.selected{border-color:var(--dt);background:#E0F5F6;}
+.invest-opt.correct-inv{border-color:var(--grn)!important;background:#E0F7EC!important;}
+.invest-opt.wrong-inv{border-color:var(--org)!important;background:#FFF0ED!important;}
+.invest-fb{display:none;padding:12px 16px;border-radius:8px;margin-top:10px;font-size:13px;line-height:1.6;}
+/* Drag-drop */
+.dd-container{display:flex;gap:24px;margin:16px 0;flex-wrap:wrap;}
+.dd-flow{flex:1;min-width:400px;}.dd-bank{width:220px;flex-shrink:0;}
+.dd-slot{min-height:52px;border:2px dashed var(--brd);border-radius:8px;padding:12px 16px;margin:8px 0;display:flex;align-items:center;gap:10px;transition:all 0.2s;background:rgba(0,0,0,0.02);}
+.dd-slot.over{border-color:var(--lt);background:rgba(0,151,172,0.08);}
+.dd-slot.filled{border-style:solid;border-color:var(--dt);background:#E0F5F6;}
+.dd-slot.correct{border-color:var(--grn);background:#E0F7EC;}.dd-slot.wrong{border-color:var(--org);background:#FFF0ED;}
+.dd-slot .slot-num{background:var(--brd);color:var(--txl);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.dd-slot.filled .slot-num{background:var(--dt);color:var(--wh);}.dd-slot.correct .slot-num{background:var(--grn);color:var(--wh);}.dd-slot.wrong .slot-num{background:var(--org);color:var(--wh);}
+.dd-slot .slot-label{font-size:11px;color:var(--txl);font-style:italic;}.dd-slot .slot-content{font-size:13px;font-weight:500;}
+.dd-arrow{text-align:center;color:var(--brd);font-size:18px;margin:2px 0;}
+.dd-item{padding:10px 14px;border:2px solid var(--brd);border-radius:8px;margin:6px 0;cursor:grab;font-size:12.5px;background:var(--wh);transition:all 0.2s;user-select:none;}
+.dd-item:hover{border-color:var(--lt);background:#F0FAFA;}.dd-item.dragging{opacity:0.4;}.dd-item.placed{opacity:0.3;cursor:default;pointer-events:none;}
+.dd-bank h4{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--txl);margin-bottom:8px;}
+.dd-check-btn{background:var(--dt);color:var(--wh);border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:12px;}.dd-check-btn:hover{background:var(--lt);}
+.dd-reset-btn{background:var(--sand);color:var(--tx);border:none;padding:6px 16px;border-radius:6px;font-size:12px;cursor:pointer;margin-left:8px;}
+.dd-feedback{display:none;padding:14px 18px;border-radius:8px;margin-top:12px;font-size:13px;line-height:1.6;}
+.dd-feedback.show{display:block;}.dd-feedback.pass{background:#E0F7EC;border-left:4px solid var(--grn);color:#1A5C3A;}.dd-feedback.fail{background:#FFF0ED;border-left:4px solid var(--org);color:#8B2500;}
+/* Quiz + Results */
+.q-card{background:var(--wh);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:28px 32px;margin-bottom:20px;}
+.q-scenario{background:#F8F9FA;border-left:3px solid var(--lt);padding:14px 18px;margin-bottom:16px;font-size:13px;border-radius:0 8px 8px 0;color:var(--txl);line-height:1.7;}
+.q-text{font-size:15px;font-weight:600;color:var(--pet);margin-bottom:14px;line-height:1.5;}
+.q-opts{display:flex;flex-direction:column;gap:8px;}
+.q-opt{border:2px solid var(--brd);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all 0.15s;font-size:13px;}
+.q-opt:hover{border-color:var(--lt);background:#F0FAFA;}.q-opt.selected{border-color:var(--dt);background:#E0F5F6;}
+.q-opt.right{border-color:var(--grn)!important;background:#E0F7EC!important;}.q-opt.wrongA{border-color:var(--org)!important;background:#FFF0ED!important;}
+.q-fb{display:none;padding:12px 16px;border-radius:8px;margin-top:12px;font-size:13px;line-height:1.6;}.q-num{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--lt);margin-bottom:6px;}
+.score-circle{width:130px;height:130px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto;font-size:34px;font-weight:700;border:6px solid var(--brd);}
+.score-circle.pass{border-color:var(--grn);color:var(--grn);}.score-circle.fail{border-color:var(--org);color:var(--org);}
+.score-circle .score-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--txl);font-weight:400;}
+.result-fb{padding:14px 18px;border-radius:8px;margin:14px 0;font-size:13.5px;line-height:1.6;}.result-fb.pass-fb{background:#E0F7EC;color:#1A5C3A;}.result-fb.fail-fb{background:#FFF0ED;color:#8B2500;}
+.ak-item{background:#F8F9FA;border-radius:8px;padding:16px;margin:10px 0;text-align:left;}.ak-q{font-weight:600;font-size:13px;color:var(--pet);margin-bottom:6px;}.ak-correct{color:var(--grn);font-size:13px;font-weight:600;margin-bottom:4px;}.ak-expl{font-size:12.5px;color:var(--txl);line-height:1.6;}
+.close-btn{background:var(--grn);color:var(--wh);border:none;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:16px;}.close-btn:hover{background:#019A6B;}
+.auto-close-msg{font-size:12px;color:var(--txl);margin-top:10px;}
+.next-mod-card{background:linear-gradient(135deg,#F0FAFA,#E0F5F6);border-radius:10px;padding:14px;margin-top:14px;text-align:center;}.next-mod-card h4{color:var(--dt);font-size:13px;}.next-mod-card p{font-size:12px;color:var(--txl);}
+.hero-card{text-align:center;padding:40px 32px;background:linear-gradient(135deg,#F0FAFA,var(--wh));}
+.hero-card h2{font-size:28px;color:var(--pet);}.hero-card .hero-weight{display:inline-block;background:linear-gradient(135deg,var(--dt),var(--lt));color:var(--wh);padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;margin:12px 0 20px;}
+.outcomes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin-top:16px;}
+.outcome-item{background:var(--wh);border:1px solid var(--brd);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.5;}.outcome-item strong{color:var(--dt);}
+
+/* === PROGRESSIVE LOCK === */
+.nav-item.locked{opacity:0.4;cursor:not-allowed;pointer-events:none;}
+.nav-item.completed .nav-icon::after{content:'✓';font-size:8px;position:relative;top:-4px;left:1px;color:var(--grn);}
+.btn.btn-locked{opacity:0.4;cursor:not-allowed;pointer-events:none;background:var(--brd)!important;color:var(--txl)!important;}
+.read-timer{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#FFF8E1,#FFF3CD);border:1px solid #FFE082;border-radius:8px;padding:8px 16px;font-size:12px;color:#8B6914;margin-bottom:16px;font-weight:500;}
+.read-timer .timer-bar{width:100px;height:4px;background:#FFE082;border-radius:2px;overflow:hidden;}
+.read-timer .timer-fill{height:100%;background:var(--dt);border-radius:2px;transition:width 1s linear;}
+.read-timer.done{background:linear-gradient(135deg,#E0F7EC,#C8F0DA);border-color:#81C784;color:#1A5C3A;}
+</style>
+
+</head><body>
+<aside class="sidebar">
+<div class="sb-header"><h1>CCD-F Certification</h1><h2>Domain 2: Applications &amp; Integration</h2><span class="weight">33.1% · ~17 of 53 Questions</span></div>
+<nav class="sb-nav">
+  <div class="nav-group"><div class="nav-group-title">Overview</div><a class="nav-item active completed" onclick="goTo(&#39;overview&#39;)" style="pointer-events: auto;"><span class="nav-icon">📋</span> Learning Outcomes</a></div>
+  <div class="nav-group"><div class="nav-group-title">1 · Claude API Mechanics</div>
+    <a class="nav-item" onclick="goTo(&#39;c1-def&#39;)" style="pointer-events: auto;"><span class="nav-icon">📘</span> Definition</a><a class="nav-item locked" onclick="goTo(&#39;c1-tech&#39;)" style="pointer-events: none;"><span class="nav-icon">⚙️</span> Technical</a><a class="nav-item locked" onclick="goTo(&#39;c1-cert&#39;)" style="pointer-events: none;"><span class="nav-icon">🎯</span> Certification</a><a class="nav-item locked" onclick="goTo(&#39;c1-case&#39;)" style="pointer-events: none;"><span class="nav-icon">🔬</span> API Explorer</a><a class="nav-item locked" onclick="goTo(&#39;c1-apply&#39;)" style="pointer-events: none;"><span class="nav-icon">🧩</span> Apply: API Decisions</a></div>
+  <div class="nav-group"><div class="nav-group-title">2 · Application Design</div>
+    <a class="nav-item locked" onclick="goTo(&#39;c2-def&#39;)" style="pointer-events: none;"><span class="nav-icon">📘</span> Definition</a><a class="nav-item locked" onclick="goTo(&#39;c2-tech&#39;)" style="pointer-events: none;"><span class="nav-icon">⚙️</span> Technical</a><a class="nav-item locked" onclick="goTo(&#39;c2-cert&#39;)" style="pointer-events: none;"><span class="nav-icon">🎯</span> Certification</a><a class="nav-item locked" onclick="goTo(&#39;c2-case&#39;)" style="pointer-events: none;"><span class="nav-icon">🔬</span> Design Tradeoffs</a><a class="nav-item locked" onclick="goTo(&#39;c2-apply&#39;)" style="pointer-events: none;"><span class="nav-icon">🧩</span> Apply: Schema Builder</a></div>
+  <div class="nav-group"><div class="nav-group-title">3 · SE Foundations</div>
+    <a class="nav-item locked" onclick="goTo(&#39;c3-def&#39;)" style="pointer-events: none;"><span class="nav-icon">📘</span> Definition</a><a class="nav-item locked" onclick="goTo(&#39;c3-tech&#39;)" style="pointer-events: none;"><span class="nav-icon">⚙️</span> Technical</a><a class="nav-item locked" onclick="goTo(&#39;c3-cert&#39;)" style="pointer-events: none;"><span class="nav-icon">🎯</span> Certification</a><a class="nav-item locked" onclick="goTo(&#39;c3-case&#39;)" style="pointer-events: none;"><span class="nav-icon">🔬</span> Quick-Fire SE</a><a class="nav-item locked" onclick="goTo(&#39;c3-apply&#39;)" style="pointer-events: none;"><span class="nav-icon">🧩</span> Apply: Code Reviewer</a></div>
+  <div class="nav-group"><div class="nav-group-title">4 · Requirements &amp; Config</div>
+    <a class="nav-item locked" onclick="goTo(&#39;c4-def&#39;)" style="pointer-events: none;"><span class="nav-icon">📘</span> Definition</a><a class="nav-item locked" onclick="goTo(&#39;c4-tech&#39;)" style="pointer-events: none;"><span class="nav-icon">⚙️</span> Technical</a><a class="nav-item locked" onclick="goTo(&#39;c4-cert&#39;)" style="pointer-events: none;"><span class="nav-icon">🎯</span> Certification</a><a class="nav-item locked" onclick="goTo(&#39;c4-case&#39;)" style="pointer-events: none;"><span class="nav-icon">🔬</span> Config Decisions</a><a class="nav-item locked" onclick="goTo(&#39;c4-apply&#39;)" style="pointer-events: none;"><span class="nav-icon">🧩</span> Apply: Investigator</a></div>
+  <div class="nav-group"><div class="nav-group-title">Assessment</div>
+    <a class="nav-item locked" onclick="goTo(&#39;assess&#39;)" style="pointer-events: none;"><span class="nav-icon">📝</span> Scenario Questions (6)</a><a class="nav-item locked" onclick="goTo(&#39;results&#39;)" style="pointer-events: none;"><span class="nav-icon">📊</span> Results</a></div>
+</nav>
+<div class="sb-footer"><div class="sb-progress"><div class="sb-progress-fill" id="progressBar" style="width: 4%;"></div></div><div class="sb-progress-label"><span id="progressText">4%</span><span id="timeDisplay">00:16</span></div></div>
+</aside>
+<main class="content" id="mainContent">
+
+<div class="section active" id="sec-overview">
+<div class="card hero-card"><div class="hero-weight">Domain 2 · 33.1% of Exam · ~17 of 53 Questions</div><h2>Applications &amp; Integration</h2><p class="subtitle">The largest exam domain — covering the Claude API, application design, software engineering practices, and configuration management</p>
+<div class="outcomes-grid">
+  <div class="outcome-item"><strong>Claude API Mechanics (6.8%)</strong> — Messages API, streaming, batch processing, vision, extended thinking, prompt caching, and third-party vendor integration</div>
+  <div class="outcome-item"><strong>Application Design (8.6%)</strong> — How Claude interprets instructions across interfaces, content boundaries, schema design, session hygiene, and plugin management</div>
+  <div class="outcome-item"><strong>SE Foundations (7.4%)</strong> — REST APIs, JSON, async programming, version control, code review, and refactoring practices for Claude applications</div>
+  <div class="outcome-item"><strong>Requirements &amp; Config (10.3%)</strong> — Business-to-functional requirements, SDLC for AI systems, CLAUDE.md, settings.json, model version pinning, and prompt versioning</div>
+</div></div>
+<div style="text-align:right;margin-top:16px;"><button class="btn btn-primary" onclick="goTo(&#39;c1-def&#39;)">Begin →</button></div>
+</div>
+
+<!-- ===== C1: CLAUDE API MECHANICS ===== -->
+<div class="section" id="sec-c1-def"><span class="tag tag-def">Definition</span><h2 class="sec-title">Claude API Mechanics</h2><p class="subtitle">Messages API, streaming, batch, vision, thinking, caching, and vendor integration</p>
+<div class="card"><h3>Messages API — Core Request/Response</h3><p>The Messages API is the primary interface for interacting with Claude. Every request includes a <code>model</code>, <code>max_tokens</code>, and a <code>messages</code> array of alternating <code>user</code>/<code>assistant</code> turns. The response includes <code>content</code> (text and/or tool_use blocks), <code>stop_reason</code>, and <code>usage</code> (token counts).</p>
+<div class="callout callout-key"><strong>Multi-turn conversations:</strong> You build the conversation by appending both the assistant's response AND the next user message to the messages array. Claude has no memory between API calls — the full conversation must be included in every request.</div></div>
+<div class="card"><h3>Key API Features</h3>
+<table class="info-table"><tbody><tr><th>Feature</th><th>What It Does</th><th>When to Use</th></tr>
+<tr><td><strong>Streaming</strong></td><td>Returns response tokens as they generate, not waiting for completion</td><td>User-facing applications where perceived latency matters</td></tr>
+<tr><td><strong>Batch API</strong></td><td>Processes large async workloads within a 24hr window at 50% reduced cost</td><td>Overnight bulk processing, non-urgent analytics — NOT blocking pipelines</td></tr>
+<tr><td><strong>Vision</strong></td><td>Accepts images (base64 or URL) alongside text in messages</td><td>Document analysis, image understanding, multimodal tasks</td></tr>
+<tr><td><strong>Extended Thinking</strong></td><td>Dedicated reasoning space that doesn't consume the response budget</td><td>Complex multi-step reasoning, mathematical proofs, architectural decisions</td></tr>
+<tr><td><strong>Prompt Caching</strong></td><td>Caches static prefix content — 90% cheaper on cache hits</td><td>Repeated system prompts across many conversations (min 1,024 tokens)</td></tr></tbody></table></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/build-with-claude/streaming" target="_blank">docs.anthropic.com — Streaming</a></div>
+<div class="read-timer" id="read-timer-c1-def"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;overview&#39;)">← Overview</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c1-tech&#39;)">Technical →</button></div></div>
+
+<div class="section" id="sec-c1-tech"><span class="tag tag-tech">Technical Deep-Dive</span><h2 class="sec-title">API Mechanics — Implementation</h2>
+<div class="card"><h3>Streaming vs Synchronous</h3>
+<pre class="code"><span class="cm"># Synchronous — waits for full response</span>
+response = client.messages.create(
+    model=<span class="str">"claude-sonnet-4-6"</span>, max_tokens=<span class="num">1024</span>,
+    messages=[{<span class="str">"role"</span>:<span class="str">"user"</span>,<span class="str">"content"</span>:<span class="str">"Explain REST APIs"</span>}])
+
+<span class="cm"># Streaming — tokens arrive as generated</span>
+<span class="kw">with</span> client.messages.stream(...) <span class="kw">as</span> stream:
+    <span class="kw">for</span> text <span class="kw">in</span> stream.text_stream:
+        print(text, end=<span class="str">""</span>, flush=True)</pre></div>
+<div class="card"><h3>Batch API — The Exam's Favourite Scenario</h3>
+<pre class="code"><span class="cm"># Batch: 50% cost savings, up to 24hr window</span>
+batch = client.messages.batches.create(
+    requests=[
+        {<span class="str">"custom_id"</span>: <span class="str">"doc-001"</span>,
+         <span class="str">"params"</span>: {<span class="str">"model"</span>: <span class="str">"claude-sonnet-4-6"</span>,
+                    <span class="str">"max_tokens"</span>: <span class="num">1024</span>,
+                    <span class="str">"messages"</span>: [{...}]}}
+    ])</pre>
+<div class="callout callout-anti"><strong>Batch API = WRONG for blocking operations.</strong> Pre-merge CI checks, real-time user requests, interactive features — all need synchronous or streaming API. The exam's sample question #1 tests exactly this.</div></div>
+<div class="card"><h3>Third-Party Vendor Integration</h3><p>Claude is available through Amazon Bedrock, Google Vertex AI, and Azure AI Foundry. The API interface is similar but requires vendor-specific authentication and may have different feature availability. The exam tests whether you know which features are vendor-specific vs universal.</p></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/build-with-claude/batch-processing" target="_blank">docs.anthropic.com — Batch Processing</a></div>
+<div class="read-timer" id="read-timer-c1-tech"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c1-def&#39;)">← Definition</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c1-cert&#39;)">Certification →</button></div></div>
+
+<div class="section" id="sec-c1-cert"><span class="tag tag-cert">Certification Focus</span><h2 class="sec-title">API Mechanics — Exam Patterns</h2>
+<div class="card">
+<div class="callout callout-exam"><strong>#1 — Batch vs Real-Time (Sample Q from Exam Guide):</strong> "10,000 documents overnight, cost is primary concern, results not needed until morning" → Batch API. Synchronous (A), lower max_tokens (C), smallest model (D) are ALL wrong.</div>
+<div class="callout callout-exam"><strong>#2 — Prompt Caching Placement:</strong> Static content (system prompt, few-shot examples) must be at the START of the request. Cache matches from the beginning — dynamic content after a miss is processed fresh. Minimum 1,024 tokens to be eligible.</div>
+<div class="callout callout-exam"><strong>#3 — Streaming for User-Facing:</strong> When the scenario describes a chatbot or user-facing application, streaming is almost always the correct answer for "how to reduce perceived latency." Not batch, not lower max_tokens.</div>
+<div class="callout callout-exam"><strong>#4 — No Memory Between Calls:</strong> Claude does not remember previous API calls. The FULL conversation history must be included in every request. This is the most fundamental API concept.</div></div>
+<div class="read-timer" id="read-timer-c1-cert"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c1-tech&#39;)">← Technical</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c1-case&#39;)">Simulation →</button></div></div>
+
+<div class="section" id="sec-c1-case"><span class="tag tag-case">Live Simulation</span><h2 class="sec-title">API Feature Explorer</h2><p class="subtitle">Compare real-time vs batch processing in a split-panel view.</p>
+<div class="card">
+<div class="ba-container"><div class="ba-panel ba-before"><h4>Real-Time (Synchronous/Streaming)</h4><pre class="code" style="font-size:11px;background:#001a00;">✓ Immediate response
+✓ User-facing applications
+✓ Blocking CI/CD checks
+✓ Interactive features
+
+Latency: ~1-5s for typical response
+Cost: Full per-token pricing
+
+<span class="cm">Use when:</span>
+• User is waiting for response
+• Pipeline needs result before next step
+• Interactive conversation
+• Pre-merge code review</pre></div>
+<div class="ba-panel ba-after"><h4>Batch API</h4><pre class="code" style="font-size:11px;background:#1a0000;">✓ 50% cost savings
+✓ Up to 24hr processing window
+✓ custom_id for result correlation
+✓ Bulk processing at scale
+
+Latency: Minutes to 24 hours
+Cost: 50% of real-time pricing
+
+<span class="cm">Use when:</span>
+• Results NOT needed immediately
+• Overnight bulk processing
+• Large-scale document analysis
+• Non-urgent analytics reports</pre></div></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c1-cert&#39;)">← Certification</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c1-apply&#39;)">Apply →</button></div></div>
+
+<div class="section" id="sec-c1-apply"><span class="tag tag-apply">Apply</span><h2 class="sec-title">API Decision Maker</h2><p class="subtitle">5 scenarios — choose the correct API approach for each.</p>
+<div class="card">
+<div class="verdict-card" id="api-0"><div class="verdict-req">1/5: Process 10,000 documents overnight. Cost is primary concern. Results needed by 9 AM.</div><div class="verdict-btns"><button class="verdict-btn" onclick="apiVote(0,0)">Synchronous API</button><button class="verdict-btn" onclick="apiVote(0,1)">Batch API</button><button class="verdict-btn" onclick="apiVote(0,2)">Streaming API</button></div><div class="verdict-expl" id="api-exp-0"></div></div>
+<div class="verdict-card" id="api-1"><div class="verdict-req">2/5: Customer-facing chatbot where users expect responses to appear word-by-word.</div><div class="verdict-btns"><button class="verdict-btn" onclick="apiVote(1,0)">Synchronous API</button><button class="verdict-btn" onclick="apiVote(1,1)">Batch API</button><button class="verdict-btn" onclick="apiVote(1,2)">Streaming API</button></div><div class="verdict-expl" id="api-exp-1"></div></div>
+<div class="verdict-card" id="api-2"><div class="verdict-req">3/5: Pre-merge CI check that must pass before code can be deployed.</div><div class="verdict-btns"><button class="verdict-btn" onclick="apiVote(2,0)">Synchronous API</button><button class="verdict-btn" onclick="apiVote(2,1)">Batch API</button><button class="verdict-btn" onclick="apiVote(2,2)">Streaming API</button></div><div class="verdict-expl" id="api-exp-2"></div></div>
+<div class="verdict-card" id="api-3"><div class="verdict-req">4/5: 3,500-token system prompt used across 200 conversations per hour.</div><div class="verdict-btns"><button class="verdict-btn" onclick="apiVote(3,0)">Prompt Caching</button><button class="verdict-btn" onclick="apiVote(3,1)">Batch API</button><button class="verdict-btn" onclick="apiVote(3,2)">Lower max_tokens</button></div><div class="verdict-expl" id="api-exp-3"></div></div>
+<div class="verdict-card" id="api-4"><div class="verdict-req">5/5: Agent needs to analyse a scanned receipt image alongside a text query.</div><div class="verdict-btns"><button class="verdict-btn" onclick="apiVote(4,0)">Text-only API + OCR pre-step</button><button class="verdict-btn" onclick="apiVote(4,1)">Vision API — send image directly</button><button class="verdict-btn" onclick="apiVote(4,2)">Batch API with image attachment</button></div><div class="verdict-expl" id="api-exp-4"></div></div>
+<div class="verdict-score" id="api-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c1-case&#39;)">← Simulation</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c2-def&#39;)">Next: Application Design →</button></div></div>
+
+<!-- ===== C2: APPLICATION DESIGN ===== -->
+<div class="section" id="sec-c2-def"><span class="tag tag-def">Definition</span><h2 class="sec-title">Claude Application Design</h2><p class="subtitle">Cross-interface instructions, content boundaries, schema design, and session hygiene</p>
+<div class="card"><h3>Claude Across Interfaces</h3><p>Claude interprets instructions differently depending on the interface:</p>
+<table class="info-table"><tbody><tr><th>Interface</th><th>Instruction Source</th><th>Key Consideration</th></tr>
+<tr><td><strong>API</strong></td><td>System prompt + messages</td><td>Full control — you manage everything</td></tr>
+<tr><td><strong>Claude Code</strong></td><td>CLAUDE.md + settings.json + hooks</td><td>File-system-based config, persistent across sessions</td></tr>
+<tr><td><strong>claude.ai</strong></td><td>User messages + projects</td><td>Conversational — no system prompt control</td></tr>
+<tr><td><strong>SDKs</strong></td><td>Agent class + tools + guardrails</td><td>SDK manages the loop — you configure behaviour</td></tr>
+<tr><td><strong>Desktop</strong></td><td>User interactions + file context</td><td>Works with local files and applications</td></tr></tbody></table></div>
+<div class="card"><h3>Session Hygiene</h3><p>Clean sessions prevent context pollution. Key practices:</p>
+<ul class="deep"><li><strong>Separate sessions per task</strong> — don't mix unrelated tasks in one conversation</li>
+<li><strong>Clear tool results</strong> — remove verbose tool outputs from earlier turns after they've been processed</li>
+<li><strong>Explicit context boundaries</strong> — mark where user content ends and system instructions begin</li></ul></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/build-with-claude/context-windows" target="_blank">docs.anthropic.com — Context Windows</a></div>
+<div class="read-timer" id="read-timer-c2-def"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c1-apply&#39;)">← Previous</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c2-tech&#39;)">Technical →</button></div></div>
+
+<div class="section" id="sec-c2-tech"><span class="tag tag-tech">Technical Deep-Dive</span><h2 class="sec-title">Schema Design &amp; Content Boundaries</h2>
+<div class="card"><h3>Structured Output with tool_use</h3><p>Use <code>tool_use</code> with JSON Schema to guarantee valid output format. Key rules:</p>
+<ul class="deep"><li>Mark fields <code>required</code> ONLY when always present — forces fabrication otherwise</li>
+<li>Use <code>type: ["string", "null"]</code> for optional fields — allows explicit "no value"</li>
+<li>Add <code>"other"</code> or <code>"unclear"</code> to enums — prevents forced categorisation</li>
+<li><strong>tool_use eliminates syntax errors, NOT semantic errors</strong> — output format is guaranteed, content accuracy is not</li></ul></div>
+<div class="card"><h3>Content Boundaries</h3>
+<pre class="code"><span class="cm"># WRONG: user content mixed with instructions</span>
+messages = [{<span class="str">"role"</span>:<span class="str">"user"</span>,
+  <span class="str">"content"</span>: user_input + <span class="str">"
+
+Please follow these rules..."</span>}]
+
+<span class="cm"># CORRECT: user content separated from instructions</span>
+messages = [{<span class="str">"role"</span>:<span class="str">"user"</span>,
+  <span class="str">"content"</span>: [
+    {<span class="str">"type"</span>:<span class="str">"text"</span>, <span class="str">"text"</span>: <span class="str">"&lt;user_input&gt;"</span>+user_input+<span class="str">"&lt;/user_input&gt;"</span>},
+    {<span class="str">"type"</span>:<span class="str">"text"</span>, <span class="str">"text"</span>: <span class="str">"Analyse the user input above."</span>}
+  ]}]</pre>
+<div class="callout callout-key"><strong>Always tag untrusted content.</strong> Wrapping user input in XML tags (<code>&lt;user_input&gt;</code>) creates a clear boundary that helps Claude distinguish instructions from data — a key defence against prompt injection.</div></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/build-with-claude/structured-outputs" target="_blank">docs.anthropic.com — Structured Outputs</a></div>
+<div class="read-timer" id="read-timer-c2-tech"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c2-def&#39;)">← Definition</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c2-cert&#39;)">Certification →</button></div></div>
+
+<div class="section" id="sec-c2-cert"><span class="tag tag-cert">Certification Focus</span><h2 class="sec-title">Application Design — Exam Patterns</h2>
+<div class="card">
+<div class="callout callout-exam"><strong>#1 — Syntax vs Semantic:</strong> tool_use guarantees valid JSON format. It does NOT guarantee correct content. A decimal place error in an invoice amount is a semantic error — valid JSON, wrong value.</div>
+<div class="callout callout-exam"><strong>#2 — Required Field Fabrication:</strong> Making a field "required" when data is sometimes absent forces Claude to fabricate. Use <code>type: ["string", "null"]</code> for optional fields.</div>
+<div class="callout callout-exam"><strong>#3 — Content Boundaries:</strong> The exam tests prompt injection awareness. Untrusted input must be tagged and separated from instructions — this is tested in the Security domain too (Sample Q #2 from the exam guide).</div>
+<div class="callout callout-exam"><strong>#4 — Session Hygiene:</strong> Old tool results consuming context → clear them. Mixing tasks → separate sessions. Context pollution → leads to inconsistent behaviour.</div></div>
+<div class="read-timer" id="read-timer-c2-cert"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c2-tech&#39;)">← Technical</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c2-case&#39;)">Simulation →</button></div></div>
+
+<div class="section" id="sec-c2-case"><span class="tag tag-case">Live Simulation</span><h2 class="sec-title">Design Tradeoff — Quick-Fire</h2><p class="subtitle">4 design decisions — choose the best approach.</p>
+<div class="card">
+<div class="verdict-card" id="des-0"><div class="verdict-req">1/4: A field "po_number" is required in the schema but 30% of invoices don't have one. Claude fabricates "N/A".</div><div class="verdict-btns"><button class="verdict-btn" onclick="desVote(0,0)">Add "never fabricate" to system prompt</button><button class="verdict-btn" onclick="desVote(0,1)">Change to type: ["string", "null"], remove from required</button></div><div class="verdict-expl" id="des-exp-0"></div></div>
+<div class="verdict-card" id="des-1"><div class="verdict-req">2/4: Chatbot shows a 3-second blank screen before the full response appears at once.</div><div class="verdict-btns"><button class="verdict-btn" onclick="desVote(1,0)">Switch to streaming — tokens appear as generated</button><button class="verdict-btn" onclick="desVote(1,1)">Lower max_tokens for faster completion</button></div><div class="verdict-expl" id="des-exp-1"></div></div>
+<div class="verdict-card" id="des-2"><div class="verdict-req">3/4: User-submitted web page content is mixed directly with system instructions in the same message.</div><div class="verdict-btns"><button class="verdict-btn" onclick="desVote(2,0)">This is fine — Claude knows the difference</button><button class="verdict-btn" onclick="desVote(2,1)">Separate with XML tags and treat user content as untrusted</button></div><div class="verdict-expl" id="des-exp-2"></div></div>
+<div class="verdict-card" id="des-3"><div class="verdict-req">4/4: Agent's context window is 85% full with old tool results from 20 turns ago.</div><div class="verdict-btns"><button class="verdict-btn" onclick="desVote(3,0)">Increase max_tokens to make room</button><button class="verdict-btn" onclick="desVote(3,1)">Clear old tool results to free context space</button></div><div class="verdict-expl" id="des-exp-3"></div></div>
+<div class="verdict-score" id="des-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c2-cert&#39;)">← Certification</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c2-apply&#39;)">Apply →</button></div></div>
+
+<div class="section" id="sec-c2-apply"><span class="tag tag-apply">Apply</span><h2 class="sec-title">Schema Error Fixer</h2><p class="subtitle">3 schema problems — select the correct fix.</p>
+<div class="card">
+<div class="verdict-card" id="sch-0"><div class="verdict-req">1/3: Enum <code>["A","B","C"]</code> — 5% of items don't fit any category. Claude picks closest-but-wrong.</div><div class="verdict-btns"><button class="verdict-btn" onclick="schVote(0,0)">Add "other" and "unclear" to enum values</button><button class="verdict-btn" onclick="schVote(0,1)">Tell Claude to "try harder" in the prompt</button></div><div class="verdict-expl" id="sch-exp-0"></div></div>
+<div class="verdict-card" id="sch-1"><div class="verdict-req">2/3: <code>"amount"</code> field — unclear whether pre-tax, post-tax, or total. Extraction inconsistent.</div><div class="verdict-btns"><button class="verdict-btn" onclick="schVote(1,0)">Rename to <code>total_amount_including_tax</code> with description</button><button class="verdict-btn" onclick="schVote(1,1)">Add "extract the right amount" to the prompt</button></div><div class="verdict-expl" id="sch-exp-1"></div></div>
+<div class="verdict-card" id="sch-2"><div class="verdict-req">3/3: Extraction returns valid JSON but the dollar amount is $150 when the invoice says $1,500.</div><div class="verdict-btns"><button class="verdict-btn" onclick="schVote(2,0)">Fix with stricter JSON Schema validation</button><button class="verdict-btn" onclick="schVote(2,1)">This is a semantic error — tool_use can't fix it. Add validation logic.</button></div><div class="verdict-expl" id="sch-exp-2"></div></div>
+<div class="verdict-score" id="sch-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c2-case&#39;)">← Simulation</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c3-def&#39;)">Next: SE Foundations →</button></div></div>
+
+<!-- ===== C3: SE FOUNDATIONS ===== -->
+<div class="section" id="sec-c3-def"><span class="tag tag-def">Definition</span><h2 class="sec-title">Software Engineering Foundations</h2><p class="subtitle">REST APIs, JSON, async programming, version control, and code review for Claude apps</p>
+<div class="card"><h3>Why SE Foundations Matter for CCD-F</h3><p>At 7.4%, this is the largest "generic engineering" sub-skill. The exam expects you to understand the engineering patterns that Claude applications are built on — not just Claude-specific APIs.</p>
+<table class="info-table"><tbody><tr><th>Concept</th><th>Why It's Tested</th></tr>
+<tr><td><strong>REST APIs</strong></td><td>The Claude API IS a REST API. Understanding HTTP methods, status codes, and request/response patterns is foundational.</td></tr>
+<tr><td><strong>JSON</strong></td><td>Every Claude API request and response is JSON. Tool schemas are JSON Schema. Structured output is JSON.</td></tr>
+<tr><td><strong>Async Programming</strong></td><td>Streaming, batch processing, and concurrent tool execution all require understanding async patterns.</td></tr>
+<tr><td><strong>Version Control</strong></td><td>Prompt versioning, model version pinning, and configuration management all build on git fundamentals.</td></tr>
+<tr><td><strong>Code Review</strong></td><td>Claude-assisted code review is a core use case. Understanding review practices helps you build better review agents.</td></tr></tbody></table></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/intro-to-claude" target="_blank">docs.anthropic.com — Intro to Claude</a></div>
+<div class="read-timer" id="read-timer-c3-def"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c2-apply&#39;)">← Previous</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c3-tech&#39;)">Technical →</button></div></div>
+
+<div class="section" id="sec-c3-tech"><span class="tag tag-tech">Technical Deep-Dive</span><h2 class="sec-title">REST, JSON &amp; Async Patterns</h2>
+<div class="card"><h3>HTTP Status Codes You Must Know</h3>
+<table class="info-table"><tbody><tr><th>Code</th><th>Meaning</th><th>Claude API Context</th></tr>
+<tr><td><code>200</code></td><td>Success</td><td>Request processed, response returned</td></tr>
+<tr><td><code>400</code></td><td>Bad Request</td><td>Invalid JSON, missing required field, schema error</td></tr>
+<tr><td><code>401</code></td><td>Unauthorized</td><td>Invalid or missing API key</td></tr>
+<tr><td><code>429</code></td><td>Rate Limited</td><td>Too many requests — retry with exponential backoff</td></tr>
+<tr><td><code>500</code></td><td>Server Error</td><td>Anthropic-side error — retry, not your fault</td></tr>
+<tr><td><code>529</code></td><td>Overloaded</td><td>API is overloaded — back off and retry later</td></tr></tbody></table></div>
+<div class="card"><h3>Async Pattern for Claude</h3>
+<pre class="code"><span class="cm"># Async streaming — non-blocking I/O</span>
+<span class="kw">async def</span> get_response(query):
+    <span class="kw">async with</span> client.messages.stream(
+        model=<span class="str">"claude-sonnet-4-6"</span>,
+        max_tokens=<span class="num">1024</span>,
+        messages=[{<span class="str">"role"</span>:<span class="str">"user"</span>, <span class="str">"content"</span>:query}]
+    ) <span class="kw">as</span> stream:
+        <span class="kw">async for</span> text <span class="kw">in</span> stream.text_stream:
+            <span class="kw">yield</span> text</pre></div>
+<div class="read-timer" id="read-timer-c3-tech"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c3-def&#39;)">← Definition</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c3-cert&#39;)">Certification →</button></div></div>
+
+<div class="section" id="sec-c3-cert"><span class="tag tag-cert">Certification Focus</span><h2 class="sec-title">SE Foundations — Exam Patterns</h2>
+<div class="card">
+<div class="callout callout-exam"><strong>#1 — 429 = Retry:</strong> Rate limit errors (429) are transient — retry with exponential backoff. 401 (bad API key) is NOT transient — fix credentials, don't retry.</div>
+<div class="callout callout-exam"><strong>#2 — Async for Streaming:</strong> Streaming requires async I/O patterns. If the exam describes a synchronous app that blocks during streaming, the fix is to switch to async/await patterns.</div>
+<div class="callout callout-exam"><strong>#3 — Version Control for Prompts:</strong> System prompts should be version-controlled just like code. Changes to prompts can cause regressions — the same eval suite approach applies.</div>
+<div class="callout callout-exam"><strong>#4 — Refactoring with Claude:</strong> Small-scale refactoring (rename, extract function) → Direct mode. Large-scale refactoring (14 files, cross-cutting concerns) → Plan mode with dependency mapping.</div></div>
+<div class="read-timer" id="read-timer-c3-cert"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c3-tech&#39;)">← Technical</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c3-case&#39;)">Simulation →</button></div></div>
+
+<div class="section" id="sec-c3-case"><span class="tag tag-case">Live Simulation</span><h2 class="sec-title">Quick-Fire: SE Concepts</h2><p class="subtitle">5 questions — select the correct SE answer.</p>
+<div class="card">
+<div class="verdict-card" id="se-0"><div class="verdict-req">1/5: Claude API returns HTTP 429. What should your code do?</div><div class="verdict-btns"><button class="verdict-btn" onclick="seVote(0,0)">Retry with exponential backoff</button><button class="verdict-btn" onclick="seVote(0,1)">Check and fix the API key</button></div><div class="verdict-expl" id="se-exp-0"></div></div>
+<div class="verdict-card" id="se-1"><div class="verdict-req">2/5: You change a system prompt and 3 previously-passing test cases now fail. What happened?</div><div class="verdict-btns"><button class="verdict-btn" onclick="seVote(1,0)">Prompt regression — the change broke existing behaviour</button><button class="verdict-btn" onclick="seVote(1,1)">The model is non-deterministic — just run again</button></div><div class="verdict-expl" id="se-exp-1"></div></div>
+<div class="verdict-card" id="se-2"><div class="verdict-req">3/5: A streaming response needs to update a UI in real-time. Which pattern?</div><div class="verdict-btns"><button class="verdict-btn" onclick="seVote(2,0)">Synchronous request, then render</button><button class="verdict-btn" onclick="seVote(2,1)">Async iterator with yield for each token</button></div><div class="verdict-expl" id="se-exp-2"></div></div>
+<div class="verdict-card" id="se-3"><div class="verdict-req">4/5: Claude API returns HTTP 401. What's the issue?</div><div class="verdict-btns"><button class="verdict-btn" onclick="seVote(3,0)">Rate limit — retry after delay</button><button class="verdict-btn" onclick="seVote(3,1)">Invalid/missing API key — fix credentials</button></div><div class="verdict-expl" id="se-exp-3"></div></div>
+<div class="verdict-card" id="se-4"><div class="verdict-req">5/5: A tool returns a 5,000-token JSON response but only 3 fields are needed.</div><div class="verdict-btns"><button class="verdict-btn" onclick="seVote(4,0)">Pass the full response — Claude can handle it</button><button class="verdict-btn" onclick="seVote(4,1)">Parse and extract the 3 needed fields before passing to Claude</button></div><div class="verdict-expl" id="se-exp-4"></div></div>
+<div class="verdict-score" id="se-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c3-cert&#39;)">← Certification</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c3-apply&#39;)">Apply →</button></div></div>
+
+<div class="section" id="sec-c3-apply"><span class="tag tag-apply">Apply</span><h2 class="sec-title">Code Review Investigator</h2><p class="subtitle">Diagnose two code review failures.</p>
+<div class="card">
+<div class="invest-scenario"><h4>Case 1: The Self-Review Blind Spot</h4><p>A CI pipeline generates code with Claude, then immediately asks the same Claude session to review it. The review says "no issues found." A human reviewer later finds 4 bugs including an off-by-one error.</p></div>
+<div class="invest-opts" id="cr-opts-0"><div class="invest-opt" onclick="crSelect(0,0,this)">A) Add "review more carefully" to the prompt</div><div class="invest-opt" onclick="crSelect(0,1,this)">B) Use a separate Claude instance for review — self-review inherits blind spots</div><div class="invest-opt" onclick="crSelect(0,2,this)">C) Use a larger model for the review step</div></div><div class="invest-fb" id="cr-fb-0"></div>
+<div class="invest-scenario" style="margin-top:16px;"><h4>Case 2: The Unversioned Prompt</h4><p>A production prompt was edited directly in the codebase without version control. A week later, the team notices extraction accuracy dropped from 95% to 78%. No one knows what changed.</p></div>
+<div class="invest-opts" id="cr-opts-1"><div class="invest-opt" onclick="crSelect(1,0,this)">A) Roll back the entire codebase to last week</div><div class="invest-opt" onclick="crSelect(1,1,this)">B) Version-control all prompts so changes are trackable and reversible</div><div class="invest-opt" onclick="crSelect(1,2,this)">C) Retrain the model on the new prompt</div></div><div class="invest-fb" id="cr-fb-1"></div>
+<button class="dd-check-btn" onclick="crCheckAll()" style="margin-top:16px;">Check Diagnoses</button><div class="dd-feedback" id="cr-fb-all"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c3-case&#39;)">← Simulation</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c4-def&#39;)">Next: Requirements &amp; Config →</button></div></div>
+
+<!-- ===== C4: REQUIREMENTS & CONFIG ===== -->
+<div class="section" id="sec-c4-def"><span class="tag tag-def">Definition</span><h2 class="sec-title">Requirements, Lifecycle &amp; Configuration</h2><p class="subtitle">Translating business needs into Claude applications, SDLC for AI, and config management</p>
+<div class="card"><h3>Requirements Engineering for Claude Apps</h3><p>The exam tests whether you can translate business requirements into functional and infrastructure specifications for Claude applications:</p>
+<table class="info-table"><tbody><tr><th>Business Requirement</th><th>Functional Requirement</th><th>Infrastructure Requirement</th></tr>
+<tr><td>"Handle 1,000 support tickets daily"</td><td>Agent with routing, escalation, and ticket resolution tools</td><td>Streaming API, auto-scaling, monitoring, 99.9% uptime</td></tr>
+<tr><td>"Extract data from invoices"</td><td>Extraction pipeline with structured output validation</td><td>Batch API for bulk, Vision API for scanned docs</td></tr>
+<tr><td>"Review PRs before merge"</td><td>Code review agent with security + quality checks</td><td>CI/CD integration with -p flag, real-time API</td></tr></tbody></table></div>
+<div class="card"><h3>SDLC for AI Systems</h3><p>AI systems add unique SDLC considerations:</p>
+<ul class="deep"><li><strong>Prompt versioning</strong> — treat prompts as code, version-control changes, run eval suites before deployment</li>
+<li><strong>Model version pinning</strong> — pin to specific model versions to prevent breaking changes on model updates</li>
+<li><strong>Eval gates</strong> — run evaluations as part of the release process, not just during development</li>
+<li><strong>Monitoring</strong> — track accuracy, latency, cost, and error rates in production</li></ul></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching" target="_blank">docs.anthropic.com — Prompt Caching</a></div>
+<div class="read-timer" id="read-timer-c4-def"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c3-apply&#39;)">← Previous</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c4-tech&#39;)">Technical →</button></div></div>
+
+<div class="section" id="sec-c4-tech"><span class="tag tag-tech">Technical Deep-Dive</span><h2 class="sec-title">Configuration Management</h2>
+<div class="card"><h3>Configuration Components</h3>
+<table class="info-table"><tbody><tr><th>Component</th><th>Location</th><th>Purpose</th></tr>
+<tr><td><strong>CLAUDE.md</strong></td><td><code>.claude/CLAUDE.md</code></td><td>Coding conventions, instructions — probabilistic</td></tr>
+<tr><td><strong>settings.json</strong></td><td><code>.claude/settings.json</code></td><td>Hooks, MCP servers, permissions — deterministic</td></tr>
+<tr><td><strong>Model version pin</strong></td><td>Code / config</td><td>Lock to specific model version (e.g., <code>claude-sonnet-4-6</code>)</td></tr>
+<tr><td><strong>Prompt version</strong></td><td>Version control</td><td>Track system prompt changes like code changes</td></tr>
+<tr><td><strong>Plugin deps</strong></td><td>Package manager</td><td>SDK version, MCP server versions</td></tr></tbody></table></div>
+<div class="card"><h3>Model Version Pinning</h3><p>Pin to specific model identifiers (e.g., <code>claude-sonnet-4-6</code>) in production. Model updates can introduce breaking changes — a prompt that works perfectly on one version may behave differently on the next. Version pinning prevents surprise regressions.</p>
+<div class="callout callout-key"><strong>When to update:</strong> Update model versions deliberately — test with eval suite, verify no regressions, then update the pin. Never use "latest" in production.</div></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/claude-code/hooks" target="_blank">docs.anthropic.com — Claude Code Hooks</a></div>
+<div class="read-timer" id="read-timer-c4-tech"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c4-def&#39;)">← Definition</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c4-cert&#39;)">Certification →</button></div></div>
+
+<div class="section" id="sec-c4-cert"><span class="tag tag-cert">Certification Focus</span><h2 class="sec-title">Config &amp; Requirements — Exam Patterns</h2>
+<div class="card">
+<div class="callout callout-exam"><strong>#1 — Business → Functional:</strong> The exam describes a business need and asks what functional spec is required. Map: "daily volume" → scaling + API choice. "Accuracy requirement" → eval gates. "Cost constraint" → batch vs real-time + caching.</div>
+<div class="callout callout-exam"><strong>#2 — Model Pinning:</strong> "App behaviour changed after Anthropic released a model update" → you weren't pinning model versions. Always pin in production.</div>
+<div class="callout callout-exam"><strong>#3 — CLAUDE.md vs settings.json:</strong> Conventions and preferences → CLAUDE.md. Hooks and enforcement → settings.json. The exam tests this distinction directly.</div>
+<div class="callout callout-exam"><strong>#4 — Prompt Versioning:</strong> Prompts should be in version control, tested with eval suites, and deployed through the same CI/CD pipeline as code changes.</div></div>
+<div class="read-timer" id="read-timer-c4-cert"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c4-tech&#39;)">← Technical</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c4-case&#39;)">Simulation →</button></div></div>
+
+<div class="section" id="sec-c4-case"><span class="tag tag-case">Live Simulation</span><h2 class="sec-title">Config Decision Maker</h2><p class="subtitle">4 config items — place each in the correct location.</p>
+<div class="card">
+<div class="verdict-card" id="cfg-0"><div class="verdict-req">1/4: "Block all Bash commands that access the /secrets/ directory"</div><div class="verdict-btns"><button class="verdict-btn" onclick="cfgVote(0,0)">CLAUDE.md</button><button class="verdict-btn" onclick="cfgVote(0,1)">settings.json (hook)</button></div><div class="verdict-expl" id="cfg-exp-0"></div></div>
+<div class="verdict-card" id="cfg-1"><div class="verdict-req">2/4: "Always use async/await for API calls in this project"</div><div class="verdict-btns"><button class="verdict-btn" onclick="cfgVote(1,0)">CLAUDE.md</button><button class="verdict-btn" onclick="cfgVote(1,1)">settings.json (hook)</button></div><div class="verdict-expl" id="cfg-exp-1"></div></div>
+<div class="verdict-card" id="cfg-2"><div class="verdict-req">3/4: "Use claude-sonnet-4-6, never auto-upgrade to newer models"</div><div class="verdict-btns"><button class="verdict-btn" onclick="cfgVote(2,0)">Model version pin in code/config</button><button class="verdict-btn" onclick="cfgVote(2,1)">CLAUDE.md instruction</button></div><div class="verdict-expl" id="cfg-exp-2"></div></div>
+<div class="verdict-card" id="cfg-3"><div class="verdict-req">4/4: "Log every tool call with timestamp for audit compliance"</div><div class="verdict-btns"><button class="verdict-btn" onclick="cfgVote(3,0)">CLAUDE.md</button><button class="verdict-btn" onclick="cfgVote(3,1)">settings.json (PostToolUse hook)</button></div><div class="verdict-expl" id="cfg-exp-3"></div></div>
+<div class="verdict-score" id="cfg-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c4-cert&#39;)">← Certification</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c4-apply&#39;)">Apply →</button></div></div>
+
+<div class="section" id="sec-c4-apply"><span class="tag tag-apply">Apply</span><h2 class="sec-title">Requirements Investigator</h2><p class="subtitle">Diagnose two requirements/config failures.</p>
+<div class="card">
+<div class="invest-scenario"><h4>Case 1: The Surprise Regression</h4><p>A production extraction app suddenly drops from 95% to 72% accuracy. No code was changed. Investigation shows Anthropic released a model update and the app was using <code>model="claude-sonnet"</code> without a version pin.</p></div>
+<div class="invest-opts" id="req-opts-0"><div class="invest-opt" onclick="reqSelect(0,0,this)">A) Roll back the model update with Anthropic</div><div class="invest-opt" onclick="reqSelect(0,1,this)">B) Pin to a specific model version and test updates with eval suite before deploying</div><div class="invest-opt" onclick="reqSelect(0,2,this)">C) Add "be more accurate" to the system prompt</div></div><div class="invest-fb" id="req-fb-0"></div>
+<div class="invest-scenario" style="margin-top:16px;"><h4>Case 2: The Missing Requirement</h4><p>A developer builds a real-time chatbot using Batch API because "it's 50% cheaper." Users complain about 6-hour response times.</p></div>
+<div class="invest-opts" id="req-opts-1"><div class="invest-opt" onclick="reqSelect(1,0,this)">A) Increase Batch API priority</div><div class="invest-opt" onclick="reqSelect(1,1,this)">B) Batch API is wrong for real-time — switch to streaming API and use prompt caching for cost savings</div><div class="invest-opt" onclick="reqSelect(1,2,this)">C) Tell users to expect longer wait times</div></div><div class="invest-fb" id="req-fb-1"></div>
+<button class="dd-check-btn" onclick="reqCheckAll()" style="margin-top:16px;">Check Diagnoses</button><div class="dd-feedback" id="req-fb-all"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c4-case&#39;)">← Simulation</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;assess&#39;)">Begin Assessment →</button></div></div>
+
+<div class="section" id="sec-assess"><span class="tag tag-assess">Assessment</span><h2 class="sec-title">Assessment</h2><p class="subtitle">6 questions · 70% to pass · CCD-F Developer difficulty</p>
+
+<div class="q-card" data-q="0"><div class="q-num">Q1 · Batch vs Real-Time (Exam Guide Sample)</div><div class="q-scenario">A developer must process 10,000 documents overnight to produce a non-urgent analytics report. Cost is the primary concern, and results are not needed until the following morning.</div><p class="q-text">Which approach best fits the requirement?</p><div class="q-opts"><div class="q-opt" onclick="selQ(0,0,this)">A) Send every request synchronously through the Messages API in parallel</div><div class="q-opt" onclick="selQ(0,1,this)">B) Use the Message Batches API — processes async workloads within 24hr at reduced cost</div><div class="q-opt" onclick="selQ(0,2,this)">C) Lower max_tokens on synchronous calls to minimize cost</div><div class="q-opt" onclick="selQ(0,3,this)">D) Switch to the smallest available model regardless of output quality</div></div><div class="q-fb" id="qfb0"></div></div>
+
+<div class="q-card" data-q="1"><div class="q-num">Q2 · Structured Output</div><div class="q-scenario">An invoice extraction system uses tool_use with JSON Schema. Output is always valid JSON. However, 12% of extracted amounts have decimal place errors ($150 instead of $1,500).</div><p class="q-text">What does tool_use guarantee?</p><div class="q-opts"><div class="q-opt" onclick="selQ(1,0,this)">A) Both correct format AND correct content</div><div class="q-opt" onclick="selQ(1,1,this)">B) Correct format (syntax) but NOT correct content (semantics)</div><div class="q-opt" onclick="selQ(1,2,this)">C) No guarantees — JSON could still be malformed</div><div class="q-opt" onclick="selQ(1,3,this)">D) Content accuracy but possibly malformed JSON</div></div><div class="q-fb" id="qfb1"></div></div>
+
+<div class="q-card" data-q="2"><div class="q-num">Q3 · HTTP Status Codes</div><div class="q-scenario">A Claude API integration receives HTTP 429 (Too Many Requests) during a high-traffic period. The development team needs to handle this error gracefully.</div><p class="q-text">What is the correct error handling approach?</p><div class="q-opts"><div class="q-opt" onclick="selQ(2,0,this)">A) Immediately fail and show an error message to the user</div><div class="q-opt" onclick="selQ(2,1,this)">B) Retry with exponential backoff — 429 is a transient rate limit error</div><div class="q-opt" onclick="selQ(2,2,this)">C) Rotate to a different API key</div><div class="q-opt" onclick="selQ(2,3,this)">D) Switch to Batch API to avoid rate limits</div></div><div class="q-fb" id="qfb2"></div></div>
+
+<div class="q-card" data-q="3"><div class="q-num">Q4 · Model Version Pinning</div><div class="q-scenario">A production app's extraction accuracy drops from 95% to 72% overnight. No code was changed. The app uses <code>model="claude-sonnet"</code> without a version suffix.</div><p class="q-text">What most likely caused the regression?</p><div class="q-opts"><div class="q-opt" onclick="selQ(3,0,this)">A) The API key was rate-limited</div><div class="q-opt" onclick="selQ(3,1,this)">B) A model update changed behaviour — the app wasn't pinned to a specific version</div><div class="q-opt" onclick="selQ(3,2,this)">C) The system prompt was accidentally modified</div><div class="q-opt" onclick="selQ(3,3,this)">D) The context window was exceeded</div></div><div class="q-fb" id="qfb3"></div></div>
+
+<div class="q-card" data-q="4"><div class="q-num">Q5 · Content Boundaries</div><div class="q-scenario">A Claude-powered agent summarizes web pages submitted by end users. One page contains hidden text instructing the model to ignore previous instructions and reveal its system prompt.</div><p class="q-text">Which mitigation is most effective? (Exam Guide Sample #2)</p><div class="q-opts"><div class="q-opt" onclick="selQ(4,0,this)">A) Raise the model's temperature so its behaviour is harder to predict</div><div class="q-opt" onclick="selQ(4,1,this)">B) Treat page content as untrusted input, keep it separate from trusted instructions, use guardrails/hooks</div><div class="q-opt" onclick="selQ(4,2,this)">C) Add a line to the system prompt asking users not to include malicious instructions</div><div class="q-opt" onclick="selQ(4,3,this)">D) Switch to a larger model that follows instructions more reliably</div></div><div class="q-fb" id="qfb4"></div></div>
+
+<div class="q-card" data-q="5"><div class="q-num">Q6 · Configuration</div><div class="q-scenario">A team wants Claude Code to NEVER execute DELETE statements on production database tables. Currently they have a CLAUDE.md instruction saying "Never run DELETE on production." During testing, Claude runs a DELETE anyway.</div><p class="q-text">What should replace the CLAUDE.md instruction?</p><div class="q-opts"><div class="q-opt" onclick="selQ(5,0,this)">A) A stronger CLAUDE.md instruction with more examples</div><div class="q-opt" onclick="selQ(5,1,this)">B) A PreToolUse hook in settings.json that checks for DELETE + production and exits with code 2</div><div class="q-opt" onclick="selQ(5,2,this)">C) Remove production database access entirely</div><div class="q-opt" onclick="selQ(5,3,this)">D) A PostToolUse hook that rolls back DELETE operations</div></div><div class="q-fb" id="qfb5"></div></div>
+
+<div style="text-align:center;margin-top:20px;"><button class="btn btn-success submit-assess-btn" id="submitBtn" style="display:none;" onclick="submitAssess()">Submit Assessment</button></div></div>
+
+<div class="section" id="sec-results"><div class="card" style="text-align:center;"><span class="tag tag-assess">Results</span><h2 class="sec-title">Assessment Results</h2><div class="score-circle" id="rCircle"><span id="rScore">—</span><span class="score-label">Score</span></div><div class="result-fb" id="rFbText"></div><div id="answerKey" style="display:none;margin-top:24px;"><h3 style="text-align:left;color:var(--pet);">Answer Key</h3><div id="answerKeyContent"></div></div><div style="margin-top:24px;"><button class="close-btn" id="closeBtn" onclick="closeModule()" style="display:none;">✓ Complete &amp; Close</button><p class="auto-close-msg" id="autoCloseMsg"></p><div class="next-mod-card" id="nextMod" style="display:none;"><h4>Up Next</h4><p>Domain 3 — Claude Code (3.1%)</p></div></div></div></div>
+</main>
+
+<script>
+var SECTIONS=['overview','c1-def','c1-tech','c1-cert','c1-case','c1-apply','c2-def','c2-tech','c2-cert','c2-case','c2-apply','c3-def','c3-tech','c3-cert','c3-case','c3-apply','c4-def','c4-tech','c4-cert','c4-case','c4-apply','assess','results'];
+var TOTAL=SECTIONS.length,PASS_THRESHOLD=70,CORRECT=[1, 1, 1, 1, 1, 1];
+var Q_TEXT=["10K docs overnight, cost primary. Approach?", "tool_use guarantees what?", "HTTP 429 handling?", "Accuracy drops overnight, no code change. Cause?", "Hidden injection in web page. Mitigation?", "CLAUDE.md DELETE instruction bypassed. Fix?"];var Q_OPTS=[["A) Synchronous parallel", "B) Batch API", "C) Lower max_tokens", "D) Smallest model"], ["A) Format AND content", "B) Format not content", "C) No guarantees", "D) Content not format"], ["A) Fail immediately", "B) Retry with backoff", "C) Rotate API key", "D) Switch to Batch"], ["A) Rate limited", "B) Unpinned model update", "C) Prompt modified", "D) Context exceeded"], ["A) Raise temperature", "B) Separate untrusted input + guardrails", "C) Ask users nicely", "D) Larger model"], ["A) Stronger CLAUDE.md", "B) PreToolUse hook exit code 2", "C) Remove DB access", "D) PostToolUse rollback"]];var EXPL=["Batch API processes async workloads at 50% reduced cost within 24hr \u2014 matches overnight, non-urgent, cost-primary. This is the exam guide's own sample question #1.", "tool_use with JSON Schema guarantees syntactically valid JSON matching the schema (correct format). Content accuracy (decimal place errors) is a semantic issue tool_use cannot fix.", "429 is a transient rate limit error \u2014 retry with exponential backoff. 401 (bad credentials) requires a fix, not a retry. Switching to Batch (D) doesn't solve the rate limit for real-time needs.", "Without version pinning (e.g., claude-sonnet-4-6), the app automatically uses the latest model. Model updates can change behaviour, causing accuracy regressions without any code changes.", "This is the exam guide's sample question #2. Isolate untrusted content from trusted instructions, use guardrails/hooks so injected text cannot invoke sensitive actions. Temperature (A) is irrelevant; a polite request (C) is not enforceable.", "PreToolUse hook in settings.json with exit code 2 provides deterministic blocking. CLAUDE.md instructions (A) are probabilistic. PostToolUse (D) runs AFTER execution \u2014 the DELETE already happened."];
+var curSection='overview',visited={overview:true},assessed=false,ans=[-1,-1,-1,-1,-1,-1],startTime=new Date();
+var maxUnlocked=0,completed={},readTimerHandle=null,READ_TIME=15;
+var INTERACTIVE_SECTIONS={'c1-case':1,'c1-apply':1,'c2-case':1,'c2-apply':1,'c3-case':1,'c3-apply':1,'c4-case':1,'c4-apply':1,'assess':1};
+function isReading(id){return !INTERACTIVE_SECTIONS[id]&&id!=='overview'&&id!=='results';}
+function completeSection(id){if(completed[id])return;completed[id]=true;var idx=SECTIONS.indexOf(id);if(idx>=maxUnlocked){maxUnlocked=idx+1;applyLocks();}enableNextBtn(id);}
+function enableNextBtn(id){var sec=document.getElementById('sec-'+id);if(!sec)return;var btns=sec.querySelectorAll('.btn-locked');for(var i=0;i<btns.length;i++){btns[i].classList.remove('btn-locked');btns[i].style.pointerEvents='auto';btns[i].style.opacity='1';}}
+function applyLocks(){var ni=document.querySelectorAll('.nav-item');for(var i=0;i<ni.length;i++){var oc=ni[i].getAttribute('onclick');if(!oc)continue;var m=oc.match(/goTo\('([^']+)'\)/);if(!m)continue;var secIdx=SECTIONS.indexOf(m[1]);if(secIdx<=maxUnlocked){ni[i].classList.remove('locked');ni[i].style.pointerEvents='auto';}else{ni[i].classList.add('locked');ni[i].style.pointerEvents='none';}if(completed[m[1]])ni[i].classList.add('completed');}}
+function startReadTimer(id){clearInterval(readTimerHandle);var el=document.getElementById('read-timer-'+id);if(!el){completeSection(id);return;}var remaining=READ_TIME;el.style.display='inline-flex';var fill=el.querySelector('.timer-fill');var label=el.querySelector('.timer-label');if(fill)fill.style.width='0%';if(label)label.textContent=remaining+'s';readTimerHandle=setInterval(function(){remaining--;if(fill)fill.style.width=Math.round((READ_TIME-remaining)/READ_TIME*100)+'%';if(label)label.textContent=remaining>0?remaining+'s':'✓';if(remaining<=0){clearInterval(readTimerHandle);el.classList.add('done');if(label)label.textContent='✓ Continue';completeSection(id);}},1000);}
+var ScormAPI=(function(){var api=null,finished=false;function findAPI(w){var t=0;while(w&&!w.API&&t<10){w=w.parent;t++;}return w&&w.API?w.API:null;}function init(){api=findAPI(window);if(!api&&window.opener)api=findAPI(window.opener);if(!api)return;api.LMSInitialize("");var s=api.LMSGetValue("cmi.core.lesson_status");if(!s||s===""||s==="not attempted")api.LMSSetValue("cmi.core.lesson_status","incomplete");api.LMSSetValue("cmi.core.score.min","0");api.LMSSetValue("cmi.core.score.max","100");api.LMSCommit("");}function gv(k){try{return api?api.LMSGetValue(k):"";}catch(e){return"";}}function sv(k,v){try{if(!finished&&api)api.LMSSetValue(k,String(v));}catch(e){}}function cm(){try{if(!finished&&api)api.LMSCommit("");}catch(e){}}function gst(){var ms=new Date()-startTime;var s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);s%=60;m%=60;return(h<10?"000":"00").slice(0,4-String(h).length)+h+":"+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;}function setScore(r){sv("cmi.core.score.raw",String(r));sv("cmi.core.score.min","0");sv("cmi.core.score.max","100");sv("cmi.core.lesson_status","completed");cm();}function setLoc(n){sv("cmi.core.lesson_location",String(n));cm();}function finish(){if(finished)return;finished=true;sv("cmi.core.session_time",gst());sv("cmi.core.exit","");cm();try{api.LMSFinish("");}catch(e){}}init();return{setScore:setScore,setLoc:setLoc,finish:finish,gv:gv};}
+)();
+function save(){try{var d=JSON.stringify({sec:curSection,vis:Object.keys(visited),mu:maxUnlocked,cmp:Object.keys(completed)});var a=null,w=window,t=0;while(w&&!w.API&&t<10){w=w.parent;t++;}if(w&&w.API)a=w.API;if(!a&&window.opener){w=window.opener;t=0;while(w&&!w.API&&t<10){w=w.parent;t++;}if(w&&w.API)a=w.API;}if(a){a.LMSSetValue("cmi.suspend_data",d);a.LMSCommit("");}}catch(e){}}
+function restore(){try{var r=ScormAPI.gv("cmi.suspend_data");if(r){var d=JSON.parse(r);if(d.sec)curSection=d.sec;if(d.vis)for(var i=0;i<d.vis.length;i++)visited[d.vis[i]]=true;if(typeof d.mu==='number')maxUnlocked=d.mu;if(d.cmp)for(var i=0;i<d.cmp.length;i++)completed[d.cmp[i]]=true;}}catch(e){}}
+setInterval(function(){var ms=new Date()-startTime;var s=Math.floor(ms/1000),m=Math.floor(s/60);s%=60;document.getElementById("timeDisplay").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;},1000);
+function goTo(id){var idx=SECTIONS.indexOf(id);if(idx>maxUnlocked&&id!=='results')return;clearInterval(readTimerHandle);var ss=document.querySelectorAll('.section');for(var i=0;i<ss.length;i++)ss[i].classList.remove('active');var t=document.getElementById('sec-'+id);if(t){t.classList.add('active');curSection=id;visited[id]=true;}var ni=document.querySelectorAll('.nav-item');for(var i=0;i<ni.length;i++){ni[i].classList.remove('active');if(ni[i].getAttribute('onclick')==="goTo('"+id+"')")ni[i].classList.add('active');}var p=Math.round(Object.keys(visited).length/TOTAL*100);document.getElementById('progressBar').style.width=p+'%';document.getElementById('progressText').textContent=p+'%';if(id==='overview'&&!completed['overview'])completeSection('overview');if(isReading(id)&&!completed[id])startReadTimer(id);if(INTERACTIVE_SECTIONS[id]&&completed[id])enableNextBtn(id);applyLocks();ScormAPI.setLoc(idx);document.getElementById('mainContent').scrollTop=0;save();}
+function selQ(qi,oi,el){if(assessed)return;ans[qi]=oi;var opts=el.parentElement.querySelectorAll('.q-opt');for(var i=0;i<opts.length;i++)opts[i].classList.remove('selected');el.classList.add('selected');if(ans.every(function(a){return a!==-1;})){completeSection('assess');var sb=document.getElementById('submitBtn');if(sb)sb.style.display='inline-block';}}
+function submitAssess(){assessed=true;document.getElementById('submitBtn').style.display='none';var c=0;for(var i=0;i<6;i++){var card=document.querySelector('[data-q="'+i+'"]');var opts=card.querySelectorAll('.q-opt');var fb=document.getElementById('qfb'+i);for(var j=0;j<opts.length;j++){if(j===CORRECT[i])opts[j].classList.add('right');else if(j===ans[i]&&ans[i]!==CORRECT[i])opts[j].classList.add('wrongA');}if(ans[i]===CORRECT[i]){c++;fb.style.display='block';fb.style.background='#E0F7EC';fb.style.borderLeft='4px solid #01B27C';fb.style.color='#1A5C3A';fb.innerHTML='✓ Correct! '+EXPL[i];}else{fb.style.display='block';fb.style.background='#FFF0ED';fb.style.borderLeft='4px solid #FC6A59';fb.style.color='#8B2500';fb.innerHTML='✗ Incorrect. '+EXPL[i];}}var pct=Math.round(c/6*100);ScormAPI.setScore(pct);save();var rc=document.getElementById('rCircle'),rs=document.getElementById('rScore'),rf=document.getElementById('rFbText');rs.textContent=pct+'%';if(pct>=PASS_THRESHOLD){rc.className='score-circle pass';rf.className='result-fb pass-fb';rf.innerHTML='<strong>Congratulations!</strong> '+c+'/6 ('+pct+'%).';}else{rc.className='score-circle fail';rf.className='result-fb fail-fb';rf.innerHTML='<strong>Keep Learning.</strong> '+c+'/6 ('+pct+'%).';}var ak='';for(var i=0;i<6;i++){ak+='<div class="ak-item"><div class="ak-q">Q'+(i+1)+'. '+Q_TEXT[i]+'</div><div class="ak-correct">✓ '+Q_OPTS[i][CORRECT[i]]+'</div><div class="ak-expl">'+EXPL[i]+'</div></div>';}document.getElementById('answerKeyContent').innerHTML=ak;document.getElementById('answerKey').style.display='block';document.getElementById('closeBtn').style.display='inline-block';document.getElementById('nextMod').style.display='block';document.getElementById('autoCloseMsg').textContent='Closing in 15s...';var ct=15;var cdI=setInterval(function(){ct--;document.getElementById('autoCloseMsg').textContent='Closing in '+ct+'s...';if(ct<=0){clearInterval(cdI);closeModule();}},1000);goTo('results');}
+function closeModule(){save();ScormAPI.finish();try{window.close();}catch(e){}document.getElementById('autoCloseMsg').textContent='✓ Module completed.';}
+function makeVoteFn(prefix,correct,expl){var answers=new Array(correct.length).fill(-1),count=0;return function(idx,choice){if(answers[idx]!==-1)return;answers[idx]=choice;count++;var card=document.getElementById(prefix+'-'+idx);card.classList.add('revealed');var btns=card.querySelectorAll('.verdict-btn');for(var i=0;i<btns.length;i++){if(i===correct[idx])btns[i].classList.add('v-correct');else if(i===choice&&choice!==correct[idx])btns[i].classList.add('v-wrong');}var exp=document.getElementById(prefix+'-exp-'+idx);exp.style.display='block';exp.innerHTML=(choice===correct[idx]?'✓ ':'✗ ')+expl[idx];if(count===correct.length){var secMap={'api':'c1-apply','des':'c2-case','sch':'c2-apply','se':'c3-case','cfg':'c4-case'};if(secMap[prefix])completeSection(secMap[prefix]);var sc=answers.filter(function(a,i){return a===correct[i];}).length;var sd=document.getElementById(prefix+'-score');if(sd){sd.style.display='block';sd.innerHTML='<strong>Score: '+sc+'/'+correct.length+'</strong>';}};};};
+var apiVote=makeVoteFn('api',[1,2,0,0,1],['Batch API — overnight, cost-primary, non-urgent = exact Batch API use case.','Streaming — word-by-word display for user-facing = streaming API.','Synchronous — blocking CI check needs immediate result.','Prompt Caching — 3,500 tokens > 1,024 minimum, 200 conversations/hr = massive reuse.','Vision API — send image directly to Claude, no OCR pre-processing needed.']);
+var desVote=makeVoteFn('des',[1,0,1,1],['Schema fix — nullable type allows explicit null instead of fabrication.','Streaming — tokens appear as generated, eliminating the blank screen.','Separate untrusted content — XML tags create clear boundary against injection.','Clear old results — free context space. max_tokens only increases response budget.']);
+var schVote=makeVoteFn('sch',[0,0,1],['Adding other/unclear prevents forced categorisation of edge cases.','Disambiguating field name + description eliminates ambiguity at schema level.','Semantic error — valid JSON, wrong value. Needs validation logic, not stricter schema.']);
+var seVote=makeVoteFn('se',[0,0,1,1,1],['429 = rate limit = transient = retry with backoff.','Prompt regression — changes to prompts can break existing behaviour, just like code changes.','Async iterator with yield — streaming requires non-blocking I/O.','401 = unauthorized = invalid credentials. Fix the API key, don\'t retry.','Parse and extract — reduce context consumption by passing only needed fields.']);
+var cfgVote=makeVoteFn('cfg',[1,0,0,1],['settings.json hook — blocking access requires deterministic enforcement.','CLAUDE.md — coding convention is a preference, not a hard enforcement.','Model version pin — infrastructure config, not a CLAUDE.md instruction.','settings.json PostToolUse hook — audit logging must happen deterministically.']);
+// C1-case (Before/After panel) — auto-complete after 3s view
+var c1CaseViewed=false;
+// C3-apply (Investigator)
+var crAnswers=[-1,-1],crCorrect=[1,1];var crExpl=['Separate instance — self-review inherits generation blind spots. Independent review catches errors the generator cannot see.','Version-control all prompts. Without version history, changes are untraceable and unreversible. Treat prompts like code.'];
+function crSelect(s,c,el){crAnswers[s]=c;var opts=document.getElementById('cr-opts-'+s).querySelectorAll('.invest-opt');for(var i=0;i<opts.length;i++)opts[i].classList.remove('selected');el.classList.add('selected');}
+function crCheckAll(){var c=0;for(var s=0;s<2;s++){var opts=document.getElementById('cr-opts-'+s).querySelectorAll('.invest-opt');for(var i=0;i<opts.length;i++){opts[i].classList.remove('correct-inv','wrong-inv');if(i===crCorrect[s])opts[i].classList.add('correct-inv');else if(i===crAnswers[s]&&crAnswers[s]!==crCorrect[s])opts[i].classList.add('wrong-inv');}if(crAnswers[s]===crCorrect[s])c++;var fb=document.getElementById('cr-fb-'+s);fb.className='invest-fb show';fb.style.background=crAnswers[s]===crCorrect[s]?'#E0F7EC':'#FFF0ED';fb.style.borderLeft=crAnswers[s]===crCorrect[s]?'4px solid #01B27C':'4px solid #FC6A59';fb.innerHTML=(crAnswers[s]===crCorrect[s]?'✓ ':'✗ ')+crExpl[s];}completeSection('c3-apply');var af=document.getElementById('cr-fb-all');af.className=c===2?'dd-feedback show pass':'dd-feedback show fail';af.innerHTML=c===2?'✓ Both correct!':'✗ '+c+'/2.';}
+// C4-apply (Investigator)
+var reqAnswers=[-1,-1],reqCorrect=[1,1];var reqExpl=['Pin to specific model version and test updates with eval suite before deploying. Unpinned models auto-upgrade and can break production.','Batch API has up to 24hr window — wrong for real-time chatbot. Switch to streaming API and use prompt caching for cost savings without latency trade-off.'];
+function reqSelect(s,c,el){reqAnswers[s]=c;var opts=document.getElementById('req-opts-'+s).querySelectorAll('.invest-opt');for(var i=0;i<opts.length;i++)opts[i].classList.remove('selected');el.classList.add('selected');}
+function reqCheckAll(){var c=0;for(var s=0;s<2;s++){var opts=document.getElementById('req-opts-'+s).querySelectorAll('.invest-opt');for(var i=0;i<opts.length;i++){opts[i].classList.remove('correct-inv','wrong-inv');if(i===reqCorrect[s])opts[i].classList.add('correct-inv');else if(i===reqAnswers[s]&&reqAnswers[s]!==reqCorrect[s])opts[i].classList.add('wrong-inv');}if(reqAnswers[s]===reqCorrect[s])c++;var fb=document.getElementById('req-fb-'+s);fb.className='invest-fb show';fb.style.background=reqAnswers[s]===reqCorrect[s]?'#E0F7EC':'#FFF0ED';fb.style.borderLeft=reqAnswers[s]===reqCorrect[s]?'4px solid #01B27C':'4px solid #FC6A59';fb.innerHTML=(reqAnswers[s]===reqCorrect[s]?'✓ ':'✗ ')+reqExpl[s];}completeSection('c4-apply');var af=document.getElementById('req-fb-all');af.className=c===2?'dd-feedback show pass':'dd-feedback show fail';af.innerHTML=c===2?'✓ Both correct!':'✗ '+c+'/2.';}
+// C1-case auto-complete on view
+var origGoTo=goTo;goTo=function(id){origGoTo(id);if(id==='c1-case'&&!c1CaseViewed){c1CaseViewed=true;setTimeout(function(){completeSection('c1-case');},3000);}};
+restore();applyLocks();goTo(curSection);window.onbeforeunload=function(){save();ScormAPI.finish();};
+</script>
+</body></html>

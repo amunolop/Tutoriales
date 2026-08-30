@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CCDV-F Domain 1 — Deep Reading: Agents &amp; Workflows (Interlaced EN/ES)</title>
+<style>
+
+:root{--dt:#006E74;--lt:#0097AC;--pet:#003C51;--pur:#881E87;--grn:#01B27C;--org:#FC6A59;--sand:#ECECE1;--wh:#FFFFFF;--tx:#1A2A33;--txl:#4A5C68;--brd:#D1D5DB;--bg:#F4F5F7;--side-w:280px;--code-bg:#0D1B2A;--code-fg:#E0E7EE;--cyan:#64DFDF;--amber:#F9A825;--indigo:#3F51B5;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,sans-serif;font-size:14.5px;line-height:1.7;color:var(--tx);background:var(--bg);display:flex;height:100vh;overflow:hidden;}
+/* === SIDEBAR === */
+.sidebar{width:var(--side-w);background:var(--pet);color:var(--wh);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+.sb-header{padding:20px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.sb-header h1{font-size:11px;font-weight:700;letter-spacing:0.5px;opacity:0.7;text-transform:uppercase;}
+.sb-header h2{font-size:14px;font-weight:600;margin-top:4px;line-height:1.3;}
+.sb-header .badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:10px;margin-top:8px;font-weight:600;}
+.sb-header .badge-read{background:var(--indigo);color:var(--wh);}
+.sb-header .badge-weight{background:var(--lt);color:var(--wh);margin-left:4px;}
+.sb-nav{flex:1;overflow-y:auto;padding:8px 0;}
+.sb-nav::-webkit-scrollbar{width:4px;}
+.sb-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px;}
+.nav-group{margin-bottom:2px;}
+.nav-group-title{display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;opacity:0.6;cursor:default;}
+.nav-item{display:block;padding:7px 16px 7px 28px;font-size:12px;color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;text-decoration:none;line-height:1.4;}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:var(--wh);}
+.nav-item.active{background:rgba(0,151,172,0.25);color:var(--wh);border-left-color:var(--lt);font-weight:600;}
+.nav-item .nav-icon{margin-right:6px;font-size:11px;}
+.sb-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.1);}
+.sb-progress{height:4px;background:rgba(255,255,255,0.15);border-radius:2px;overflow:hidden;}
+.sb-progress-fill{height:100%;background:linear-gradient(90deg,var(--lt),var(--grn));width:0%;transition:width 0.4s;}
+.sb-progress-label{font-size:10px;opacity:0.6;margin-top:4px;display:flex;justify-content:space-between;}
+/* === MAIN CONTENT === */
+.content{flex:1;overflow-y:auto;scroll-behavior:smooth;}
+.section{display:none;padding:32px 40px 80px;max-width:960px;margin:0 auto;}
+.section.active{display:block;}
+h2.sec-title{font-size:24px;font-weight:700;color:var(--pet);margin-bottom:6px;}
+h3{font-size:17px;font-weight:700;color:var(--dt);margin:24px 0 10px;}
+h4{font-size:14.5px;font-weight:700;color:var(--pet);margin:18px 0 8px;}
+p{margin-bottom:12px;}
+.subtitle{font-size:14px;color:var(--lt);font-weight:600;margin-bottom:24px;}
+.card{background:var(--wh);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:28px 32px;margin-bottom:20px;}
+.card-sm{padding:20px 24px;}
+.tag{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:1.4px;padding:3px 10px;border-radius:16px;font-weight:600;margin-bottom:10px;}
+.tag-read{background:#E8EAF6;color:var(--indigo);}
+.tag-deep{background:#E3F2FD;color:#1565C0;}
+.tag-exam{background:#FFF8E1;color:#E65100;}
+.tag-watch{background:#F3E5F5;color:var(--pur);}
+.info-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;}
+.info-table th{background:var(--pet);color:var(--wh);padding:10px 14px;text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:0.5px;}
+.info-table td{padding:10px 14px;border-bottom:1px solid var(--brd);vertical-align:top;}
+.info-table tr:nth-child(even) td{background:#F8F9FA;}
+.callout{border-radius:8px;padding:16px 20px;margin:14px 0;font-size:13.5px;line-height:1.6;}
+.callout-key{background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border-left:4px solid var(--amber);}
+.callout-key strong{color:#E65100;}
+.callout-best{background:#E0F7EC;border-left:4px solid var(--grn);}
+.callout-best strong{color:#1A5C3A;}
+.callout-anti{background:#FFF0ED;border-left:4px solid var(--org);}
+.callout-anti strong{color:#C4402A;}
+.callout-exam{background:#E3F2FD;border-left:4px solid #1565C0;}
+.callout-exam strong{color:#1565C0;}
+.notebook{background:linear-gradient(135deg,#FFFBEB,#FFF9E0);border:1px solid #E8D5A3;border-radius:12px;padding:20px 24px;margin:16px 0;position:relative;font-size:13.5px;line-height:1.7;}
+.notebook::before{content:"📝 Developer's Notebook";position:absolute;top:-10px;left:16px;background:var(--amber);color:var(--wh);font-size:10px;font-weight:700;padding:2px 12px;border-radius:10px;text-transform:uppercase;letter-spacing:1px;}
+.notebook p:first-of-type{margin-top:8px;}
+.myth-card{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0;border-radius:12px;overflow:hidden;border:1px solid var(--brd);}
+.myth-side{padding:18px 22px;font-size:13px;line-height:1.6;}
+.myth-wrong{background:#FFF0ED;border-right:2px solid var(--org);}
+.myth-right{background:#E0F7EC;}
+.myth-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:6px;}
+.myth-wrong .myth-label{color:var(--org);}
+.myth-right .myth-label{color:var(--grn);}
+.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+.video-card{background:var(--wh);border:1px solid var(--brd);border-radius:10px;overflow:hidden;transition:all 0.2s;cursor:pointer;text-decoration:none;color:inherit;}
+.video-card:hover{border-color:var(--lt);box-shadow:0 4px 12px rgba(0,0,0,0.08);transform:translateY(-2px);}
+.video-thumb{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:20px;display:flex;align-items:center;justify-content:center;min-height:80px;position:relative;}
+.video-thumb .play-icon{width:40px;height:40px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.video-thumb .duration{position:absolute;bottom:6px;right:8px;background:rgba(0,0,0,0.7);color:var(--wh);font-size:10px;padding:2px 6px;border-radius:4px;}
+.video-info{padding:12px 14px;}
+.video-info h5{font-size:12.5px;font-weight:600;color:var(--pet);margin-bottom:4px;line-height:1.4;}
+.video-info .video-meta{font-size:10.5px;color:var(--txl);}
+.exam-radar{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#FFF3E0,#FFECB3);border:1px solid #FFB74D;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;color:#E65100;margin-bottom:14px;}
+.radar-dots{display:flex;gap:3px;}
+.radar-dot{width:8px;height:8px;border-radius:50%;background:#FFB74D;}
+.radar-dot.hot{background:#E65100;}
+.accordion{border:1px solid var(--brd);border-radius:10px;margin:12px 0;overflow:hidden;}
+.acc-header{padding:14px 20px;background:var(--wh);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;color:var(--pet);transition:background 0.15s;user-select:none;}
+.acc-header:hover{background:#F0FAFA;}
+.acc-header .acc-icon{transition:transform 0.2s;font-size:12px;}
+.acc-body{display:none;padding:0 20px 18px;font-size:13.5px;line-height:1.7;}
+.acc-body.open{display:block;}
+.acc-header.open .acc-icon{transform:rotate(90deg);}
+.connect-dots{background:linear-gradient(135deg,#E8EAF6,#F5F5FF);border-left:4px solid var(--indigo);border-radius:0 10px 10px 0;padding:16px 20px;margin:16px 0;font-size:13px;}
+.connect-dots strong{color:var(--indigo);}
+.reading-links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+.reading-link{display:flex;align-items:flex-start;gap:10px;background:var(--wh);border:1px solid var(--brd);border-radius:8px;padding:12px 14px;text-decoration:none;color:inherit;transition:all 0.15s;font-size:12.5px;line-height:1.5;}
+.reading-link:hover{border-color:var(--lt);background:#F0FAFA;}
+.reading-link .rl-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.reading-link .rl-title{font-weight:600;color:var(--pet);display:block;margin-bottom:2px;}
+.reading-link .rl-desc{color:var(--txl);font-size:11px;}
+.scenario-box{background:linear-gradient(135deg,#F0FAFA,#E0F5F6);border:2px solid var(--lt);border-radius:12px;padding:22px 26px;margin:16px 0;position:relative;}
+.scenario-box::before{content:"🏢 Production Scenario";position:absolute;top:-11px;left:16px;background:var(--lt);color:var(--wh);font-size:10px;font-weight:700;padding:2px 12px;border-radius:10px;text-transform:uppercase;letter-spacing:1px;}
+.scenario-box p:first-of-type{margin-top:6px;}
+pre.code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:18px 20px;font-family:"Cascadia Code","Fira Code","Consolas",monospace;font-size:12.5px;line-height:1.6;overflow-x:auto;margin:12px 0;white-space:pre;}
+code{background:rgba(0,110,116,0.08);padding:1px 6px;border-radius:4px;font-family:"Cascadia Code","Fira Code","Consolas",monospace;font-size:12.5px;color:var(--dt);}
+pre.code .kw{color:#FF79C6;}pre.code .str{color:#F1FA8C;}pre.code .cm{color:#6272A4;font-style:italic;}pre.code .fn{color:#50FA7B;}pre.code .num{color:#BD93F9;}
+pre.code .hl{background:rgba(100,223,223,0.1);display:block;margin:0 -20px;padding:0 20px;border-left:3px solid var(--cyan);}
+.def-block{background:linear-gradient(135deg,#E3F2FD,#F5F8FF);border-left:4px solid #1565C0;border-radius:0 10px 10px 0;padding:18px 22px;margin:14px 0;font-size:14px;line-height:1.7;}
+.def-block .def-term{font-size:16px;font-weight:700;color:#1565C0;margin-bottom:6px;}
+ul.deep{padding-left:20px;margin:10px 0;}
+ul.deep li{margin-bottom:6px;font-size:13.5px;}
+.hero-card{text-align:center;padding:40px 32px;background:linear-gradient(135deg,#F0FAFA,var(--wh));}
+.hero-card h2{font-size:28px;color:var(--pet);}
+.hero-card .hero-weight{display:inline-block;background:linear-gradient(135deg,var(--dt),var(--lt));color:var(--wh);padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;margin:12px 0 8px;}
+.hero-card .hero-type{display:inline-block;background:linear-gradient(135deg,var(--indigo),#5C6BC0);color:var(--wh);padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;margin:4px 0 20px;}
+.outcomes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin-top:16px;}
+.outcome-item{background:var(--wh);border:1px solid var(--brd);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.5;}
+.outcome-item strong{color:var(--dt);}
+.nav-btn-row{display:flex;justify-content:space-between;position:sticky;bottom:0;background:var(--bg);padding:12px 0;border-top:1px solid var(--brd);margin-top:24px;}
+.btn{padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.btn-primary{background:var(--dt);color:var(--wh);}.btn-primary:hover{background:var(--lt);}
+.btn-secondary{background:var(--sand);color:var(--tx);}.btn-secondary:hover{background:#DDDDD2;}
+.btn-success{background:var(--grn);color:var(--wh);}.btn-success:hover{background:#019A6B;}
+.q-card{background:var(--wh);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:28px 32px;margin-bottom:20px;}
+.q-scenario{background:#F8F9FA;border-left:3px solid var(--lt);padding:14px 18px;margin-bottom:16px;font-size:13px;border-radius:0 8px 8px 0;color:var(--txl);line-height:1.7;}
+.q-text{font-size:15px;font-weight:600;color:var(--pet);margin-bottom:14px;line-height:1.5;}
+.q-opts{display:flex;flex-direction:column;gap:8px;}
+.q-opt{border:2px solid var(--brd);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all 0.15s;font-size:13px;}
+.q-opt:hover{border-color:var(--lt);background:#F0FAFA;}
+.q-opt.selected{border-color:var(--dt);background:#E0F5F6;}
+.q-opt.right{border-color:var(--grn)!important;background:#E0F7EC!important;}
+.q-opt.wrongA{border-color:var(--org)!important;background:#FFF0ED!important;}
+.q-fb{display:none;padding:12px 16px;border-radius:8px;margin-top:12px;font-size:13px;line-height:1.6;}
+.q-num{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--lt);margin-bottom:6px;}
+.score-circle{width:130px;height:130px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto;font-size:34px;font-weight:700;border:6px solid var(--brd);}
+.score-circle.pass{border-color:var(--grn);color:var(--grn);}
+.score-circle.fail{border-color:var(--org);color:var(--org);}
+.score-circle .score-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--txl);font-weight:400;}
+.result-fb{padding:14px 18px;border-radius:8px;margin:14px 0;font-size:13.5px;line-height:1.6;}
+.result-fb.pass-fb{background:#E0F7EC;color:#1A5C3A;}
+.result-fb.fail-fb{background:#FFF0ED;color:#8B2500;}
+.ak-item{background:#F8F9FA;border-radius:8px;padding:16px;margin:10px 0;text-align:left;}
+.ak-q{font-weight:600;font-size:13px;color:var(--pet);margin-bottom:6px;}
+.ak-correct{color:var(--grn);font-size:13px;font-weight:600;margin-bottom:4px;}
+.ak-expl{font-size:12.5px;color:var(--txl);line-height:1.6;}
+.close-btn{background:var(--grn);color:var(--wh);border:none;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:16px;}
+.close-btn:hover{background:#019A6B;}
+.auto-close-msg{font-size:12px;color:var(--txl);margin-top:10px;}
+.next-mod-card{background:linear-gradient(135deg,#F0FAFA,#E0F5F6);border-radius:10px;padding:14px;margin-top:14px;text-align:center;}
+.next-mod-card h4{color:var(--dt);font-size:13px;}.next-mod-card p{font-size:12px;color:var(--txl);}
+.source{margin-top:16px;padding-top:10px;border-top:1px dashed var(--brd);font-size:0;}
+.source a{display:inline-block;font-size:11px;color:var(--lt);margin-right:12px;margin-bottom:4px;word-break:break-all;}
+.source a:hover{color:var(--dt);}
+.lic-pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:#FFF8E1;color:#8B6914;margin-left:6px;}
+
+/* === INLINE BILINGUAL (ES translation under EN prose) === */
+.es-inline{font-style:italic;color:var(--txl);opacity:0.85;}
+p.es-inline,li.es-inline{font-size:0.93em;margin-top:-6px;margin-bottom:12px;}
+h2.es-inline{font-size:15px;font-weight:500;margin-top:-4px;margin-bottom:14px;color:var(--lt);}
+h3.es-inline{font-size:13px;font-weight:500;margin-top:-8px;margin-bottom:8px;color:var(--lt);}
+h4.es-inline{font-size:12px;font-weight:500;margin-top:-14px;margin-bottom:8px;color:var(--lt);}
+div.callout.es-inline,div.notebook.es-inline,div.def-block.es-inline,div.scenario-box.es-inline,div.connect-dots.es-inline{margin-top:-8px;font-size:0.93em;opacity:0.88;}
+.outcomes-grid .es-inline{grid-column:1/-1;margin-top:-8px;}
+.acc-header.es-inline{background:#F8FAFA;}
+.myth-label.es-inline{margin-top:-4px;}
+/* === TIME TRACKING SIDEBAR CONTROLS === */
+.time-control{padding:10px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.time-control label{display:block;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;opacity:0.6;margin-bottom:6px;}
+.time-row{display:flex;align-items:center;justify-content:center;}
+.time-display{font-family:"Cascadia Code","Fira Code","Consolas",monospace;font-size:15px;font-weight:700;letter-spacing:0.5px;background:rgba(0,0,0,0.25);border-radius:6px;padding:5px 10px;color:var(--lt);transition:color 0.3s;}
+.time-display.over-time{color:var(--org);}
+.time-buttons{display:flex;gap:6px;margin-top:6px;}
+.time-btn{flex:1;background:rgba(255,255,255,0.08);color:var(--wh);border:none;border-radius:5px;padding:5px 4px;font-size:10px;font-weight:600;cursor:pointer;transition:background 0.15s;opacity:0.85;}
+.time-btn:hover{background:rgba(255,255,255,0.18);opacity:1;}
+.time-btn.running{background:var(--lt);opacity:1;}
+.time-btn.running:hover{background:var(--dt);}
+.time-btn-reset:hover{background:rgba(252,106,89,0.3);}
+.group-toast{position:fixed;bottom:22px;left:22px;background:var(--pet);color:var(--wh);padding:14px 22px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.3);font-size:13px;z-index:9999;opacity:0;transform:translateY(12px);transition:opacity 0.3s ease,transform 0.3s ease;pointer-events:none;max-width:380px;}
+.group-toast.show{opacity:1;transform:translateY(0);}
+.group-toast strong{color:var(--lt);}
+.toast-breakdown{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.15);display:flex;flex-direction:column;gap:3px;}
+.toast-row{display:flex;justify-content:space-between;gap:16px;font-size:11px;opacity:0.85;}
+.toast-row span:last-child{font-family:"Cascadia Code","Fira Code","Consolas",monospace;opacity:0.9;}
+.nav-group-title{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.group-time{font-size:9px;font-family:"Cascadia Code","Fira Code","Consolas",monospace;font-weight:600;letter-spacing:0;text-transform:none;opacity:0.85;flex-shrink:0;min-width:32px;text-align:right;}
+.nav-item{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.nav-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nav-time{flex-shrink:0;font-size:9.5px;font-family:"Cascadia Code","Fira Code","Consolas",monospace;opacity:0.55;font-weight:600;min-width:28px;text-align:right;}
+.nav-item.active .nav-time{opacity:0.85;}
+
+</style>
+</head>
+<body>
+<aside class="sidebar">
+
+<div class="sb-header">
+  <h1>CCDV-F Certification</h1>
+  <h2>Domain 1: Agents &amp; Workflows</h2>
+  <span class="badge badge-read">📖 Deep Reading</span>
+  <span class="badge badge-weight">14.7% · ~9 Qs</span>
+</div>
+<nav class="sb-nav">
+<div class="time-control">
+  <label>⏱ Previsión: 1h/hoja</label>
+  <div class="time-row">
+    <div class="time-display" id="pageTimer">00:00</div>
+  </div>
+  <div class="time-buttons">
+    <button class="time-btn" id="timerToggleBtn" onclick="toggleTimer()">▶ Iniciar</button>
+    <button class="time-btn time-btn-reset" onclick="resetTimer()">⟲ Reset</button>
+  </div>
+</div>
+
+  <div class="nav-group">
+    <div class="nav-group-title"><span>Overview</span><span class="group-time" id="group-overview-time"></span></div>
+    <a class="nav-item active" onclick="goTo(&#39;overview&#39;)"><span class="nav-label"><span class="nav-icon">📋</span> Reading Guide</span><span class="nav-time" id="navtime-overview"></span></a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title"><span>1 · Workflow vs Agent</span><span class="group-time" id="group-c1-time"></span></div>
+    <a class="nav-item" onclick="goTo(&#39;c1-def&#39;)"><span class="nav-label"><span class="nav-icon">📘</span> The Core Distinction</span><span class="nav-time" id="navtime-c1-def"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;c1-cert&#39;)"><span class="nav-label"><span class="nav-icon">🎯</span> Choosing the Pattern</span><span class="nav-time" id="navtime-c1-cert"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;c1-apply&#39;)"><span class="nav-label"><span class="nav-icon">🎬</span> Watch &amp; Read Resources</span><span class="nav-time" id="navtime-c1-apply"></span></a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title"><span>2 · Agent SDK</span><span class="group-time" id="group-c2-time"></span></div>
+    <a class="nav-item" onclick="goTo(&#39;c2-def&#39;)"><span class="nav-label"><span class="nav-icon">📘</span> SDK &amp; Construction</span><span class="nav-time" id="navtime-c2-def"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;c2-cert&#39;)"><span class="nav-label"><span class="nav-icon">🎯</span> SDK vs Custom Loop</span><span class="nav-time" id="navtime-c2-cert"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;c2-apply&#39;)"><span class="nav-label"><span class="nav-icon">🎬</span> Watch &amp; Read Resources</span><span class="nav-time" id="navtime-c2-apply"></span></a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title"><span>3 · Agentic Loop</span><span class="group-time" id="group-c3-time"></span></div>
+    <a class="nav-item" onclick="goTo(&#39;c3-def&#39;)"><span class="nav-label"><span class="nav-icon">📘</span> stop_reason &amp; Tool Use</span><span class="nav-time" id="navtime-c3-def"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;c3-cert&#39;)"><span class="nav-label"><span class="nav-icon">🎯</span> Errors &amp; Anti-Patterns</span><span class="nav-time" id="navtime-c3-cert"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;c3-apply&#39;)"><span class="nav-label"><span class="nav-icon">🎬</span> Watch &amp; Read Resources</span><span class="nav-time" id="navtime-c3-apply"></span></a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title"><span>4 · Frameworks</span><span class="group-time" id="group-c4-time"></span></div>
+    <a class="nav-item" onclick="goTo(&#39;c4-def&#39;)"><span class="nav-label"><span class="nav-icon">📘</span> LangGraph · Strands · Pydantic</span><span class="nav-time" id="navtime-c4-def"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;c4-cert&#39;)"><span class="nav-label"><span class="nav-icon">🎯</span> Matching the Constraint</span><span class="nav-time" id="navtime-c4-cert"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;c4-apply&#39;)"><span class="nav-label"><span class="nav-icon">🎬</span> Watch &amp; Read Resources</span><span class="nav-time" id="navtime-c4-apply"></span></a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title"><span>5 · Multi-Agent</span><span class="group-time" id="group-c5-time"></span></div>
+    <a class="nav-item" onclick="goTo(&#39;c5-def&#39;)"><span class="nav-label"><span class="nav-icon">📘</span> Orchestrator &amp; Context</span><span class="nav-time" id="navtime-c5-def"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;c5-cert&#39;)"><span class="nav-label"><span class="nav-icon">🎯</span> When NOT to Multi-Agent</span><span class="nav-time" id="navtime-c5-cert"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;c5-apply&#39;)"><span class="nav-label"><span class="nav-icon">🎬</span> Watch &amp; Read Resources</span><span class="nav-time" id="navtime-c5-apply"></span></a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title"><span>Assessment</span><span class="group-time" id="group-assess-time"></span></div>
+    <a class="nav-item" onclick="goTo(&#39;assess&#39;)"><span class="nav-label"><span class="nav-icon">📝</span> Reading Check (6 Qs)</span><span class="nav-time" id="navtime-assess"></span></a>
+    <a class="nav-item" onclick="goTo(&#39;results&#39;)"><span class="nav-label"><span class="nav-icon">📊</span> Results &amp; Answer Key</span><span class="nav-time" id="navtime-results"></span></a>
+  </div>
+</nav>
+<div class="sb-footer">
+  <div class="sb-progress"><div class="sb-progress-fill" id="progressBar" style="width: 0%;"></div></div>
+  <div class="sb-progress-label"><span id="progressText">0%</span><span id="timeDisplay">10:57</span></div>
+</div>
+
+</aside>
+
+<main class="content" id="mainContent">
+<!-- ======== OVERVIEW ======== -->
+<div class="section active" id="sec-overview">
+<div class="card hero-card">
+<div class="hero-weight">Domain 1 · 14.7% of Exam · ~9 Questions</div><div class="hero-weight es-inline">Dominio 1 · 14,7% del Examen · ~9 Preguntas</div>
+<div class="hero-type">📖 Deep Reading Companion · Authenticated Sources</div><div class="hero-type es-inline">📖 Guía de Lectura Profunda · Fuentes Autenticadas</div>
+<h2>Agents &amp; Workflows</h2><h2 class="es-inline">Agentes y Flujos de Trabajo</h2>
+<p class="subtitle">The definitive reading guide — every concept sourced only from official Anthropic docs, engineering blogs, and open-source repos</p><p class="subtitle es-inline">La guía de lectura definitiva — cada concepto extraído únicamente de la documentación oficial de Anthropic, sus blogs de ingeniería y repositorios de código abierto</p>
+<div class="outcomes-grid">
+<div class="outcome-item"><strong>Concept 1 — Workflow vs Agent</strong> — The core architectural line, the five workflow patterns, and choosing the simplest reliable design</div><div class="outcome-item es-inline"><strong>Concepto 1 — Flujo de Trabajo vs Agente</strong> — La distinción arquitectónica central, los cinco patrones de flujo de trabajo y cómo elegir el diseño fiable más sencillo</div>
+<div class="outcome-item"><strong>Concept 2 — Agent SDK</strong> — Building agents with the Claude Agent SDK, the agent loop, hooks and guardrails, SDK vs custom loop</div><div class="outcome-item es-inline"><strong>Concepto 2 — SDK de Agentes</strong> — Construcción de agentes con el Claude Agent SDK, el bucle del agente, hooks y guardarrailes, SDK vs bucle personalizado</div>
+<div class="outcome-item"><strong>Concept 3 — Agentic Loop</strong> — <code>stop_reason</code> as the only reliable signal, the tool round-trip, <code>is_error</code>, and error recovery</div><div class="outcome-item es-inline"><strong>Concepto 3 — Bucle Agéntico</strong> — <code>stop_reason</code> como única señal fiable, el ciclo de herramientas, <code>is_error</code> y la recuperación ante errores</div>
+<div class="outcome-item"><strong>Concept 4 — Frameworks</strong> — LangGraph, Strands and PydanticAI, and matching each to the right constraint</div><div class="outcome-item es-inline"><strong>Concepto 4 — Frameworks</strong> — LangGraph, Strands y PydanticAI, y cómo emparejar cada uno con la restricción adecuada</div>
+<div class="outcome-item"><strong>Concept 5 — Multi-Agent</strong> — Orchestrator-workers, context isolation, and when NOT to go multi-agent</div><div class="outcome-item es-inline"><strong>Concepto 5 — Multiagente</strong> — Orquestador-trabajadores, aislamiento de contexto y cuándo NO pasar a multiagente</div>
+</div>
+</div>
+<div class="card card-sm">
+<h3>How to Use This Reading Module</h3><h3 class="es-inline">Cómo Usar Este Módulo de Lectura</h3>
+<p>Each concept mixes <strong>concept reading</strong>, <strong>production scenarios</strong>, <strong>myth busters</strong>, and a <strong>Watch &amp; Read</strong> page linking the four authenticated resources for that topic. The Developer's Notebook callouts are the margin notes you'd write after your first read-through.</p><p class="es-inline">Cada concepto combina <strong>lectura conceptual</strong>, <strong>escenarios de producción</strong>, <strong>desmontaje de mitos</strong> y una página de <strong>Ver y Leer</strong> que enlaza los cuatro recursos autenticados de ese tema. Los recuadros del Cuaderno del Desarrollador son las notas al margen que escribirías tras tu primera lectura.</p>
+<p>Every source is <strong>publicly accessible with no sign-in</strong>: official Anthropic documentation, official engineering/Claude blogs, official open-source repositories (MIT / Apache-2.0), and reputable framework docs. Videos are the only link-outs (YouTube).</p><p class="es-inline">Todas las fuentes son <strong>públicamente accesibles y sin necesidad de iniciar sesión</strong>: documentación oficial de Anthropic, blogs oficiales de ingeniería/Claude, repositorios oficiales de código abierto (MIT / Apache-2.0) y documentación de frameworks reputados. Los vídeos son los únicos enlaces externos (YouTube).</p>
+<p>The assessment contains 6 scenario-based questions at CCDV-F difficulty. You need 70% (4/6) to pass. <strong>Estimated reading time:</strong> 45–60 minutes.</p><p class="es-inline">La evaluación contiene 6 preguntas basadas en escenarios con la dificultad del CCDV-F. Necesitas un 70% (4/6) para aprobar. <strong>Tiempo estimado de lectura:</strong> 45–60 minutos.</p>
+</div>
+<div class="card card-sm">
+<h3>Five Concepts Covered</h3><h3 class="es-inline">Cinco Conceptos Cubiertos</h3>
+<table class="info-table">
+<tbody><tr><th>Concept</th><th>Topic</th><th>Exam Heat</th></tr>
+<tr><td>1</td><td>Workflow vs Agent — Foundations</td><td>🔥🔥🔥 Very High</td></tr>
+<tr><td>2</td><td>Agent SDK &amp; Construction</td><td>🔥🔥 High</td></tr>
+<tr><td>3</td><td>Agentic Loop, Tool Use &amp; Error Handling</td><td>🔥🔥🔥 Very High</td></tr>
+<tr><td>4</td><td>Frameworks — LangGraph / Strands / PydanticAI</td><td>🔥🔥 High</td></tr>
+<tr><td>5</td><td>Multi-Agent &amp; Context Isolation</td><td>🔥🔥 High</td></tr>
+</tbody></table>
+</div>
+<div style="text-align:right;margin-top:16px;"><button class="btn btn-primary" onclick="goTo('c1-def')">Begin Reading: Workflow vs Agent →</button></div><div class="es-inline"><button class="btn btn-primary" onclick="goTo('c1-def')">Comenzar Lectura: Flujo de Trabajo vs Agente →</button></div>
+</div>
+<!-- ======== CONCEPT 1 ======== -->
+<div class="section" id="sec-c1-def">
+<span class="tag tag-read">Deep Reading</span>
+<h2 class="sec-title">The Core Distinction — Workflow vs Agent</h2><h2 class="sec-title es-inline">La Distinción Central — Flujo de Trabajo vs Agente</h2>
+<p class="subtitle">Concept 1 — The single most-tested architectural decision in Domain 1</p><p class="subtitle es-inline">Concepto 1 — La decisión arquitectónica más evaluada del Dominio 1</p>
+<div class="exam-radar"><span>Exam Frequency:</span><div class="radar-dots"><span class="radar-dot hot"></span><span class="radar-dot hot"></span><span class="radar-dot hot"></span><span class="radar-dot"></span><span class="radar-dot"></span></div> Very High</div>
+<div class="def-block">
+<div class="def-term">Workflows vs Agents</div>
+  Anthropic draws one architectural line and builds everything on it. <strong>Workflows</strong> are systems where LLMs and tools are orchestrated through <em>predefined code paths</em>. <strong>Agents</strong> are systems where the LLM <em>dynamically directs its own process and tool usage</em>, maintaining control over how it accomplishes the task.
+</div><div class="def-block es-inline">
+<div class="def-term">Flujos de Trabajo vs Agentes</div>
+  Anthropic traza una única línea arquitectónica y construye todo sobre ella. Los <strong>flujos de trabajo</strong> son sistemas donde los LLM y las herramientas se orquestan mediante <em>rutas de código predefinidas</em>. Los <strong>agentes</strong> son sistemas donde el LLM <em>dirige dinámicamente su propio proceso y el uso de herramientas</em>, manteniendo el control sobre cómo lleva a cabo la tarea.
+</div>
+<div class="card">
+<h3>When (and When Not) to Build an Agent</h3><h3 class="es-inline">Cuándo (y Cuándo No) Construir un Agente</h3>
+<p>Anthropic's guidance is explicit: find the <strong>simplest solution possible</strong> and only increase complexity when it demonstrably improves outcomes. Many use cases need just a single well-prompted LLM call with retrieval and in-context examples — not an agent.</p><p class="es-inline">La indicación de Anthropic es explícita: buscar la <strong>solución más simple posible</strong> y aumentar la complejidad solo cuando eso mejore demostrablemente los resultados. Muchos casos de uso solo necesitan una única llamada al LLM bien diseñada, con recuperación de información y ejemplos en el propio contexto — no un agente.</p>
+<div class="callout callout-key">
+<strong>Golden rule:</strong> Workflows offer predictability and consistency for well-defined tasks; agents are the better option when flexibility and model-driven decision-making are needed at scale. Agents trade latency and cost for adaptability — make that trade deliberately.
+  </div><div class="callout callout-key es-inline">
+<strong>Regla de oro:</strong> los flujos de trabajo ofrecen previsibilidad y consistencia para tareas bien definidas; los agentes son la mejor opción cuando se necesita flexibilidad y toma de decisiones impulsada por el modelo a gran escala. Los agentes cambian latencia y coste por adaptabilidad — haz ese intercambio de forma deliberada.
+  </div>
+<div class="myth-card">
+<div class="myth-side myth-wrong">
+<div class="myth-label">✗ Common Misconception</div><div class="myth-label es-inline">✗ Concepto Erróneo Común</div>
+<p>"If the task is complex, always use an agent — agents handle everything better."</p><p class="es-inline">"Si la tarea es compleja, usa siempre un agente — los agentes lo manejan todo mejor."</p>
+</div>
+<div class="myth-side myth-right">
+<div class="myth-label">✓ What the Exam Rewards</div><div class="myth-label es-inline">✓ Lo que Premia el Examen</div>
+<p>Use the <strong>simplest architecture that solves the problem</strong>. If a workflow works, don't build an agent. Agents add power but also unpredictability, variable cost, and debugging complexity.</p><p class="es-inline">Usa la <strong>arquitectura más simple que resuelva el problema</strong>. Si un flujo de trabajo funciona, no construyas un agente. Los agentes añaden potencia, pero también imprevisibilidad, coste variable y complejidad de depuración.</p>
+</div>
+</div>
+</div>
+<div class="card">
+<h3>The Five Workflow Patterns</h3><h3 class="es-inline">Los Cinco Patrones de Flujo de Trabajo</h3>
+<p>Before reaching for a full agent, Anthropic identifies five composable workflow patterns along the autonomy spectrum:</p><p class="es-inline">Antes de recurrir a un agente completo, Anthropic identifica cinco patrones de flujo de trabajo componibles a lo largo del espectro de autonomía:</p>
+<table class="info-table">
+<tbody><tr><th>Pattern</th><th>How It Works</th><th>When to Use</th></tr>
+<tr><td><strong>Prompt Chaining</strong></td><td>Fixed sequential steps; each output feeds the next, with validation gates.</td><td>Document processing, ETL-style pipelines</td></tr>
+<tr><td><strong>Routing</strong></td><td>Classify the input, then send it to a specialised handler.</td><td>Email triage, ticket classification</td></tr>
+<tr><td><strong>Parallelisation</strong></td><td>Run independent subtasks concurrently (sectioning / voting), then aggregate.</td><td>Multi-section analysis, guardrail voting</td></tr>
+<tr><td><strong>Orchestrator-Workers</strong></td><td>A lead model dynamically decomposes the task and delegates to workers.</td><td>Complex research, multi-file refactors</td></tr>
+<tr><td><strong>Evaluator-Optimizer</strong></td><td>One call generates, another evaluates and gives feedback, looping until quality is met.</td><td>Translation, iterative writing/refinement</td></tr>
+</tbody></table>
+<div class="notebook">
+<p>On frameworks, Anthropic notes the Claude Agent SDK, Strands (AWS) and GUI builders help you start fast — but warns they add abstraction layers that can obscure prompts and complicate debugging. Learn the primitives first; adopt a framework second.</p><p class="es-inline">Sobre los frameworks, Anthropic señala que el Claude Agent SDK, Strands (AWS) y los constructores con interfaz gráfica ayudan a empezar rápido — pero advierte que añaden capas de abstracción que pueden ocultar los prompts y complicar la depuración. Aprende primero las primitivas; adopta un framework después.</p>
+</div>
+</div>
+<div class="source">
+<a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">anthropic.com/engineering — Building Effective Agents</a>
+<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" target="_blank">platform.claude.com — Tool Use Overview</a>
+</div>
+<div class="nav-btn-row"><span></span><button class="btn btn-primary" onclick="goTo('c1-cert')">Choosing the Pattern →</button></div>
+</div>
+<div class="section" id="sec-c1-cert">
+<span class="tag tag-exam">Certification Focus</span>
+<h2 class="sec-title">Choosing the Pattern</h2><h2 class="sec-title es-inline">Eligiendo el Patrón</h2>
+<p class="subtitle">The decision criteria the exam tests — pick the minimum viable architecture</p><p class="subtitle es-inline">Los criterios de decisión que evalúa el examen — elige la arquitectura mínima viable</p>
+<div class="card">
+<h3>Decision Criteria: Workflow or Agent?</h3><h3 class="es-inline">Criterios de Decisión: ¿Flujo de Trabajo o Agente?</h3>
+<table class="info-table">
+<tbody><tr><th>Criterion</th><th>→ Workflow</th><th>→ Agent</th></tr>
+<tr><td><strong>Path predictability</strong></td><td>Steps known at design time</td><td>Steps depend on intermediate results</td></tr>
+<tr><td><strong>Decision authority</strong></td><td>Your code decides the next step</td><td>Claude decides the next step</td></tr>
+<tr><td><strong>Auditability</strong></td><td>Fully traceable — code controls branches</td><td>Harder — Claude's reasoning drives the path</td></tr>
+<tr><td><strong>Cost predictability</strong></td><td>Predictable token usage</td><td>Variable — 3 or 30 tool calls</td></tr>
+<tr><td><strong>Complexity</strong></td><td>Fewer than ~5 well-defined steps</td><td>Open-ended, steps unpredetermined</td></tr>
+</tbody></table>
+<div class="callout callout-exam">
+<strong>Exam Language Cue:</strong> "the same steps every time" or "predetermined path" → workflow. "depends on what Claude discovers" or "cannot be determined in advance" → agent.
+  </div><div class="callout callout-exam es-inline">
+<strong>Pista de lenguaje del examen:</strong> "los mismos pasos cada vez" o "ruta predeterminada" → flujo de trabajo. "depende de lo que descubra Claude" o "no se puede determinar de antemano" → agente.
+  </div>
+</div>
+<div class="card">
+<h3>The Reference Implementation</h3><h3 class="es-inline">La Implementación de Referencia</h3>
+<div class="scenario-box">
+<p>You want to <em>see</em> each workflow pattern in minimal code before deciding. Where do you look?</p><p class="es-inline">Quieres <em>ver</em> cada patrón de flujo de trabajo en código mínimo antes de decidir. ¿Dónde miras?</p>
+</div>
+<p>The official <strong>Building Effective Agents Cookbook</strong> (in <code>anthropics/claude-cookbooks</code>) provides runnable, framework-free implementations for each pattern:</p><p class="es-inline">El <strong>Building Effective Agents Cookbook</strong> oficial (en <code>anthropics/claude-cookbooks</code>) ofrece implementaciones ejecutables y sin framework para cada patrón:</p>
+<div class="accordion" onclick="toggleAcc(this)">
+<div class="acc-header">patterns/agents/ — folder contents <span class="acc-icon">▶</span></div><div class="acc-header es-inline">patterns/agents/ — contenido de la carpeta <span class="acc-icon">▶</span></div>
+<div class="acc-body">
+<pre class="code"><span class="cm"># patterns/agents/</span>
+README.md                        <span class="cm"># overview</span>
+basic_workflows.ipynb            <span class="cm"># chaining · routing · parallelisation</span>
+evaluator_optimizer.ipynb        <span class="cm"># generate → evaluate → refine</span>
+orchestrator_workers.ipynb       <span class="cm"># dynamic delegation</span>
+async_multi_agent_orchestration.ipynb</pre>
+<p>Read <code>basic_workflows.ipynb</code> first to see how little code each workflow needs, then compare with <code>orchestrator_workers.ipynb</code> to feel the jump to agentic delegation.</p><p class="es-inline">Lee primero <code>basic_workflows.ipynb</code> para ver cuán poco código necesita cada flujo de trabajo, y luego compáralo con <code>orchestrator_workers.ipynb</code> para notar el salto hacia la delegación agéntica.</p>
+</div>
+</div>
+<div class="notebook">
+<p>The exam rewards recognising that a framework or an agent is often <em>more</em> than the task needs. When a scenario describes fully predictable steps, the correct answer is a workflow pattern — not "build an autonomous agent."</p><p class="es-inline">El examen premia reconocer que un framework o un agente suele ser <em>más</em> de lo que la tarea necesita. Cuando un escenario describe pasos completamente predecibles, la respuesta correcta es un patrón de flujo de trabajo — no "construir un agente autónomo".</p>
+</div>
+</div>
+<div class="source">
+<a href="https://github.com/anthropics/claude-cookbooks/tree/main/patterns/agents" target="_blank">github.com/anthropics/claude-cookbooks — patterns/agents (MIT)</a>
+</div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo('c1-def')">← Core Distinction</button><button class="btn btn-primary" onclick="goTo('c1-apply')">Watch &amp; Read Resources →</button></div>
+</div>
+<div class="section" id="sec-c1-apply">
+<span class="tag tag-watch">Watch &amp; Read</span>
+<h2 class="sec-title">Concept 1 — Learning Resources</h2><h2 class="sec-title es-inline">Concepto 1 — Recursos de Aprendizaje</h2>
+<p class="subtitle">Four authenticated resources · docs &amp; blogs &amp; repos readable, video links out · no sign-in</p><p class="subtitle es-inline">Cuatro recursos autenticados · docs, blogs y repos legibles, vídeos con enlace externo · sin inicio de sesión</p>
+<div class="card">
+<h3>🎬 Recommended Video</h3><h3 class="es-inline">🎬 Vídeo Recomendado</h3>
+<div class="video-grid">
+<a class="video-card" href="https://www.youtube.com/watch?v=D7_ipDqhtwk" target="_blank">
+<div class="video-thumb"><div class="play-icon">▶</div><span class="duration">15 min</span></div>
+<div class="video-info"><h5>How We Build Effective Agents — Barry Zhang</h5><p class="video-meta">YouTube · AI Engineer Summit 2025 · featuring Anthropic</p></div>
+</a>
+</div><div class="video-grid es-inline">
+<a class="video-card" href="https://www.youtube.com/watch?v=D7_ipDqhtwk" target="_blank">
+<div class="video-thumb"><div class="play-icon">▶</div><span class="duration">15 min</span></div>
+<div class="video-info"><h5>How We Build Effective Agents — Barry Zhang</h5><p class="video-meta">YouTube · AI Engineer Summit 2025 · con Anthropic</p></div>
+</a>
+</div>
+</div>
+<div class="card">
+<h3>📖 Essential Reading</h3><h3 class="es-inline">📖 Lectura Esencial</h3>
+<div class="reading-links">
+<a class="reading-link" href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">
+<span class="rl-icon">📄</span><div><span class="rl-title">Building Effective Agents</span><span class="rl-desc">Anthropic Engineering · Workflows vs agents, five patterns, "start simple"</span></div>
+</a>
+<a class="reading-link" href="https://github.com/anthropics/claude-cookbooks/tree/main/patterns/agents" target="_blank">
+<span class="rl-icon">💻</span><div><span class="rl-title">Building Effective Agents Cookbook <span class="lic-pill">MIT</span></span><span class="rl-desc">GitHub · anthropics/claude-cookbooks · runnable pattern notebooks</span></div>
+</a>
+<a class="reading-link" href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">Tool Use with Claude</span><span class="rl-desc">Claude Platform Docs · the "augmented LLM" building block</span></div>
+</a>
+<a class="reading-link" href="https://www.youtube.com/watch?v=D7_ipDqhtwk" target="_blank">
+<span class="rl-icon">▶️</span><div><span class="rl-title">Barry Zhang — Effective Agents (video)</span><span class="rl-desc">YouTube · three rules for building agents</span></div>
+</a>
+</div><div class="reading-links es-inline">
+<a class="reading-link" href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">
+<span class="rl-icon">📄</span><div><span class="rl-title">Building Effective Agents</span><span class="rl-desc">Anthropic Engineering · flujos de trabajo vs agentes, cinco patrones, "empieza simple"</span></div>
+</a>
+<a class="reading-link" href="https://github.com/anthropics/claude-cookbooks/tree/main/patterns/agents" target="_blank">
+<span class="rl-icon">💻</span><div><span class="rl-title">Building Effective Agents Cookbook <span class="lic-pill">MIT</span></span><span class="rl-desc">GitHub · anthropics/claude-cookbooks · notebooks de patrones ejecutables</span></div>
+</a>
+<a class="reading-link" href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">Tool Use with Claude</span><span class="rl-desc">Documentación de Claude Platform · el bloque constructivo del "LLM aumentado"</span></div>
+</a>
+<a class="reading-link" href="https://www.youtube.com/watch?v=D7_ipDqhtwk" target="_blank">
+<span class="rl-icon">▶️</span><div><span class="rl-title">Barry Zhang — Effective Agents (vídeo)</span><span class="rl-desc">YouTube · tres reglas para construir agentes</span></div>
+</a>
+</div>
+</div>
+<div class="card card-sm">
+<h3>✅ Reading Checkpoint</h3><h3 class="es-inline">✅ Punto de Control de Lectura</h3>
+<ul class="deep">
+<li>State the one-line difference between a workflow and an agent.</li><li class="es-inline">Enuncia la diferencia en una línea entre un flujo de trabajo y un agente.</li>
+<li>Name all five workflow patterns and one use case each.</li><li class="es-inline">Nombra los cinco patrones de flujo de trabajo y un caso de uso para cada uno.</li>
+<li>Why does Anthropic advise "start simple"?</li><li class="es-inline">¿Por qué recomienda Anthropic "empezar simple"?</li>
+<li>When does the added cost/latency of an agent become worth it?</li><li class="es-inline">¿Cuándo compensa el coste y la latencia adicionales de un agente?</li>
+</ul>
+</div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo('c1-cert')">← Choosing the Pattern</button><button class="btn btn-primary" onclick="goTo('c2-def')">Next: Agent SDK →</button></div>
+</div>
+<!-- ======== CONCEPT 2 ======== -->
+<div class="section" id="sec-c2-def">
+<span class="tag tag-read">Deep Reading</span>
+<h2 class="sec-title">Agent SDK &amp; Construction</h2><h2 class="sec-title es-inline">SDK de Agentes y Construcción</h2>
+<p class="subtitle">Concept 2 — Building production agents with the Claude Agent SDK</p><p class="subtitle es-inline">Concepto 2 — Construcción de agentes de producción con el Claude Agent SDK</p>
+<div class="exam-radar"><span>Exam Frequency:</span><div class="radar-dots"><span class="radar-dot hot"></span><span class="radar-dot hot"></span><span class="radar-dot"></span><span class="radar-dot"></span><span class="radar-dot"></span></div> High</div>
+<div class="def-block">
+<div class="def-term">Claude Agent SDK</div>
+  The SDK gives you the same tools, agent loop and context management that power Claude Code — programmable in Python and TypeScript. It handles the loop (call the model, run tools, feed results back), built-in tools for reading files / running commands / editing code, and permissions via an <code>allowed_tools</code> allow-list.
+</div><div class="def-block es-inline">
+<div class="def-term">Claude Agent SDK</div>
+  El SDK te da las mismas herramientas, bucle de agente y gestión de contexto que impulsan a Claude Code — programable en Python y TypeScript. Gestiona el bucle (llamar al modelo, ejecutar herramientas, devolver resultados), herramientas integradas para leer archivos / ejecutar comandos / editar código, y permisos mediante una lista de permitidos <code>allowed_tools</code>.
+</div>
+<div class="card">
+<h3>The Minimal Agent</h3><h3 class="es-inline">El Agente Mínimo</h3>
+<pre class="code"><span class="kw">import</span> asyncio
+<span class="kw">from</span> claude_agent_sdk <span class="kw">import</span> query, ClaudeAgentOptions
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async for</span> message <span class="kw">in</span> query(
+        prompt=<span class="str">"Find and fix the bug in auth.py"</span>,
+        options=ClaudeAgentOptions(allowed_tools=[<span class="str">"Read"</span>,<span class="str">"Edit"</span>,<span class="str">"Bash"</span>]),
+    ):
+        <span class="fn">print</span>(message)
+asyncio.run(main())</pre>
+<div class="callout callout-key">
+<strong>Auth flexibility:</strong> the SDK works with the Claude API directly or via Amazon Bedrock, Google Vertex and Microsoft Foundry — the "managed vs self-hosted deployment" angle the exam likes.
+  </div><div class="callout callout-key es-inline">
+<strong>Flexibilidad de autenticación:</strong> el SDK funciona directamente con la API de Claude o a través de Amazon Bedrock, Google Vertex y Microsoft Foundry — el enfoque de "despliegue gestionado vs autoalojado" que le gusta al examen.
+  </div>
+</div>
+<div class="card">
+<h3>The Design Philosophy — "Give Your Agent a Computer"</h3><h3 class="es-inline">La Filosofía de Diseño — "Dale a tu Agente un Ordenador"</h3>
+<p>Rather than hand-wiring every tool, the SDK gives Claude a general-purpose environment (file access, shell, code editing) and lets it operate the way a developer would. The loop it runs for you:</p><p class="es-inline">En lugar de cablear manualmente cada herramienta, el SDK le da a Claude un entorno de propósito general (acceso a archivos, shell, edición de código) y le permite operar como lo haría un desarrollador. El bucle que ejecuta por ti:</p>
+<ul class="deep">
+<li><strong>Gather context</strong> — pull in files, search results and prior state</li><li class="es-inline"><strong>Reunir contexto</strong> — incorporar archivos, resultados de búsqueda y estado previo</li>
+<li><strong>Take action</strong> — call tools / run commands</li><li class="es-inline"><strong>Actuar</strong> — llamar a herramientas / ejecutar comandos</li>
+<li><strong>Verify work</strong> — check results, self-correct</li><li class="es-inline"><strong>Verificar el trabajo</strong> — comprobar resultados, autocorregirse</li>
+<li><strong>Repeat</strong> until the task is complete</li><li class="es-inline"><strong>Repetir</strong> hasta que la tarea esté completa</li>
+</ul>
+<div class="notebook">
+<p>Hooks and guardrails let you enforce hard rules (things that MUST happen every time) around a probabilistic model. This "hook vs system-prompt" distinction — deterministic enforcement vs soft guidance — is a recurring exam theme.</p><p class="es-inline">Los hooks y guardarrailes te permiten imponer reglas estrictas (cosas que DEBEN ocurrir siempre) alrededor de un modelo probabilístico. Esta distinción "hook vs prompt del sistema" — aplicación determinista frente a orientación blanda — es un tema recurrente en el examen.</p>
+</div>
+</div>
+<div class="source">
+<a href="https://code.claude.com/docs/en/agent-sdk/overview" target="_blank">code.claude.com — Agent SDK Overview</a>
+<a href="https://claude.com/blog/building-agents-with-the-claude-agent-sdk" target="_blank">claude.com/blog — Building Agents with the SDK</a>
+</div>
+<div class="nav-btn-row"><span></span><button class="btn btn-primary" onclick="goTo('c2-cert')">SDK vs Custom Loop →</button></div>
+</div>
+<div class="section" id="sec-c2-cert">
+<span class="tag tag-exam">Certification Focus</span>
+<h2 class="sec-title">SDK vs Custom Loop</h2><h2 class="sec-title es-inline">SDK vs Bucle Personalizado</h2>
+<p class="subtitle">The trade-off the exam tests — and where the official SDK repo helps</p><p class="subtitle es-inline">La compensación que evalúa el examen — y dónde ayuda el repositorio oficial del SDK</p>
+<div class="card">
+<h3>When to Use the SDK vs Hand-Writing the Loop</h3><h3 class="es-inline">Cuándo Usar el SDK frente a Escribir el Bucle a Mano</h3>
+<div class="myth-card">
+<div class="myth-side myth-wrong">
+<div class="myth-label">✗ Over-Engineering</div><div class="myth-label es-inline">✗ Sobreingeniería</div>
+<p>Hand-writing the entire agentic loop, session store, and tool plumbing for a standard file/command/edit agent.</p><p class="es-inline">Escribir a mano todo el bucle agéntico, el almacén de sesiones y la plomería de herramientas para un agente estándar de archivos/comandos/edición.</p>
+</div>
+<div class="myth-side myth-right">
+<div class="myth-label">✓ Use the SDK</div><div class="myth-label es-inline">✓ Usa el SDK</div>
+<p>The SDK already implements the loop, built-in tools, context management and permissions. Reach for a custom loop only when you need control the SDK doesn't expose.</p><p class="es-inline">El SDK ya implementa el bucle, herramientas integradas, gestión de contexto y permisos. Recurre a un bucle personalizado solo cuando necesites un control que el SDK no expone.</p>
+</div>
+</div>
+<p>The official <code>claude-agent-sdk-python</code> repo bundles the Claude Code CLI automatically and ships runnable examples (email assistant, research agent) plus reference session-store adapters (S3, Redis, Postgres).</p><p class="es-inline">El repositorio oficial <code>claude-agent-sdk-python</code> incluye automáticamente la CLI de Claude Code y aporta ejemplos ejecutables (asistente de correo, agente de investigación) además de adaptadores de referencia para el almacén de sesiones (S3, Redis, Postgres).</p>
+<pre class="code"><span class="cm"># pip install claude-agent-sdk   (Python 3.10+)</span>
+<span class="kw">import</span> anyio
+<span class="kw">from</span> claude_agent_sdk <span class="kw">import</span> query
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async for</span> message <span class="kw">in</span> query(prompt=<span class="str">"What is 2 + 2?"</span>):
+        <span class="fn">print</span>(message)
+anyio.run(main)</pre>
+<div class="callout callout-exam">
+<strong>Exam link:</strong> reading these examples shows the SDK doing the loop for you — the contrast with a hand-written <code>while</code> loop is exactly the "SDK vs custom loop" trade-off you'll be tested on.
+  </div><div class="callout callout-exam es-inline">
+<strong>Conexión con el examen:</strong> leer estos ejemplos muestra al SDK ejecutando el bucle por ti — el contraste con un bucle <code>while</code> escrito a mano es exactamente la compensación "SDK vs bucle personalizado" que se evaluará.
+  </div>
+</div>
+<div class="connect-dots">
+<strong>🔗 Connect the Dots:</strong> The loop the SDK runs is the same <code>stop_reason</code> loop covered in Concept 3. Understand it there and you understand what the SDK is doing under the hood.
+</div><div class="connect-dots es-inline">
+<strong>🔗 Conectando Ideas:</strong> el bucle que ejecuta el SDK es el mismo bucle de <code>stop_reason</code> tratado en el Concepto 3. Entiéndelo allí y entenderás lo que el SDK hace por debajo.
+</div>
+<div class="source">
+<a href="https://github.com/anthropics/claude-agent-sdk-python" target="_blank">github.com/anthropics/claude-agent-sdk-python (MIT)</a>
+</div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo('c2-def')">← SDK &amp; Construction</button><button class="btn btn-primary" onclick="goTo('c2-apply')">Watch &amp; Read Resources →</button></div>
+</div>
+<div class="section" id="sec-c2-apply">
+<span class="tag tag-watch">Watch &amp; Read</span>
+<h2 class="sec-title">Concept 2 — Learning Resources</h2><h2 class="sec-title es-inline">Concepto 2 — Recursos de Aprendizaje</h2>
+<p class="subtitle">Four authenticated resources · no sign-in</p><p class="subtitle es-inline">Cuatro recursos autenticados · sin inicio de sesión</p>
+<div class="card">
+<h3>🎬 Recommended Video</h3><h3 class="es-inline">🎬 Vídeo Recomendado</h3>
+<div class="video-grid">
+<a class="video-card" href="https://www.youtube.com/watch?v=jNpH_hOFvg4" target="_blank">
+<div class="video-thumb"><div class="play-icon">▶</div><span class="duration">31 min</span></div>
+<div class="video-info"><h5>Build &amp; Deploy Agents with the Claude Agent SDK</h5><p class="video-meta">YouTube · Matt Palmer · end-to-end build</p></div>
+</a>
+</div><div class="video-grid es-inline">
+<a class="video-card" href="https://www.youtube.com/watch?v=jNpH_hOFvg4" target="_blank">
+<div class="video-thumb"><div class="play-icon">▶</div><span class="duration">31 min</span></div>
+<div class="video-info"><h5>Build &amp; Deploy Agents with the Claude Agent SDK</h5><p class="video-meta">YouTube · Matt Palmer · construcción de extremo a extremo</p></div>
+</a>
+</div>
+</div>
+<div class="card">
+<h3>📖 Essential Reading</h3><h3 class="es-inline">📖 Lectura Esencial</h3>
+<div class="reading-links">
+<a class="reading-link" href="https://code.claude.com/docs/en/agent-sdk/overview" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">Agent SDK Overview</span><span class="rl-desc">Claude Code Docs · loop, built-in tools, provider auth</span></div>
+</a>
+<a class="reading-link" href="https://github.com/anthropics/claude-agent-sdk-python" target="_blank">
+<span class="rl-icon">💻</span><div><span class="rl-title">claude-agent-sdk-python <span class="lic-pill">MIT</span></span><span class="rl-desc">GitHub · official Python SDK + runnable examples</span></div>
+</a>
+<a class="reading-link" href="https://claude.com/blog/building-agents-with-the-claude-agent-sdk" target="_blank">
+<span class="rl-icon">📄</span><div><span class="rl-title">Building Agents with the Claude Agent SDK</span><span class="rl-desc">Anthropic (Claude blog) · design philosophy, hooks</span></div>
+</a>
+<a class="reading-link" href="https://www.youtube.com/watch?v=jNpH_hOFvg4" target="_blank">
+<span class="rl-icon">▶️</span><div><span class="rl-title">Build &amp; Deploy with the Agent SDK (video)</span><span class="rl-desc">YouTube · Matt Palmer</span></div>
+</a>
+</div><div class="reading-links es-inline">
+<a class="reading-link" href="https://code.claude.com/docs/en/agent-sdk/overview" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">Agent SDK Overview</span><span class="rl-desc">Documentación de Claude Code · bucle, herramientas integradas, autenticación de proveedores</span></div>
+</a>
+<a class="reading-link" href="https://github.com/anthropics/claude-agent-sdk-python" target="_blank">
+<span class="rl-icon">💻</span><div><span class="rl-title">claude-agent-sdk-python <span class="lic-pill">MIT</span></span><span class="rl-desc">GitHub · SDK oficial de Python + ejemplos ejecutables</span></div>
+</a>
+<a class="reading-link" href="https://claude.com/blog/building-agents-with-the-claude-agent-sdk" target="_blank">
+<span class="rl-icon">📄</span><div><span class="rl-title">Building Agents with the Claude Agent SDK</span><span class="rl-desc">Anthropic (blog de Claude) · filosofía de diseño, hooks</span></div>
+</a>
+<a class="reading-link" href="https://www.youtube.com/watch?v=jNpH_hOFvg4" target="_blank">
+<span class="rl-icon">▶️</span><div><span class="rl-title">Build &amp; Deploy with the Agent SDK (vídeo)</span><span class="rl-desc">YouTube · Matt Palmer</span></div>
+</a>
+</div>
+</div>
+<div class="card card-sm">
+<h3>✅ Reading Checkpoint</h3><h3 class="es-inline">✅ Punto de Control de Lectura</h3>
+<ul class="deep">
+<li>What four things does the Agent SDK handle for you?</li><li class="es-inline">¿Qué cuatro cosas gestiona por ti el Agent SDK?</li>
+<li>What does the <code>allowed_tools</code> allow-list control?</li><li class="es-inline">¿Qué controla la lista de permitidos <code>allowed_tools</code>?</li>
+<li>Which providers can the SDK authenticate against?</li><li class="es-inline">¿Contra qué proveedores puede autenticarse el SDK?</li>
+<li>When would you write a custom loop instead of using the SDK?</li><li class="es-inline">¿Cuándo escribirías un bucle personalizado en lugar de usar el SDK?</li>
+</ul>
+</div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo('c2-cert')">← SDK vs Custom Loop</button><button class="btn btn-primary" onclick="goTo('c3-def')">Next: Agentic Loop →</button></div>
+</div>
+<!-- ======== CONCEPT 3 ======== -->
+<div class="section" id="sec-c3-def">
+<span class="tag tag-read">Deep Reading</span>
+<h2 class="sec-title">Agentic Loop, Tool Use &amp; stop_reason</h2><h2 class="sec-title es-inline">Bucle Agéntico, Uso de Herramientas y stop_reason</h2>
+<p class="subtitle">Concept 3 — The control mechanism behind every Claude agent</p><p class="subtitle es-inline">Concepto 3 — El mecanismo de control detrás de todo agente de Claude</p>
+<div class="exam-radar"><span>Exam Frequency:</span><div class="radar-dots"><span class="radar-dot hot"></span><span class="radar-dot hot"></span><span class="radar-dot hot"></span><span class="radar-dot"></span><span class="radar-dot"></span></div> Very High</div>
+<div class="def-block">
+<div class="def-term">stop_reason — the only reliable signal</div>
+  Every Messages API response carries a <code>stop_reason</code> that tells you why Claude stopped. It is the authoritative, deterministic signal your loop uses to decide what to do next.
+</div><div class="def-block es-inline">
+<div class="def-term">stop_reason — la única señal fiable</div>
+  Cada respuesta de la API de Messages incluye un <code>stop_reason</code> que indica por qué se detuvo Claude. Es la señal autoritaria y determinista que tu bucle usa para decidir qué hacer a continuación.
+</div>
+<div class="card">
+<h3>Quick Reference</h3><h3 class="es-inline">Referencia Rápida</h3>
+<ul class="deep">
+<li><code>end_turn</code> — finished naturally → <strong>use the response / stop the loop</strong></li><li class="es-inline"><code>end_turn</code> — terminó de forma natural → <strong>usa la respuesta / detén el bucle</strong></li>
+<li><code>tool_use</code> — Claude is calling a tool → <strong>run it, return the result, continue</strong></li><li class="es-inline"><code>tool_use</code> — Claude está llamando a una herramienta → <strong>ejecútala, devuelve el resultado, continúa</strong></li>
+<li><code>max_tokens</code> — hit the token limit → raise limit or continue</li><li class="es-inline"><code>max_tokens</code> — se alcanzó el límite de tokens → aumenta el límite o continúa</li>
+<li><code>pause_turn</code> — a server-tool loop hit its iteration cap → send content back to resume</li><li class="es-inline"><code>pause_turn</code> — un bucle de herramienta del servidor alcanzó su límite de iteraciones → devuelve el contenido para reanudar</li>
+<li><code>refusal</code> — Claude declined → read <code>stop_details</code>, retry on a fallback</li><li class="es-inline"><code>refusal</code> — Claude rechazó → lee <code>stop_details</code>, reintenta con una alternativa</li>
+</ul>
+<pre class="code"><span class="kw">if</span> response.stop_reason == <span class="str">"end_turn"</span>:
+    <span class="fn">print</span>(response.content[<span class="num">0</span>].text)   <span class="cm"># done</span>
+<span class="kw">elif</span> response.stop_reason == <span class="str">"tool_use"</span>:
+    run_tools_and_continue(response)      <span class="cm"># keep looping</span></pre>
+</div>
+<div class="card">
+<h3>The Tool Round-Trip</h3><h3 class="es-inline">El Ciclo de Ida y Vuelta de la Herramienta</h3>
+<p>Define a tool with an <code>input_schema</code> → Claude replies with a <code>tool_use</code> block → you execute and return a <code>tool_result</code> matched to the <code>tool_use_id</code> → Claude uses it to answer. Client tools run in <em>your</em> app; server tools (web_search, code_execution) run on Anthropic's infrastructure.</p><p class="es-inline">Define una herramienta con un <code>input_schema</code> → Claude responde con un bloque <code>tool_use</code> → tú lo ejecutas y devuelves un <code>tool_result</code> emparejado con el <code>tool_use_id</code> → Claude lo usa para responder. Las herramientas de cliente se ejecutan en <em>tu</em> aplicación; las herramientas de servidor (web_search, code_execution) se ejecutan en la infraestructura de Anthropic.</p>
+<pre class="code">tools = [{
+  <span class="str">"name"</span>: <span class="str">"get_weather"</span>,
+  <span class="str">"description"</span>: <span class="str">"Get current weather for a location."</span>,
+  <span class="str">"input_schema"</span>: {<span class="str">"type"</span>:<span class="str">"object"</span>,
+     <span class="str">"properties"</span>:{<span class="str">"location"</span>:{<span class="str">"type"</span>:<span class="str">"string"</span>}},
+     <span class="str">"required"</span>:[<span class="str">"location"</span>]}}]</pre>
+</div>
+<div class="source">
+<a href="https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons" target="_blank">platform.claude.com — Stop Reasons &amp; Fallback</a>
+<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" target="_blank">platform.claude.com — Tool Use</a>
+</div>
+<div class="nav-btn-row"><span></span><button class="btn btn-primary" onclick="goTo('c3-cert')">Errors &amp; Anti-Patterns →</button></div>
+</div>
+<div class="section" id="sec-c3-cert">
+<span class="tag tag-exam">Certification Focus</span>
+<h2 class="sec-title">Errors &amp; Anti-Patterns</h2><h2 class="sec-title es-inline">Errores y Antipatrones</h2>
+<p class="subtitle">is_error, graceful degradation, and the loop-control trap</p><p class="subtitle es-inline">is_error, degradación elegante y la trampa del control de bucle</p>
+<div class="card">
+<h3>Return Errors with the is_error Flag</h3><h3 class="es-inline">Devuelve Errores con el Indicador is_error</h3>
+<pre class="code"><span class="cm"># CORRECT — Claude knows the tool failed</span>
+{<span class="str">"type"</span>:<span class="str">"tool_result"</span>,
+ <span class="str">"tool_use_id"</span>:<span class="str">"toolu_123"</span>,
+ <span class="str">"content"</span>:<span class="str">"Error: timeout after 30s"</span>,
+ <span class="str">"is_error"</span>: <span class="kw">true</span>}</pre>
+<div class="callout callout-anti">
+<strong>Anti-Pattern:</strong> silently swallowing a tool error and returning an empty result. Claude assumes the tool succeeded with no data and hallucinates. Always propagate failures with <code>is_error: true</code>.
+  </div><div class="callout callout-anti es-inline">
+<strong>Antipatrón:</strong> silenciar un error de herramienta y devolver un resultado vacío. Claude asume que la herramienta tuvo éxito sin datos y alucina. Propaga siempre los fallos con <code>is_error: true</code>.
+  </div>
+</div>
+<div class="card">
+<h3>The Loop-Control Trap</h3><h3 class="es-inline">La Trampa del Control de Bucle</h3>
+<div class="scenario-box">
+<p>A support agent stops after saying "Let me look up your order." The code checks <code>response.content[0].type == "text"</code> to decide the agent is finished.</p><p class="es-inline">Un agente de soporte se detiene después de decir "Déjame consultar tu pedido". El código comprueba <code>response.content[0].type == "text"</code> para decidir que el agente ha terminado.</p>
+</div>
+<div class="myth-card">
+<div class="myth-side myth-wrong">
+<div class="myth-label">✗ Content-Type Check</div><div class="myth-label es-inline">✗ Comprobación por Tipo de Contenido</div>
+<p>Claude can return text <em>and</em> a <code>tool_use</code> block together. Checking content type terminates prematurely — the lookup never runs.</p><p class="es-inline">Claude puede devolver texto <em>y</em> un bloque <code>tool_use</code> juntos. Comprobar el tipo de contenido termina el bucle prematuramente — la consulta nunca se ejecuta.</p>
+</div>
+<div class="myth-side myth-right">
+<div class="myth-label">✓ stop_reason Check</div><div class="myth-label es-inline">✓ Comprobación de stop_reason</div>
+<p>Only <code>stop_reason == "end_turn"</code> reliably means "done." When Claude still needs a tool, <code>stop_reason</code> is <code>"tool_use"</code> regardless of any text.</p><p class="es-inline">Solo <code>stop_reason == "end_turn"</code> significa de forma fiable "terminado". Cuando Claude todavía necesita una herramienta, <code>stop_reason</code> es <code>"tool_use"</code> independientemente de cualquier texto.</p>
+</div>
+</div>
+<div class="notebook">
+<p>Graceful degradation and recovery depend on keeping the <em>right</em> context (exact IDs, amounts, prior tool errors) — not the <em>most</em> context. The <code>customer-support-agent</code> quickstart shows a concrete "degrade → escalate to human" path via its <code>redirect_to_agent</code> field.</p><p class="es-inline">La degradación elegante y la recuperación dependen de mantener el contexto <em>correcto</em> (identificadores exactos, importes, errores previos de herramientas) — no el <em>máximo</em> contexto. La guía rápida <code>customer-support-agent</code> muestra una ruta concreta de "degradar → escalar a un humano" mediante su campo <code>redirect_to_agent</code>.</p>
+</div>
+</div>
+<div class="connect-dots">
+<strong>🔗 Connect the Dots:</strong> Context engineering (curating the finite window across a long loop) directly supports error recovery — see the Effective Context Engineering blog in this concept's resources.
+</div><div class="connect-dots es-inline">
+<strong>🔗 Conectando Ideas:</strong> la ingeniería de contexto (seleccionar la ventana finita a lo largo de un bucle largo) apoya directamente la recuperación ante errores — ver el blog Effective Context Engineering en los recursos de este concepto.
+</div>
+<div class="source">
+<a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank">anthropic.com — Effective Context Engineering</a>
+<a href="https://github.com/anthropics/claude-quickstarts/tree/main/customer-support-agent" target="_blank">github.com/anthropics/claude-quickstarts — customer-support-agent (MIT)</a>
+</div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo('c3-def')">← stop_reason</button><button class="btn btn-primary" onclick="goTo('c3-apply')">Watch &amp; Read Resources →</button></div>
+</div>
+<div class="section" id="sec-c3-apply">
+<span class="tag tag-watch">Watch &amp; Read</span>
+<h2 class="sec-title">Concept 3 — Learning Resources</h2><h2 class="sec-title es-inline">Concepto 3 — Recursos de Aprendizaje</h2>
+<p class="subtitle">Four authenticated resources · no sign-in</p><p class="subtitle es-inline">Cuatro recursos autenticados · sin inicio de sesión</p>
+<div class="card">
+<h3>📖 Essential Reading &amp; Code</h3><h3 class="es-inline">📖 Lectura y Código Esenciales</h3>
+<div class="reading-links">
+<a class="reading-link" href="https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">Stop Reasons &amp; Fallback</span><span class="rl-desc">Claude Platform Docs · every stop_reason value and what to do</span></div>
+</a>
+<a class="reading-link" href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">Tool Use — full round trip &amp; is_error</span><span class="rl-desc">Claude Platform Docs · tool_result, tool_use_id, is_error</span></div>
+</a>
+<a class="reading-link" href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank">
+<span class="rl-icon">📄</span><div><span class="rl-title">Effective Context Engineering for AI Agents</span><span class="rl-desc">Anthropic Engineering · curating the window across long loops</span></div>
+</a>
+<a class="reading-link" href="https://github.com/anthropics/claude-quickstarts/tree/main/customer-support-agent" target="_blank">
+<span class="rl-icon">💻</span><div><span class="rl-title">Customer Support Agent <span class="lic-pill">MIT</span></span><span class="rl-desc">GitHub · tool loop + RAG + human escalation</span></div>
+</a>
+</div><div class="reading-links es-inline">
+<a class="reading-link" href="https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">Stop Reasons &amp; Fallback</span><span class="rl-desc">Documentación de Claude Platform · cada valor de stop_reason y qué hacer</span></div>
+</a>
+<a class="reading-link" href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">Tool Use — ciclo completo e is_error</span><span class="rl-desc">Documentación de Claude Platform · tool_result, tool_use_id, is_error</span></div>
+</a>
+<a class="reading-link" href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank">
+<span class="rl-icon">📄</span><div><span class="rl-title">Effective Context Engineering for AI Agents</span><span class="rl-desc">Anthropic Engineering · seleccionar la ventana a lo largo de bucles largos</span></div>
+</a>
+<a class="reading-link" href="https://github.com/anthropics/claude-quickstarts/tree/main/customer-support-agent" target="_blank">
+<span class="rl-icon">💻</span><div><span class="rl-title">Customer Support Agent <span class="lic-pill">MIT</span></span><span class="rl-desc">GitHub · bucle de herramientas + RAG + escalado humano</span></div>
+</a>
+</div>
+</div>
+<div class="card card-sm">
+<h3>✅ Reading Checkpoint</h3><h3 class="es-inline">✅ Punto de Control de Lectura</h3>
+<ul class="deep">
+<li>Why is <code>stop_reason</code> the only reliable termination signal?</li><li class="es-inline">¿Por qué es <code>stop_reason</code> la única señal fiable de finalización?</li>
+<li>What does <code>is_error: true</code> tell Claude, and why does it matter?</li><li class="es-inline">¿Qué le indica a Claude <code>is_error: true</code>, y por qué importa?</li>
+<li>Why must each <code>tool_result</code> match a <code>tool_use_id</code>?</li><li class="es-inline">¿Por qué cada <code>tool_result</code> debe coincidir con un <code>tool_use_id</code>?</li>
+<li>How does context engineering support error recovery?</li><li class="es-inline">¿Cómo apoya la ingeniería de contexto la recuperación ante errores?</li>
+</ul>
+</div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo('c3-cert')">← Errors &amp; Anti-Patterns</button><button class="btn btn-primary" onclick="goTo('c4-def')">Next: Frameworks →</button></div>
+</div>
+<!-- ======== CONCEPT 4 ======== -->
+<div class="section" id="sec-c4-def">
+<span class="tag tag-read">Deep Reading</span>
+<h2 class="sec-title">Frameworks — LangGraph, Strands &amp; PydanticAI</h2><h2 class="sec-title es-inline">Frameworks — LangGraph, Strands y PydanticAI</h2>
+<p class="subtitle">Concept 4 — Recognition-level knowledge of the major agent frameworks</p><p class="subtitle es-inline">Concepto 4 — Conocimiento de reconocimiento de los principales frameworks de agentes</p>
+<div class="exam-radar"><span>Exam Frequency:</span><div class="radar-dots"><span class="radar-dot hot"></span><span class="radar-dot hot"></span><span class="radar-dot"></span><span class="radar-dot"></span><span class="radar-dot"></span></div> High</div>
+<div class="card">
+<h3>🔷 LangGraph — graph-based state machines</h3><h3 class="es-inline">🔷 LangGraph — máquinas de estado basadas en grafos</h3>
+<p>A low-level orchestration framework for <strong>long-running, stateful</strong> agents, modelled as a graph of <em>State · Nodes · Edges</em>. Core benefits: durable execution (resume after failure), human-in-the-loop, short- and long-term memory, and mixing deterministic with model-driven steps in one graph.</p><p class="es-inline">Un framework de orquestación de bajo nivel para agentes <strong>de larga duración y con estado</strong>, modelado como un grafo de <em>Estado · Nodos · Aristas</em>. Beneficios principales: ejecución duradera (reanudar tras un fallo), humano-en-el-bucle, memoria a corto y largo plazo, y mezclar pasos deterministas con pasos impulsados por el modelo en un mismo grafo.</p>
+<pre class="code"><span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, MessagesState, START, END
+graph = StateGraph(MessagesState)
+graph.add_node(mock_llm)
+graph.add_edge(START, <span class="str">"mock_llm"</span>)
+graph.add_edge(<span class="str">"mock_llm"</span>, END)
+graph = graph.compile()</pre>
+</div>
+<div class="card">
+<h3>🟠 Strands — AWS-native, model-driven</h3><h3 class="es-inline">🟠 Strands — nativo de AWS, impulsado por el modelo</h3>
+<p>An open-source SDK (Python &amp; TypeScript) that builds an agent from three parts: a model, a system prompt, and a set of tools. A lightweight agent loop, a <code>@tool</code> decorator, MCP support, and built-in multi-agent patterns (Swarms, Graphs, Workflows, Agent-to-Agent). First-class AWS integration and OpenTelemetry observability; used in production by Amazon Q, Kiro and AWS Glue.</p><p class="es-inline">Un SDK de código abierto (Python y TypeScript) que construye un agente a partir de tres piezas: un modelo, un prompt del sistema y un conjunto de herramientas. Un bucle de agente ligero, un decorador <code>@tool</code>, soporte para MCP y patrones multiagente integrados (Swarms, Grafos, Flujos de Trabajo, Agente-a-Agente). Integración de primera clase con AWS y observabilidad mediante OpenTelemetry; usado en producción por Amazon Q, Kiro y AWS Glue.</p>
+</div>
+<div class="card">
+<h3>🟣 PydanticAI — type-safe agents</h3><h3 class="es-inline">🟣 PydanticAI — agentes con seguridad de tipos</h3>
+<p>"The FastAPI feeling for GenAI" — a fully type-safe, model-agnostic Python framework. Pydantic validation on every input/output moves whole classes of bugs to write-time. Ships the agent loop, structured outputs, tools, MCP and web search, plus evals and observability via Logfire.</p><p class="es-inline">"La sensación de FastAPI para la IA generativa" — un framework de Python totalmente seguro en tipos y agnóstico al modelo. La validación de Pydantic en cada entrada/salida traslada clases enteras de errores al momento de escritura. Incluye el bucle del agente, salidas estructuradas, herramientas, MCP y búsqueda web, además de evaluaciones y observabilidad mediante Logfire.</p>
+<div class="notebook">
+<p>You only need <strong>recognition-level</strong> knowledge here: what each framework is <em>for</em>, not how to build with it. The exam pairs a constraint with the right framework — memorise the mapping on the next page.</p><p class="es-inline">Aquí solo necesitas un conocimiento de <strong>nivel de reconocimiento</strong>: para qué sirve cada framework, no cómo construir con él. El examen empareja una restricción con el framework correcto — memoriza el mapeo en la siguiente página.</p>
+</div>
+</div>
+<div class="source">
+<a href="https://docs.langchain.com/oss/python/langgraph/overview" target="_blank">docs.langchain.com — LangGraph Overview</a>
+<a href="https://strandsagents.com/docs/user-guide/quickstart/overview/" target="_blank">strandsagents.com — Get Started</a>
+<a href="https://ai.pydantic.dev/" target="_blank">ai.pydantic.dev — PydanticAI</a>
+</div>
+<div class="nav-btn-row"><span></span><button class="btn btn-primary" onclick="goTo('c4-cert')">Matching the Constraint →</button></div>
+</div>
+<div class="section" id="sec-c4-cert">
+<span class="tag tag-exam">Certification Focus</span>
+<h2 class="sec-title">Matching the Constraint to the Framework</h2><h2 class="sec-title es-inline">Ajustando la Restricción al Framework</h2>
+<p class="subtitle">The exact mapping the exam tests</p><p class="subtitle es-inline">El mapeo exacto que evalúa el examen</p>
+<div class="card">
+<h3>The Decision Table</h3><h3 class="es-inline">La Tabla de Decisión</h3>
+<table class="info-table">
+<tbody><tr><th>The constraint says…</th><th>→ Choose</th><th>Why</th></tr>
+<tr><td>"conditional branching, state rollback, auditable control flow"</td><td><strong>LangGraph</strong></td><td>Graph state machine with durable execution and human-in-the-loop</td></tr>
+<tr><td>"AWS-native, managed scaling and lifecycle"</td><td><strong>Strands</strong></td><td>Model-driven SDK with first-class AWS integration &amp; observability</td></tr>
+<tr><td>"every input/output must be schema-validated"</td><td><strong>PydanticAI</strong></td><td>Type-safe by design — validation moves bugs to write-time</td></tr>
+</tbody></table>
+<div class="callout callout-exam">
+<strong>Exam cue:</strong> "7-branch approval workflow" or "resume after failure" → LangGraph. "Amazon Q / Bedrock-native" → Strands. "data-extraction pipeline where structure correctness is critical" → PydanticAI.
+  </div><div class="callout callout-exam es-inline">
+<strong>Pista del examen:</strong> "flujo de aprobación de 7 ramas" o "reanudar tras un fallo" → LangGraph. "Amazon Q / nativo de Bedrock" → Strands. "pipeline de extracción de datos donde la corrección de la estructura es crítica" → PydanticAI.
+  </div>
+<div class="myth-card">
+<div class="myth-side myth-wrong">
+<div class="myth-label">✗ Wrong Instinct</div><div class="myth-label es-inline">✗ Instinto Equivocado</div>
+<p>"Pick the most popular framework for everything."</p><p class="es-inline">"Elige el framework más popular para todo."</p>
+</div>
+<div class="myth-side myth-right">
+<div class="myth-label">✓ What the Exam Rewards</div><div class="myth-label es-inline">✓ Lo que Premia el Examen</div>
+<p>Match the framework's core strength to the scenario's dominant constraint. All three are open-source (MIT / Apache-2.0) and model-agnostic.</p><p class="es-inline">Empareja la fortaleza principal del framework con la restricción dominante del escenario. Los tres son de código abierto (MIT / Apache-2.0) y agnósticos al modelo.</p>
+</div>
+</div>
+</div>
+<div class="source">
+<a href="https://github.com/langchain-ai/langgraph" target="_blank">github.com/langchain-ai/langgraph (MIT)</a>
+</div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo('c4-def')">← The Three Frameworks</button><button class="btn btn-primary" onclick="goTo('c4-apply')">Watch &amp; Read Resources →</button></div>
+</div>
+<div class="section" id="sec-c4-apply">
+<span class="tag tag-watch">Watch &amp; Read</span>
+<h2 class="sec-title">Concept 4 — Learning Resources</h2><h2 class="sec-title es-inline">Concepto 4 — Recursos de Aprendizaje</h2>
+<p class="subtitle">Four authenticated resources · no sign-in</p><p class="subtitle es-inline">Cuatro recursos autenticados · sin inicio de sesión</p>
+<div class="card">
+<h3>🎬 Recommended Video</h3><h3 class="es-inline">🎬 Vídeo Recomendado</h3>
+<div class="video-grid">
+<a class="video-card" href="https://www.youtube.com/watch?v=jGg_1h0qzaM" target="_blank">
+<div class="video-thumb"><div class="play-icon">▶</div><span class="duration">3h 10m</span></div>
+<div class="video-info"><h5>LangGraph Complete Course for Beginners</h5><p class="video-meta">YouTube · freeCodeCamp · state, nodes, edges, cycles</p></div>
+</a>
+</div><div class="video-grid es-inline">
+<a class="video-card" href="https://www.youtube.com/watch?v=jGg_1h0qzaM" target="_blank">
+<div class="video-thumb"><div class="play-icon">▶</div><span class="duration">3h 10m</span></div>
+<div class="video-info"><h5>LangGraph Complete Course for Beginners</h5><p class="video-meta">YouTube · freeCodeCamp · estado, nodos, aristas, ciclos</p></div>
+</a>
+</div>
+</div>
+<div class="card">
+<h3>📖 Essential Reading</h3><h3 class="es-inline">📖 Lectura Esencial</h3>
+<div class="reading-links">
+<a class="reading-link" href="https://docs.langchain.com/oss/python/langgraph/overview" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">LangGraph — Overview <span class="lic-pill">MIT</span></span><span class="rl-desc">Docs by LangChain · durable, stateful graph agents</span></div>
+</a>
+<a class="reading-link" href="https://strandsagents.com/docs/user-guide/quickstart/overview/" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">Strands Agents — Get Started <span class="lic-pill">Apache-2.0</span></span><span class="rl-desc">strandsagents.com · AWS-native model-driven SDK</span></div>
+</a>
+<a class="reading-link" href="https://ai.pydantic.dev/" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">PydanticAI — Overview <span class="lic-pill">MIT</span></span><span class="rl-desc">ai.pydantic.dev · fully type-safe agent framework</span></div>
+</a>
+<a class="reading-link" href="https://www.youtube.com/watch?v=jGg_1h0qzaM" target="_blank">
+<span class="rl-icon">▶️</span><div><span class="rl-title">LangGraph Complete Course (video)</span><span class="rl-desc">YouTube · freeCodeCamp</span></div>
+</a>
+</div><div class="reading-links es-inline">
+<a class="reading-link" href="https://docs.langchain.com/oss/python/langgraph/overview" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">LangGraph — Overview <span class="lic-pill">MIT</span></span><span class="rl-desc">Documentación de LangChain · agentes en grafo, duraderos y con estado</span></div>
+</a>
+<a class="reading-link" href="https://strandsagents.com/docs/user-guide/quickstart/overview/" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">Strands Agents — Get Started <span class="lic-pill">Apache-2.0</span></span><span class="rl-desc">strandsagents.com · SDK nativo de AWS impulsado por el modelo</span></div>
+</a>
+<a class="reading-link" href="https://ai.pydantic.dev/" target="_blank">
+<span class="rl-icon">📘</span><div><span class="rl-title">PydanticAI — Overview <span class="lic-pill">MIT</span></span><span class="rl-desc">ai.pydantic.dev · framework de agentes totalmente seguro en tipos</span></div>
+</a>
+<a class="reading-link" href="https://www.youtube.com/watch?v=jGg_1h0qzaM" target="_blank">
+<span class="rl-icon">▶️</span><div><span class="rl-title">LangGraph Complete Course (vídeo)</span><span class="rl-desc">YouTube · freeCodeCamp</span></div>
+</a>
+</div>
+</div>
+<div class="card card-sm">
+<h3>✅ Reading Checkpoint</h3><h3 class="es-inline">✅ Punto de Control de Lectura</h3>
+<ul class="deep">
+<li>Which framework maps to "graph state machine with rollback"?</li><li class="es-inline">¿Qué framework corresponde a "máquina de estado en grafo con retroceso"?</li>
+<li>Which framework is the AWS-native choice, and why?</li><li class="es-inline">¿Qué framework es la opción nativa de AWS, y por qué?</li>
+<li>When is PydanticAI the right pick?</li><li class="es-inline">¿Cuándo es PydanticAI la elección correcta?</li>
+<li>What do all three frameworks have in common (licensing, model support)?</li><li class="es-inline">¿Qué tienen en común los tres frameworks (licencia, soporte de modelos)?</li>
+</ul>
+</div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo('c4-cert')">← Matching the Constraint</button><button class="btn btn-primary" onclick="goTo('c5-def')">Next: Multi-Agent →</button></div>
+</div>
+<!-- ======== CONCEPT 5 ======== -->
+<div class="section" id="sec-c5-def">
+<span class="tag tag-read">Deep Reading</span>
+<h2 class="sec-title">Multi-Agent &amp; Context Isolation</h2><h2 class="sec-title es-inline">Multiagente y Aislamiento de Contexto</h2>
+<p class="subtitle">Concept 5 — Orchestrator-workers and the context-isolation rule</p><p class="subtitle es-inline">Concepto 5 — Orquestador-trabajadores y la regla de aislamiento de contexto</p>
+<div class="exam-radar"><span>Exam Frequency:</span><div class="radar-dots"><span class="radar-dot hot"></span><span class="radar-dot hot"></span><span class="radar-dot"></span><span class="radar-dot"></span><span class="radar-dot"></span></div> High</div>
+<div class="def-block">
+<div class="def-term">Multi-Agent System</div>
+  Multiple LLM instances running with <strong>separate conversation contexts</strong>, coordinated through code. The common pattern is <strong>orchestrator-subagent</strong>: a lead agent spawns and manages specialised subagents for specific subtasks.
+</div><div class="def-block es-inline">
+<div class="def-term">Sistema Multiagente</div>
+  Varias instancias de LLM ejecutándose con <strong>contextos de conversación separados</strong>, coordinadas mediante código. El patrón común es <strong>orquestador-subagente</strong>: un agente líder crea y gestiona subagentes especializados para subtareas concretas.
+</div>
+<div class="card">
+<h3>How the Research System Works</h3><h3 class="es-inline">Cómo Funciona el Sistema de Investigación</h3>
+<p>From Claude's own Research feature: a <strong>lead agent</strong> plans the work and spawns <strong>parallel subagents</strong>. Each subagent explores with its <strong>own context window</strong>, then compresses findings back to the lead. Separation of concerns — distinct tools, prompts and trajectories — reduces path dependency.</p><p class="es-inline">Según la propia función de Investigación de Claude: un <strong>agente líder</strong> planifica el trabajo y crea <strong>subagentes en paralelo</strong>. Cada subagente explora con su <strong>propia ventana de contexto</strong> y luego comprime los hallazgos de vuelta al líder. La separación de responsabilidades — herramientas, prompts y trayectorias distintas — reduce la dependencia de la ruta.</p>
+<div class="callout callout-key">
+<strong>Context isolation (key exam fact):</strong> subagents do <em>not</em> inherit the coordinator's conversation history. The lead must explicitly pass the task/topic, or the subagent has nothing to work with. There is no shared memory between invocations.
+  </div><div class="callout callout-key es-inline">
+<strong>Aislamiento de contexto (dato clave para el examen):</strong> los subagentes <em>no</em> heredan el historial de conversación del coordinador. El líder debe pasar explícitamente la tarea/tema, o el subagente no tendrá con qué trabajar. No hay memoria compartida entre invocaciones.
+  </div>
+</div>
+<div class="card">
+<h3>The Three Situations Where Multi-Agent Wins</h3><h3 class="es-inline">Las Tres Situaciones Donde Gana el Multiagente</h3>
+<ul class="deep">
+<li><strong>Context pollution</strong> — one context can't hold everything without degrading</li><li class="es-inline"><strong>Contaminación de contexto</strong> — un solo contexto no puede contenerlo todo sin degradarse</li>
+<li><strong>Parallelism</strong> — subtasks can run at the same time</li><li class="es-inline"><strong>Paralelismo</strong> — las subtareas pueden ejecutarse al mismo tiempo</li>
+<li><strong>Specialisation</strong> — distinct prompts/tools improve focus and tool selection</li><li class="es-inline"><strong>Especialización</strong> — prompts/herramientas distintos mejoran el enfoque y la selección de herramientas</li>
+</ul>
+<div class="notebook">
+<p>Multi-agent systems burn far more tokens than a single agent. Reserve them for high-value, parallelisable, open-ended work — and always start by asking whether a well-prompted single agent would do.</p><p class="es-inline">Los sistemas multiagente consumen muchos más tokens que un solo agente. Resérvalos para trabajo de alto valor, paralelizable y abierto — y empieza siempre preguntándote si un único agente bien diseñado bastaría.</p>
+</div>
+</div>
+<div class="source">
+<a href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank">anthropic.com — Multi-Agent Research System</a>
+<a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them" target="_blank">claude.com/blog — When to Use Multi-Agent Systems</a>
+</div>
+<div class="nav-btn-row"><span></span><button class="btn btn-primary" onclick="goTo('c5-cert')">When NOT to Multi-Agent →</button></div>
+</div>
+<div class="section" id="sec-c5-cert">
+<span class="tag tag-exam">Certification Focus</span>
+<h2 class="sec-title">When NOT to Go Multi-Agent</h2><h2 class="sec-title es-inline">Cuándo NO Pasar a Multiagente</h2>
+<p class="subtitle">The over-engineering trap and the incomplete-report scenario</p><p class="subtitle es-inline">La trampa de la sobreingeniería y el escenario del informe incompleto</p>
+<div class="card">
+<h3>Start Single</h3><h3 class="es-inline">Empieza con un Solo Agente</h3>
+<div class="myth-card">
+<div class="myth-side myth-wrong">
+<div class="myth-label">✗ Over-Engineering</div><div class="myth-label es-inline">✗ Sobreingeniería</div>
+<p>Building separate agents for planning, execution, review and iteration — losing context at every handoff and spending more tokens coordinating than executing.</p><p class="es-inline">Construir agentes separados para planificación, ejecución, revisión e iteración — perdiendo contexto en cada traspaso y gastando más tokens en coordinar que en ejecutar.</p>
+</div>
+<div class="myth-side myth-right">
+<div class="myth-label">✓ What the Exam Rewards</div><div class="myth-label es-inline">✓ Lo que Premia el Examen</div>
+<p>A well-designed single agent handles most workflows. Every extra agent is another failure point and coordination cost. Go multi-agent only for the three situations on the previous page.</p><p class="es-inline">Un único agente bien diseñado maneja la mayoría de los flujos de trabajo. Cada agente adicional es otro punto de fallo y coste de coordinación. Pasa a multiagente solo en las tres situaciones de la página anterior.</p>
+</div>
+</div>
+</div>
+<div class="card">
+<h3>Tracing an Incomplete Multi-Agent Output</h3><h3 class="es-inline">Rastreando una Salida Multiagente Incompleta</h3>
+<div class="scenario-box">
+<p>A research system dispatches 5 subagents; all return successfully. But the final report only covers the first topic in depth.</p><p class="es-inline">Un sistema de investigación despliega 5 subagentes; todos regresan con éxito. Pero el informe final solo cubre el primer tema en profundidad.</p>
+</div>
+<div class="callout callout-anti"><strong>✗ Wrong diagnosis:</strong> "the search subagent's queries were too narrow" — it searched thoroughly for what it was assigned.</div><div class="callout callout-anti es-inline"><strong>✗ Diagnóstico incorrecto:</strong> "las consultas del subagente de búsqueda eran demasiado estrechas" — buscó a fondo lo que se le asignó.</div>
+<div class="callout callout-best"><strong>✓ Correct diagnosis:</strong> the <strong>coordinator's decomposition</strong> only scoped synthesis to one topic. If the output is incomplete in <em>scope</em> (not depth), the coordinator's decomposition is almost always the root cause — not any downstream subagent.</div><div class="callout callout-best es-inline"><strong>✓ Diagnóstico correcto:</strong> la <strong>descomposición del coordinador</strong> solo delimitó la síntesis a un tema. Si la salida está incompleta en <em>alcance</em> (no en profundidad), la descomposición del coordinador es casi siempre la causa raíz — no ningún subagente posterior.</div>
+<div class="notebook">
+<p>Trace the runnable version in <code>anthropics/claude-cookbooks · patterns/agents</code>: watch how the orchestrator passes context <em>into</em> each worker call. That line of code is the concrete form of "subagents don't inherit history; context must be passed explicitly."</p><p class="es-inline">Rastrea la versión ejecutable en <code>anthropics/claude-cookbooks · patterns/agents</code>: observa cómo el orquestador pasa el contexto <em>a</em> cada llamada de trabajador. Esa línea de código es la forma concreta de "los subagentes no heredan el historial; el contexto debe pasarse explícitamente".</p>
+</div>
+</div>
+<div class="source">
+<a href="https://github.com/anthropics/claude-cookbooks/tree/main/patterns/agents" target="_blank">github.com/anthropics/claude-cookbooks — patterns/agents (MIT)</a>
+</div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo('c5-def')">← Orchestrator &amp; Context</button><button class="btn btn-primary" onclick="goTo('c5-apply')">Watch &amp; Read Resources →</button></div>
+</div>
+<div class="section" id="sec-c5-apply">
+<span class="tag tag-watch">Watch &amp; Read</span>
+<h2 class="sec-title">Concept 5 — Learning Resources</h2><h2 class="sec-title es-inline">Concepto 5 — Recursos de Aprendizaje</h2>
+<p class="subtitle">Four authenticated resources · no sign-in</p><p class="subtitle es-inline">Cuatro recursos autenticados · sin inicio de sesión</p>
+<div class="card">
+<h3>🎬 Recommended Video</h3><h3 class="es-inline">🎬 Vídeo Recomendado</h3>
+<div class="video-grid">
+<a class="video-card" href="https://www.youtube.com/watch?v=uhJJgc-0iTQ" target="_blank">
+<div class="video-thumb"><div class="play-icon">▶</div><span class="duration">~19 min</span></div>
+<div class="video-info"><h5>Building More Effective AI Agents</h5><p class="video-meta">YouTube · Anthropic · subagents, MCP, six months on</p></div>
+</a>
+</div><div class="video-grid es-inline">
+<a class="video-card" href="https://www.youtube.com/watch?v=uhJJgc-0iTQ" target="_blank">
+<div class="video-thumb"><div class="play-icon">▶</div><span class="duration">~19 min</span></div>
+<div class="video-info"><h5>Building More Effective AI Agents</h5><p class="video-meta">YouTube · Anthropic · subagentes, MCP, seis meses después</p></div>
+</a>
+</div>
+</div>
+<div class="card">
+<h3>📖 Essential Reading &amp; Code</h3><h3 class="es-inline">📖 Lectura y Código Esenciales</h3>
+<div class="reading-links">
+<a class="reading-link" href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them" target="_blank">
+<span class="rl-icon">📄</span><div><span class="rl-title">When to Use Multi-Agent Systems</span><span class="rl-desc">Anthropic (Claude blog) · the three winning situations</span></div>
+</a>
+<a class="reading-link" href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank">
+<span class="rl-icon">📄</span><div><span class="rl-title">How We Built Our Multi-Agent Research System</span><span class="rl-desc">Anthropic Engineering · orchestrator-workers at scale</span></div>
+</a>
+<a class="reading-link" href="https://github.com/anthropics/claude-cookbooks/tree/main/patterns/agents" target="_blank">
+<span class="rl-icon">💻</span><div><span class="rl-title">Orchestration Notebooks <span class="lic-pill">MIT</span></span><span class="rl-desc">GitHub · orchestrator_workers &amp; async multi-agent</span></div>
+</a>
+<a class="reading-link" href="https://www.youtube.com/watch?v=uhJJgc-0iTQ" target="_blank">
+<span class="rl-icon">▶️</span><div><span class="rl-title">Building More Effective AI Agents (video)</span><span class="rl-desc">YouTube · Anthropic</span></div>
+</a>
+</div><div class="reading-links es-inline">
+<a class="reading-link" href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them" target="_blank">
+<span class="rl-icon">📄</span><div><span class="rl-title">When to Use Multi-Agent Systems</span><span class="rl-desc">Anthropic (blog de Claude) · las tres situaciones ganadoras</span></div>
+</a>
+<a class="reading-link" href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank">
+<span class="rl-icon">📄</span><div><span class="rl-title">How We Built Our Multi-Agent Research System</span><span class="rl-desc">Anthropic Engineering · orquestador-trabajadores a gran escala</span></div>
+</a>
+<a class="reading-link" href="https://github.com/anthropics/claude-cookbooks/tree/main/patterns/agents" target="_blank">
+<span class="rl-icon">💻</span><div><span class="rl-title">Orchestration Notebooks <span class="lic-pill">MIT</span></span><span class="rl-desc">GitHub · orchestrator_workers y multiagente asíncrono</span></div>
+</a>
+<a class="reading-link" href="https://www.youtube.com/watch?v=uhJJgc-0iTQ" target="_blank">
+<span class="rl-icon">▶️</span><div><span class="rl-title">Building More Effective AI Agents (vídeo)</span><span class="rl-desc">YouTube · Anthropic</span></div>
+</a>
+</div>
+</div>
+<div class="card card-sm">
+<h3>✅ Final Reading Checkpoint — All of D1</h3><h3 class="es-inline">✅ Punto de Control de Lectura Final — Todo el D1</h3>
+<ul class="deep">
+<li>State the workflow-vs-agent distinction and the "start simple" rule.</li><li class="es-inline">Enuncia la distinción flujo de trabajo vs agente y la regla de "empezar simple".</li>
+<li>What does the Agent SDK handle, and when write a custom loop?</li><li class="es-inline">¿Qué gestiona el Agent SDK, y cuándo escribir un bucle personalizado?</li>
+<li>Why is <code>stop_reason</code> the only reliable termination signal?</li><li class="es-inline">¿Por qué es <code>stop_reason</code> la única señal fiable de finalización?</li>
+<li>Map each framework (LangGraph / Strands / PydanticAI) to its constraint.</li><li class="es-inline">Empareja cada framework (LangGraph / Strands / PydanticAI) con su restricción.</li>
+<li>Why don't subagents inherit the coordinator's history?</li><li class="es-inline">¿Por qué los subagentes no heredan el historial del coordinador?</li>
+</ul>
+<p style="margin-top:12px;"><strong>If you can answer all five confidently, you are ready for the assessment.</strong></p><p class="es-inline"><strong>Si puedes responder las cinco con confianza, estás listo para la evaluación.</strong></p>
+</div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo('c5-cert')">← When NOT to Multi-Agent</button><button class="btn btn-success" onclick="goTo('assess')">Take the Assessment →</button></div>
+</div>
+<!-- ======== ASSESSMENT ======== -->
+<div class="section" id="sec-assess">
+<span class="tag tag-exam">Assessment</span>
+<h2 class="sec-title">Domain 1 — Reading Comprehension Check</h2>
+<p class="subtitle">6 scenario-based questions at CCDV-F difficulty · 70% (4/6) to pass</p>
+<div class="q-card" data-q="0">
+<div class="q-num">Question 1 of 6</div>
+<div class="q-scenario">A team must process incoming invoices in the same fixed sequence every time: extract fields, validate against a schema, then write to a database. The steps never change and must be fully auditable.</div>
+<div class="q-text">Which architecture should they choose?</div>
+<div class="q-opts">
+<div class="q-opt" onclick="selQ(0,0,this)">A) An autonomous agent that decides each step dynamically</div>
+<div class="q-opt" onclick="selQ(0,1,this)">B) A prompt-chaining workflow with validation gates between steps</div>
+<div class="q-opt" onclick="selQ(0,2,this)">C) A multi-agent system with one subagent per field</div>
+<div class="q-opt" onclick="selQ(0,3,this)">D) A single LLM call with no tools</div>
+</div>
+<div class="q-fb" id="qfb0"></div>
+</div>
+<div class="q-card" data-q="1">
+<div class="q-num">Question 2 of 6</div>
+<div class="q-scenario">A developer's support agent sometimes stops after emitting "Let me look up your order." The loop terminates when <code>response.content[0].type == "text"</code>.</div>
+<div class="q-text">What is the correct fix?</div>
+<div class="q-opts">
+<div class="q-opt" onclick="selQ(1,0,this)">A) Add an iteration cap of 15 loops</div>
+<div class="q-opt" onclick="selQ(1,1,this)">B) Parse the text for phrases like "I have finished"</div>
+<div class="q-opt" onclick="selQ(1,2,this)">C) Terminate only when stop_reason == "end_turn"; continue on "tool_use"</div>
+<div class="q-opt" onclick="selQ(1,3,this)">D) Force tool_choice to "any" so text is never returned</div>
+</div>
+<div class="q-fb" id="qfb1"></div>
+</div>
+<div class="q-card" data-q="2">
+<div class="q-num">Question 3 of 6</div>
+<div class="q-scenario">A tool call times out. The developer wants Claude to know the tool failed so it can retry or report the problem rather than assume success.</div>
+<div class="q-text">How should the tool_result be returned?</div>
+<div class="q-opts">
+<div class="q-opt" onclick="selQ(2,0,this)">A) Return an empty content string so Claude moves on</div>
+<div class="q-opt" onclick="selQ(2,1,this)">B) Omit the tool_result entirely for the failed call</div>
+<div class="q-opt" onclick="selQ(2,2,this)">C) Return the tool_result with is_error: true and the error message</div>
+<div class="q-opt" onclick="selQ(2,3,this)">D) Throw an exception and stop the loop</div>
+</div>
+<div class="q-fb" id="qfb2"></div>
+</div>
+<div class="q-card" data-q="3">
+<div class="q-num">Question 4 of 6</div>
+<div class="q-scenario">A team needs an agent framework for a 7-branch approval process that must persist through failures, resume where it left off, and allow a human to inspect and modify state mid-run.</div>
+<div class="q-text">Which framework best fits these constraints?</div>
+<div class="q-opts">
+<div class="q-opt" onclick="selQ(3,0,this)">A) PydanticAI — for its type safety</div>
+<div class="q-opt" onclick="selQ(3,1,this)">B) LangGraph — graph state machine with durable execution and human-in-the-loop</div>
+<div class="q-opt" onclick="selQ(3,2,this)">C) Strands — because it is AWS-native</div>
+<div class="q-opt" onclick="selQ(3,3,this)">D) None — frameworks can't support branching</div>
+</div>
+<div class="q-fb" id="qfb3"></div>
+</div>
+<div class="q-card" data-q="4">
+<div class="q-num">Question 5 of 6</div>
+<div class="q-scenario">A multi-agent research system dispatches 5 subagents that all return successfully, but the final report only covers the first topic in depth. The other four topics are missing entirely.</div>
+<div class="q-text">What is the most likely root cause?</div>
+<div class="q-opts">
+<div class="q-opt" onclick="selQ(4,0,this)">A) The search subagents used queries that were too narrow</div>
+<div class="q-opt" onclick="selQ(4,1,this)">B) The subagents needed a shared memory store to coordinate</div>
+<div class="q-opt" onclick="selQ(4,2,this)">C) The coordinator's decomposition scoped synthesis to only the first topic</div>
+<div class="q-opt" onclick="selQ(4,3,this)">D) The model context window was too small</div>
+</div>
+<div class="q-fb" id="qfb4"></div>
+</div>
+<div class="q-card" data-q="5">
+<div class="q-num">Question 6 of 6</div>
+<div class="q-scenario">A developer needs a standard agent that reads files, runs commands and edits code, deployable on Amazon Bedrock. They want to avoid re-implementing the agent loop, tool plumbing and context management.</div>
+<div class="q-text">What is the most appropriate choice?</div>
+<div class="q-opts">
+<div class="q-opt" onclick="selQ(5,0,this)">A) Hand-write a custom while-loop from scratch for full control</div>
+<div class="q-opt" onclick="selQ(5,1,this)">B) Use the Claude Agent SDK, which provides the loop, built-in tools and Bedrock auth</div>
+<div class="q-opt" onclick="selQ(5,2,this)">C) Use a single LLM call with no tools</div>
+<div class="q-opt" onclick="selQ(5,3,this)">D) Build a five-agent multi-agent system for redundancy</div>
+</div>
+<div class="q-fb" id="qfb5"></div>
+</div>
+<div style="text-align:center;margin-top:20px;">
+<button class="btn btn-success" id="submitBtn" onclick="submitAssess()" style="padding:14px 40px;font-size:15px;">Submit Assessment</button>
+</div>
+</div>
+<!-- ======== RESULTS ======== -->
+<div class="section" id="sec-results">
+<span class="tag tag-exam">Results</span>
+<h2 class="sec-title">Assessment Results</h2>
+<div class="card" style="text-align:center;">
+<div class="score-circle" id="rCircle"><span class="score-label">Score</span><span id="rScore">—</span></div>
+<div class="result-fb" id="rFbText"></div>
+<button class="close-btn" id="closeBtn" onclick="closeModule()" style="display:none;">✓ Complete &amp; Close Module</button>
+<p class="auto-close-msg" id="autoCloseMsg"></p>
+</div>
+<div id="answerKey" style="display:none;"><h3>📋 Answer Key</h3><div id="answerKeyContent"></div></div>
+<div class="next-mod-card" id="nextMod" style="display:none;"><h4>Next Module</h4><p>Domain 2: Applications &amp; Integration →</p></div>
+</div>
+</main>
+
+<div class="group-toast" id="groupToast"></div>
+
+<script>
+
+/* ===== NAVIGATION (free navigation, no SCORM) ===== */
+var sections=['overview','c1-def','c1-cert','c1-apply','c2-def','c2-cert','c2-apply','c3-def','c3-cert','c3-apply','c4-def','c4-cert','c4-apply','c5-def','c5-cert','c5-apply','assess','results'];
+var TOTAL=sections.length;
+var curSection='overview';
+var assessed=false;
+var ans=[-1,-1,-1,-1,-1,-1];
+var PASS_THRESHOLD=70;
+var CORRECT=[1,2,2,1,2,1];
+var EXPL=[
+  "Fixed, predetermined, auditable steps call for a workflow — specifically prompt chaining with validation gates. An autonomous agent adds unnecessary unpredictability and cost; multi-agent is over-engineering; a single no-tool call can't write to a database.",
+  "stop_reason is the only reliable termination signal. Claude can return text alongside a tool_use block, so a content-type check terminates prematurely. Iteration caps are a safety net, not primary control; parsing text is ambiguous; forcing tool_choice breaks normal replies.",
+  "Return the tool_result with is_error: true and the error message. This lets Claude reason about the failure and recover. Empty content or omitting the result makes Claude assume success and hallucinate; throwing kills the loop entirely.",
+  "LangGraph is the graph state-machine framework with durable execution (resume after failure) and human-in-the-loop — exactly the 7-branch, resumable, inspectable requirement. Type safety (PydanticAI) and AWS-native (Strands) are not the dominant constraint here.",
+  "When a multi-agent output is incomplete in SCOPE (whole topics missing) rather than depth, the coordinator's decomposition is the root cause — it never scoped the other topics into synthesis. Subagents don't share memory; the fix is not narrower queries or a bigger context.",
+  "The Claude Agent SDK provides the agent loop, built-in file/command/edit tools, context management and Bedrock authentication out of the box — no need to hand-write the loop. A custom loop is unnecessary control; a no-tool call can't act; a five-agent system is over-engineering."
+];
+var Q_TEXT=[
+  "Which architecture for fixed, auditable invoice steps?",
+  "Correct fix for premature loop termination?",
+  "How to return a failed tool result?",
+  "Best framework for a resumable 7-branch approval process?",
+  "Root cause of a scope-incomplete multi-agent report?",
+  "Best choice for a standard file/command/edit agent on Bedrock?"
+];
+var Q_OPTS=[
+  ["Autonomous agent","Prompt-chaining workflow with validation gates","Multi-agent, one subagent per field","Single no-tool LLM call"],
+  ["Iteration cap of 15","Parse text for 'I have finished'","Terminate only on stop_reason=='end_turn'","Force tool_choice='any'"],
+  ["Empty content string","Omit the tool_result","tool_result with is_error: true","Throw an exception, stop the loop"],
+  ["PydanticAI","LangGraph — durable, human-in-the-loop","Strands — AWS-native","None — frameworks can't branch"],
+  ["Search queries too narrow","Subagents needed shared memory","Coordinator scoped synthesis to one topic","Context window too small"],
+  ["Hand-write a custom while-loop","Claude Agent SDK (loop, tools, Bedrock auth)","Single no-tool call","Five-agent system for redundancy"]
+];
+
+function goTo(id){
+  var idx=sections.indexOf(id);
+  if(idx<0)return;
+  var prevGroup=(typeof sectionToGroup!=='undefined')?sectionToGroup[curSection]:null;
+  var newGroup=(typeof sectionToGroup!=='undefined')?sectionToGroup[id]:null;
+  if(prevGroup && newGroup && prevGroup!==newGroup){
+    showGroupToast(prevGroup);
+  }
+  curSection=id;
+  for(var i=0;i<TOTAL;i++){var el=document.getElementById('sec-'+sections[i]);if(el)el.classList.toggle('active',sections[i]===id);}
+  var navItems=document.querySelectorAll('.nav-item');
+  for(var i=0;i<navItems.length;i++)navItems[i].classList.remove('active');
+  if(navItems[idx])navItems[idx].classList.add('active');
+  var pct=Math.round(idx/(TOTAL-1)*100);
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('progressText').textContent=pct+'%';
+  document.getElementById('mainContent').scrollTop=0;
+}
+function toggleAcc(el){var body=el.querySelector('.acc-body');var header=el.querySelector('.acc-header');body.classList.toggle('open');header.classList.toggle('open');}
+
+function selQ(qi,oi,el){if(assessed)return;ans[qi]=oi;var opts=el.parentElement.querySelectorAll('.q-opt');for(var i=0;i<opts.length;i++)opts[i].classList.remove('selected');el.classList.add('selected');}
+function submitAssess(){
+  assessed=true;document.getElementById('submitBtn').style.display='none';var c=0;
+  for(var i=0;i<6;i++){
+    var card=document.querySelector('[data-q="'+i+'"]');
+    var opts=card.querySelectorAll('.q-opt');
+    var fb=document.getElementById('qfb'+i);
+    for(var j=0;j<opts.length;j++){
+      if(j===CORRECT[i])opts[j].classList.add('right');
+      else if(j===ans[i]&&ans[i]!==CORRECT[i])opts[j].classList.add('wrongA');
+    }
+    if(ans[i]===CORRECT[i]){c++;fb.style.display='block';fb.style.background='#E0F7EC';fb.style.borderLeft='4px solid #01B27C';fb.style.color='#1A5C3A';fb.innerHTML='✓ Correct! '+EXPL[i];}
+    else{fb.style.display='block';fb.style.background='#FFF0ED';fb.style.borderLeft='4px solid #FC6A59';fb.style.color='#8B2500';fb.innerHTML='✗ Incorrect. '+EXPL[i];}
+  }
+  var pct=Math.round(c/6*100);
+  var rc=document.getElementById('rCircle'),rs=document.getElementById('rScore'),rf=document.getElementById('rFbText');
+  rs.textContent=pct+'%';
+  if(pct>=PASS_THRESHOLD){rc.className='score-circle pass';rf.className='result-fb pass-fb';rf.innerHTML='<strong>Congratulations!</strong> '+c+'/6 ('+pct+'%). You have demonstrated solid comprehension of Domain 1 — Agents &amp; Workflows.';}
+  else{rc.className='score-circle fail';rf.className='result-fb fail-fb';rf.innerHTML='<strong>Keep Reading.</strong> '+c+'/6 ('+pct+'%). Review the sections where you missed questions before retrying.';}
+  var ak='';for(var i=0;i<6;i++){ak+='<div class="ak-item"><div class="ak-q">Q'+(i+1)+'. '+Q_TEXT[i]+'</div><div class="ak-correct">✓ '+Q_OPTS[i][CORRECT[i]]+'</div><div class="ak-expl">'+EXPL[i]+'</div></div>';}
+  document.getElementById('answerKeyContent').innerHTML=ak;document.getElementById('answerKey').style.display='block';
+  document.getElementById('closeBtn').style.display='inline-block';document.getElementById('nextMod').style.display='block';
+  goTo('results');
+}
+function closeModule(){
+  document.getElementById('autoCloseMsg').textContent='✓ Module completed.';
+}
+
+/* ===== SESSION TIMER (start/pause/reset) + PER-SECTION/BLOCK BREAKDOWN ===== */
+var pageTimerInterval=null;
+var pageTimerRunning=false;
+var totalSeconds=0;
+var sectionTimes={};
+sections.forEach(function(id){ sectionTimes[id]=0; });
+
+function formatClock(sec){
+  var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+  return h>0
+    ? (String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'))
+    : (String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'));
+}
+function formatBadge(sec){
+  if(sec<=0)return '';
+  if(sec<60)return sec+'s';
+  var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60);
+  return h>0 ? (h+'h '+String(m).padStart(2,'0')+'m') : (m+'m');
+}
+function updateClockDisplay(){
+  var el=document.getElementById('pageTimer');
+  if(!el)return;
+  el.textContent=formatClock(totalSeconds);
+  el.classList.toggle('over-time', totalSeconds>=3600);
+}
+function updateNavBadge(id){
+  var b=document.getElementById('navtime-'+id);
+  if(b)b.textContent=formatBadge(sectionTimes[id]||0);
+}
+
+var groupMap={
+  'group-overview':['overview'],
+  'group-c1':['c1-def','c1-cert','c1-apply'],
+  'group-c2':['c2-def','c2-cert','c2-apply'],
+  'group-c3':['c3-def','c3-cert','c3-apply'],
+  'group-c4':['c4-def','c4-cert','c4-apply'],
+  'group-c5':['c5-def','c5-cert','c5-apply'],
+  'group-assess':['assess','results']
+};
+var sectionToGroup={};
+Object.keys(groupMap).forEach(function(g){ groupMap[g].forEach(function(id){ sectionToGroup[id]=g; }); });
+
+function updateGroupBadge(groupKey){
+  var ids=groupMap[groupKey];
+  if(!ids)return;
+  var total=ids.reduce(function(sum,id){ return sum+(sectionTimes[id]||0); },0);
+  var el=document.getElementById(groupKey+'-time');
+  if(el)el.textContent=formatBadge(total);
+}
+
+var groupLabels={
+  'group-overview':'Overview',
+  'group-c1':'Block 1 · Workflow vs Agent',
+  'group-c2':'Block 2 · Agent SDK',
+  'group-c3':'Block 3 · Agentic Loop',
+  'group-c4':'Block 4 · Frameworks',
+  'group-c5':'Block 5 · Multi-Agent',
+  'group-assess':'Assessment'
+};
+var sectionLabels={
+  'overview':'Reading Guide',
+  'c1-def':'The Core Distinction',
+  'c1-cert':'Choosing the Pattern',
+  'c1-apply':'Watch & Read Resources',
+  'c2-def':'SDK & Construction',
+  'c2-cert':'SDK vs Custom Loop',
+  'c2-apply':'Watch & Read Resources',
+  'c3-def':'stop_reason & Tool Use',
+  'c3-cert':'Errors & Anti-Patterns',
+  'c3-apply':'Watch & Read Resources',
+  'c4-def':'LangGraph · Strands · Pydantic',
+  'c4-cert':'Matching the Constraint',
+  'c4-apply':'Watch & Read Resources',
+  'c5-def':'Orchestrator & Context',
+  'c5-cert':'When NOT to Multi-Agent',
+  'c5-apply':'Watch & Read Resources',
+  'assess':'Reading Check',
+  'results':'Results & Answer Key'
+};
+function formatDuration(sec){
+  var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+  if(h>0)return h+'h '+String(m).padStart(2,'0')+'m';
+  if(m>0)return m+'m '+String(s).padStart(2,'0')+'s';
+  return s+'s';
+}
+var groupToastTimeout=null;
+function showGroupToast(groupKey){
+  var ids=groupMap[groupKey];
+  if(!ids)return;
+  var total=ids.reduce(function(sum,id){ return sum+(sectionTimes[id]||0); },0);
+  if(total<=0)return;
+  var el=document.getElementById('groupToast');
+  if(!el)return;
+  var breakdown=ids.filter(function(id){return (sectionTimes[id]||0)>0;})
+    .map(function(id){return '<div class="toast-row"><span>'+(sectionLabels[id]||id)+'</span><span>'+formatDuration(sectionTimes[id])+'</span></div>';})
+    .join('');
+  el.innerHTML='✓ <strong>'+(groupLabels[groupKey]||groupKey)+'</strong> completed in '+formatDuration(total)
+    +(breakdown ? '<div class="toast-breakdown">'+breakdown+'</div>' : '');
+  el.classList.add('show');
+  clearTimeout(groupToastTimeout);
+  groupToastTimeout=setTimeout(function(){el.classList.remove('show');},7000);
+}
+
+function toggleTimer(){
+  var btn=document.getElementById('timerToggleBtn');
+  if(pageTimerRunning){
+    clearInterval(pageTimerInterval);
+    pageTimerRunning=false;
+    if(btn){btn.innerHTML='▶ Iniciar';btn.classList.remove('running');}
+  }else{
+    pageTimerInterval=setInterval(function(){
+      totalSeconds++;
+      sectionTimes[curSection]=(sectionTimes[curSection]||0)+1;
+      updateClockDisplay();
+      updateNavBadge(curSection);
+      updateGroupBadge(sectionToGroup[curSection]);
+    },1000);
+    pageTimerRunning=true;
+    if(btn){btn.innerHTML='⏸ Pausar';btn.classList.add('running');}
+  }
+}
+function resetTimer(){
+  totalSeconds=0;
+  updateClockDisplay();
+}
+
+goTo(curSection);
+toggleTimer();
+
+</script>
+</body></html>

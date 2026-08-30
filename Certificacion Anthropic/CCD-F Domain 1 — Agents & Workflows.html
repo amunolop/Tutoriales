@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<!-- saved from url=(0170)https://cdn2.percipio.com/rustici/us/custom-content/2167600c-3cdb-48a7-8b98-57b3ebf412cb/rustici/course-packages/courses/7499cbd4-0827-4f2e-9ac3-8130fd52c684/0/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CCD-F Domain 1 — Agents &amp; Workflows</title>
+<style>
+:root{--dt:#006E74;--lt:#0097AC;--pet:#003C51;--pur:#881E87;--grn:#01B27C;--org:#FC6A59;--sand:#ECECE1;--wh:#FFFFFF;--tx:#1A2A33;--txl:#4A5C68;--brd:#D1D5DB;--bg:#F4F5F7;--side-w:280px;--code-bg:#0D1B2A;--code-fg:#E0E7EE;--cyan:#64DFDF;--amber:#F9A825;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,sans-serif;font-size:14.5px;line-height:1.7;color:var(--tx);background:var(--bg);display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:var(--side-w);background:var(--pet);color:var(--wh);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+.sb-header{padding:20px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.sb-header h1{font-size:13px;font-weight:700;letter-spacing:0.5px;opacity:0.7;text-transform:uppercase;}
+.sb-header h2{font-size:15px;font-weight:600;margin-top:4px;line-height:1.3;}
+.sb-header .weight{display:inline-block;background:var(--lt);padding:2px 10px;border-radius:12px;font-size:11px;margin-top:8px;font-weight:600;}
+.sb-nav{flex:1;overflow-y:auto;padding:8px 0;}.sb-nav::-webkit-scrollbar{width:4px;}.sb-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px;}
+.nav-group{margin-bottom:2px;}.nav-group-title{display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;opacity:0.6;cursor:default;}
+.nav-item{display:block;padding:7px 16px 7px 28px;font-size:12.5px;color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;text-decoration:none;line-height:1.4;}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:var(--wh);}
+.nav-item.active{background:rgba(0,151,172,0.25);color:var(--wh);border-left-color:var(--lt);font-weight:600;}
+.nav-item .nav-icon{margin-right:6px;font-size:11px;}
+.sb-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.1);}
+.sb-progress{height:4px;background:rgba(255,255,255,0.15);border-radius:2px;overflow:hidden;}
+.sb-progress-fill{height:100%;background:linear-gradient(90deg,var(--lt),var(--grn));width:0%;transition:width 0.4s;}
+.sb-progress-label{font-size:10px;opacity:0.6;margin-top:4px;display:flex;justify-content:space-between;}
+.content{flex:1;overflow-y:auto;scroll-behavior:smooth;}
+.section{display:none;padding:32px 40px 80px;max-width:960px;margin:0 auto;}.section.active{display:block;}
+h2.sec-title{font-size:24px;font-weight:700;color:var(--pet);margin-bottom:6px;}
+h3{font-size:17px;font-weight:700;color:var(--dt);margin:24px 0 10px;}
+h4{font-size:14.5px;font-weight:700;color:var(--pet);margin:18px 0 8px;}
+p{margin-bottom:12px;}.subtitle{font-size:14px;color:var(--lt);font-weight:600;margin-bottom:24px;}
+.card{background:var(--wh);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:28px 32px;margin-bottom:20px;}
+.card-sm{padding:20px 24px;}
+.tag{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:1.4px;padding:3px 10px;border-radius:16px;font-weight:600;margin-bottom:10px;}
+.tag-def{background:#E3F2FD;color:#1565C0;}.tag-tech{background:#E8EAF6;color:#283593;}.tag-cert{background:#FFF8E1;color:#E65100;}.tag-case{background:#F3E5F5;color:var(--pur);}.tag-apply{background:#E0F7EC;color:#007A4D;}.tag-assess{background:#FFF0ED;color:#C4402A;}
+.info-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;}
+.info-table th{background:var(--pet);color:var(--wh);padding:10px 14px;text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:0.5px;}
+.info-table td{padding:10px 14px;border-bottom:1px solid var(--brd);vertical-align:top;}.info-table tr:nth-child(even) td{background:#F8F9FA;}
+.callout{border-radius:8px;padding:16px 20px;margin:14px 0;font-size:13.5px;line-height:1.6;}
+.callout-key{background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border-left:4px solid var(--amber);}.callout-key strong{color:#E65100;}
+.callout-best{background:#E0F7EC;border-left:4px solid var(--grn);}.callout-best strong{color:#1A5C3A;}
+.callout-anti{background:#FFF0ED;border-left:4px solid var(--org);}.callout-anti strong{color:#C4402A;}
+.callout-exam{background:#E3F2FD;border-left:4px solid #1565C0;}.callout-exam strong{color:#1565C0;}
+.source{margin-top:16px;padding-top:10px;border-top:1px dashed var(--brd);font-size:0;}
+.source a{display:inline-block;font-size:11px;color:var(--lt);margin-right:12px;margin-bottom:4px;word-break:break-all;}.source a:hover{color:var(--dt);}
+pre.code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:18px 20px;font-family:"Cascadia Code","Fira Code","Consolas",monospace;font-size:12.5px;line-height:1.6;overflow-x:auto;margin:12px 0;white-space:pre;}
+code{background:rgba(0,110,116,0.08);padding:1px 6px;border-radius:4px;font-family:"Cascadia Code","Fira Code","Consolas",monospace;font-size:12.5px;color:var(--dt);}
+.def-block{background:linear-gradient(135deg,#E3F2FD,#F5F8FF);border-left:4px solid #1565C0;border-radius:0 10px 10px 0;padding:18px 22px;margin:14px 0;font-size:14px;line-height:1.7;}.def-block .def-term{font-size:16px;font-weight:700;color:#1565C0;margin-bottom:6px;}
+ul.deep{padding-left:20px;margin:10px 0;}ul.deep li{margin-bottom:6px;font-size:13.5px;}
+.nav-btn-row{display:flex;justify-content:space-between;position:sticky;bottom:0;background:var(--bg);padding:12px 0;border-top:1px solid var(--brd);margin-top:24px;}
+.btn{padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.btn-primary{background:var(--dt);color:var(--wh);}.btn-primary:hover{background:var(--lt);}
+.btn-secondary{background:var(--sand);color:var(--tx);}.btn-secondary:hover{background:#DDDDD2;}
+.btn-success{background:var(--grn);color:var(--wh);}.btn-success:hover{background:#019A6B;}
+.submit-assess-btn{display:none;}
+.ide{background:var(--code-bg);border-radius:10px;overflow:hidden;margin:16px 0;border:1px solid #1B2D45;}
+.ide-tabs{display:flex;background:#111D2E;border-bottom:1px solid #1B2D45;}
+.ide-tab{padding:8px 16px;font-size:11.5px;color:rgba(224,231,238,0.5);cursor:pointer;border-bottom:2px solid transparent;font-family:"Cascadia Code","Consolas",monospace;transition:all 0.15s;}
+.ide-tab:hover{color:var(--code-fg);}.ide-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);background:var(--code-bg);}
+.ide-panel{display:none;padding:16px 20px;color:var(--code-fg);font-family:"Cascadia Code","Consolas",monospace;font-size:12px;line-height:1.65;min-height:200px;max-height:400px;overflow-y:auto;}.ide-panel.active{display:block;}
+.ide-panel .kw{color:#FF79C6;}.ide-panel .str{color:#F1FA8C;}.ide-panel .cm{color:#6272A4;font-style:italic;}.ide-panel .fn{color:#50FA7B;}.ide-panel .num{color:#BD93F9;}.ide-panel .cyan{color:var(--cyan);}.ide-panel .hl{background:rgba(100,223,223,0.1);display:block;margin:0 -20px;padding:0 20px;border-left:3px solid var(--cyan);}
+/* Before/After Fixer (C1 sim) */
+.ba-container{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;}
+.ba-panel{border-radius:10px;padding:18px 22px;font-size:13px;line-height:1.6;}
+.ba-before{background:#FFF0ED;border:2px solid var(--org);}.ba-before h4{color:var(--org);}
+.ba-after{background:#E0F7EC;border:2px solid var(--grn);}.ba-after h4{color:var(--grn);}
+.ba-highlight{background:rgba(1,178,124,0.15);padding:2px 6px;border-radius:4px;font-weight:600;}
+/* Error Triage (C2 sim) */
+.triage-item{background:var(--wh);border:2px solid var(--brd);border-radius:10px;padding:16px 20px;margin:10px 0;transition:all 0.2s;}
+.triage-item.answered{opacity:0.7;}
+.triage-error{font-family:"Cascadia Code",monospace;font-size:12px;background:#F8F9FA;padding:10px 14px;border-radius:6px;margin-bottom:10px;color:var(--org);}
+.triage-opts{display:flex;gap:6px;flex-wrap:wrap;}
+.triage-btn{padding:6px 14px;border:2px solid var(--brd);border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;background:var(--wh);transition:all 0.15s;}
+.triage-btn:hover{border-color:var(--lt);background:#F0FAFA;}
+.triage-btn.correct-t{background:#E0F7EC;border-color:var(--grn);color:var(--grn);}
+.triage-btn.wrong-t{background:#FFF0ED;border-color:var(--org);color:var(--org);}
+.triage-expl{display:none;font-size:12px;margin-top:8px;padding:8px 12px;border-radius:6px;background:#F8F9FA;line-height:1.5;}
+/* Code gap-fill */
+.code-fill{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:20px 24px;font-family:"Cascadia Code","Consolas",monospace;font-size:12.5px;line-height:2.2;margin:16px 0;overflow-x:auto;}
+.code-blank{display:inline-block;min-width:180px;border-bottom:2px dashed var(--cyan);color:var(--cyan);cursor:pointer;padding:2px 8px;margin:0 4px;transition:all 0.2s;position:relative;}
+.code-blank:hover{background:rgba(100,223,223,0.15);}.code-blank.filled{border-bottom-style:solid;color:#50FA7B;}
+.code-blank.correct-fill{border-bottom-color:var(--grn);color:var(--grn);background:rgba(1,178,124,0.1);}
+.code-blank.wrong-fill{border-bottom-color:var(--org);color:var(--org);background:rgba(252,106,89,0.1);}
+.cf-dropdown{position:absolute;top:100%;left:0;background:#1B2D45;border:1px solid var(--cyan);border-radius:6px;z-index:100;min-width:240px;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+.cf-option{padding:8px 14px;cursor:pointer;font-size:12px;color:var(--code-fg);transition:background 0.1s;}.cf-option:hover{background:rgba(100,223,223,0.15);}
+/* Category sorter */
+.sort-container{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:16px 0;}
+.sort-bucket{background:#F8F9FA;border:2px dashed var(--brd);border-radius:10px;min-height:180px;padding:12px;transition:all 0.2s;}
+.sort-bucket.over{border-color:var(--lt);background:rgba(0,151,172,0.06);}
+.sort-bucket h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--txl);margin-bottom:10px;text-align:center;padding-bottom:8px;border-bottom:1px solid var(--brd);}
+.sort-bucket .bucket-items{min-height:100px;}
+.sort-bucket.correct-bucket{border-color:var(--grn);border-style:solid;background:#F0FFF6;}
+.sort-bucket.wrong-bucket{border-color:var(--org);border-style:solid;background:#FFF8F6;}
+.sort-item{padding:10px 14px;border:2px solid var(--brd);border-radius:8px;margin:6px 0;cursor:grab;font-size:12px;background:var(--wh);transition:all 0.2s;user-select:none;}
+.sort-item:hover{border-color:var(--lt);}.sort-item.placed{opacity:0.3;pointer-events:none;}.sort-item.in-bucket{cursor:grab;opacity:1;pointer-events:auto;margin:4px 0;}
+/* Verdict/Quick-fire */
+.verdict-card{background:var(--wh);border:2px solid var(--brd);border-radius:12px;padding:20px 24px;margin:12px 0;transition:all 0.3s;}.verdict-card.revealed{border-color:var(--lt);}
+.verdict-req{font-size:14px;font-weight:500;color:var(--pet);margin-bottom:14px;line-height:1.5;}
+.verdict-btns{display:flex;gap:10px;}
+.verdict-btn{flex:1;padding:12px;border:2px solid var(--brd);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;text-align:center;transition:all 0.15s;background:var(--wh);}
+.verdict-btn:hover{background:#F0FAFA;border-color:var(--lt);}
+.verdict-btn.v-correct{background:#E0F7EC;border-color:var(--grn);color:var(--grn);}
+.verdict-btn.v-wrong{background:#FFF0ED;border-color:var(--org);color:var(--org);}
+.verdict-expl{display:none;padding:10px 14px;border-radius:8px;margin-top:10px;font-size:12.5px;line-height:1.6;background:#F8F9FA;border-left:3px solid var(--lt);}
+.verdict-score{text-align:center;padding:16px;background:linear-gradient(135deg,#E3F2FD,#F5F8FF);border-radius:10px;margin-top:16px;display:none;}
+/* Investigator */
+.invest-scenario{background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border:2px solid var(--amber);border-radius:10px;padding:18px 22px;margin:12px 0;}
+.invest-scenario h4{color:#E65100;font-size:14px;margin-bottom:8px;}
+.invest-scenario p{font-size:13px;color:var(--tx);line-height:1.6;}
+.invest-opts{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+.invest-opt{border:2px solid var(--brd);border-radius:10px;padding:12px 16px;cursor:pointer;font-size:13px;transition:all 0.15s;}
+.invest-opt:hover{border-color:var(--lt);background:#F0FAFA;}.invest-opt.selected{border-color:var(--dt);background:#E0F5F6;}
+.invest-opt.correct-inv{border-color:var(--grn)!important;background:#E0F7EC!important;}
+.invest-opt.wrong-inv{border-color:var(--org)!important;background:#FFF0ED!important;}
+.invest-fb{display:none;padding:12px 16px;border-radius:8px;margin-top:10px;font-size:13px;line-height:1.6;}
+/* Drag-drop */
+.dd-container{display:flex;gap:24px;margin:16px 0;flex-wrap:wrap;}
+.dd-flow{flex:1;min-width:400px;}.dd-bank{width:220px;flex-shrink:0;}
+.dd-slot{min-height:52px;border:2px dashed var(--brd);border-radius:8px;padding:12px 16px;margin:8px 0;display:flex;align-items:center;gap:10px;transition:all 0.2s;background:rgba(0,0,0,0.02);}
+.dd-slot.over{border-color:var(--lt);background:rgba(0,151,172,0.08);}
+.dd-slot.filled{border-style:solid;border-color:var(--dt);background:#E0F5F6;}
+.dd-slot.correct{border-color:var(--grn);background:#E0F7EC;}.dd-slot.wrong{border-color:var(--org);background:#FFF0ED;}
+.dd-slot .slot-num{background:var(--brd);color:var(--txl);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.dd-slot.filled .slot-num{background:var(--dt);color:var(--wh);}.dd-slot.correct .slot-num{background:var(--grn);color:var(--wh);}.dd-slot.wrong .slot-num{background:var(--org);color:var(--wh);}
+.dd-slot .slot-label{font-size:11px;color:var(--txl);font-style:italic;}.dd-slot .slot-content{font-size:13px;font-weight:500;}
+.dd-arrow{text-align:center;color:var(--brd);font-size:18px;margin:2px 0;}
+.dd-item{padding:10px 14px;border:2px solid var(--brd);border-radius:8px;margin:6px 0;cursor:grab;font-size:12.5px;background:var(--wh);transition:all 0.2s;user-select:none;}
+.dd-item:hover{border-color:var(--lt);background:#F0FAFA;}.dd-item.dragging{opacity:0.4;}.dd-item.placed{opacity:0.3;cursor:default;pointer-events:none;}
+.dd-bank h4{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--txl);margin-bottom:8px;}
+.dd-check-btn{background:var(--dt);color:var(--wh);border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:12px;}.dd-check-btn:hover{background:var(--lt);}
+.dd-reset-btn{background:var(--sand);color:var(--tx);border:none;padding:6px 16px;border-radius:6px;font-size:12px;cursor:pointer;margin-left:8px;}
+.dd-feedback{display:none;padding:14px 18px;border-radius:8px;margin-top:12px;font-size:13px;line-height:1.6;}
+.dd-feedback.show{display:block;}.dd-feedback.pass{background:#E0F7EC;border-left:4px solid var(--grn);color:#1A5C3A;}.dd-feedback.fail{background:#FFF0ED;border-left:4px solid var(--org);color:#8B2500;}
+/* Quiz + Results */
+.q-card{background:var(--wh);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);padding:28px 32px;margin-bottom:20px;}
+.q-scenario{background:#F8F9FA;border-left:3px solid var(--lt);padding:14px 18px;margin-bottom:16px;font-size:13px;border-radius:0 8px 8px 0;color:var(--txl);line-height:1.7;}
+.q-text{font-size:15px;font-weight:600;color:var(--pet);margin-bottom:14px;line-height:1.5;}
+.q-opts{display:flex;flex-direction:column;gap:8px;}
+.q-opt{border:2px solid var(--brd);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all 0.15s;font-size:13px;}
+.q-opt:hover{border-color:var(--lt);background:#F0FAFA;}.q-opt.selected{border-color:var(--dt);background:#E0F5F6;}
+.q-opt.right{border-color:var(--grn)!important;background:#E0F7EC!important;}.q-opt.wrongA{border-color:var(--org)!important;background:#FFF0ED!important;}
+.q-fb{display:none;padding:12px 16px;border-radius:8px;margin-top:12px;font-size:13px;line-height:1.6;}.q-num{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--lt);margin-bottom:6px;}
+.score-circle{width:130px;height:130px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:20px auto;font-size:34px;font-weight:700;border:6px solid var(--brd);}
+.score-circle.pass{border-color:var(--grn);color:var(--grn);}.score-circle.fail{border-color:var(--org);color:var(--org);}
+.score-circle .score-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--txl);font-weight:400;}
+.result-fb{padding:14px 18px;border-radius:8px;margin:14px 0;font-size:13.5px;line-height:1.6;}.result-fb.pass-fb{background:#E0F7EC;color:#1A5C3A;}.result-fb.fail-fb{background:#FFF0ED;color:#8B2500;}
+.ak-item{background:#F8F9FA;border-radius:8px;padding:16px;margin:10px 0;text-align:left;}.ak-q{font-weight:600;font-size:13px;color:var(--pet);margin-bottom:6px;}.ak-correct{color:var(--grn);font-size:13px;font-weight:600;margin-bottom:4px;}.ak-expl{font-size:12.5px;color:var(--txl);line-height:1.6;}
+.close-btn{background:var(--grn);color:var(--wh);border:none;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:16px;}.close-btn:hover{background:#019A6B;}
+.auto-close-msg{font-size:12px;color:var(--txl);margin-top:10px;}
+.next-mod-card{background:linear-gradient(135deg,#F0FAFA,#E0F5F6);border-radius:10px;padding:14px;margin-top:14px;text-align:center;}.next-mod-card h4{color:var(--dt);font-size:13px;}.next-mod-card p{font-size:12px;color:var(--txl);}
+.hero-card{text-align:center;padding:40px 32px;background:linear-gradient(135deg,#F0FAFA,var(--wh));}
+.hero-card h2{font-size:28px;color:var(--pet);}.hero-card .hero-weight{display:inline-block;background:linear-gradient(135deg,var(--dt),var(--lt));color:var(--wh);padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;margin:12px 0 20px;}
+.outcomes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin-top:16px;}
+.outcome-item{background:var(--wh);border:1px solid var(--brd);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.5;}.outcome-item strong{color:var(--dt);}
+
+/* === PROGRESSIVE LOCK SYSTEM === */
+.nav-item.locked{opacity:0.4;cursor:not-allowed;pointer-events:none;}
+.nav-item.locked .nav-icon{filter:grayscale(1);}
+.nav-item.completed .nav-icon::after{content:'✓';font-size:8px;position:relative;top:-4px;left:1px;color:var(--grn);}
+.btn.btn-locked{opacity:0.4;cursor:not-allowed;pointer-events:none;background:var(--brd)!important;color:var(--txl)!important;}
+.read-timer{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#FFF8E1,#FFF3CD);border:1px solid #FFE082;border-radius:8px;padding:8px 16px;font-size:12px;color:#8B6914;margin-bottom:16px;font-weight:500;}
+.read-timer .timer-bar{width:100px;height:4px;background:#FFE082;border-radius:2px;overflow:hidden;}
+.read-timer .timer-fill{height:100%;background:var(--dt);border-radius:2px;transition:width 1s linear;}
+.read-timer.done{background:linear-gradient(135deg,#E0F7EC,#C8F0DA);border-color:#81C784;color:#1A5C3A;}
+</style>
+
+</head><body>
+<aside class="sidebar">
+<div class="sb-header"><h1>CCD-F Certification</h1><h2>Domain 1: Agents &amp; Workflows</h2><span class="weight">14.7% · ~8 of 53 Questions</span></div>
+<nav class="sb-nav">
+  <div class="nav-group"><div class="nav-group-title">Overview</div><a class="nav-item active completed" onclick="goTo(&#39;overview&#39;)" style="pointer-events: auto;"><span class="nav-icon">📋</span> Learning Outcomes</a></div>
+  <div class="nav-group"><div class="nav-group-title">1 · Workflow vs Agent</div>
+    <a class="nav-item" onclick="goTo(&#39;c1-def&#39;)" style="pointer-events: auto;"><span class="nav-icon">📘</span> Definition</a><a class="nav-item locked" onclick="goTo(&#39;c1-tech&#39;)" style="pointer-events: none;"><span class="nav-icon">⚙️</span> Technical</a><a class="nav-item locked" onclick="goTo(&#39;c1-cert&#39;)" style="pointer-events: none;"><span class="nav-icon">🎯</span> Certification</a><a class="nav-item locked" onclick="goTo(&#39;c1-case&#39;)" style="pointer-events: none;"><span class="nav-icon">🔬</span> Decision Matrix</a><a class="nav-item locked" onclick="goTo(&#39;c1-apply&#39;)" style="pointer-events: none;"><span class="nav-icon">🧩</span> Apply: Pattern Match</a></div>
+  <div class="nav-group"><div class="nav-group-title">2 · Agent SDK &amp; Construction</div>
+    <a class="nav-item locked" onclick="goTo(&#39;c2-def&#39;)" style="pointer-events: none;"><span class="nav-icon">📘</span> Definition</a><a class="nav-item locked" onclick="goTo(&#39;c2-tech&#39;)" style="pointer-events: none;"><span class="nav-icon">⚙️</span> Technical</a><a class="nav-item locked" onclick="goTo(&#39;c2-cert&#39;)" style="pointer-events: none;"><span class="nav-icon">🎯</span> Certification</a><a class="nav-item locked" onclick="goTo(&#39;c2-case&#39;)" style="pointer-events: none;"><span class="nav-icon">🔬</span> SDK Explorer</a><a class="nav-item locked" onclick="goTo(&#39;c2-apply&#39;)" style="pointer-events: none;"><span class="nav-icon">🧩</span> Apply: Code Completion</a></div>
+  <div class="nav-group"><div class="nav-group-title">3 · Agentic Loop Patterns</div>
+    <a class="nav-item locked" onclick="goTo(&#39;c3-def&#39;)" style="pointer-events: none;"><span class="nav-icon">📘</span> Definition</a><a class="nav-item locked" onclick="goTo(&#39;c3-tech&#39;)" style="pointer-events: none;"><span class="nav-icon">⚙️</span> Technical</a><a class="nav-item locked" onclick="goTo(&#39;c3-cert&#39;)" style="pointer-events: none;"><span class="nav-icon">🎯</span> Certification</a><a class="nav-item locked" onclick="goTo(&#39;c3-case&#39;)" style="pointer-events: none;"><span class="nav-icon">🔬</span> Quick-Fire Patterns</a><a class="nav-item locked" onclick="goTo(&#39;c3-apply&#39;)" style="pointer-events: none;"><span class="nav-icon">🧩</span> Apply: Pattern Sorter</a></div>
+  <div class="nav-group"><div class="nav-group-title">4 · Frameworks &amp; Multi-Agent</div>
+    <a class="nav-item locked" onclick="goTo(&#39;c4-def&#39;)" style="pointer-events: none;"><span class="nav-icon">📘</span> Definition</a><a class="nav-item locked" onclick="goTo(&#39;c4-tech&#39;)" style="pointer-events: none;"><span class="nav-icon">⚙️</span> Technical</a><a class="nav-item locked" onclick="goTo(&#39;c4-cert&#39;)" style="pointer-events: none;"><span class="nav-icon">🎯</span> Certification</a><a class="nav-item locked" onclick="goTo(&#39;c4-case&#39;)" style="pointer-events: none;"><span class="nav-icon">🔬</span> Framework Comparison</a><a class="nav-item locked" onclick="goTo(&#39;c4-apply&#39;)" style="pointer-events: none;"><span class="nav-icon">🧩</span> Apply: Investigator</a></div>
+  <div class="nav-group"><div class="nav-group-title">Assessment</div>
+    <a class="nav-item locked" onclick="goTo(&#39;assess&#39;)" style="pointer-events: none;"><span class="nav-icon">📝</span> Scenario Questions (6)</a><a class="nav-item locked" onclick="goTo(&#39;results&#39;)" style="pointer-events: none;"><span class="nav-icon">📊</span> Results</a></div>
+</nav>
+<div class="sb-footer"><div class="sb-progress"><div class="sb-progress-fill" id="progressBar" style="width: 4%;"></div></div><div class="sb-progress-label"><span id="progressText">4%</span><span id="timeDisplay">00:32</span></div></div>
+</aside>
+<main class="content" id="mainContent">
+
+<div class="section active" id="sec-overview">
+<div class="card hero-card"><div class="hero-weight">Domain 1 · 14.7% of Exam · ~8 of 53 Questions</div><h2>Agents &amp; Workflows</h2><p class="subtitle">Build agents and workflows using the Claude Agent SDK, agentic frameworks, and custom loops</p>
+<div class="outcomes-grid">
+  <div class="outcome-item"><strong>Workflow vs Agent</strong> — Apply decision criteria for choosing workflows (fixed path) vs agents (LLM-driven), including manager/supervisor hierarchies and subagent roles</div>
+  <div class="outcome-item"><strong>Agent SDK &amp; Construction</strong> — Build agents with the Claude Agent SDK, custom agentic loops, managed vs self-hosted deployments, and deterministic hooks</div>
+  <div class="outcome-item"><strong>Agentic Loop Patterns</strong> — Implement tool-use loops with stop_reason-based control, error recovery, and graceful degradation strategies</div>
+  <div class="outcome-item"><strong>Frameworks &amp; Multi-Agent</strong> — Evaluate third-party frameworks (Strands, LangGraph, PydanticAI) and design multi-agent architectures with context isolation</div>
+</div></div>
+
+<div style="text-align:right;margin-top:16px;"><button class="btn btn-primary" onclick="goTo(&#39;c1-def&#39;)">Begin →</button></div>
+</div>
+
+<!-- ===== C1: WORKFLOW vs AGENT ===== -->
+<div class="section" id="sec-c1-def"><span class="tag tag-def">Definition</span><h2 class="sec-title">Workflow vs Agent — Decision Criteria</h2><p class="subtitle">Fixed orchestration paths vs LLM-driven autonomous decision-making</p>
+<div class="def-block"><div class="def-term">Workflow</div>A <strong>fixed, predetermined orchestration path</strong> where every step is defined at design time. The developer controls which models are called, in what order, with which inputs. Claude executes each step but does NOT decide what to do next. Think pipeline: step A → step B → step C, always in that order.</div>
+<div class="def-block"><div class="def-term">Agent</div>An <strong>LLM-driven autonomous system</strong> where Claude decides what action to take next based on the current state. The model controls the flow — it chooses which tools to call, how many iterations to run, and when to stop. The developer defines the tools and constraints; the model drives execution.</div>
+<div class="card"><h3>4 Decision Criteria</h3>
+<table class="info-table"><tbody><tr><th>Criterion</th><th>Workflow</th><th>Agent</th></tr>
+<tr><td><strong>Path predetermined?</strong></td><td>Yes — every step defined at design time</td><td>No — path depends on model's observations</td></tr>
+<tr><td><strong>Number of steps fixed?</strong></td><td>Yes — same steps every execution</td><td>No — could be 1 step or 15 depending on task</td></tr>
+<tr><td><strong>Model decides next action?</strong></td><td>No — developer's code routes each step</td><td>Yes — model selects tools and actions</td></tr>
+<tr><td><strong>Cost predictable?</strong></td><td>Yes — fixed API calls = predictable cost</td><td>No — variable iterations = variable cost</td></tr></tbody></table>
+<div class="callout callout-key"><strong>The exam tests this distinction directly.</strong> If ALL 4 answers are "fixed/predetermined/yes" → Workflow. If ANY answer is "variable/model-decides" → Agent. There is no hybrid middle ground on the exam.</div></div>
+<div class="card"><h3>Manager/Supervisor Hierarchies</h3><p>In complex systems, a <strong>manager agent</strong> delegates subtasks to <strong>worker subagents</strong>. The manager decides what to delegate and coordinates results. Workers execute focused tasks with scoped tools. This is the orchestrator-workers pattern.</p></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview" target="_blank">docs.anthropic.com — Tool Use Overview</a></div>
+<div class="read-timer" id="read-timer-c1-def"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;overview&#39;)">← Overview</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c1-tech&#39;)">Technical →</button></div></div>
+
+<div class="section" id="sec-c1-tech"><span class="tag tag-tech">Technical Deep-Dive</span><h2 class="sec-title">Workflow vs Agent — Orchestration Patterns</h2>
+<div class="card"><h3>5 Orchestration Patterns</h3>
+<table class="info-table"><tbody><tr><th>Pattern</th><th>Type</th><th>When to Use</th></tr>
+<tr><td><strong>Prompt Chaining</strong></td><td>Workflow</td><td>Sequential steps with validation gates between each</td></tr>
+<tr><td><strong>Routing</strong></td><td>Workflow</td><td>Classify input → send to specialised handler</td></tr>
+<tr><td><strong>Parallelisation</strong></td><td>Workflow</td><td>Independent subtasks that can run concurrently (fan-out/fan-in)</td></tr>
+<tr><td><strong>Orchestrator-Workers</strong></td><td>Agent</td><td>Manager decomposes tasks dynamically, delegates to worker subagents</td></tr>
+<tr><td><strong>Evaluator-Optimizer</strong></td><td>Agent</td><td>Generate → evaluate → refine loop until quality threshold met</td></tr></tbody></table></div>
+<div class="card"><h3>Workflow Code Pattern</h3>
+<pre class="code"><span class="cm"># Workflow: Fixed pipeline — developer controls flow</span>
+summary = claude(<span class="str">"Summarise this document"</span>, doc)
+translation = claude(<span class="str">"Translate to French"</span>, summary)
+quality = claude(<span class="str">"Rate translation quality 1-10"</span>, translation)
+<span class="cm"># Always 3 steps, always in this order</span></pre></div>
+<div class="card"><h3>Agent Code Pattern</h3>
+<pre class="code"><span class="cm"># Agent: Model-driven loop — Claude decides flow</span>
+<span class="kw">while</span> True:
+    response = claude(messages, tools=tools)
+    <span class="kw">if</span> response.stop_reason == <span class="str">"end_turn"</span>:
+        <span class="kw">break</span>  <span class="cm"># Claude decided it's done</span>
+    <span class="cm"># Execute tool calls, append results, continue</span>
+    messages.append(execute_tools(response))</pre></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/chain-prompts" target="_blank">docs.anthropic.com — Prompt Chaining &gt;docs.anthropic.com — Orchestration Patterns</a> Orchestration</div>
+<div class="read-timer" id="read-timer-c1-tech"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c1-def&#39;)">← Definition</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c1-cert&#39;)">Certification →</button></div></div>
+
+<div class="section" id="sec-c1-cert"><span class="tag tag-cert">Certification Focus</span><h2 class="sec-title">Workflow vs Agent — Exam Patterns</h2>
+<div class="card">
+<div class="callout callout-exam"><strong>#1 — "Which orchestration pattern?":</strong> The exam describes a scenario and asks which pattern to use. Map: fixed steps → prompt chaining/routing. Variable steps, model decides → orchestrator-workers. Independent subtasks → parallelisation (fan-out/fan-in).</div>
+<div class="callout callout-exam"><strong>#2 — Fan-Out/Fan-In:</strong> Only use when subtasks are genuinely independent. If task B depends on task A's result, parallelisation is wrong — use prompt chaining.</div>
+<div class="callout callout-exam"><strong>#3 — Subagent Role:</strong> Subagents improve task execution by focusing on narrow subtasks with scoped tools. They do NOT communicate with each other directly — all communication flows through the coordinator/manager.</div>
+<div class="callout callout-anti"><strong>Trap: "Agent for everything":</strong> The exam often presents simple tasks where a workflow is the correct answer. A 3-step translation pipeline does NOT need an agent — it needs prompt chaining. Over-engineering with agents is a wrong answer.</div></div>
+<div class="read-timer" id="read-timer-c1-cert"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c1-tech&#39;)">← Technical</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c1-case&#39;)">Simulation →</button></div></div>
+
+<div class="section" id="sec-c1-case"><span class="tag tag-case">Live Simulation</span><h2 class="sec-title">Decision Matrix — Workflow or Agent?</h2><p class="subtitle">4 scenarios — classify each as Workflow or Agent.</p>
+<div class="card">
+<div class="verdict-card" id="wa-0"><div class="verdict-req">1/4: A customer support bot that looks up orders, processes refunds, and escalates to humans — the path varies based on what the customer says.</div><div class="verdict-btns"><button class="verdict-btn" onclick="waVote(0,0)">Workflow</button><button class="verdict-btn" onclick="waVote(0,1)">Agent</button></div><div class="verdict-expl" id="wa-exp-0"></div></div>
+<div class="verdict-card" id="wa-1"><div class="verdict-req">2/4: A pipeline that extracts text from a PDF, translates it, then formats it as HTML — always the same 3 steps.</div><div class="verdict-btns"><button class="verdict-btn" onclick="waVote(1,0)">Workflow</button><button class="verdict-btn" onclick="waVote(1,1)">Agent</button></div><div class="verdict-expl" id="wa-exp-1"></div></div>
+<div class="verdict-card" id="wa-2"><div class="verdict-req">3/4: A research assistant that searches the web, reads articles, and synthesises findings — the number of searches depends on what it finds.</div><div class="verdict-btns"><button class="verdict-btn" onclick="waVote(2,0)">Workflow</button><button class="verdict-btn" onclick="waVote(2,1)">Agent</button></div><div class="verdict-expl" id="wa-exp-2"></div></div>
+<div class="verdict-card" id="wa-3"><div class="verdict-req">4/4: An email classifier that reads each email and routes it to one of 5 departments based on content.</div><div class="verdict-btns"><button class="verdict-btn" onclick="waVote(3,0)">Workflow</button><button class="verdict-btn" onclick="waVote(3,1)">Agent</button></div><div class="verdict-expl" id="wa-exp-3"></div></div>
+<div class="verdict-score" id="wa-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c1-cert&#39;)">← Certification</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c1-apply&#39;)">Apply →</button></div></div>
+
+<div class="section" id="sec-c1-apply"><span class="tag tag-apply">Apply</span><h2 class="sec-title">Orchestration Pattern Matcher</h2><p class="subtitle">5 use cases — match each to the correct orchestration pattern.</p>
+<div class="card">
+<div class="verdict-card" id="pm-0"><div class="verdict-req">1/5: Analyse 100 customer reviews simultaneously, then combine the results.</div><div class="verdict-btns"><button class="verdict-btn" onclick="pmVote(0,0)">Prompt Chaining</button><button class="verdict-btn" onclick="pmVote(0,1)">Parallelisation</button><button class="verdict-btn" onclick="pmVote(0,2)">Orchestrator-Workers</button></div><div class="verdict-expl" id="pm-exp-0"></div></div>
+<div class="verdict-card" id="pm-1"><div class="verdict-req">2/5: Classify a support ticket, then route to the billing, technical, or account handler.</div><div class="verdict-btns"><button class="verdict-btn" onclick="pmVote(1,0)">Routing</button><button class="verdict-btn" onclick="pmVote(1,1)">Parallelisation</button><button class="verdict-btn" onclick="pmVote(1,2)">Evaluator-Optimizer</button></div><div class="verdict-expl" id="pm-exp-1"></div></div>
+<div class="verdict-card" id="pm-2"><div class="verdict-req">3/5: Generate a marketing email, score it for quality, revise based on feedback, repeat until score &gt; 8.</div><div class="verdict-btns"><button class="verdict-btn" onclick="pmVote(2,0)">Prompt Chaining</button><button class="verdict-btn" onclick="pmVote(2,1)">Routing</button><button class="verdict-btn" onclick="pmVote(2,2)">Evaluator-Optimizer</button></div><div class="verdict-expl" id="pm-exp-2"></div></div>
+<div class="verdict-card" id="pm-3"><div class="verdict-req">4/5: Extract data → validate → transform → load into database, always in this order.</div><div class="verdict-btns"><button class="verdict-btn" onclick="pmVote(3,0)">Prompt Chaining</button><button class="verdict-btn" onclick="pmVote(3,1)">Orchestrator-Workers</button><button class="verdict-btn" onclick="pmVote(3,2)">Parallelisation</button></div><div class="verdict-expl" id="pm-exp-3"></div></div>
+<div class="verdict-card" id="pm-4"><div class="verdict-req">5/5: A manager agent decomposes a research question, sends subtasks to search/analysis/writing subagents.</div><div class="verdict-btns"><button class="verdict-btn" onclick="pmVote(4,0)">Routing</button><button class="verdict-btn" onclick="pmVote(4,1)">Prompt Chaining</button><button class="verdict-btn" onclick="pmVote(4,2)">Orchestrator-Workers</button></div><div class="verdict-expl" id="pm-exp-4"></div></div>
+<div class="verdict-score" id="pm-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c1-case&#39;)">← Simulation</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c2-def&#39;)">Next: Agent SDK →</button></div></div>
+
+<!-- ===== C2: AGENT SDK ===== -->
+<div class="section" id="sec-c2-def"><span class="tag tag-def">Definition</span><h2 class="sec-title">Agent SDK &amp; Construction Methods</h2><p class="subtitle">Three ways to build Claude agents — SDK, custom loops, and managed platforms</p>
+<div class="card"><h3>Three Construction Approaches</h3>
+<table class="info-table"><tbody><tr><th>Approach</th><th>What It Is</th><th>When to Use</th></tr>
+<tr><td><strong>Claude Agent SDK</strong></td><td>Anthropic's official Python framework. Provides <code>Agent</code> class with built-in tool management, guardrails, handoffs, and tracing.</td><td>Most production use cases — handles the loop, error recovery, and observability for you.</td></tr>
+<tr><td><strong>Custom Agent Loop</strong></td><td>Raw Messages API in a <code>while</code> loop. You control every aspect: tool execution, error handling, context management.</td><td>When you need full control — custom retry logic, non-standard tool patterns, or the SDK doesn't support your architecture.</td></tr>
+<tr><td><strong>Managed Deployment</strong></td><td>Anthropic-hosted or self-hosted agent infrastructure. Managed handles scaling, versioning, and monitoring.</td><td>Enterprise production — when you need SLAs, scaling, and operational monitoring without building infra yourself.</td></tr></tbody></table></div>
+<div class="card"><h3>SDK vs Custom Loop — Key Difference</h3>
+<div class="callout callout-key"><strong>SDK:</strong> The framework handles the agentic loop internally. You configure agent behaviour (tools, guardrails, handoffs). <strong>Custom Loop:</strong> You write the loop yourself — checking <code>stop_reason</code>, executing tools, appending results. The SDK is higher-level; the custom loop gives full control.</div></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/claude-code/sdk/sdk-overview" target="_blank">docs.anthropic.com — Agent SDK Overview</a></div>
+<div class="read-timer" id="read-timer-c2-def"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c1-apply&#39;)">← Previous</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c2-tech&#39;)">Technical →</button></div></div>
+
+<div class="section" id="sec-c2-tech"><span class="tag tag-tech">Technical Deep-Dive</span><h2 class="sec-title">Agent SDK — Components</h2>
+<div class="card"><h3>SDK Agent Definition</h3>
+<pre class="code"><span class="kw">from</span> anthropic.agents <span class="kw">import</span> Agent, Tool
+
+agent = Agent(
+    name=<span class="str">"support_agent"</span>,
+    model=<span class="str">"claude-sonnet-4-6"</span>,
+    tools=[lookup_order, process_refund, escalate],
+    system_prompt=<span class="str">"You are a customer support agent..."</span>,
+    guardrails=[block_pii_exposure, require_identity],
+    max_turns=<span class="num">25</span>,
+)
+
+<span class="cm"># The SDK handles the loop — you just run it</span>
+result = agent.run(<span class="str">"I want to return my order"</span>)</pre></div>
+<div class="card"><h3>Hooks for Deterministic Actions</h3><p>Hooks provide deterministic enforcement within SDK agents:</p>
+<ul class="deep">
+<li><strong>PreToolUse</strong> — fires before a tool executes. Return <code>block</code> to prevent execution. Use for policy enforcement, input validation.</li>
+<li><strong>PostToolUse</strong> — fires after a tool returns. Use for output sanitisation, logging, data normalisation.</li>
+<li><strong>Guardrails</strong> — SDK-level constraints that check every turn. Block PII exposure, enforce identity verification, prevent dangerous actions.</li></ul>
+<div class="callout callout-key"><strong>Hooks are deterministic; prompts are probabilistic.</strong> If a rule MUST be enforced 100% of the time, it goes in a hook. If it's a preference, it goes in the system prompt.</div></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/claude-code/hooks" target="_blank">docs.anthropic.com — Claude Code Hooks</a></div>
+<div class="read-timer" id="read-timer-c2-tech"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c2-def&#39;)">← Definition</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c2-cert&#39;)">Certification →</button></div></div>
+
+<div class="section" id="sec-c2-cert"><span class="tag tag-cert">Certification Focus</span><h2 class="sec-title">Agent Construction — Exam Patterns</h2>
+<div class="card">
+<div class="callout callout-exam"><strong>#1 — SDK vs Custom Loop:</strong> "Which approach gives the developer the MOST control?" → Custom loop. "Which approach handles the loop, tracing, and guardrails automatically?" → Agent SDK. Know the trade-off: SDK = less code, less control. Custom = more code, full control.</div>
+<div class="callout callout-exam"><strong>#2 — Hooks vs System Prompt:</strong> "Agent must NEVER process refunds without identity verification" → Hook (PreToolUse that blocks). "Agent should prefer formal tone" → System prompt. The keyword is MUST vs SHOULD.</div>
+<div class="callout callout-exam"><strong>#3 — max_turns:</strong> A safety parameter that caps the number of loop iterations. It's a safety net, NOT the primary termination mechanism. The primary mechanism is <code>stop_reason: end_turn</code>.</div>
+<div class="callout callout-exam"><strong>#4 — Handoffs in SDK:</strong> When one agent transfers control to another. The handoff includes context about what was done and what needs to happen next. The receiving agent starts fresh — it does NOT inherit the sending agent's conversation history unless explicitly passed.</div></div>
+<div class="read-timer" id="read-timer-c2-cert"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c2-tech&#39;)">← Technical</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c2-case&#39;)">Simulation →</button></div></div>
+
+<div class="section" id="sec-c2-case"><span class="tag tag-case">Live Simulation</span><h2 class="sec-title">SDK Explorer — Before/After</h2><p class="subtitle">Compare building an agent with the raw API vs the SDK.</p>
+<div class="card">
+<div class="ba-container"><div class="ba-panel ba-before"><h4>Custom Loop (Raw API)</h4><pre class="code" style="font-size:11px;background:#1a0000;"><span class="cm"># 30+ lines of loop management</span>
+messages = [{"role":"user","content":q}]
+<span class="kw">while</span> True:
+  r = client.messages.create(
+    model="claude-sonnet-4-6",
+    messages=messages, tools=tools)
+  <span class="kw">if</span> r.stop_reason == "end_turn":
+    <span class="kw">break</span>
+  <span class="cm"># Manual tool execution</span>
+  <span class="kw">for</span> block <span class="kw">in</span> r.content:
+    <span class="kw">if</span> block.type == "tool_use":
+      result = execute(block)
+      messages.append(...)
+  <span class="cm"># Manual error handling</span>
+  <span class="cm"># Manual PII check</span>
+  <span class="cm"># Manual logging</span>
+  <span class="cm"># Manual turn counting</span></pre></div>
+<div class="ba-panel ba-after"><h4>Agent SDK</h4><pre class="code" style="font-size:11px;background:#001a00;"><span class="cm"># 10 lines — SDK handles the rest</span>
+agent = Agent(
+  name="support",
+  model="claude-sonnet-4-6",
+  tools=[lookup, refund, escalate],
+  system_prompt="You are...",
+  guardrails=[block_pii],
+  max_turns=25,
+)
+result = agent.run(query)
+
+<span class="cm">✓ Loop handled by SDK</span>
+<span class="cm">✓ Tool execution managed</span>
+<span class="cm">✓ Guardrails checked every turn</span>
+<span class="cm">✓ Tracing built in</span>
+<span class="cm">✓ Error recovery automatic</span></pre></div></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c2-cert&#39;)">← Certification</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c2-apply&#39;)">Apply →</button></div></div>
+
+<div class="section" id="sec-c2-apply"><span class="tag tag-apply">Apply</span><h2 class="sec-title">SDK vs Custom — Quick-Fire</h2><p class="subtitle">4 requirements — choose SDK or Custom Loop for each.</p>
+<div class="card">
+<div class="verdict-card" id="sdk-0"><div class="verdict-req">1/4: "I need built-in guardrails, tracing, and automatic tool management with minimal code"</div><div class="verdict-btns"><button class="verdict-btn" onclick="sdkVote(0,0)">Agent SDK</button><button class="verdict-btn" onclick="sdkVote(0,1)">Custom Loop</button></div><div class="verdict-expl" id="sdk-exp-0"></div></div>
+<div class="verdict-card" id="sdk-1"><div class="verdict-req">2/4: "I need to implement a custom retry strategy with exponential backoff that the SDK doesn't support"</div><div class="verdict-btns"><button class="verdict-btn" onclick="sdkVote(1,0)">Agent SDK</button><button class="verdict-btn" onclick="sdkVote(1,1)">Custom Loop</button></div><div class="verdict-expl" id="sdk-exp-1"></div></div>
+<div class="verdict-card" id="sdk-2"><div class="verdict-req">3/4: "Enterprise production deployment with SLA requirements and auto-scaling"</div><div class="verdict-btns"><button class="verdict-btn" onclick="sdkVote(2,0)">Agent SDK + Managed</button><button class="verdict-btn" onclick="sdkVote(2,1)">Custom Loop + Self-hosted</button></div><div class="verdict-expl" id="sdk-exp-2"></div></div>
+<div class="verdict-card" id="sdk-3"><div class="verdict-req">4/4: "Agent must NEVER access the billing system without verified customer identity"</div><div class="verdict-btns"><button class="verdict-btn" onclick="sdkVote(3,0)">System prompt instruction</button><button class="verdict-btn" onclick="sdkVote(3,1)">PreToolUse hook</button></div><div class="verdict-expl" id="sdk-exp-3"></div></div>
+<div class="verdict-score" id="sdk-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c2-case&#39;)">← Simulation</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c3-def&#39;)">Next: Loop Patterns →</button></div></div>
+
+<!-- ===== C3: AGENTIC LOOP PATTERNS ===== -->
+<div class="section" id="sec-c3-def"><span class="tag tag-def">Definition</span><h2 class="sec-title">Agentic Loop Patterns</h2><p class="subtitle">Tool-use loops, stop_reason control, and error recovery</p>
+<div class="def-block"><div class="def-term">The Agentic Loop</div>The core pattern: (1) Send messages + tools to Claude, (2) Check <code>stop_reason</code>, (3) If <code>tool_use</code> → execute tool, append result, loop back to step 1, (4) If <code>end_turn</code> → exit loop, return response. The loop runs until Claude decides it's finished.</div>
+<div class="card"><h3>stop_reason Values</h3>
+<table class="info-table"><tbody><tr><th>Value</th><th>Meaning</th><th>Action</th></tr>
+<tr><td><code>end_turn</code></td><td>Claude finished its response</td><td><strong>STOP</strong> — exit the loop</td></tr>
+<tr><td><code>tool_use</code></td><td>Claude wants to call a tool</td><td><strong>CONTINUE</strong> — execute tool, append result, loop</td></tr>
+<tr><td><code>max_tokens</code></td><td>Response hit the token limit</td><td>Handle truncation — may need to continue</td></tr>
+<tr><td><code>pause_turn</code></td><td>Model paused for external input</td><td>Wait for input, then resume</td></tr></tbody></table>
+<div class="callout callout-key"><strong>stop_reason is the ONLY reliable termination signal.</strong> Never parse text content ("I'm done") to determine if the loop should end. Never use content[0].type == "text" — Claude can return text alongside tool_use blocks.</div></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview" target="_blank">docs.anthropic.com — Tool Use &gt;docs.anthropic.com — Stop Reasons &amp; Tool Use</a> Stop Reasons</div>
+<div class="read-timer" id="read-timer-c3-def"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c2-apply&#39;)">← Previous</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c3-tech&#39;)">Technical →</button></div></div>
+
+<div class="section" id="sec-c3-tech"><span class="tag tag-tech">Technical Deep-Dive</span><h2 class="sec-title">Error Recovery &amp; Graceful Degradation</h2>
+<div class="card"><h3>Error Recovery Strategies</h3>
+<table class="info-table"><tbody><tr><th>Strategy</th><th>When to Use</th><th>Implementation</th></tr>
+<tr><td><strong>Retry with backoff</strong></td><td>Transient failures (network, rate limits)</td><td>Exponential backoff: 1s, 2s, 4s, max 3 retries</td></tr>
+<tr><td><strong>Fallback to simpler strategy</strong></td><td>Complex tool fails repeatedly</td><td>Try tool A → fail → try simpler tool B</td></tr>
+<tr><td><strong>Graceful degradation</strong></td><td>Partial failure in multi-step task</td><td>Return available results, report what's missing</td></tr>
+<tr><td><strong>Human escalation</strong></td><td>Agent cannot progress</td><td>Structured handoff with context summary</td></tr></tbody></table></div>
+<div class="card"><h3>The isError Flag</h3><p>When returning tool results to Claude, the <code>is_error</code> field tells the model the tool failed. Without it, Claude may interpret error text as a normal result and incorporate error messages into its response.</p>
+<pre class="code"><span class="cm"># WRONG — error text treated as content</span>
+{<span class="str">"type"</span>: <span class="str">"tool_result"</span>, <span class="str">"content"</span>: <span class="str">"Error: timeout"</span>}
+
+<span class="cm"># CORRECT — flagged as error</span>
+{<span class="str">"type"</span>: <span class="str">"tool_result"</span>,
+ <span class="str">"content"</span>: <span class="str">"Error: timeout after 30s"</span>,
+ <span class="str">"is_error"</span>: <span class="kw">true</span>}</pre></div>
+<div class="read-timer" id="read-timer-c3-tech"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c3-def&#39;)">← Definition</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c3-cert&#39;)">Certification →</button></div></div>
+
+<div class="section" id="sec-c3-cert"><span class="tag tag-cert">Certification Focus</span><h2 class="sec-title">Loop Patterns — Exam Patterns</h2>
+<div class="card">
+<div class="callout callout-exam"><strong>#1 — Three Anti-Patterns:</strong> (A) Parsing "I'm done" from text → unreliable. (B) Arbitrary iteration caps as PRIMARY control → wrong (OK as safety net). (C) Checking content[0].type == "text" → Claude can return text AND tool_use together.</div>
+<div class="callout callout-exam"><strong>#2 — is_error Flag:</strong> When asked "tool returns an error — what happens next?" the correct answer always involves <code>is_error: true</code> in the tool result, so Claude knows the execution failed.</div>
+<div class="callout callout-exam"><strong>#3 — Retry vs Escalate:</strong> Transient errors (network) → retry with backoff. Persistent errors (tool doesn't exist, permission denied) → escalate or fail gracefully. The exam tests whether you can distinguish transient from persistent.</div>
+<div class="callout callout-exam"><strong>#4 — tool_choice:</strong> <code>"auto"</code> = Claude may call a tool or not. <code>"any"</code> = Claude MUST call a tool. <code>{"type":"tool","name":"X"}</code> = forced specific tool. Forcing "any" when the agent is genuinely finished creates infinite loops.</div></div>
+<div class="read-timer" id="read-timer-c3-cert"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c3-tech&#39;)">← Technical</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c3-case&#39;)">Simulation →</button></div></div>
+
+<div class="section" id="sec-c3-case"><span class="tag tag-case">Live Simulation</span><h2 class="sec-title">Quick-Fire: Loop Control</h2><p class="subtitle">5 scenarios — select the correct loop control action.</p>
+<div class="card">
+<div class="verdict-card" id="lp-0"><div class="verdict-req">1/5: API returns stop_reason: "tool_use" with a lookup_order tool call.</div><div class="verdict-btns"><button class="verdict-btn" onclick="lpVote(0,0)">Continue — execute tool, loop</button><button class="verdict-btn" onclick="lpVote(0,1)">Stop — return response</button></div><div class="verdict-expl" id="lp-exp-0"></div></div>
+<div class="verdict-card" id="lp-1"><div class="verdict-req">2/5: API returns stop_reason: "end_turn" with final text.</div><div class="verdict-btns"><button class="verdict-btn" onclick="lpVote(1,0)">Continue — might have more work</button><button class="verdict-btn" onclick="lpVote(1,1)">Stop — end_turn means done</button></div><div class="verdict-expl" id="lp-exp-1"></div></div>
+<div class="verdict-card" id="lp-2"><div class="verdict-req">3/5: Tool call returns a network timeout error.</div><div class="verdict-btns"><button class="verdict-btn" onclick="lpVote(2,0)">Retry with exponential backoff</button><button class="verdict-btn" onclick="lpVote(2,1)">Immediately escalate to human</button></div><div class="verdict-expl" id="lp-exp-2"></div></div>
+<div class="verdict-card" id="lp-3"><div class="verdict-req">4/5: Response includes text "Let me check that" AND a tool_use block.</div><div class="verdict-btns"><button class="verdict-btn" onclick="lpVote(3,0)">Stop — text means Claude is done</button><button class="verdict-btn" onclick="lpVote(3,1)">Continue — stop_reason is tool_use</button></div><div class="verdict-expl" id="lp-exp-3"></div></div>
+<div class="verdict-card" id="lp-4"><div class="verdict-req">5/5: Tool "delete_account" attempted but agent doesn't have permission.</div><div class="verdict-btns"><button class="verdict-btn" onclick="lpVote(4,0)">Retry — might work next time</button><button class="verdict-btn" onclick="lpVote(4,1)">Return is_error: true and let Claude try alternative</button></div><div class="verdict-expl" id="lp-exp-4"></div></div>
+<div class="verdict-score" id="lp-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c3-cert&#39;)">← Certification</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c3-apply&#39;)">Apply →</button></div></div>
+
+<div class="section" id="sec-c3-apply"><span class="tag tag-apply">Apply</span><h2 class="sec-title">Error Strategy Sorter</h2><p class="subtitle">4 error scenarios — match each to the correct recovery strategy.</p>
+<div class="card">
+<div class="verdict-card" id="err-0"><div class="verdict-req">1/4: API rate limit hit (429 status code)</div><div class="verdict-btns"><button class="verdict-btn" onclick="errVote(0,0)">Retry with backoff</button><button class="verdict-btn" onclick="errVote(0,1)">Fail gracefully</button><button class="verdict-btn" onclick="errVote(0,2)">Escalate to human</button></div><div class="verdict-expl" id="err-exp-0"></div></div>
+<div class="verdict-card" id="err-1"><div class="verdict-req">2/4: Search tool works but database tool returns "table not found" on every retry</div><div class="verdict-btns"><button class="verdict-btn" onclick="errVote(1,0)">Retry with backoff</button><button class="verdict-btn" onclick="errVote(1,1)">Return search results, report DB unavailable</button><button class="verdict-btn" onclick="errVote(1,2)">Stop entirely</button></div><div class="verdict-expl" id="err-exp-1"></div></div>
+<div class="verdict-card" id="err-2"><div class="verdict-req">3/4: Customer asks to cancel a subscription but the agent has no cancel tool</div><div class="verdict-btns"><button class="verdict-btn" onclick="errVote(2,0)">Retry with different tool</button><button class="verdict-btn" onclick="errVote(2,1)">Graceful degradation</button><button class="verdict-btn" onclick="errVote(2,2)">Escalate to human agent</button></div><div class="verdict-expl" id="err-exp-2"></div></div>
+<div class="verdict-card" id="err-3"><div class="verdict-req">4/4: Network timeout on 1st attempt, succeeds on 2nd attempt</div><div class="verdict-btns"><button class="verdict-btn" onclick="errVote(3,0)">Retry with backoff</button><button class="verdict-btn" onclick="errVote(3,1)">Escalate to human</button><button class="verdict-btn" onclick="errVote(3,2)">Return partial results</button></div><div class="verdict-expl" id="err-exp-3"></div></div>
+<div class="verdict-score" id="err-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c3-case&#39;)">← Simulation</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c4-def&#39;)">Next: Frameworks →</button></div></div>
+
+<!-- ===== C4: FRAMEWORKS & MULTI-AGENT ===== -->
+<div class="section" id="sec-c4-def"><span class="tag tag-def">Definition</span><h2 class="sec-title">Frameworks &amp; Multi-Agent Architecture</h2><p class="subtitle">Third-party frameworks and multi-agent design patterns</p>
+<div class="card"><h3>Third-Party Agent Frameworks</h3><p>The CCD-F exam explicitly tests knowledge of third-party frameworks:</p>
+<table class="info-table"><tbody><tr><th>Framework</th><th>Key Feature</th><th>Best For</th></tr>
+<tr><td><strong>Strands</strong></td><td>AWS-native, managed lifecycle</td><td>Enterprise AWS deployments with managed scaling</td></tr>
+<tr><td><strong>LangGraph</strong></td><td>Graph-based state machines</td><td>Complex workflows with branching and conditional paths</td></tr>
+<tr><td><strong>PydanticAI</strong></td><td>Type-safe, schema-validated agents</td><td>When you need strong typing and schema validation</td></tr></tbody></table>
+<div class="callout callout-key"><strong>Exam Tip:</strong> The exam tests whether you can select the right framework for a given constraint. AWS-native → Strands. Complex state machines → LangGraph. Type safety → PydanticAI. Claude-native with built-in guardrails → Agent SDK.</div></div>
+<div class="card"><h3>Multi-Agent Context Rules</h3><p>Two rules that apply regardless of framework:</p>
+<ul class="deep"><li>Subagents do <strong>NOT inherit</strong> the coordinator's conversation history — context must be explicitly passed.</li>
+<li>Subagents do <strong>NOT share memory</strong> between invocations — each call starts fresh.</li></ul></div>
+<div class="source"><a href="https://docs.anthropic.com/en/docs/claude-code/sub-agents" target="_blank">docs.anthropic.com — Custom Subagents</a></div>
+<div class="read-timer" id="read-timer-c4-def"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c3-apply&#39;)">← Previous</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c4-tech&#39;)">Technical →</button></div></div>
+
+<div class="section" id="sec-c4-tech"><span class="tag tag-tech">Technical Deep-Dive</span><h2 class="sec-title">Multi-Agent Topologies</h2>
+<div class="card"><h3>Hierarchical vs Peer-to-Peer</h3>
+<table class="info-table"><tbody><tr><th>Topology</th><th>How It Works</th><th>When to Use</th></tr>
+<tr><td><strong>Hierarchical</strong></td><td>Manager delegates to workers. All communication goes through manager.</td><td>Clear task decomposition, need coordination and result synthesis.</td></tr>
+<tr><td><strong>Peer-to-Peer</strong></td><td>Agents communicate directly with each other via message passing.</td><td>Collaborative tasks where agents negotiate or build on each other's work.</td></tr></tbody></table></div>
+<div class="card"><h3>Context Window Management in Agents</h3><p>Long-running agents face context window limits. Management strategies:</p>
+<ul class="deep"><li><strong>Progressive summarisation</strong> — compress earlier turns while preserving exact values (amounts, IDs)</li>
+<li><strong>/compact</strong> — Claude Code's built-in compaction that preserves key facts</li>
+<li><strong>Scratchpad files</strong> — write intermediate results to disk, read back when needed</li>
+<li><strong>Memory via tools</strong> — use a memory tool to store and retrieve key facts across turns</li></ul></div>
+<div class="read-timer" id="read-timer-c4-tech"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c4-def&#39;)">← Definition</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c4-cert&#39;)">Certification →</button></div></div>
+
+<div class="section" id="sec-c4-cert"><span class="tag tag-cert">Certification Focus</span><h2 class="sec-title">Frameworks — Exam Patterns</h2>
+<div class="card">
+<div class="callout callout-exam"><strong>#1 — Framework Selection:</strong> "Need AWS-native managed agents" → Strands. "Need graph-based state machine with branching" → LangGraph. "Need type-safe validated agents" → PydanticAI. "Need Anthropic-native with built-in guardrails" → Claude Agent SDK.</div>
+<div class="callout callout-exam"><strong>#2 — Context Isolation:</strong> "New subagent ignores instructions given to the coordinator" → Context was not explicitly passed. Subagents start with empty context unless the coordinator includes relevant information.</div>
+<div class="callout callout-exam"><strong>#3 — Handoff vs Message-Passing:</strong> Handoffs transfer CONTROL (one agent stops, another starts). Message-passing shares DATA (both agents continue). The exam tests whether you match the mechanism to the need.</div>
+<div class="callout callout-anti"><strong>Trap: "Framework X is always better":</strong> No framework is universally best. Each has trade-offs. The correct answer matches framework capabilities to specific requirements.</div></div>
+<div class="read-timer" id="read-timer-c4-cert"><span>⏱</span><span class="timer-label">15s</span><div class="timer-bar"><div class="timer-fill"></div></div><span>to continue</span></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c4-tech&#39;)">← Technical</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c4-case&#39;)">Simulation →</button></div></div>
+
+<div class="section" id="sec-c4-case"><span class="tag tag-case">Live Simulation</span><h2 class="sec-title">Framework Comparison</h2><p class="subtitle">4 requirements — select the best framework for each.</p>
+<div class="card">
+<div class="verdict-card" id="fw-0"><div class="verdict-req">1/4: Enterprise deployment on AWS with managed scaling and lifecycle management.</div><div class="verdict-btns"><button class="verdict-btn" onclick="fwVote(0,0)">Claude Agent SDK</button><button class="verdict-btn" onclick="fwVote(0,1)">Strands</button><button class="verdict-btn" onclick="fwVote(0,2)">LangGraph</button></div><div class="verdict-expl" id="fw-exp-0"></div></div>
+<div class="verdict-card" id="fw-1"><div class="verdict-req">2/4: Complex approval workflow with 7 conditional branches and state rollback.</div><div class="verdict-btns"><button class="verdict-btn" onclick="fwVote(1,0)">Claude Agent SDK</button><button class="verdict-btn" onclick="fwVote(1,1)">PydanticAI</button><button class="verdict-btn" onclick="fwVote(1,2)">LangGraph</button></div><div class="verdict-expl" id="fw-exp-1"></div></div>
+<div class="verdict-card" id="fw-2"><div class="verdict-req">3/4: Need built-in guardrails, tracing, and handoffs with minimal framework overhead.</div><div class="verdict-btns"><button class="verdict-btn" onclick="fwVote(2,0)">Claude Agent SDK</button><button class="verdict-btn" onclick="fwVote(2,1)">Strands</button><button class="verdict-btn" onclick="fwVote(2,2)">LangGraph</button></div><div class="verdict-expl" id="fw-exp-2"></div></div>
+<div class="verdict-card" id="fw-3"><div class="verdict-req">4/4: Data extraction pipeline where every input/output must be Pydantic-validated.</div><div class="verdict-btns"><button class="verdict-btn" onclick="fwVote(3,0)">Claude Agent SDK</button><button class="verdict-btn" onclick="fwVote(3,1)">PydanticAI</button><button class="verdict-btn" onclick="fwVote(3,2)">LangGraph</button></div><div class="verdict-expl" id="fw-exp-3"></div></div>
+<div class="verdict-score" id="fw-score"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c4-cert&#39;)">← Certification</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;c4-apply&#39;)">Apply →</button></div></div>
+
+<div class="section" id="sec-c4-apply"><span class="tag tag-apply">Apply</span><h2 class="sec-title">Multi-Agent Investigator</h2><p class="subtitle">Diagnose multi-agent architecture failures.</p>
+<div class="card">
+<div class="invest-scenario"><h4>Case 1: The Silent Subagent</h4><p>A coordinator agent delegates a research task to a subagent. The subagent returns an empty result despite having access to the right tools. Investigation shows the subagent had no knowledge of what to research.</p></div>
+<div class="invest-opts" id="ma-opts-0"><div class="invest-opt" onclick="maSelect(0,0,this)">A) The subagent's tools are misconfigured</div><div class="invest-opt" onclick="maSelect(0,1,this)">B) Context was not explicitly passed — subagents don't inherit coordinator history</div><div class="invest-opt" onclick="maSelect(0,2,this)">C) The subagent model is too small</div></div><div class="invest-fb" id="ma-fb-0"></div>
+<div class="invest-scenario" style="margin-top:16px;"><h4>Case 2: The Infinite Agent</h4><p>An agent keeps calling tools in a loop, never finishing. It has called 50+ tools. The developer set max_turns=100 thinking "more is better."</p></div>
+<div class="invest-opts" id="ma-opts-1"><div class="invest-opt" onclick="maSelect(1,0,this)">A) Lower max_turns to 10 as the primary fix</div><div class="invest-opt" onclick="maSelect(1,1,this)">B) The system prompt doesn't tell the agent when to stop — add clear completion criteria</div><div class="invest-opt" onclick="maSelect(1,2,this)">C) Switch to a larger model that knows when to stop</div></div><div class="invest-fb" id="ma-fb-1"></div>
+<button class="dd-check-btn" onclick="maCheckAll()" style="margin-top:16px;">Check Diagnoses</button><div class="dd-feedback" id="ma-fb-all"></div></div>
+<div class="nav-btn-row"><button class="btn btn-secondary" onclick="goTo(&#39;c4-case&#39;)">← Simulation</button><button class="btn btn-primary btn-locked" onclick="goTo(&#39;assess&#39;)">Begin Assessment →</button></div></div>
+
+<div class="section" id="sec-assess"><span class="tag tag-assess">Assessment</span><h2 class="sec-title">Assessment</h2><p class="subtitle">6 questions · 70% to pass · CCD-F Developer difficulty</p>
+
+<div class="q-card" data-q="0"><div class="q-num">Q1 · Workflow vs Agent</div><div class="q-scenario">A developer needs to build a document processing pipeline: extract text from PDF, translate to French, format as HTML. The steps are always the same, in the same order.</div><p class="q-text">Which orchestration pattern is correct?</p><div class="q-opts"><div class="q-opt" onclick="selQ(0,0,this)">A) Orchestrator-Workers — delegate to subagents for each step</div><div class="q-opt" onclick="selQ(0,1,this)">B) Prompt Chaining — sequential steps with fixed order</div><div class="q-opt" onclick="selQ(0,2,this)">C) Evaluator-Optimizer — generate and refine until quality met</div><div class="q-opt" onclick="selQ(0,3,this)">D) Full agentic loop with tool_use-based termination</div></div><div class="q-fb" id="qfb0"></div></div>
+
+<div class="q-card" data-q="1"><div class="q-num">Q2 · Agent SDK vs Custom Loop</div><div class="q-scenario">A team wants to build a support agent with automatic tool management, built-in guardrails checked every turn, and production tracing. They want minimal code.</div><p class="q-text">Which approach best fits?</p><div class="q-opts"><div class="q-opt" onclick="selQ(1,0,this)">A) Custom agentic loop with the raw Messages API</div><div class="q-opt" onclick="selQ(1,1,this)">B) Claude Agent SDK — handles loop, guardrails, tracing automatically</div><div class="q-opt" onclick="selQ(1,2,this)">C) LangGraph for state machine management</div><div class="q-opt" onclick="selQ(1,3,this)">D) Prompt chaining with validation between steps</div></div><div class="q-fb" id="qfb1"></div></div>
+
+<div class="q-card" data-q="2"><div class="q-num">Q3 · stop_reason</div><div class="q-scenario">An agent's response includes both a text block ("Let me look up your order") and a tool_use block for lookup_order. A junior developer's code stops the loop because it found text content.</div><p class="q-text">What is wrong with this termination logic?</p><div class="q-opts"><div class="q-opt" onclick="selQ(2,0,this)">A) Nothing — text content means the agent is done</div><div class="q-opt" onclick="selQ(2,1,this)">B) The code should check stop_reason, not content type — Claude can return text alongside tool_use</div><div class="q-opt" onclick="selQ(2,2,this)">C) The agent should never return text with tool_use</div><div class="q-opt" onclick="selQ(2,3,this)">D) The max_turns limit should prevent this</div></div><div class="q-fb" id="qfb2"></div></div>
+
+<div class="q-card" data-q="3"><div class="q-num">Q4 · Error Recovery</div><div class="q-scenario">An agent calls a search tool that returns results, then calls a database tool that returns "table not found" on every attempt. The search results are valid and useful.</div><p class="q-text">What is the best recovery strategy?</p><div class="q-opts"><div class="q-opt" onclick="selQ(3,0,this)">A) Retry the database tool with exponential backoff</div><div class="q-opt" onclick="selQ(3,1,this)">B) Return search results and report database unavailable (graceful degradation)</div><div class="q-opt" onclick="selQ(3,2,this)">C) Stop entirely and return an error</div><div class="q-opt" onclick="selQ(3,3,this)">D) Switch to a different database</div></div><div class="q-fb" id="qfb3"></div></div>
+
+<div class="q-card" data-q="4"><div class="q-num">Q5 · Framework Selection</div><div class="q-scenario">A team needs to build an approval workflow with 7 conditional branches, state rollback capability, and visual debugging of the workflow graph.</div><p class="q-text">Which framework best fits?</p><div class="q-opts"><div class="q-opt" onclick="selQ(4,0,this)">A) Claude Agent SDK — simplest option with built-in features</div><div class="q-opt" onclick="selQ(4,1,this)">B) LangGraph — graph-based state machines with branching and rollback</div><div class="q-opt" onclick="selQ(4,2,this)">C) PydanticAI — type-safe schema validation</div><div class="q-opt" onclick="selQ(4,3,this)">D) Strands — AWS-native managed deployment</div></div><div class="q-fb" id="qfb4"></div></div>
+
+<div class="q-card" data-q="5"><div class="q-num">Q6 · Multi-Agent Context</div><div class="q-scenario">A coordinator agent delegates a "summarise recent news about AI safety" task to a research subagent. The subagent returns an empty summary saying "I don't have enough context to complete this task." The subagent has access to search tools.</div><p class="q-text">What is the most likely cause?</p><div class="q-opts"><div class="q-opt" onclick="selQ(5,0,this)">A) The search tools are not configured correctly</div><div class="q-opt" onclick="selQ(5,1,this)">B) The coordinator did not explicitly pass the research topic — subagents don't inherit conversation history</div><div class="q-opt" onclick="selQ(5,2,this)">C) The subagent model is too small for this task</div><div class="q-opt" onclick="selQ(5,3,this)">D) The context window is too small</div></div><div class="q-fb" id="qfb5"></div></div>
+
+<div style="text-align:center;margin-top:20px;"><button class="btn btn-success submit-assess-btn" id="submitBtn" style="display:none;" onclick="submitAssess()">Submit Assessment</button></div></div>
+
+<div class="section" id="sec-results"><div class="card" style="text-align:center;"><span class="tag tag-assess">Results</span><h2 class="sec-title">Assessment Results</h2><div class="score-circle" id="rCircle"><span id="rScore">—</span><span class="score-label">Score</span></div><div class="result-fb" id="rFbText"></div><div id="answerKey" style="display:none;margin-top:24px;"><h3 style="text-align:left;color:var(--pet);">Answer Key</h3><div id="answerKeyContent"></div></div><div style="margin-top:24px;"><button class="close-btn" id="closeBtn" onclick="closeModule()" style="display:none;">✓ Complete &amp; Close</button><p class="auto-close-msg" id="autoCloseMsg"></p><div class="next-mod-card" id="nextMod" style="display:none;"><h4>Up Next</h4><p>Domain 2 — Applications &amp; Integration (33.1%)</p></div></div></div></div>
+</main>
+
+<script>
+var SECTIONS=['overview','c1-def','c1-tech','c1-cert','c1-case','c1-apply','c2-def','c2-tech','c2-cert','c2-case','c2-apply','c3-def','c3-tech','c3-cert','c3-case','c3-apply','c4-def','c4-tech','c4-cert','c4-case','c4-apply','assess','results'];
+var TOTAL=SECTIONS.length,PASS_THRESHOLD=70,CORRECT=[1, 1, 1, 1, 1, 1];
+var Q_TEXT=["Fixed PDF\u2192translate\u2192HTML pipeline. Pattern?", "Built-in guardrails, tracing, minimal code. Approach?", "Text + tool_use in response, code stops. What's wrong?", "Search works, DB fails persistently. Recovery?", "7 branches + rollback + graph debug. Framework?", "Subagent returns empty \u2014 'not enough context'. Cause?"];var Q_OPTS=[["A) Orchestrator-Workers", "B) Prompt Chaining", "C) Evaluator-Optimizer", "D) Full agentic loop"], ["A) Custom loop", "B) Agent SDK", "C) LangGraph", "D) Prompt chaining"], ["A) Nothing wrong", "B) Check stop_reason, not content type", "C) Agent shouldn't return text+tool", "D) max_turns prevents this"], ["A) Retry DB with backoff", "B) Return search results, report DB unavailable", "C) Stop entirely", "D) Switch database"], ["A) Agent SDK", "B) LangGraph", "C) PydanticAI", "D) Strands"], ["A) Search tools misconfigured", "B) Context not passed \u2014 subagents don't inherit history", "C) Model too small", "D) Context window too small"]];var EXPL=["Fixed sequential steps (PDF\u2192translate\u2192HTML) = Prompt Chaining. The path is predetermined and identical every time. Orchestrator-Workers (A) adds unnecessary complexity. Evaluator-Optimizer (C) is for iterative refinement.", "The Agent SDK handles the loop, guardrails, tool management, and tracing automatically with minimal code. Custom loop (A) gives more control but requires more code. LangGraph (C) is for graph-based state machines, not simple agent deployment.", "Claude can return text alongside tool_use blocks in the same response. The stop_reason is tool_use (not end_turn), so the loop should continue. Checking content type instead of stop_reason is a documented anti-pattern.", "Graceful degradation \u2014 return what succeeded (search results) and transparently report what failed (DB). Retrying (A) won't fix 'table not found' (persistent, not transient). Stopping entirely (C) wastes valid results.", "LangGraph provides graph-based state machines with conditional branching, state rollback, and visual debugging \u2014 exactly matching the requirements. Agent SDK (A) doesn't natively support complex branching. PydanticAI (C) is for type safety. Strands (D) is AWS-native deployment.", "Subagents do NOT automatically inherit the coordinator's conversation history. The coordinator must explicitly include the research topic in the subagent's prompt. Without it, the subagent has no idea what to research."];
+var curSection='overview',visited={overview:true},assessed=false,ans=[-1,-1,-1,-1,-1,-1],startTime=new Date();
+var maxUnlocked=0,completed={},readTimerHandle=null,READ_TIME=15;
+var INTERACTIVE_SECTIONS={'c1-case':1,'c1-apply':1,'c2-case':1,'c2-apply':1,'c3-case':1,'c3-apply':1,'c4-case':1,'c4-apply':1,'assess':1};
+function isReading(id){return !INTERACTIVE_SECTIONS[id]&&id!=='overview'&&id!=='results';}
+function completeSection(id){if(completed[id])return;completed[id]=true;var idx=SECTIONS.indexOf(id);if(idx>=maxUnlocked){maxUnlocked=idx+1;applyLocks();}enableNextBtn(id);}
+function enableNextBtn(id){var sec=document.getElementById('sec-'+id);if(!sec)return;var btns=sec.querySelectorAll('.btn-locked');for(var i=0;i<btns.length;i++){btns[i].classList.remove('btn-locked');btns[i].style.pointerEvents='auto';btns[i].style.opacity='1';}}
+function applyLocks(){var ni=document.querySelectorAll('.nav-item');for(var i=0;i<ni.length;i++){var oc=ni[i].getAttribute('onclick');if(!oc)continue;var m=oc.match(/goTo\('([^']+)'\)/);if(!m)continue;var secIdx=SECTIONS.indexOf(m[1]);if(secIdx<=maxUnlocked){ni[i].classList.remove('locked');ni[i].style.pointerEvents='auto';}else{ni[i].classList.add('locked');ni[i].style.pointerEvents='none';}if(completed[m[1]])ni[i].classList.add('completed');}}
+function startReadTimer(id){clearInterval(readTimerHandle);var el=document.getElementById('read-timer-'+id);if(!el){completeSection(id);return;}var remaining=READ_TIME;el.style.display='inline-flex';var fill=el.querySelector('.timer-fill');var label=el.querySelector('.timer-label');if(fill)fill.style.width='0%';if(label)label.textContent=remaining+'s';readTimerHandle=setInterval(function(){remaining--;if(fill)fill.style.width=Math.round((READ_TIME-remaining)/READ_TIME*100)+'%';if(label)label.textContent=remaining>0?remaining+'s':'✓';if(remaining<=0){clearInterval(readTimerHandle);el.classList.add('done');if(label)label.textContent='✓ Continue';completeSection(id);}},1000);}
+var ScormAPI=(function(){var api=null,finished=false;function findAPI(w){var t=0;while(w&&!w.API&&t<10){w=w.parent;t++;}return w&&w.API?w.API:null;}function init(){api=findAPI(window);if(!api&&window.opener)api=findAPI(window.opener);if(!api)return;api.LMSInitialize("");var s=api.LMSGetValue("cmi.core.lesson_status");if(!s||s===""||s==="not attempted")api.LMSSetValue("cmi.core.lesson_status","incomplete");api.LMSSetValue("cmi.core.score.min","0");api.LMSSetValue("cmi.core.score.max","100");api.LMSCommit("");}function gv(k){try{return api?api.LMSGetValue(k):"";}catch(e){return"";}}function sv(k,v){try{if(!finished&&api)api.LMSSetValue(k,String(v));}catch(e){}}function cm(){try{if(!finished&&api)api.LMSCommit("");}catch(e){}}function gst(){var ms=new Date()-startTime;var s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);s%=60;m%=60;return(h<10?"000":"00").slice(0,4-String(h).length)+h+":"+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;}function setScore(r){sv("cmi.core.score.raw",String(r));sv("cmi.core.score.min","0");sv("cmi.core.score.max","100");sv("cmi.core.lesson_status","completed");cm();}function setLoc(n){sv("cmi.core.lesson_location",String(n));cm();}function finish(){if(finished)return;finished=true;sv("cmi.core.session_time",gst());sv("cmi.core.exit","");cm();try{api.LMSFinish("");}catch(e){}}init();return{setScore:setScore,setLoc:setLoc,finish:finish,gv:gv};}
+)();
+function save(){try{var d=JSON.stringify({sec:curSection,vis:Object.keys(visited),mu:maxUnlocked,cmp:Object.keys(completed)});var a=null,w=window,t=0;while(w&&!w.API&&t<10){w=w.parent;t++;}if(w&&w.API)a=w.API;if(!a&&window.opener){w=window.opener;t=0;while(w&&!w.API&&t<10){w=w.parent;t++;}if(w&&w.API)a=w.API;}if(a){a.LMSSetValue("cmi.suspend_data",d);a.LMSCommit("");}}catch(e){}}
+function restore(){try{var r=ScormAPI.gv("cmi.suspend_data");if(r){var d=JSON.parse(r);if(d.sec)curSection=d.sec;if(d.vis)for(var i=0;i<d.vis.length;i++)visited[d.vis[i]]=true;if(typeof d.mu==='number')maxUnlocked=d.mu;if(d.cmp)for(var i=0;i<d.cmp.length;i++)completed[d.cmp[i]]=true;}}catch(e){}}
+setInterval(function(){var ms=new Date()-startTime;var s=Math.floor(ms/1000),m=Math.floor(s/60);s%=60;document.getElementById("timeDisplay").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;},1000);
+function goTo(id){var idx=SECTIONS.indexOf(id);if(idx>maxUnlocked&&id!=='results')return;clearInterval(readTimerHandle);var ss=document.querySelectorAll('.section');for(var i=0;i<ss.length;i++)ss[i].classList.remove('active');var t=document.getElementById('sec-'+id);if(t){t.classList.add('active');curSection=id;visited[id]=true;}var ni=document.querySelectorAll('.nav-item');for(var i=0;i<ni.length;i++){ni[i].classList.remove('active');if(ni[i].getAttribute('onclick')==="goTo('"+id+"')")ni[i].classList.add('active');}var p=Math.round(Object.keys(visited).length/TOTAL*100);document.getElementById('progressBar').style.width=p+'%';document.getElementById('progressText').textContent=p+'%';if(id==='overview'&&!completed['overview'])completeSection('overview');if(isReading(id)&&!completed[id])startReadTimer(id);if(INTERACTIVE_SECTIONS[id]&&completed[id])enableNextBtn(id);applyLocks();ScormAPI.setLoc(idx);document.getElementById('mainContent').scrollTop=0;save();}
+function selQ(qi,oi,el){if(assessed)return;ans[qi]=oi;var opts=el.parentElement.querySelectorAll('.q-opt');for(var i=0;i<opts.length;i++)opts[i].classList.remove('selected');el.classList.add('selected');if(ans.every(function(a){return a!==-1;})){completeSection('assess');var sb=document.getElementById('submitBtn');if(sb)sb.style.display='inline-block';}}
+function submitAssess(){assessed=true;document.getElementById('submitBtn').style.display='none';var c=0;for(var i=0;i<6;i++){var card=document.querySelector('[data-q="'+i+'"]');var opts=card.querySelectorAll('.q-opt');var fb=document.getElementById('qfb'+i);for(var j=0;j<opts.length;j++){if(j===CORRECT[i])opts[j].classList.add('right');else if(j===ans[i]&&ans[i]!==CORRECT[i])opts[j].classList.add('wrongA');}if(ans[i]===CORRECT[i]){c++;fb.style.display='block';fb.style.background='#E0F7EC';fb.style.borderLeft='4px solid #01B27C';fb.style.color='#1A5C3A';fb.innerHTML='✓ Correct! '+EXPL[i];}else{fb.style.display='block';fb.style.background='#FFF0ED';fb.style.borderLeft='4px solid #FC6A59';fb.style.color='#8B2500';fb.innerHTML='✗ Incorrect. '+EXPL[i];}}var pct=Math.round(c/6*100);ScormAPI.setScore(pct);save();var rc=document.getElementById('rCircle'),rs=document.getElementById('rScore'),rf=document.getElementById('rFbText');rs.textContent=pct+'%';if(pct>=PASS_THRESHOLD){rc.className='score-circle pass';rf.className='result-fb pass-fb';rf.innerHTML='<strong>Congratulations!</strong> '+c+'/6 ('+pct+'%).';}else{rc.className='score-circle fail';rf.className='result-fb fail-fb';rf.innerHTML='<strong>Keep Learning.</strong> '+c+'/6 ('+pct+'%).';}var ak='';for(var i=0;i<6;i++){ak+='<div class="ak-item"><div class="ak-q">Q'+(i+1)+'. '+Q_TEXT[i]+'</div><div class="ak-correct">✓ '+Q_OPTS[i][CORRECT[i]]+'</div><div class="ak-expl">'+EXPL[i]+'</div></div>';}document.getElementById('answerKeyContent').innerHTML=ak;document.getElementById('answerKey').style.display='block';document.getElementById('closeBtn').style.display='inline-block';document.getElementById('nextMod').style.display='block';document.getElementById('autoCloseMsg').textContent='Closing in 15s...';var ct=15;var cdI=setInterval(function(){ct--;document.getElementById('autoCloseMsg').textContent='Closing in '+ct+'s...';if(ct<=0){clearInterval(cdI);closeModule();}},1000);goTo('results');}
+function closeModule(){save();ScormAPI.finish();try{window.close();}catch(e){}document.getElementById('autoCloseMsg').textContent='✓ Module completed.';}
+function makeVoteFn(prefix,correct,expl){var answers=new Array(correct.length).fill(-1),count=0;return function(idx,choice){if(answers[idx]!==-1)return;answers[idx]=choice;count++;var card=document.getElementById(prefix+'-'+idx);card.classList.add('revealed');var btns=card.querySelectorAll('.verdict-btn');for(var i=0;i<btns.length;i++){if(i===correct[idx])btns[i].classList.add('v-correct');else if(i===choice&&choice!==correct[idx])btns[i].classList.add('v-wrong');}var exp=document.getElementById(prefix+'-exp-'+idx);exp.style.display='block';exp.innerHTML=(choice===correct[idx]?'✓ ':'✗ ')+expl[idx];if(count===correct.length){var secMap={'wa':'c1-case','pm':'c1-apply','sdk':'c2-apply','lp':'c3-case','err':'c3-apply','fw':'c4-case'};if(secMap[prefix])completeSection(secMap[prefix]);var sc=answers.filter(function(a,i){return a===correct[i];}).length;var sd=document.getElementById(prefix+'-score');if(sd){sd.style.display='block';sd.innerHTML='<strong>Score: '+sc+'/'+correct.length+'</strong>';}};};};
+var waVote=makeVoteFn('wa',[1,0,1,0],['Agent — path varies based on customer input, steps are not fixed.','Workflow — fixed 3 steps, always same order. Prompt chaining.','Agent — variable number of searches, model decides when to stop.','Workflow — routing pattern. Classify then route to handler.']);
+var pmVote=makeVoteFn('pm',[1,0,2,0,2],['Parallelisation — 100 independent reviews processed concurrently, then combined.','Routing — classify input, route to specialised handler.','Evaluator-Optimizer — generate→evaluate→refine loop until quality threshold.','Prompt Chaining — fixed sequential steps (extract→validate→transform→load).','Orchestrator-Workers — manager decomposes dynamically, delegates to subagents.']);
+var sdkVote=makeVoteFn('sdk',[0,1,0,1],['Agent SDK — built-in guardrails, tracing, tool management with minimal code.','Custom Loop — full control needed for custom retry strategies.','SDK + Managed — enterprise needs SLAs, scaling, monitoring.','PreToolUse hook — deterministic enforcement for MUST requirements.']);
+var lpVote=makeVoteFn('lp',[0,1,0,1,1],['Continue — tool_use means execute the tool and loop.','Stop — end_turn means Claude is done.','Retry — network timeout is transient, may succeed on retry.','Continue — stop_reason is tool_use regardless of text content.','Return is_error — permission denied is persistent, let Claude try alternative.']);
+var errVote=makeVoteFn('err',[0,1,2,0],['Retry with backoff — rate limit is transient.','Graceful degradation — return what works, report what failed.','Escalate — agent cannot perform the action, needs human.','Retry with backoff — network timeout is transient.']);
+var fwVote=makeVoteFn('fw',[1,2,0,1],['Strands — AWS-native with managed scaling and lifecycle.','LangGraph — graph-based state machines with branching and rollback.','Claude Agent SDK — built-in guardrails and tracing, minimal overhead.','PydanticAI — type-safe with schema validation throughout.']);
+// C2-case (Before/After) — complete on view since it's a static comparison
+// C4-apply (Investigator)
+var maAnswers=[-1,-1],maCorrect=[1,1];var maExpl=['Context was not explicitly passed. Subagents start with empty context — the coordinator must include the research topic.','The system prompt needs clear completion criteria — when should the agent stop? max_turns is a safety net, not the primary control. Adding explicit completion conditions fixes the root cause.'];
+function maSelect(s,c,el){maAnswers[s]=c;var opts=document.getElementById('ma-opts-'+s).querySelectorAll('.invest-opt');for(var i=0;i<opts.length;i++)opts[i].classList.remove('selected');el.classList.add('selected');}
+function maCheckAll(){var c=0;for(var s=0;s<2;s++){var opts=document.getElementById('ma-opts-'+s).querySelectorAll('.invest-opt');for(var i=0;i<opts.length;i++){opts[i].classList.remove('correct-inv','wrong-inv');if(i===maCorrect[s])opts[i].classList.add('correct-inv');else if(i===maAnswers[s]&&maAnswers[s]!==maCorrect[s])opts[i].classList.add('wrong-inv');}if(maAnswers[s]===maCorrect[s])c++;var fb=document.getElementById('ma-fb-'+s);fb.className='invest-fb show';fb.style.background=maAnswers[s]===maCorrect[s]?'#E0F7EC':'#FFF0ED';fb.style.borderLeft=maAnswers[s]===maCorrect[s]?'4px solid #01B27C':'4px solid #FC6A59';fb.innerHTML=(maAnswers[s]===maCorrect[s]?'✓ ':'✗ ')+maExpl[s];}completeSection('c4-apply');var af=document.getElementById('ma-fb-all');af.className=c===2?'dd-feedback show pass':'dd-feedback show fail';af.innerHTML=c===2?'✓ Both correct!':'✗ '+c+'/2.';}
+// C2-case auto-complete on view (static Before/After panel)
+var c2CaseViewed=false;
+var origGoTo=goTo;
+goTo=function(id){origGoTo(id);if(id==='c2-case'&&!c2CaseViewed){c2CaseViewed=true;setTimeout(function(){completeSection('c2-case');},3000);}};
+restore();applyLocks();goTo(curSection);window.onbeforeunload=function(){save();ScormAPI.finish();};
+</script>
+</body></html>

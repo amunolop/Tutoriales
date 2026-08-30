@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Certification Nominee Fit Finder | GAMA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+  * { box-sizing: border-box; }
+  body { margin:0; padding:0; }
+  .opt-card:hover { border-color:#0097AC !important; background:#F0F8F9 !important; }
+  .opt-input:checked + .opt-card { border-color:#006E74 !important; background:#E4F2F3 !important; box-shadow: inset 0 0 0 1px #006E74; }
+  .tab-btn.active { background:#003C51 !important; color:#FFFFFF !important; }
+  .find-btn:hover { background:#005158 !important; }
+  .acc-toggle:hover { background:#F0F8F9 !important; }
+  @media (max-width: 760px) {
+    .q-grid { grid-template-columns: 1fr !important; }
+    .mech-grid { grid-template-columns: repeat(2,1fr) !important; }
+    .directory-mech { grid-template-columns: repeat(2,1fr) !important; }
+    .header-flex { flex-direction: column !important; align-items:flex-start !important; gap:12px !important; }
+    .logos-row { align-self: stretch !important; }
+  }
+</style>
+</head>
+<body style="font-family:'Inter',sans-serif; background:#F7F5F0; color:#003C51; line-height:1.5;">
+
+<div style="max-width:1180px; margin:0 auto; padding:28px 20px 60px;">
+
+  <!-- HEADER -->
+  <div class="header-flex" style="display:flex; justify-content:space-between; align-items:center; padding-bottom:20px; border-bottom:2px solid #003C51;">
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:2px; color:#FC6A59; font-weight:600; text-transform:uppercase;">GAMA &middot; UST &times; Anthropic Enablement</div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:700; color:#003C51; margin-top:4px;">Claude Certification Nominee Fit Finder</div>
+    </div>
+    <div class="logos-row" style="display:flex; align-items:center; gap:14px;">
+      <div style="display:flex; align-items:center; justify-content:center; height:44px; padding:0 16px; background:#003C51; border-radius:4px;">
+        <span style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:20px; color:#FFFFFF; letter-spacing:1px;">UST</span>
+      </div>
+      <span style="font-family:'IBM Plex Mono',monospace; color:#9AA5AA; font-size:16px;">&times;</span>
+      <div style="display:flex; align-items:center; justify-content:center; height:44px; padding:0 16px; border:1.5px solid #D97757; border-radius:4px; background:#FFFFFF;">
+        <span style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px; color:#D97757; letter-spacing:0.5px;">ANTHROPIC</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STRATEGIC FRAME -->
+  <div style="margin-top:18px; padding:16px 18px; background:#FFFFFF; border-left:4px solid #FC6A59; border-radius:2px;">
+    <div style="font-size:14px; color:#003C51;">
+      <strong>Purpose:</strong> A structured screening tool for HRBSE and business leaders to nominate the right associate for the right Claude credential &mdash; reducing mis-nomination risk against the 90-day certification funnel target and protecting exam pass-rate economics ahead of the pre-October 2026 sprint milestone.
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div style="display:flex; gap:8px; margin-top:26px; border-bottom:1px solid #DADFE1; flex-wrap:wrap;">
+    <button onclick="gamaShowTab('finder')" id="tab-btn-finder" class="tab-btn active" style="font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:10px 18px; border:none; background:transparent; color:#003C51; cursor:pointer; border-radius:4px 4px 0 0;">Fit Finder</button>
+    <button onclick="gamaShowTab('directory')" id="tab-btn-directory" class="tab-btn" style="font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:10px 18px; border:none; background:transparent; color:#003C51; cursor:pointer; border-radius:4px 4px 0 0;">Certification Directory</button>
+    <button onclick="gamaShowTab('jobmap')" id="tab-btn-jobmap" class="tab-btn" style="font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:10px 18px; border:none; background:transparent; color:#003C51; cursor:pointer; border-radius:4px 4px 0 0;">Job Family Map</button>
+  </div>
+
+  <!-- ===================== FIT FINDER TAB ===================== -->
+  <div id="panel-finder" style="margin-top:22px;">
+
+    <div style="background:#FFFFFF; border:1px solid #E2E5E7; border-radius:8px; padding:24px;">
+      <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:17px; color:#003C51; margin-bottom:4px;">Nominee Profile</div>
+      <div style="font-size:13px; color:#5B6B70; margin-bottom:20px;">Answer four questions about the associate you're screening. The result maps to Anthropic's published minimally-qualified-candidate criteria, cross-walked to UST job families.</div>
+
+      <!-- Q1 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:#FC6A59; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">01 &middot; Primary work profile</div>
+        <div class="q-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">
+          <label style="position:relative;">
+            <input type="radio" name="role" value="business" class="opt-input" style="position:absolute; opacity:0;" checked>
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8;">
+              <div style="font-weight:600; font-size:13px;">Business / delivery</div>
+              <div style="font-size:11.5px; color:#5B6B70; margin-top:3px;">BA, PM, consultant, delivery lead, HR/marketing &mdash; regular Claude use, no coding</div>
+            </div>
+          </label>
+          <label style="position:relative;">
+            <input type="radio" name="role" value="engineering" class="opt-input" style="position:absolute; opacity:0;">
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8;">
+              <div style="font-weight:600; font-size:13px;">Software / AI-ML engineering</div>
+              <div style="font-size:11.5px; color:#5B6B70; margin-top:3px;">Hands-on developer building applications with Claude</div>
+            </div>
+          </label>
+          <label style="position:relative;">
+            <input type="radio" name="role" value="architecture" class="opt-input" style="position:absolute; opacity:0;">
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8;">
+              <div style="font-weight:600; font-size:13px;">Solution architecture</div>
+              <div style="font-size:11.5px; color:#5B6B70; margin-top:3px;">Designs agentic systems, internal-facing architecture ownership</div>
+            </div>
+          </label>
+          <label style="position:relative;">
+            <input type="radio" name="role" value="seniorArchitectClient" class="opt-input" style="position:absolute; opacity:0;">
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8;">
+              <div style="font-weight:600; font-size:13px;">Senior architecture, client-facing</div>
+              <div style="font-size:11.5px; color:#5B6B70; margin-top:3px;">Owns architecture conversations directly with client stakeholders</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:#FC6A59; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">02 &middot; Coding proficiency</div>
+        <div class="q-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
+          <label style="position:relative;">
+            <input type="radio" name="coding" value="none" class="opt-input" style="position:absolute; opacity:0;" checked>
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8;">
+              <div style="font-weight:600; font-size:13px;">None required</div>
+              <div style="font-size:11.5px; color:#5B6B70; margin-top:3px;">Uses Claude via UI, no development background</div>
+            </div>
+          </label>
+          <label style="position:relative;">
+            <input type="radio" name="coding" value="basic" class="opt-input" style="position:absolute; opacity:0;">
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8;">
+              <div style="font-weight:600; font-size:13px;">Basic / self-taught</div>
+              <div style="font-size:11.5px; color:#5B6B70; margin-top:3px;">Some scripting, not production-grade</div>
+            </div>
+          </label>
+          <label style="position:relative;">
+            <input type="radio" name="coding" value="proficient" class="opt-input" style="position:absolute; opacity:0;">
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8;">
+              <div style="font-weight:600; font-size:13px;">Proficient</div>
+              <div style="font-size:11.5px; color:#5B6B70; margin-top:3px;">Python / TypeScript, REST APIs, CLI tools</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:#FC6A59; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">03 &middot; Hands-on Claude / LLM experience</div>
+        <div class="q-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
+          <label style="position:relative;">
+            <input type="radio" name="claude" value="lt6" class="opt-input" style="position:absolute; opacity:0;" checked>
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8;">
+              <div style="font-weight:600; font-size:13px;">Under 6 months</div>
+              <div style="font-size:11.5px; color:#5B6B70; margin-top:3px;">New or occasional use</div>
+            </div>
+          </label>
+          <label style="position:relative;">
+            <input type="radio" name="claude" value="ge6" class="opt-input" style="position:absolute; opacity:0;">
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8;">
+              <div style="font-weight:600; font-size:13px;">6+ months, regular use</div>
+              <div style="font-size:11.5px; color:#5B6B70; margin-top:3px;">Comfortable with Claude / comparable LLM platform</div>
+            </div>
+          </label>
+          <label style="position:relative;">
+            <input type="radio" name="claude" value="ge6prod" class="opt-input" style="position:absolute; opacity:0;">
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8;">
+              <div style="font-weight:600; font-size:13px;">6+ months, production</div>
+              <div style="font-size:11.5px; color:#5B6B70; margin-top:3px;">Delivered production systems using Claude</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div style="margin-bottom:24px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:#FC6A59; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">04 &middot; Years of experience in current discipline</div>
+        <div class="q-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">
+          <label style="position:relative;">
+            <input type="radio" name="years" value="lt2" class="opt-input" style="position:absolute; opacity:0;" checked>
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8; text-align:center;">
+              <div style="font-weight:600; font-size:13px;">&lt; 2 yrs</div>
+            </div>
+          </label>
+          <label style="position:relative;">
+            <input type="radio" name="years" value="2to3" class="opt-input" style="position:absolute; opacity:0;">
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8; text-align:center;">
+              <div style="font-weight:600; font-size:13px;">2&ndash;3 yrs</div>
+            </div>
+          </label>
+          <label style="position:relative;">
+            <input type="radio" name="years" value="3to5" class="opt-input" style="position:absolute; opacity:0;">
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8; text-align:center;">
+              <div style="font-weight:600; font-size:13px;">3&ndash;5 yrs</div>
+            </div>
+          </label>
+          <label style="position:relative;">
+            <input type="radio" name="years" value="ge5" class="opt-input" style="position:absolute; opacity:0;">
+            <div class="opt-card" style="border:1.5px solid #DADFE1; border-radius:6px; padding:12px; cursor:pointer; background:#FAFAF8; text-align:center;">
+              <div style="font-weight:600; font-size:13px;">5+ yrs</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <button onclick="gamaFindMatch()" class="find-btn" style="font-family:'Inter',sans-serif; font-weight:700; font-size:14px; color:#FFFFFF; background:#006E74; border:none; padding:13px 26px; border-radius:6px; cursor:pointer;">Find recommended certification &rarr;</button>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="gama-result" style="display:none; margin-top:20px;"></div>
+
+  </div>
+
+  <!-- ===================== DIRECTORY TAB ===================== -->
+  <div id="panel-directory" style="display:none; margin-top:22px;">
+    <div id="directory-container"></div>
+  </div>
+
+  <!-- ===================== JOB MAP TAB ===================== -->
+  <div id="panel-jobmap" style="display:none; margin-top:22px;">
+    <div style="background:#FFFFFF; border:1px solid #E2E5E7; border-radius:8px; padding:24px;">
+      <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:17px; color:#003C51; margin-bottom:14px;">UST job family &rarr; certification cross-walk</div>
+      <table style="width:100%; border-collapse:collapse; font-size:13.5px;">
+        <thead>
+          <tr style="border-bottom:2px solid #003C51;">
+            <th style="text-align:left; padding:9px 8px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:#5B6B70;">UST Job Family</th>
+            <th style="text-align:left; padding:9px 8px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:#5B6B70;">Recommended Track</th>
+          </tr>
+        </thead>
+        <tbody id="jobmap-body"></tbody>
+      </table>
+      <div style="margin-top:16px; font-size:12px; color:#5B6B70;">Cross-walk derived from Anthropic's published nominee criteria per track. Use the Fit Finder for individual-level screening &mdash; this table supports population-level planning (e.g. cohort sizing by job family for the 90-day sprint).</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="margin-top:36px; padding-top:16px; border-top:1px solid #DADFE1; font-size:11.5px; color:#8B979B; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+    <div>GAMA &middot; G.A. Menon Academy for UST &times; Anthropic Enablement. Built by Krishnan Nilakantan.</div>
+    <div>Source: Anthropic published exam guides. No mandatory prerequisites &middot; credentials valid 12 months from award.</div>
+  </div>
+
+</div>
+
+<script>
+// ---------- DATA ----------
+const CERTS = {
+  ccaof: {
+    code: 'CCAO-F',
+    name: 'Claude Certified Associate &mdash; Foundations',
+    level: 'Foundations &middot; Non-technical to semi-technical',
+    domains: ['Prompting and Task Execution','Output Evaluation and Validation','Product and Model Selection','Workflow Integration and Solution Design','Configuration and Knowledge Management','Governance, Risk, and Responsible Use','Troubleshooting and Optimization'],
+    profile: 'Client-facing, delivery, or operations staff with regular hands-on Claude use in their day-to-day role &mdash; business analysts, project/program managers, delivery leads, consultants, marketing/HR/education professionals. 2+ years in a business or delivery role; comfortable with Claude Projects and Artifacts; no development background needed.',
+    fit: ['Business Analysis','Program / Project Management','Delivery Management','Consulting','Marketing','HR','Learning &amp; Education'],
+    fee: '$99', items: '60', time: '120 min', pass: '720 / 1,000'
+  },
+  ccdvf: {
+    code: 'CCDV-F',
+    name: 'Claude Certified Developer &mdash; Foundation',
+    level: 'Foundations &middot; Technical, hands-on software development required',
+    domains: ['Agents and Workflows','Applications and Integration','Claude Code','Eval, Testing, and Debugging','Model Selection and Optimization','Prompt and Context Engineering','Security and Safety','Tools and MCPs'],
+    profile: 'Software engineers and AI/ML engineers with 1&ndash;5 years professional software engineering experience and at least 6 months hands-on with Claude or a comparable LLM platform. Proficient in Python or TypeScript, fluent with REST APIs and CLI tools.',
+    fit: ['AI/ML Engineering','Software Engineering','DevOps Engineering'],
+    fee: '$125', items: '53', time: '120 min', pass: '720 / 1,000'
+  },
+  ccarf: {
+    code: 'CCAR-F',
+    name: 'Claude Certified Architect &mdash; Foundation',
+    level: 'Foundations &middot; Technical, architecture-level. 6+ months hands-on recommended',
+    domains: ['Agentic Architecture &amp; Orchestration','Tool Design &amp; MCP Integration','Claude Code Configuration &amp; Workflows','Prompt Engineering &amp; Structured Output','Context Management &amp; Reliability'],
+    profile: 'Solution architects or senior engineers with 6+ months hands-on experience building with the Claude Agent SDK, Claude Code, and MCP. Track record designing agentic systems, multi-agent orchestration, or integrating LLMs into production applications.',
+    fit: ['Software Architecture','Enterprise Solutions','Senior AI/ML Engineering'],
+    fee: '$125', items: '60', time: '120 min', pass: '720 / 1,000'
+  },
+  ccarp: {
+    code: 'CCAR-P',
+    name: 'Claude Certified Architect &mdash; Professional',
+    level: 'Professional &middot; Builds on Foundation. Mid-to-senior, client-facing architecture role',
+    domains: ['Solution Design &amp; Architecture','Claude Models, Prompting &amp; Context Engineering','Integration','Evaluation, Testing &amp; Optimization','Governance, Safety &amp; Risk Management','Stakeholder Communication &amp; Lifecycle Management','Developer Productivity &amp; Operational Enablement'],
+    profile: 'Senior solution architects or platform engineering leads with 3+ years in systems architecture or platform engineering, plus 6+ months hands-on production experience with Claude or a comparable LLM system. Demonstrated experience delivering end-to-end systems from discovery through deployment, comfortable owning architecture conversations directly with client stakeholders.',
+    fit: ['Enterprise Solutions','Senior / Lead Software Architecture','Data Architecture'],
+    fee: '$175', items: '63', time: '120 min', pass: '720 / 1,000'
+  }
+};
+
+const ACCENTS = { ccaof:'#0097AC', ccdvf:'#006E74', ccarf:'#003C51', ccarp:'#FC6A59' };
+
+// ---------- TABS ----------
+function gamaShowTab(name) {
+  ['finder','directory','jobmap'].forEach(function(t){
+    document.getElementById('panel-'+t).style.display = (t===name) ? 'block' : 'none';
+    document.getElementById('tab-btn-'+t).classList.remove('active');
+  });
+  document.getElementById('tab-btn-'+name).classList.add('active');
+}
+
+// ---------- DIRECTORY RENDER ----------
+function renderDirectory() {
+  const c = document.getElementById('directory-container');
+  let html = '';
+  Object.keys(CERTS).forEach(function(key){
+    const d = CERTS[key];
+    const accent = ACCENTS[key];
+    html += '<div style="background:#FFFFFF; border:1px solid #E2E5E7; border-left:5px solid '+accent+'; border-radius:8px; padding:22px; margin-bottom:16px;">';
+    html += '<div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">';
+    html += '<div><span style="font-family:\'IBM Plex Mono\',monospace; font-size:11px; font-weight:600; color:'+accent+'; letter-spacing:1px;">'+d.code+'</span>';
+    html += '<div style="font-family:\'Space Grotesk\',sans-serif; font-weight:600; font-size:18px; color:#003C51; margin-top:2px;">'+d.name+'</div>';
+    html += '<div style="font-size:12.5px; color:#5B6B70; margin-top:3px;">'+d.level+'</div></div>';
+    html += '</div>';
+
+    html += '<div class="directory-mech" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:16px;">';
+    html += mechChip('Fee', d.fee, accent);
+    html += mechChip('Items', d.items, accent);
+    html += mechChip('Time limit', d.time, accent);
+    html += mechChip('Passing score', d.pass, accent);
+    html += '</div>';
+
+    html += '<div style="margin-top:16px; font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:#5B6B70;">Domains tested</div>';
+    html += '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:7px;">';
+    d.domains.forEach(function(dom){
+      html += '<span style="font-size:12px; background:#F0F8F9; color:#003C51; padding:5px 10px; border-radius:12px; border:1px solid #DCE9EA;">'+dom+'</span>';
+    });
+    html += '</div>';
+
+    html += '<div style="margin-top:16px; font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:#5B6B70;">Nominee profile</div>';
+    html += '<div style="font-size:13.5px; color:#2E3A3E; margin-top:6px; line-height:1.55;">'+d.profile+'</div>';
+
+    html += '<div style="margin-top:16px; font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:#5B6B70;">Best-fit UST job families</div>';
+    html += '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:7px;">';
+    d.fit.forEach(function(f){
+      html += '<span style="font-size:12px; font-weight:600; background:'+accent+'; color:#FFFFFF; padding:5px 10px; border-radius:4px;">'+f+'</span>';
+    });
+    html += '</div>';
+
+    html += '</div>';
+  });
+  c.innerHTML = html;
+}
+function mechChip(label, value, accent) {
+  return '<div style="background:#FAFAF8; border:1px solid #EAEBE6; border-radius:6px; padding:9px 10px; text-align:center;">'
+    + '<div style="font-family:\'IBM Plex Mono\',monospace; font-size:10px; color:#8B979B; text-transform:uppercase; letter-spacing:0.5px;">'+label+'</div>'
+    + '<div style="font-family:\'Space Grotesk\',sans-serif; font-weight:700; font-size:15px; color:'+accent+'; margin-top:2px;">'+value+'</div></div>';
+}
+
+// ---------- JOB MAP RENDER ----------
+function renderJobMap() {
+  const rows = [
+    ['Business Analysis', 'ccaof'],['Program / Project Management','ccaof'],['Delivery Management','ccaof'],
+    ['Consulting','ccaof'],['Marketing / HR / Learning &amp; Education','ccaof'],
+    ['AI/ML Engineering','ccdvf'],['Software Engineering','ccdvf'],['DevOps Engineering','ccdvf'],
+    ['Software Architecture (mid-level / internal)','ccarf'],['Senior AI/ML Engineering','ccarf'],
+    ['Enterprise Solutions (senior, client-facing)','ccarp'],['Senior / Lead Software Architecture','ccarp'],['Data Architecture (senior)','ccarp']
+  ];
+  let html = '';
+  rows.forEach(function(r){
+    const d = CERTS[r[1]];
+    const accent = ACCENTS[r[1]];
+    html += '<tr style="border-bottom:1px solid #EEEFEA;">';
+    html += '<td style="padding:10px 8px;">'+r[0]+'</td>';
+    html += '<td style="padding:10px 8px;"><span style="font-family:\'IBM Plex Mono\',monospace; font-weight:600; font-size:12px; background:'+accent+'; color:#FFFFFF; padding:4px 9px; border-radius:4px;">'+d.code+'</span> <span style="font-size:12.5px; color:#5B6B70;"> &mdash; '+d.name.replace(' &mdash; ', ', ')+'</span></td>';
+    html += '</tr>';
+  });
+  document.getElementById('jobmap-body').innerHTML = html;
+}
+
+// ---------- MATCH LOGIC ----------
+function gamaFindMatch() {
+  const role = document.querySelector('input[name="role"]:checked').value;
+  const coding = document.querySelector('input[name="coding"]:checked').value;
+  const claude = document.querySelector('input[name="claude"]:checked').value;
+  const years = document.querySelector('input[name="years"]:checked').value;
+
+  let key, status, statusColor, rationale = [], alt = null;
+
+  if (role === 'business') {
+    key = 'ccaof';
+    if (years === 'lt2') {
+      status = 'Building readiness';
+      statusColor = '#FC6A59';
+      rationale.push('Anthropic sets no mandatory prerequisite, but the published nominee profile calls for 2+ years in a business or delivery role &mdash; this associate is below that bar.');
+      rationale.push('Recommend structured Claude Projects / Artifacts exposure for 3&ndash;6 months before nomination to improve pass likelihood.');
+    } else {
+      status = 'Ready now';
+      statusColor = '#006E74';
+      rationale.push('Business/delivery profile with 2+ years tenure matches the CCAO-F minimally-qualified-candidate description directly.');
+      rationale.push('No coding or API background required for this track.');
+    }
+  } else if (role === 'engineering') {
+    if (coding !== 'proficient') {
+      key = 'ccaof';
+      status = 'Redirect recommended';
+      statusColor = '#FC6A59';
+      rationale.push('CCDV-F requires proficiency in Python or TypeScript with REST APIs and CLI tools &mdash; this associate does not yet meet that bar.');
+      rationale.push('CCAO-F is the appropriate near-term track; revisit CCDV-F once coding proficiency is established.');
+    } else if (claude === 'lt6') {
+      key = 'ccdvf';
+      status = 'Building readiness';
+      statusColor = '#FC6A59';
+      rationale.push('Coding proficiency matches the CCDV-F bar, but published criteria call for 6+ months hands-on with Claude or a comparable LLM platform.');
+      rationale.push('Recommend nominating once hands-on tenure crosses 6 months &mdash; track via project assignment records.');
+    } else {
+      key = 'ccdvf';
+      status = 'Ready now';
+      statusColor = '#006E74';
+      rationale.push('Proficient developer with 6+ months hands-on Claude experience matches the CCDV-F nominee profile directly.');
+      rationale.push('UST fit: AI/ML Engineering, Software Engineering, DevOps Engineering job families.');
+    }
+  } else if (role === 'architecture') {
+    if (claude === 'lt6' || coding !== 'proficient') {
+      key = 'ccdvf';
+      status = 'Build via Developer track first';
+      statusColor = '#FC6A59';
+      rationale.push('CCAR-F expects a track record designing agentic systems with 6+ months hands-on Claude Agent SDK / Claude Code / MCP experience.');
+      rationale.push('Recommend building depth via CCDV-F before nominating for the Architect Foundation track.');
+      alt = 'ccarf';
+    } else {
+      key = 'ccarf';
+      status = 'Ready now';
+      statusColor = '#006E74';
+      rationale.push('Technical profile with hands-on agentic-systems experience matches the CCAR-F nominee description.');
+      rationale.push('UST fit: Software Architecture, Enterprise Solutions, senior AI/ML Engineering.');
+    }
+  } else { // seniorArchitectClient
+    const seniorYears = (years === '3to5' || years === 'ge5');
+    if (seniorYears && claude === 'ge6prod') {
+      key = 'ccarp';
+      status = 'Ready now';
+      statusColor = '#006E74';
+      rationale.push('3+ years in systems/platform architecture plus 6+ months production Claude experience matches the CCAR-P bar directly.');
+      rationale.push('Professional track fits associates who own architecture conversations with client stakeholders end-to-end.');
+    } else {
+      key = 'ccarf';
+      status = 'Foundation track recommended first';
+      statusColor = '#FC6A59';
+      rationale.push('CCAR-P calls for 3+ years in systems or platform architecture plus 6+ months hands-on production Claude experience.');
+      if (!seniorYears) rationale.push('Tenure in the discipline is below the 3-year Professional-track bar.');
+      if (claude !== 'ge6prod') rationale.push('Production-grade Claude experience (not just hands-on use) is the differentiator for the Professional track.');
+      rationale.push('CCAR-F is the appropriate track today; revisit CCAR-P once both criteria are met.');
+      alt = 'ccarp';
+    }
+  }
+
+  const d = CERTS[key];
+  const accent = ACCENTS[key];
+  let html = '<div style="background:#FFFFFF; border:1px solid #E2E5E7; border-left:5px solid '+accent+'; border-radius:8px; padding:22px;">';
+  html += '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">';
+  html += '<div><span style="font-family:\'IBM Plex Mono\',monospace; font-size:11px; color:'+accent+'; font-weight:600; letter-spacing:1px; text-transform:uppercase;">Recommended track</span>';
+  html += '<div style="font-family:\'Space Grotesk\',sans-serif; font-weight:700; font-size:20px; color:#003C51; margin-top:2px;">'+d.code+' &middot; '+d.name+'</div></div>';
+  html += '<span style="font-family:\'IBM Plex Mono\',monospace; font-size:11.5px; font-weight:600; color:#FFFFFF; background:'+statusColor+'; padding:6px 12px; border-radius:14px; white-space:nowrap;">'+status+'</span>';
+  html += '</div>';
+
+  html += '<div style="margin-top:14px; font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:#5B6B70;">Rationale</div>';
+  html += '<ul style="margin:8px 0 0; padding-left:18px; font-size:13.5px; color:#2E3A3E; line-height:1.6;">';
+  rationale.forEach(function(r){ html += '<li>'+r+'</li>'; });
+  html += '</ul>';
+
+  html += '<div class="mech-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:16px;">';
+  html += mechChip('Fee', d.fee, accent);
+  html += mechChip('Items', d.items, accent);
+  html += mechChip('Time limit', d.time, accent);
+  html += mechChip('Passing score', d.pass, accent);
+  html += '</div>';
+
+  if (alt) {
+    const ad = CERTS[alt];
+    html += '<div style="margin-top:16px; padding:12px 14px; background:#FAFAF8; border-radius:6px; font-size:12.5px; color:#5B6B70;"><strong style="color:#003C51;">Aspirational track:</strong> once readiness gaps close, this associate is positioned for <strong>'+ad.code+'</strong> &mdash; '+ad.name+'.</div>';
+  }
+
+  html += '<div style="margin-top:14px; font-size:11.5px; color:#8B979B;">Anthropic imposes no mandatory prerequisites &mdash; this is a UST/GAMA screening recommendation, not an eligibility gate. Final nomination rests with HRBSE and business leadership.</div>';
+  html += '</div>';
+
+  const resultEl = document.getElementById('gama-result');
+  resultEl.innerHTML = html;
+  resultEl.style.display = 'block';
+  resultEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+renderDirectory();
+renderJobMap();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCDV-F Prep Guide · Claude Certified Developer — Foundations</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--surface:#fff;--surface2:#edeae0;--border:#cfc8b4;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--teal:#0e7c7b;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}.container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+header{border-bottom:3px solid var(--ink);padding-bottom:26px;margin-bottom:34px}.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-0.7deg)}h1{font-family:var(--display);font-size:clamp(28px,5vw,50px);font-weight:800;line-height:1;letter-spacing:-1.5px;margin-bottom:12px}h1 em{font-style:normal;color:var(--accent)}h1 .v{color:var(--accent2)}.subtitle{font-size:12px;color:var(--muted);line-height:1.8;max-width:700px;margin-bottom:16px}.badge-row{display:flex;flex-wrap:wrap;gap:8px}.badge{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}.badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}.badge.t{color:var(--teal);border-color:var(--teal)}
+.tab-nav{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:5px;overflow:hidden;margin-bottom:36px}.tab-btn{font-family:var(--mono);font-size:10px;font-weight:700;padding:10px 13px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}.tab-btn:last-child{border-right:none}.tab-btn:hover{background:var(--surface2);color:var(--ink)}.tab-btn.active{background:var(--ink);color:var(--bg)}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s ease both}
+.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:30px 0 14px;display:flex;align-items:center;gap:12px}.sec:first-child{margin-top:0}.sec::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:3px;flex-shrink:0}
+.note{border-left:4px solid;padding:13px 17px;margin:13px 0;font-size:12px;line-height:1.75;color:var(--ink2);border-radius:0 4px 4px 0}.note strong{display:block;margin-bottom:4px}.note code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px}.note.o{border-color:var(--accent);background:rgba(193,68,14,.05)}.note.o strong{color:var(--accent)}.note.g{border-color:var(--accent2);background:rgba(42,110,78,.05)}.note.g strong{color:var(--accent2)}.note.b{border-color:var(--accent3);background:rgba(26,74,138,.05)}.note.b strong{color:var(--accent3)}.note.y{border-color:var(--yellow);background:rgba(232,160,32,.05)}.note.y strong{color:var(--yellow)}.note.p{border-color:var(--purple);background:rgba(122,58,205,.05)}.note.p strong{color:var(--purple)}.note.t{border-color:var(--teal);background:rgba(14,124,123,.05)}.note.t strong{color:var(--teal)}
+a{color:var(--accent3)}a:hover{color:var(--accent)}
+.tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);overflow:hidden;margin:13px 0;border-radius:4px}.tbl th{background:var(--ink);color:var(--bg);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:10px 13px;text-align:left}.tbl td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(0,0,0,.015)}.tbl td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:10.5px}.tbl td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}.tbl td.w{font-weight:700;color:var(--accent);white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin:14px 0}.card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .2s}.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.07)}.card-hd{padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px}.card-hd.g{background:rgba(42,110,78,.1);color:var(--accent2)}.card-hd.o{background:rgba(193,68,14,.1);color:var(--accent)}.card-hd.b{background:rgba(26,74,138,.1);color:var(--accent3)}.card-hd.p{background:rgba(122,58,205,.1);color:var(--purple)}.card-hd.y{background:rgba(232,160,32,.1);color:var(--yellow)}.card-hd.t{background:rgba(14,124,123,.1);color:var(--teal)}.card-bd{padding:13px;font-size:12px;line-height:1.75;color:var(--ink2)}
+.insight{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:17px 21px;margin:17px 0}.insight-t{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:7px}.insight-b{font-size:12px;color:var(--ink2);line-height:1.75}.danger{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:17px 21px;margin:17px 0}.danger-t{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:7px}.danger-b{font-size:12px;color:var(--ink2);line-height:1.75}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:16px 0}.fbox{border:2px solid var(--ink);border-radius:5px;padding:9px 13px;font-size:11px;font-weight:700;text-align:center;min-width:90px}.fbox sub{display:block;font-size:9px;opacity:.75;font-weight:400;margin-top:2px}.fbox.o{background:var(--accent);color:#fff;border-color:var(--accent)}.fbox.g{background:var(--accent2);color:#fff;border-color:var(--accent2)}.fbox.b{background:var(--accent3);color:#fff;border-color:var(--accent3)}.farr{font-size:18px;color:var(--muted);flex-shrink:0}
+.quote{border-left:4px solid var(--purple);background:rgba(122,58,205,.03);padding:16px 20px;margin:16px 0;border-radius:0 6px 6px 0}.quote-t{font-size:13px;line-height:1.8;color:var(--ink2);font-style:italic;margin-bottom:8px}.quote-a{font-size:11px;font-weight:700;color:var(--purple)}
+.weekgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:14px 0}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.weekgrid{grid-template-columns:1fr}}
+.week-card{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:15px 17px}
+.week-card .wk-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.week-card .wk-n{font-family:var(--display);font-weight:800;font-size:13px;color:var(--accent)}
+.week-card .wk-dom{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.week-card p{font-size:11.5px;line-height:1.7;color:var(--ink2)}
+.steps{counter-reset:step;margin:14px 0}
+.step{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step::before{counter-increment:step;content:counter(step);flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.step-b{font-size:12px;line-height:1.7;color:var(--ink2);padding-top:3px}
+.step-b strong{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Certificación Anthropic · Preparación CCDV-F · UST Partner Network</div>
+  <h1>CCDV-F <span class="v">Prep Guide</span><br><em>Claude Certified Developer — Foundations</em></h1>
+  <div class="subtitle">Enlaces oficiales, mapa de dominios del examen y plan de 8 semanas para construir base con los cursos gratuitos de Anthropic (Claude Academy) antes de presentarte al examen proctorizado.</div>
+  <div class="badge-row">
+    <span class="badge o">53 preguntas</span>
+    <span class="badge b">120 min</span>
+    <span class="badge g">720/1000 para aprobar</span>
+    <span class="badge p">8 dominios</span>
+    <span class="badge t">$125 · descuento por tier UST</span>
+  </div>
+</header>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="st('vision')">🧭 VISIÓN</button>
+  <button class="tab-btn" onclick="st('dominios')">🗺️ DOMINIOS</button>
+  <button class="tab-btn" onclick="st('recursos')">📚 RECURSOS GRATUITOS</button>
+  <button class="tab-btn" onclick="st('plan')">🗓️ PLAN 8 SEMANAS</button>
+  <button class="tab-btn" onclick="st('examen')">🎯 EXAMEN Y LOGÍSTICA</button>
+  <button class="tab-btn" onclick="st('cheatsheet')">📋 CHEATSHEET</button>
+</div>
+
+<!-- ═══════════════════════ VISIÓN ═══════════ -->
+<div id="tab-vision" class="tab-panel active">
+
+<div class="sec" data-n="★">QUÉ ES Y PARA QUIÉN</div>
+
+<div class="note b">
+  <strong>CCDV-F valida que sabes construir, integrar y desplegar aplicaciones de producción sobre Claude</strong> — no solo escribir prompts. Anthropic la orienta a perfiles con 1-5 años de ingeniería de software y al menos 6 meses de experiencia práctica con Claude u otros LLM, cómodos con Python o TypeScript y con APIs REST. No hay prerrequisitos obligatorios — la credencial se obtiene solo por el resultado del examen.
+</div>
+
+<div class="flow">
+  <div class="fbox b">Partner Academy<sub>registro con email UST</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox o">Estudio<sub>8 dominios ponderados</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox g">Pearson VUE<sub>examen proctorizado</sub></div>
+</div>
+
+<div class="sec" data-n="!">TU BRECHA REAL — DIAGNÓSTICO</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ El 47.8% del examen es exactamente tu punto débil actual</div>
+  <div class="danger-b"><code>Applications &amp; Integration (33.1%)</code> + <code>Agents &amp; Workflows (14.7%)</code> exigen experiencia construyendo agentes con el <strong>Agent SDK / Claude API directamente</strong>. Tu experiencia hasta ahora es con Claude Code (orquestación desde CLI durante 3 meses) — muy valiosa, pero distinta de programar agentes desde cero contra la API. Ese es tu punto de partida real, no un detalle menor.</div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ Cómo cerrar la brecha con un solo recurso</div>
+  <div class="insight-b">El curso <a href="https://academy.claude.com/courses/building-with-the-claude-api" target="_blank"><strong>"Building with the Claude API"</strong></a> (9h, gratuito) cubre por sí solo prompting, tool use, RAG, agentes y patrones de producción — es decir, casi la mitad del examen. Es, con diferencia, tu mejor inversión de tiempo. Lo verás priorizado en la pestaña 🗓️ PLAN.</div>
+</div>
+
+<div class="quote">
+  <div class="quote-t">"Applications and Integration alone is worth more than the bottom four domains combined — Claude Code, Eval and Testing, Security, and Tools/MCPs."</div>
+  <div class="quote-a">Lectura del blueprint oficial: estudia por peso, no por orden alfabético</div>
+</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">Formato</div><div class="card-bd">53 preguntas (opción múltiple / respuesta múltiple), 120 minutos, online-proctorizado o en centro físico vía Pearson VUE.</div></div>
+  <div class="card"><div class="card-hd b">Coste</div><div class="card-bd">$125 USD base. Como UST es partner de Anthropic, tu tier de Claude Partner Network aplica un descuento automático al pagar en el Partner Academy.</div></div>
+  <div class="card"><div class="card-hd g">Aprobado</div><div class="card-bd">720 sobre 1000 puntos (escala, no porcentaje directo de aciertos).</div></div>
+  <div class="card"><div class="card-hd p">Validez</div><div class="card-bd">12 meses. Renovación a tiempo: evaluación gratuita no proctorizada en el Partner Academy.</div></div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ DOMINIOS ═════════ -->
+<div id="tab-dominios" class="tab-panel">
+
+<div class="sec" data-n="1">LOS 8 DOMINIOS DEL EXAMEN (ORDENADOS POR PESO)</div>
+
+<div class="note o">
+  <strong>Reparte tu tiempo de estudio proporcionalmente al peso, no por igual entre los 8.</strong> Los dos primeros dominios ya son el 50% del examen.
+</div>
+
+<table class="tbl">
+  <tr><th>Dominio</th><th>Peso</th><th>Recurso principal recomendado</th></tr>
+  <tr><td class="cat">Applications &amp; Integration</td><td class="w">33.1%</td><td><a href="https://academy.claude.com/courses/building-with-the-claude-api" target="_blank">Building with the Claude API</a> (curso completo)</td></tr>
+  <tr><td class="cat">Model Selection &amp; Optimization</td><td class="w">16.8%</td><td><a href="https://academy.claude.com/courses/building-with-the-claude-api" target="_blank">Building with the Claude API</a> + tutorial <a href="https://academy.claude.com/tutorials/choosing-the-right-claude-model" target="_blank">"Choosing the right Claude model"</a></td></tr>
+  <tr><td class="cat">Agents &amp; Workflows</td><td class="w">14.7%</td><td>Blog: <a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">"Building effective agents"</a> + <a href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank">"How we built our multi-agent research system"</a></td></tr>
+  <tr><td class="cat">Prompt &amp; Context Engineering</td><td class="w">11.0%</td><td>Docs: <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview" target="_blank">Prompt engineering overview</a> + blog <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank">"Effective context engineering for AI agents"</a></td></tr>
+  <tr><td class="cat">Tools &amp; MCPs</td><td class="w">10.6%</td><td><a href="https://academy.claude.com/courses/introduction-to-model-context-protocol" target="_blank">Introduction to MCP</a> + <a href="https://academy.claude.com/courses/model-context-protocol-advanced-topics" target="_blank">MCP: Advanced Topics</a></td></tr>
+  <tr><td class="cat">Security &amp; Safety</td><td class="w">8.1%</td><td><a href="https://academy.claude.com/courses/ai-capabilities-and-limitations" target="_blank">AI Capabilities and Limitations</a> + <a href="https://www.anthropic.com/legal/aup" target="_blank">política de uso de Anthropic</a></td></tr>
+  <tr><td class="cat">Claude Code</td><td class="w">3.1%</td><td><a href="https://academy.claude.com/courses/claude-code-101" target="_blank">Claude Code 101</a> (repaso — ya tienes 3 meses de experiencia práctica)</td></tr>
+  <tr><td class="cat">Eval, Testing &amp; Debugging</td><td class="w">2.6%</td><td><a href="https://github.com/anthropics/claude-cookbooks" target="_blank">Claude Cookbooks</a> (ejemplos de evals en GitHub)</td></tr>
+</table>
+
+<div class="note t">
+  <strong>Dato curioso del blueprint:</strong> en la certificación de Architect (CCAR-F), Claude Code pesa un 20% — aquí en Developer (CCDV-F) solo un 3.1%. No dediques tiempo desproporcionado ahí: ya lo dominas por tu experiencia previa.
+</div>
+
+</div>
+
+<!-- ═══════════════════════ RECURSOS ═════════ -->
+<div id="tab-recursos" class="tab-panel">
+
+<div class="sec" data-n="1">CURSOS GRATUITOS — CLAUDE ACADEMY (academy.claude.com)</div>
+
+<div class="note b">
+  Lanzada el 20 de agosto de 2026 como evolución de la antigua Anthropic Academy. Todos los cursos son gratuitos, con certificado/badge al completarlos. No hace falta plan de pago de Claude.
+</div>
+
+<table class="tbl">
+  <tr><th>Curso</th><th>Duración</th><th>Cubre</th><th>Enlace</th></tr>
+  <tr><td class="cat">Claude Platform 101</td><td>13 lecciones · 1.5h</td><td>Base API / Console / MCP</td><td><a href="https://academy.claude.com/courses/claude-platform-101" target="_blank">academy.claude.com/courses/claude-platform-101</a></td></tr>
+  <tr><td class="cat">Building with the Claude API</td><td>67 lecciones · 9h</td><td>Applications &amp; Integration, Model Selection, Agents</td><td><a href="https://academy.claude.com/courses/building-with-the-claude-api" target="_blank">academy.claude.com/courses/building-with-the-claude-api</a></td></tr>
+  <tr><td class="cat">Introduction to Model Context Protocol</td><td>10 lecciones · 1h</td><td>Tools &amp; MCPs</td><td><a href="https://academy.claude.com/courses/introduction-to-model-context-protocol" target="_blank">academy.claude.com/courses/introduction-to-model-context-protocol</a></td></tr>
+  <tr><td class="cat">Model Context Protocol: Advanced Topics</td><td>11 lecciones</td><td>Tools &amp; MCPs (nivel avanzado)</td><td><a href="https://academy.claude.com/courses/model-context-protocol-advanced-topics" target="_blank">academy.claude.com/courses/model-context-protocol-advanced-topics</a></td></tr>
+  <tr><td class="cat">Claude Code 101</td><td>12 lecciones · 1h</td><td>Claude Code (repaso)</td><td><a href="https://academy.claude.com/courses/claude-code-101" target="_blank">academy.claude.com/courses/claude-code-101</a></td></tr>
+  <tr><td class="cat">AI Capabilities and Limitations</td><td>13 lecciones · 3.5h</td><td>Security &amp; Safety / base conceptual del modelo</td><td><a href="https://academy.claude.com/courses/ai-capabilities-and-limitations" target="_blank">academy.claude.com/courses/ai-capabilities-and-limitations</a></td></tr>
+  <tr><td class="cat">AI Fluency: Framework &amp; Foundations</td><td>14 lecciones · 4h</td><td>Transversal (opcional, no técnico)</td><td><a href="https://academy.claude.com/courses/ai-fluency-framework-foundations" target="_blank">academy.claude.com/courses/ai-fluency-framework-foundations</a></td></tr>
+  <tr><td class="cat">Claude with Amazon Bedrock</td><td>65 lecciones · 8 quizzes</td><td>Solo si despliegas vía AWS (opcional)</td><td><a href="https://academy.claude.com/courses/claude-with-amazon-bedrock" target="_blank">academy.claude.com/courses/claude-with-amazon-bedrock</a></td></tr>
+  <tr><td class="cat">Claude with Google Cloud's Vertex AI</td><td>66 lecciones · 9 quizzes</td><td>Solo si despliegas vía GCP (opcional)</td><td><a href="https://academy.claude.com/courses/claude-with-google-cloud-s-vertex-ai" target="_blank">academy.claude.com/courses/claude-with-google-cloud-s-vertex-ai</a></td></tr>
+</table>
+
+<div class="note y">
+  <strong>"<a href="https://academy.claude.com/courses/claude-101" target="_blank">Claude 101</a>" (el curso para perfiles no técnicos) no aparece en esta lista a propósito.</strong> Con tu perfil de arquitecto senior, empieza directamente en <a href="https://academy.claude.com/courses/claude-platform-101" target="_blank">Claude Platform 101</a> — te ahorras 2.5h de contenido que ya dominas.
+</div>
+
+<div class="sec" data-n="2">ARTÍCULOS DE INGENIERÍA DE ANTHROPIC (anthropic.com/engineering)</div>
+
+<div class="note p">
+  No son cursos formales, pero son la fuente más directa sobre cómo Anthropic diseña agentes — y son justo el contenido que llena el hueco de <strong>Agents &amp; Workflows</strong>.
+</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">Building effective agents</div><div class="card-bd">Cuándo usar un workflow vs. un agente, patrones de orquestación.<br><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">anthropic.com/engineering/building-effective-agents</a></div></div>
+  <div class="card"><div class="card-hd b">Writing effective tools for agents</div><div class="card-bd">Cómo diseñar tools que un agente pueda usar de forma fiable.<br><a href="https://www.anthropic.com/engineering/writing-tools-for-agents" target="_blank">anthropic.com/engineering/writing-tools-for-agents</a></div></div>
+  <div class="card"><div class="card-hd g">Effective context engineering for AI agents</div><div class="card-bd">Gestión del contexto y la memoria en agentes de larga duración.<br><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank">anthropic.com/engineering/effective-context-engineering-for-ai-agents</a></div></div>
+  <div class="card"><div class="card-hd p">How we built our multi-agent research system</div><div class="card-bd">Arquitectura real manager/subagentes de Anthropic en producción.<br><a href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank">anthropic.com/engineering/multi-agent-research-system</a></div></div>
+  <div class="card"><div class="card-hd t">Contextual retrieval</div><div class="card-bd">Técnica de RAG que mejora la recuperación de contexto relevante.<br><a href="https://www.anthropic.com/news/contextual-retrieval" target="_blank">anthropic.com/news/contextual-retrieval</a></div></div>
+</div>
+
+<div class="sec" data-n="3">DOCUMENTACIÓN DE REFERENCIA</div>
+
+<table class="tbl">
+  <tr><th>Recurso</th><th>Para qué sirve</th><th>Enlace</th></tr>
+  <tr><td class="cat">API Reference</td><td>Referencia completa de endpoints y parámetros</td><td><a href="https://platform.claude.com/docs/en/api/overview" target="_blank">platform.claude.com/docs/en/api/overview</a></td></tr>
+  <tr><td class="cat">Prompt Engineering Overview</td><td>Técnicas oficiales de prompting</td><td><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview" target="_blank">platform.claude.com/.../prompt-engineering/overview</a></td></tr>
+  <tr><td class="cat">Claude Cookbooks</td><td>Ejemplos de código: agentes, RAG, evals, tool use</td><td><a href="https://github.com/anthropics/claude-cookbooks" target="_blank">github.com/anthropics/claude-cookbooks</a></td></tr>
+  <tr><td class="cat">Claude Code Docs</td><td>Referencia técnica completa de Claude Code</td><td><a href="https://code.claude.com/docs" target="_blank">code.claude.com/docs</a></td></tr>
+  <tr><td class="cat">Help Center</td><td>Soporte general de producto</td><td><a href="https://support.claude.com" target="_blank">support.claude.com</a></td></tr>
+</table>
+
+</div>
+
+<!-- ═══════════════════════ PLAN ═════════════ -->
+<div id="tab-plan" class="tab-panel">
+
+<div class="sec" data-n="0">FASE 0 — FUNDAMENTOS PREVIOS (ANTES DEL EXAMEN)</div>
+
+<div class="note p">
+  <strong>Tu TFM (FMI) demuestra dominio de arquitectura y orquestación conceptual — el examen pide otra cosa: implementación directa contra la API.</strong> Antes de entrar en el plan de 8 semanas orientado al blueprint, conviene reconstruir la base desde cero, sin dar nada por sentado, para que lo técnico se apoye en algo sólido.
+</div>
+
+<div class="weekgrid">
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Fundamento 1</span><span class="wk-dom">Modelo mental</span></div><p><a href="https://academy.claude.com/courses/claude-101" target="_blank"><strong>Claude 101</strong></a> (2.5h) — sí, es el curso "no técnico". Da igual: te da el vocabulario base (mensajes, system prompt, contexto) sin asumir que ya lo conoces. Ve rápido por lo obvio, párate en lo nuevo.</p></div>
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Fundamento 2</span><span class="wk-dom">Cómo funciona un LLM</span></div><p><a href="https://academy.claude.com/courses/ai-capabilities-and-limitations" target="_blank"><strong>AI Capabilities and Limitations</strong></a> (3.5h) — predicción de siguiente token, qué es "conocimiento" para el modelo, memoria de trabajo, steerability, límites de contexto. Sin esto, el prompting y los agentes son recetas sueltas sin por qué.</p></div>
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Fundamento 3</span><span class="wk-dom">Delegar y evaluar</span></div><p><a href="https://academy.claude.com/courses/ai-fluency-framework-foundations" target="_blank"><strong>AI Fluency: Framework & Foundations</strong></a> (4h) — el framework 4D (Delegation, Description, Discernment, Diligence) que usa el propio Anthropic. Es la base mental para decidir qué delegar a un agente y cómo juzgar si su resultado es correcto.</p></div>
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Fundamento 4</span><span class="wk-dom">Primera llamada real</span></div><p>Antes del curso completo de la API: crea una API key en la <a href="https://platform.claude.com/docs/en/get-api-key" target="_blank">Console</a>, instala el SDK de Python o TypeScript, y haz tu <a href="https://platform.claude.com/docs/en/get-started" target="_blank">primera llamada manual</a> (<code>client.messages.create()</code>) sin seguir un curso — solo tú, la doc y el error que te salga.</p></div>
+</div>
+
+<div class="sec" data-n="★">PLAN DE 8 SEMANAS — YA CON LA BASE PUESTA</div>
+
+<div class="note g">
+  Diseñado en dos fases: primero la base conceptual (Fase 0), después el contenido específico del blueprint (semanas 1-8), donde las semanas 2-4 (Building with the Claude API) son las que más cuentan.
+</div>
+
+<div class="weekgrid">
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Semana 1</span><span class="wk-dom">Base</span></div><p><a href="https://academy.claude.com/courses/claude-platform-101" target="_blank">Claude Platform 101</a> completo + <a href="https://academy.claude.com/courses/ai-capabilities-and-limitations" target="_blank">AI Capabilities and Limitations</a>. Objetivo: entender el modelo mental de la plataforma antes de tocar código.</p></div>
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Semana 2</span><span class="wk-dom">Applications & Integration</span></div><p><a href="https://academy.claude.com/courses/building-with-the-claude-api" target="_blank">Building with the Claude API</a> — primer tercio (mensajes, prompting, streaming, manejo de errores). Practica cada bloque con tu propio código.</p></div>
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Semana 3</span><span class="wk-dom">Model Selection + Agents</span></div><p><a href="https://academy.claude.com/courses/building-with-the-claude-api" target="_blank">Building with the Claude API</a> — segundo tercio (tool use, elección de modelo, coste/latencia). Este es tu punto ciego: dedícale tiempo extra si hace falta.</p></div>
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Semana 4</span><span class="wk-dom">Agents & Workflows</span></div><p><a href="https://academy.claude.com/courses/building-with-the-claude-api" target="_blank">Building with the Claude API</a> — tercio final (agentes, RAG, patrones de producción) + blog <a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">"Building effective agents"</a>. Construye un agente mínimo con el <a href="https://code.claude.com/docs/en/agent-sdk/quickstart" target="_blank">Agent SDK</a>.</p></div>
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Semana 5</span><span class="wk-dom">Agents & Workflows (práctica)</span></div><p>Blog <a href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank">"How we built our multi-agent research system"</a> + <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank">"Effective context engineering"</a>. Replica un patrón manager/subagente a pequeña escala.</p></div>
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Semana 6</span><span class="wk-dom">Tools & MCPs</span></div><p><a href="https://academy.claude.com/courses/introduction-to-model-context-protocol" target="_blank">Introduction to MCP</a> + <a href="https://academy.claude.com/courses/model-context-protocol-advanced-topics" target="_blank">MCP: Advanced Topics</a>. Construye un servidor MCP simple con el SDK de Python.</p></div>
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Semana 7</span><span class="wk-dom">Prompt/Context + Security</span></div><p><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview" target="_blank">Prompt Engineering Overview</a> + <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank">Effective Context Engineering</a> + repaso de la <a href="https://www.anthropic.com/legal/aup" target="_blank">política de uso de Anthropic</a> (Security & Safety).</p></div>
+  <div class="week-card"><div class="wk-hd"><span class="wk-n">Semana 8</span><span class="wk-dom">Repaso + Claude Code + registro</span></div><p><a href="https://academy.claude.com/courses/claude-code-101" target="_blank">Claude Code 101</a> (repaso rápido) + <a href="https://github.com/anthropics/claude-cookbooks" target="_blank">Claude Cookbooks</a> (evals) + repaso de la guía oficial del examen por dominio. Regístrate en el <a href="https://anthropic-partners.skilljar.com" target="_blank">Partner Academy</a>.</p></div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ EXAMEN ═══════════ -->
+<div id="tab-examen" class="tab-panel">
+
+<div class="sec" data-n="1">CÓMO REGISTRARTE (VÍA UST — PARTNER NETWORK)</div>
+
+<div class="note b">
+  <strong>El registro NO es público</strong> — requiere pertenecer a una organización del Claude Partner Network con email corporativo verificado. Como UST tiene acuerdo de partner con Anthropic, tu email @ust debería darte acceso directo.
+</div>
+
+<div class="steps">
+  <div class="step"><div class="step-b">Entra en el <strong>Anthropic Partner Academy</strong> con tu email corporativo de UST: <a href="https://anthropic-partners.skilljar.com" target="_blank">anthropic-partners.skilljar.com</a></div></div>
+  <div class="step"><div class="step-b">Busca la página del programa <strong>Claude Certification</strong> y localiza <code>CCDV-F</code> (Claude Certified Developer — Foundations).</div></div>
+  <div class="step"><div class="step-b">Revisa la <strong>guía oficial del examen (Exam Guide v1.0)</strong> y los términos — cada página de certificación la incluye junto con los cursos de preparación.</div></div>
+  <div class="step"><div class="step-b">Completa el registro y pago dentro del propio Partner Academy — el descuento de tu tier de partner se aplica automáticamente en el checkout.</div></div>
+  <div class="step"><div class="step-b">Recibirás instrucciones para crear tu cuenta de <a href="https://www.pearsonvue.com/us/en/anthropic.html" target="_blank"><strong>Pearson VUE</strong></a> y agendar la sesión (online-proctorizada o en centro físico).</div></div>
+  <div class="step"><div class="step-b">Día del examen: ID oficial vigente con el mismo nombre del registro, espacio de trabajo despejado — sin notas, móvil, smartwatch ni segunda pantalla.</div></div>
+</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Si el Academy no reconoce tu email de UST</div>
+  <div class="danger-b">Comprueba que accedes con tu correo corporativo, no uno personal. Si el error persiste, escribe a <code>partner-support@anthropic.com</code> — vincular un dominio nuevo tarda 7-10 días, así que hazlo con margen antes de la fecha que quieras reservar.</div>
+</div>
+
+<div class="sec" data-n="2">REINTENTOS Y RENOVACIÓN</div>
+
+<table class="tbl">
+  <tr><th>Situación</th><th>Regla</th></tr>
+  <tr><td class="cat">Primer suspenso</td><td>Espera 14 días antes de repetir</td></tr>
+  <tr><td class="cat">Segundo suspenso</td><td>Espera 30 días</td></tr>
+  <tr><td class="cat">Tercer suspenso</td><td>Espera 90 días</td></tr>
+  <tr><td class="cat">Límite de intentos</td><td>Máximo 4 intentos en 12 meses móviles — la tarifa se paga en cada intento</td></tr>
+  <tr><td class="cat">Renovación a tiempo</td><td>Evaluación gratuita, no proctorizada, en el Partner Academy — extiende 12 meses más</td></tr>
+  <tr><td class="cat">Credencial caducada</td><td>Hay que repetir el examen completo a tarifa completa</td></tr>
+</table>
+
+</div>
+
+<!-- ═══════════════════════ CHEATSHEET ═══════ -->
+<div id="tab-cheatsheet" class="tab-panel">
+
+<div class="sec" data-n="★">TODOS LOS ENLACES — REFERENCIA RÁPIDA</div>
+
+<table class="tbl">
+  <tr><th>Recurso</th><th>Enlace</th></tr>
+  <tr><td class="cat">Claude Academy (home)</td><td><a href="https://academy.claude.com" target="_blank">academy.claude.com</a></td></tr>
+  <tr><td class="cat">Claude Platform 101</td><td><a href="https://academy.claude.com/courses/claude-platform-101" target="_blank">academy.claude.com/courses/claude-platform-101</a></td></tr>
+  <tr><td class="cat">Building with the Claude API</td><td><a href="https://academy.claude.com/courses/building-with-the-claude-api" target="_blank">academy.claude.com/courses/building-with-the-claude-api</a></td></tr>
+  <tr><td class="cat">Introduction to MCP</td><td><a href="https://academy.claude.com/courses/introduction-to-model-context-protocol" target="_blank">academy.claude.com/courses/introduction-to-model-context-protocol</a></td></tr>
+  <tr><td class="cat">MCP: Advanced Topics</td><td><a href="https://academy.claude.com/courses/model-context-protocol-advanced-topics" target="_blank">academy.claude.com/courses/model-context-protocol-advanced-topics</a></td></tr>
+  <tr><td class="cat">Claude Code 101</td><td><a href="https://academy.claude.com/courses/claude-code-101" target="_blank">academy.claude.com/courses/claude-code-101</a></td></tr>
+  <tr><td class="cat">AI Capabilities and Limitations</td><td><a href="https://academy.claude.com/courses/ai-capabilities-and-limitations" target="_blank">academy.claude.com/courses/ai-capabilities-and-limitations</a></td></tr>
+  <tr><td class="cat">AI Fluency: Framework &amp; Foundations</td><td><a href="https://academy.claude.com/courses/ai-fluency-framework-foundations" target="_blank">academy.claude.com/courses/ai-fluency-framework-foundations</a></td></tr>
+  <tr><td class="cat">Choosing the right Claude model (tutorial)</td><td><a href="https://academy.claude.com/tutorials/choosing-the-right-claude-model" target="_blank">academy.claude.com/tutorials/choosing-the-right-claude-model</a></td></tr>
+  <tr><td class="cat">Building effective agents</td><td><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">anthropic.com/engineering/building-effective-agents</a></td></tr>
+  <tr><td class="cat">Writing effective tools for agents</td><td><a href="https://www.anthropic.com/engineering/writing-tools-for-agents" target="_blank">anthropic.com/engineering/writing-tools-for-agents</a></td></tr>
+  <tr><td class="cat">Effective context engineering for AI agents</td><td><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank">anthropic.com/engineering/effective-context-engineering-for-ai-agents</a></td></tr>
+  <tr><td class="cat">How we built our multi-agent research system</td><td><a href="https://www.anthropic.com/engineering/multi-agent-research-system" target="_blank">anthropic.com/engineering/multi-agent-research-system</a></td></tr>
+  <tr><td class="cat">Contextual retrieval</td><td><a href="https://www.anthropic.com/news/contextual-retrieval" target="_blank">anthropic.com/news/contextual-retrieval</a></td></tr>
+  <tr><td class="cat">API Reference</td><td><a href="https://platform.claude.com/docs/en/api/overview" target="_blank">platform.claude.com/docs/en/api/overview</a></td></tr>
+  <tr><td class="cat">Prompt Engineering Overview</td><td><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview" target="_blank">platform.claude.com/.../prompt-engineering/overview</a></td></tr>
+  <tr><td class="cat">Claude Cookbooks (GitHub)</td><td><a href="https://github.com/anthropics/claude-cookbooks" target="_blank">github.com/anthropics/claude-cookbooks</a></td></tr>
+  <tr><td class="cat">Claude Code Docs</td><td><a href="https://code.claude.com/docs" target="_blank">code.claude.com/docs</a></td></tr>
+  <tr><td class="cat">Anthropic Partner Academy (registro examen)</td><td><a href="https://anthropic-partners.skilljar.com" target="_blank">anthropic-partners.skilljar.com</a></td></tr>
+  <tr><td class="cat">Pearson VUE — programa Anthropic</td><td><a href="https://www.pearsonvue.com/us/en/anthropic.html" target="_blank">pearsonvue.com/us/en/anthropic.html</a></td></tr>
+  <tr><td class="cat">Claude Partner Network — info</td><td><a href="https://www.anthropic.com/news/services-track-partner-hub" target="_blank">anthropic.com/news/services-track-partner-hub</a></td></tr>
+</table>
+
+<div class="note y">
+  <strong>Nota sobre vigencia:</strong> Claude Academy se relanzó el 20 de agosto de 2026 y el catálogo sigue creciendo — si algún enlace cambia de nombre, busca el curso por título dentro de academy.claude.com. Los datos del examen (precio, dominios, formato) están tomados de la Exam Guide v1.0 (julio 2026); confirma cualquier cambio en el propio Partner Academy antes de programar tu examen.
+</div>
+
+</div>
+
+</div>
+
+<script>
+function st(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

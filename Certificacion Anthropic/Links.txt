@@ -1,0 +1,41 @@
+Additioanl Resources for Practice
+
+Refer to the following resources for further reading and practice:
+Prompt Engineering Novice to Foundation	https://share.percipio.com/cd/jmGIakcpl
+
+Prompt Engineering Foundation to intermediate	https://share.percipio.com/cd/ewL290oSn
+
+Prompt Engineering Intermediate to Advanced	https://share.percipio.com/cd/O-UOc6-OE
+
+Prompt Engineering for Programmers	https://share.percipio.com/cd/-SN60HH4ys
+
+Interactive Course: Intermediate Prompt Engineering	https://share.percipio.com/cd/bhp9vj8Iq
+
+Lab: Prompt Engineering Pattern & Structures	https://share.percipio.com/cd/1-btO9zCi
+
+Claude projects	https://share.percipio.com/cd/5ZGlpQ0yw
+
+Video: Claude projects	https://share.percipio.com/cd/mMBSD8WCn
+
+Claude Artefacts	https://share.percipio.com/cd/mzOY7JTHv
+
+Claude Cowork	https://share.percipio.com/cd/q9unsjmv2
+
+Claude Cowork in action	https://share.percipio.com/cd/j2tGzyo8e
+
+Claude Cowork's Tools	https://share.percipio.com/cd/f9zZoPfE0
+
+Claude Cowork's use cases	https://share.percipio.com/cd/OSo6bPDA9
+
+AI Assisted development with Claude code	https://share.percipio.com/cd/-IRHUvpiv
+
+Introduction to Claude code and AI Assisted development	https://share.percipio.com/cd/U8INPb4tI
+
+
+
+CCDVF Prepartory Course Link
+
+https://anthropic-partners.skilljar.com/path/claude-certified-developer-foundations
+
+
+

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antes de Empezar · De Claude Code a la API cruda</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--surface:#fff;--surface2:#edeae0;--border:#cfc8b4;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--teal:#0e7c7b;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}.container{max-width:1140px;margin:0 auto;padding:48px 28px 100px}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+header{border-bottom:3px solid var(--ink);padding-bottom:26px;margin-bottom:34px}.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-0.7deg)}h1{font-family:var(--display);font-size:clamp(28px,5vw,50px);font-weight:800;line-height:1;letter-spacing:-1.5px;margin-bottom:12px}h1 em{font-style:normal;color:var(--accent)}h1 .v{color:var(--accent2)}.subtitle{font-size:12px;color:var(--muted);line-height:1.8;max-width:700px;margin-bottom:16px}.badge-row{display:flex;flex-wrap:wrap;gap:8px}.badge{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}.badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}.badge.t{color:var(--teal);border-color:var(--teal)}
+.tab-nav{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:5px;overflow:hidden;margin-bottom:36px}.tab-btn{font-family:var(--mono);font-size:10px;font-weight:700;padding:10px 13px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}.tab-btn:last-child{border-right:none}.tab-btn:hover{background:var(--surface2);color:var(--ink)}.tab-btn.active{background:var(--ink);color:var(--bg)}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s ease both}
+.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:30px 0 14px;display:flex;align-items:center;gap:12px}.sec:first-child{margin-top:0}.sec::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:3px;flex-shrink:0}
+.note{border-left:4px solid;padding:13px 17px;margin:13px 0;font-size:12px;line-height:1.75;color:var(--ink2);border-radius:0 4px 4px 0}.note strong{display:block;margin-bottom:4px}.note code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px}.note.o{border-color:var(--accent);background:rgba(193,68,14,.05)}.note.o strong{color:var(--accent)}.note.g{border-color:var(--accent2);background:rgba(42,110,78,.05)}.note.g strong{color:var(--accent2)}.note.b{border-color:var(--accent3);background:rgba(26,74,138,.05)}.note.b strong{color:var(--accent3)}.note.y{border-color:var(--yellow);background:rgba(232,160,32,.05)}.note.y strong{color:var(--yellow)}.note.p{border-color:var(--purple);background:rgba(122,58,205,.05)}.note.p strong{color:var(--purple)}.note.t{border-color:var(--teal);background:rgba(14,124,123,.05)}.note.t strong{color:var(--teal)}
+a{color:var(--accent3)}a:hover{color:var(--accent)}
+pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:16px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.85;color:var(--ink);margin:13px 0}.kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}
+.tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);overflow:hidden;margin:13px 0;border-radius:4px}.tbl th{background:var(--ink);color:var(--bg);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:10px 13px;text-align:left}.tbl td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(0,0,0,.015)}.tbl td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:10.5px}.tbl td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin:14px 0}.card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .2s}.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.07)}.card-hd{padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px}.card-hd.g{background:rgba(42,110,78,.1);color:var(--accent2)}.card-hd.o{background:rgba(193,68,14,.1);color:var(--accent)}.card-hd.b{background:rgba(26,74,138,.1);color:var(--accent3)}.card-hd.p{background:rgba(122,58,205,.1);color:var(--purple)}.card-hd.y{background:rgba(232,160,32,.1);color:var(--yellow)}.card-hd.t{background:rgba(14,124,123,.1);color:var(--teal)}.card-bd{padding:13px;font-size:12px;line-height:1.75;color:var(--ink2)}
+.insight{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:17px 21px;margin:17px 0}.insight-t{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:7px}.insight-b{font-size:12px;color:var(--ink2);line-height:1.75}.danger{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:17px 21px;margin:17px 0}.danger-t{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:7px}.danger-b{font-size:12px;color:var(--ink2);line-height:1.75}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:16px 0}.fbox{border:2px solid var(--ink);border-radius:5px;padding:9px 13px;font-size:11px;font-weight:700;text-align:center;min-width:90px}.fbox sub{display:block;font-size:9px;opacity:.75;font-weight:400;margin-top:2px}.fbox.o{background:var(--accent);color:#fff;border-color:var(--accent)}.fbox.g{background:var(--accent2);color:#fff;border-color:var(--accent2)}.fbox.b{background:var(--accent3);color:#fff;border-color:var(--accent3)}.farr{font-size:18px;color:var(--muted);flex-shrink:0}
+.steps{counter-reset:step;margin:14px 0}.step{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)}.step:last-child{border-bottom:none}.step::before{counter-increment:step;content:counter(step);flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}.step-b{font-size:12px;line-height:1.7;color:var(--ink2);padding-top:3px}.step-b strong{color:var(--ink)}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Fase −1 · Antes de tocar la documentación del examen</div>
+  <h1>De Claude Code <span class="v">a la API cruda</span><br><em>Diccionario y primeros pasos</em></h1>
+  <div class="subtitle">No te falta capacidad de programación — ya sabes Python, TypeScript y consumir APIs. El hueco es puramente de vocabulario: Claude Code lleva meses resolviendo por ti el esquema concreto que el examen CCDV-F pregunta. Esta guía traduce lo que ya sabes al lenguaje exacto de la API de Claude antes de abrir un curso técnico.</div>
+  <div class="badge-row">
+    <span class="badge o">12 términos traducidos</span>
+    <span class="badge b">Primera llamada real</span>
+    <span class="badge g">Orden de cursos recomendado</span>
+    <span class="badge t">100% enlaces oficiales</span>
+  </div>
+</header>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="st('ruta')">🎯 RUTA DE ENTRADA</button>
+  <button class="tab-btn" onclick="st('porque')">🧭 POR QUÉ SUENA A CHINO</button>
+  <button class="tab-btn" onclick="st('glosario')">📖 GLOSARIO</button>
+  <button class="tab-btn" onclick="st('conceptos')">🧱 CONCEPTOS BASE</button>
+  <button class="tab-btn" onclick="st('primera')">🔌 TU PRIMERA LLAMADA</button>
+  <button class="tab-btn" onclick="st('orden')">📚 ORDEN DE CURSOS</button>
+</div>
+
+<!-- ═══════════════════════ RUTA DE ENTRADA ══ -->
+<div id="tab-ruta" class="tab-panel active">
+
+<div class="sec" data-n="★">RUTA DE ENTRADA — 5 PASOS ANTES DE CCDV-F</div>
+
+<div class="note g">
+  Cuatro pasos de entrada (~11.5h en total, repartibles a tu ritmo) y un quinto paso donde ya entras de lleno en la formación específica del examen.
+</div>
+
+<div class="steps">
+  <div class="step"><div class="step-b"><strong><a href="https://academy.claude.com/courses/claude-101" target="_blank">Claude 101 (2.5h)</a></strong><br>Sin código. Vocabulario base: qué es un mensaje, qué es el system prompt, cómo se estructura una conversación. Ve rápido — mucho ya lo intuyes por tu experiencia con Claude Code.</div></div>
+  <div class="step"><div class="step-b"><strong><a href="https://academy.claude.com/courses/claude-platform-101" target="_blank">Claude Platform 101 (1.5h)</a></strong><br>Primer contacto formal con la API, la Console y MCP a nivel introductorio. Aquí empiezas a ver los nombres exactos (<code>messages</code>, <code>system</code>, <code>tools</code>) que hasta ahora Claude Code te resolvía por detrás.</div></div>
+  <div class="step"><div class="step-b"><strong><a href="https://academy.claude.com/courses/ai-capabilities-and-limitations" target="_blank">AI Capabilities and Limitations (3.5h)</a></strong><br>Cómo funciona un LLM de verdad: predicción de token, memoria de trabajo, límites de contexto. Es la base que hace que el resto tenga sentido en vez de ser recetas sueltas.</div></div>
+  <div class="step"><div class="step-b"><strong><a href="https://academy.claude.com/courses/ai-fluency-framework-foundations" target="_blank">AI Fluency: Framework &amp; Foundations (4h)</a></strong><br>El marco 4D (Delegation, Description, Discernment, Diligence) que usa el propio Anthropic. Te da el criterio para decidir qué delegar a un agente y cómo juzgar si el resultado es correcto — clave para Agents &amp; Workflows.</div></div>
+  <div class="step"><div class="step-b"><strong><a href="https://academy.claude.com/courses/building-with-the-claude-api" target="_blank">Building with the Claude API (9h)</a> — aquí entras de lleno en CCDV-F</strong><br>El curso grande: prompting, tool use, RAG, agentes, patrones de producción. A partir de aquí sigues con la guía específica del examen (dominios, pesos y plan semanal) que ya tienes preparada.</div></div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ POR QUÉ ══════════ -->
+<div id="tab-porque" class="tab-panel">
+
+<div class="sec" data-n="★">POR QUÉ TODO SUENA A CHINO SI YA USAS CLAUDE CODE A DIARIO</div>
+
+<div class="note b">
+  <strong>Claude Code es un agente que ya trae resuelta toda la capa que pregunta el examen.</strong> Tú escribes en lenguaje natural en el terminal; por debajo, Claude Code construye el array de mensajes, gestiona el system prompt, decide qué herramienta usar y en qué orden, reintenta si algo falla. Nunca ves ese código — por diseño, esa es la gracia de la herramienta.
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ Esto NO es un problema de programación</div>
+  <div class="insight-b">Ya sabes Python, TypeScript, VS Code y ya escribes scripts que consumen APIs — la mecánica de "instalar un SDK, guardar una clave, hacer una petición HTTP" no es nueva para ti. El hueco es mucho más estrecho de lo que parece: es el <strong>esquema concreto de la API de Claude</strong> (cómo se forma el array <code>messages</code>, qué es un bloque <code>tool_use</code>, cómo se estructura la respuesta) — vocabulario específico, no una habilidad nueva que construir desde cero.</div>
+</div>
+
+<div class="flow">
+  <div class="fbox b">Tú escribes<sub>"arregla este bug"</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox o">Claude Code<sub>capa oculta: API, tools, loop</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox g">Resultado<sub>archivo modificado</sub></div>
+</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Por eso puedes tener 300 horas de Claude Code y 0 horas de API cruda</div>
+  <div class="danger-b">No es contradictorio: son capas distintas del mismo sistema, y tu experiencia de scripting general no incluye <strong>el esquema propio de Claude</strong>. El examen y los cursos oficiales usan ese vocabulario concreto — roles, content blocks, tool_use, tool_result, system como parámetro — que Claude Code te ha estado ocultando todo este tiempo precisamente porque funciona bien.</div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ El plan de esta guía</div>
+  <div class="insight-b">1) Un <strong>glosario</strong> que traduce cada concepto que ya conoces de Claude Code a su nombre exacto en la API. 2) Los <strong>conceptos base</strong> de cómo funciona un LLM por debajo. 3) Tu <strong>primera llamada real</strong> a la API, sin curso de por medio. 4) El <strong>orden</strong> en que conviene hacer los cursos oficiales a partir de aquí.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ GLOSARIO ═════════ -->
+<div id="tab-glosario" class="tab-panel">
+
+<div class="sec" data-n="1">LO QUE YA CONOCES → CÓMO SE LLAMA EN LA API</div>
+
+<div class="note o">
+  Lee esta tabla una vez de arriba a abajo antes de abrir cualquier curso. No memorices — solo familiarízate con que cada cosa tiene nombre.
+</div>
+
+<table class="tbl">
+  <tr><th>En Claude Code (lo que ya conoces)</th><th>En la API cruda (cómo se llama)</th><th>Doc</th></tr>
+  <tr><td class="cat">Escribes algo en el terminal</td><td>Mensaje de usuario — objeto <code>{role: "user", content: ...}</code> dentro del array <code>messages</code></td><td><a href="https://platform.claude.com/docs/en/build-with-claude/working-with-messages" target="_blank">Working with Messages</a></td></tr>
+  <tr><td class="cat">Archivo <code>CLAUDE.md</code> / instrucciones de proyecto</td><td>Parámetro <code>system</code> en <code>messages.create()</code></td><td><a href="https://platform.claude.com/docs/en/build-with-claude/working-with-messages" target="_blank">Working with Messages</a></td></tr>
+  <tr><td class="cat">El historial que Claude Code recuerda de la conversación</td><td>El array <code>messages</code> completo — <strong>tú</strong> lo reenvías entero en cada llamada, la API no tiene memoria propia</td><td><a href="https://platform.claude.com/docs/en/intro" target="_blank">Intro to Claude</a></td></tr>
+  <tr><td class="cat">Herramientas integradas (leer archivo, bash, editar código)</td><td>Objetos <code>tools</code> que tú defines con JSON Schema + bloques <code>tool_use</code> / <code>tool_result</code></td><td><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" target="_blank">Tool use overview</a></td></tr>
+  <tr><td class="cat">Claude Code decide qué herramienta usar y cuándo parar</td><td>El "bucle agente": tu código detecta <code>stop_reason: "tool_use"</code>, ejecuta la tool, y vuelve a llamar a la API con el resultado</td><td><a href="https://code.claude.com/docs/en/agent-sdk/quickstart" target="_blank">Agent SDK quickstart</a></td></tr>
+  <tr><td class="cat">Subagentes (delegar una tarea aislada)</td><td>No existe como primitiva en la API cruda — lo construyes tú con llamadas independientes a <code>messages.create()</code>, o usas el Agent SDK que sí lo abstrae</td><td><a href="https://code.claude.com/docs/en/agent-sdk/quickstart" target="_blank">Agent SDK docs</a></td></tr>
+  <tr><td class="cat">Servidores MCP en <code>.claude/settings.json</code></td><td>Mismo protocolo MCP — en la API lo conectas tú vía el parámetro <code>mcp_servers</code> o tu propio cliente MCP</td><td><a href="https://code.claude.com/docs/en/mcp" target="_blank">MCP servers</a></td></tr>
+  <tr><td class="cat">Claude "piensa" antes de responder (extended thinking)</td><td>Parámetro <code>thinking</code> con <code>budget_tokens</code>; la respuesta trae bloques de tipo <code>thinking</code></td><td><a href="https://platform.claude.com/docs/en/intro" target="_blank">Intro to Claude</a></td></tr>
+  <tr><td class="cat">Cuando la conversación se llena, Claude Code la resume solo</td><td>Tú decides cuándo resumir o recortar el array <code>messages</code> — no ocurre automáticamente en la API cruda</td><td><a href="https://platform.claude.com/docs/en/intro" target="_blank">Context management</a></td></tr>
+  <tr><td class="cat">El modelo que eliges en Claude Code (Sonnet, Opus...)</td><td>El parámetro <code>model</code> como string exacto, por ejemplo <code>"claude-sonnet-5"</code></td><td><a href="https://academy.claude.com/tutorials/choosing-the-right-claude-model" target="_blank">Choosing the right model</a></td></tr>
+  <tr><td class="cat">Aprobar o denegar que Claude ejecute un comando</td><td>Tú implementas esa lógica de permisos alrededor de cada <code>tool_use</code> antes de ejecutarlo — la API no la trae de fábrica</td><td><a href="https://code.claude.com/docs/en/agent-sdk/quickstart" target="_blank">Agent SDK — Handling Permissions</a></td></tr>
+  <tr><td class="cat">El coste/tokens que ves en la sesión de Claude Code</td><td>Campo <code>usage</code> en cada respuesta (<code>input_tokens</code>, <code>output_tokens</code>) que tú multiplicas por el precio del modelo</td><td><a href="https://platform.claude.com/docs/en/get-started" target="_blank">Get started</a></td></tr>
+</table>
+
+</div>
+
+<!-- ═══════════════════════ CONCEPTOS ════════ -->
+<div id="tab-conceptos" class="tab-panel">
+
+<div class="sec" data-n="1">CÓMO FUNCIONA UN LLM POR DEBAJO — LO MÍNIMO INDISPENSABLE</div>
+
+<div class="note g">
+  Sin esto, el prompting y los agentes son recetas sueltas sin por qué. Con esto, todo lo que veas después encaja en un modelo mental.
+</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">Token</div><div class="card-bd">La unidad mínima de texto que procesa el modelo — no es una palabra, es un fragmento (a veces media palabra). Todo se mide y se paga en tokens: entrada y salida.</div></div>
+  <div class="card"><div class="card-hd b">Context window</div><div class="card-bd">El total de tokens que el modelo puede "ver" a la vez (mensaje + system + historial + respuesta). Se agota, y tú eres responsable de gestionarlo en la API cruda.</div></div>
+  <div class="card"><div class="card-hd g">Roles (user / assistant / system)</div><div class="card-bd">Cada mensaje del array lleva una etiqueta de quién "habla". El modelo predice el siguiente turno como si continuara un guion con esos roles.</div></div>
+  <div class="card"><div class="card-hd p">stop_reason</div><div class="card-bd">El campo que te dice por qué el modelo dejó de generar: <code>end_turn</code>, <code>max_tokens</code>, o <code>tool_use</code> (quiere que ejecutes una herramienta y le devuelvas el resultado).</div></div>
+  <div class="card"><div class="card-hd y">Streaming</div><div class="card-bd">Recibir la respuesta token a token en vez de esperar al mensaje completo — es lo que hace que Claude Code parezca "escribir en vivo".</div></div>
+  <div class="card"><div class="card-hd t">temperature / max_tokens</div><div class="card-bd">Parámetros que controlas tú en cada llamada: cuánta aleatoriedad permites en la respuesta y cuántos tokens como máximo puede generar.</div></div>
+</div>
+
+<div class="note p">
+  Para profundizar sin perderte, un único enlace: <a href="https://platform.claude.com/docs/en/intro" target="_blank">Intro to Claude</a> — el mapa completo de la documentación, organizado por tema, con enlaces a cada concepto de esta tabla.
+</div>
+
+</div>
+
+<!-- ═══════════════════════ PRIMERA LLAMADA ══ -->
+<div id="tab-primera" class="tab-panel">
+
+<div class="sec" data-n="1">TU PRIMERA LLAMADA A LA API — LO ESPECÍFICO DE CLAUDE, NO LA MECÁNICA DE SCRIPTING</div>
+
+<div class="note b">
+  <strong>Te salto lo que ya sabes:</strong> crear proyecto, entorno virtual, instalar dependencias — eso ya lo dominas. Vamos directo al ejemplo mínimo para que veas por primera vez la <strong>forma exacta</strong> de la petición y la respuesta de Claude, que es lo único realmente nuevo aquí.
+</div>
+
+<div class="steps">
+  <div class="step"><div class="step-b">Crea tu clave en <a href="https://platform.claude.com" target="_blank">platform.claude.com</a> → <strong>Settings → API keys</strong> (solo se muestra completa una vez). Guía oficial: <a href="https://platform.claude.com/docs/en/get-api-key" target="_blank">Get your Claude API key</a>. Instala <code>pip install anthropic</code> o <code>npm install @anthropic-ai/sdk</code> según prefieras.</div></div>
+  <div class="step"><div class="step-b">Ejecuta el ejemplo de abajo tal cual, sin modificar nada, y fíjate en tres cosas que Claude Code te oculta: el <code>system</code> como parámetro explícito, el array <code>messages</code> que reconstruyes tú en cada turno, y el objeto <code>usage</code> con los tokens reales.</div></div>
+  <div class="step"><div class="step-b">Cambia el <code>content</code> del mensaje y observa cómo varía <code>usage</code>. Después, fuerza un <code>max_tokens</code> muy bajo y mira el <code>stop_reason</code> cambiar a <code>"max_tokens"</code> — así ves ese campo en acción, no solo en la doc.</div></div>
+</div>
+
+<pre><span class="kw">import</span> anthropic
+
+client = anthropic.Anthropic()  <span class="cm"># lee ANTHROPIC_API_KEY solo</span>
+
+message = client.messages.create(
+    model=<span class="st">"claude-sonnet-5"</span>,
+    max_tokens=<span class="st">1000</span>,
+    system=<span class="st">"Responde siempre en una sola frase."</span>,
+    messages=[
+        {<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"¿Qué es un token en un LLM?"</span>}
+    ],
+)
+
+<span class="kw">print</span>(message.content[<span class="st">0</span>].text)
+<span class="kw">print</span>(message.usage)       <span class="cm"># input_tokens y output_tokens reales</span>
+<span class="kw">print</span>(message.stop_reason) <span class="cm"># "end_turn", "max_tokens" o "tool_use"</span></pre>
+
+<div class="insight">
+  <div class="insight-t">✅ Qué acabas de ver que Claude Code te ocultaba</div>
+  <div class="insight-b">No la mecánica de hacer una llamada — eso ya lo sabías. Lo nuevo es el <strong>esquema exacto de Claude</strong>: <code>system</code> como parámetro (no un archivo), <code>messages</code> como array que tú mantienes, y <code>stop_reason</code>/<code>usage</code> como campos concretos de la respuesta.</div>
+</div>
+
+<div class="note y">
+  Guía oficial completa de este mismo ejercicio, con Python y TypeScript: <a href="https://platform.claude.com/docs/en/get-started" target="_blank">Get started — Claude Platform Docs</a>.
+</div>
+
+</div>
+
+<!-- ═══════════════════════ ORDEN CURSOS ═════ -->
+<div id="tab-orden" class="tab-panel">
+
+<div class="sec" data-n="★">EL ORDEN QUE RECOMIENDO A PARTIR DE AQUÍ</div>
+
+<div class="note t">
+  Con el glosario y la primera llamada ya hechos, esto debería costarte bastante menos de lo que imaginas hoy.
+</div>
+
+<table class="tbl">
+  <tr><th>#</th><th>Curso</th><th>Por qué en este orden</th><th>Enlace</th></tr>
+  <tr><td class="cat">1</td><td>Claude 101</td><td>Vocabulario base sin asumir nada — ve rápido, ya sabes la mayoría</td><td><a href="https://academy.claude.com/courses/claude-101" target="_blank">academy.claude.com/courses/claude-101</a></td></tr>
+  <tr><td class="cat">2</td><td>AI Capabilities and Limitations</td><td>Cómo funciona un LLM por dentro — la base de todo lo demás</td><td><a href="https://academy.claude.com/courses/ai-capabilities-and-limitations" target="_blank">academy.claude.com/courses/ai-capabilities-and-limitations</a></td></tr>
+  <tr><td class="cat">3</td><td>Claude Platform 101</td><td>El puente hacia lo técnico: API, Console, MCP a nivel introductorio</td><td><a href="https://academy.claude.com/courses/claude-platform-101" target="_blank">academy.claude.com/courses/claude-platform-101</a></td></tr>
+  <tr><td class="cat">4</td><td>AI Fluency: Framework &amp; Foundations</td><td>Marco para decidir qué delegar a un agente y evaluar su resultado</td><td><a href="https://academy.claude.com/courses/ai-fluency-framework-foundations" target="_blank">academy.claude.com/courses/ai-fluency-framework-foundations</a></td></tr>
+  <tr><td class="cat">5</td><td>Building with the Claude API</td><td>Ahora sí, el curso largo (9h) — con el vocabulario ya asentado, no partiendo de cero</td><td><a href="https://academy.claude.com/courses/building-with-the-claude-api" target="_blank">academy.claude.com/courses/building-with-the-claude-api</a></td></tr>
+</table>
+
+<div class="note g">
+  <strong>Siguiente paso:</strong> cuando termines el curso 5, retoma la guía de preparación específica para el examen CCDV-F (dominios, pesos, plan de 8 semanas y logística de registro) que ya tienes preparada — ese documento asume exactamente el punto en el que esta guía te deja.
+</div>
+
+</div>
+
+</div>
+
+<script>
+function st(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
