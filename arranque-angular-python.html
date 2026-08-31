@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arranque de Proyectos · Angular/npm vs Python/uv</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--surface:#fff;--surface2:#edeae0;--border:#cfc8b4;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--teal:#0e7c7b;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}.container{max-width:1180px;margin:0 auto;padding:48px 28px 100px}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+header{border-bottom:3px solid var(--ink);padding-bottom:26px;margin-bottom:34px}.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-0.7deg)}h1{font-family:var(--display);font-size:clamp(26px,4.5vw,48px);font-weight:800;line-height:1;letter-spacing:-1.5px;margin-bottom:12px}h1 em{font-style:normal;color:var(--accent)}h1 .v{color:var(--accent2)}.subtitle{font-size:12px;color:var(--muted);line-height:1.8;max-width:720px;margin-bottom:16px}.badge-row{display:flex;flex-wrap:wrap;gap:8px}.badge{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}.badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}.badge.t{color:var(--teal);border-color:var(--teal)}
+.tab-nav{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:5px;overflow:hidden;margin-bottom:36px}.tab-btn{font-family:var(--mono);font-size:9.5px;font-weight:700;padding:10px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}.tab-btn:last-child{border-right:none}.tab-btn:hover{background:var(--surface2);color:var(--ink)}.tab-btn.active{background:var(--ink);color:var(--bg)}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s ease both}
+.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:30px 0 14px;display:flex;align-items:center;gap:12px}.sec:first-child{margin-top:0}.sec::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:3px;flex-shrink:0}
+.note{border-left:4px solid;padding:13px 17px;margin:13px 0;font-size:12px;line-height:1.75;color:var(--ink2);border-radius:0 4px 4px 0}.note strong{display:block;margin-bottom:4px}.note code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px}.note.o{border-color:var(--accent);background:rgba(193,68,14,.05)}.note.o strong{color:var(--accent)}.note.g{border-color:var(--accent2);background:rgba(42,110,78,.05)}.note.g strong{color:var(--accent2)}.note.b{border-color:var(--accent3);background:rgba(26,74,138,.05)}.note.b strong{color:var(--accent3)}.note.y{border-color:var(--yellow);background:rgba(232,160,32,.05)}.note.y strong{color:var(--yellow)}.note.p{border-color:var(--purple);background:rgba(122,58,205,.05)}.note.p strong{color:var(--purple)}.note.t{border-color:var(--teal);background:rgba(14,124,123,.05)}.note.t strong{color:var(--teal)}
+a{color:var(--accent3)}a:hover{color:var(--accent)}
+pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:16px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.8;color:var(--ink);margin:13px 0}.kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}
+.tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);overflow:hidden;margin:13px 0;border-radius:4px}.tbl th{background:var(--ink);color:var(--bg);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:10px 13px;text-align:left}.tbl td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(0,0,0,.015)}.tbl td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:10.5px}.tbl td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin:14px 0}.card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .2s}.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.07)}.card-hd{padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px}.card-hd.g{background:rgba(42,110,78,.1);color:var(--accent2)}.card-hd.o{background:rgba(193,68,14,.1);color:var(--accent)}.card-hd.b{background:rgba(26,74,138,.1);color:var(--accent3)}.card-hd.p{background:rgba(122,58,205,.1);color:var(--purple)}.card-hd.y{background:rgba(232,160,32,.1);color:var(--yellow)}.card-hd.t{background:rgba(14,124,123,.1);color:var(--teal)}.card-bd{padding:13px;font-size:12px;line-height:1.75;color:var(--ink2)}
+.insight{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:17px 21px;margin:17px 0}.insight-t{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:7px}.insight-b{font-size:12px;color:var(--ink2);line-height:1.75}.danger{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:17px 21px;margin:17px 0}.danger-t{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:7px}.danger-b{font-size:12px;color:var(--ink2);line-height:1.75}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:16px 0}.fbox{border:2px solid var(--ink);border-radius:5px;padding:9px 13px;font-size:11px;font-weight:700;text-align:center;min-width:90px}.fbox sub{display:block;font-size:9px;opacity:.75;font-weight:400;margin-top:2px}.fbox.o{background:var(--accent);color:#fff;border-color:var(--accent)}.fbox.g{background:var(--accent2);color:#fff;border-color:var(--accent2)}.fbox.b{background:var(--accent3);color:#fff;border-color:var(--accent3)}.fbox.p{background:var(--purple);color:#fff;border-color:var(--purple)}.fbox.s{background:var(--surface2);color:var(--ink)}.farr{font-size:18px;color:var(--muted);flex-shrink:0}
+.steps{counter-reset:step;margin:14px 0}.step{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)}.step:last-child{border-bottom:none}.step::before{counter-increment:step;content:counter(step);flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}.step-b{font-size:12px;line-height:1.7;color:var(--ink2);padding-top:3px}.step-b strong{color:var(--ink)}
+.quote{border-left:4px solid var(--purple);background:rgba(122,58,205,.03);padding:16px 20px;margin:16px 0;border-radius:0 6px 6px 0}.quote-t{font-size:13px;line-height:1.8;color:var(--ink2);font-style:italic;margin-bottom:8px}.quote-a{font-size:11px;font-weight:700;color:var(--purple)}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Guía completa · Arranque de proyectos · Agosto 2026</div>
+  <h1>Angular/npm <span class="v">vs</span> <em>Python/uv</em><br>Cómo se guarda la configuración de librerías</h1>
+  <div class="subtitle">npm install, npx, package.json, package-lock.json frente a pip, venv, pyproject.toml y el nuevo estándar <code>uv</code>. Con la pregunta de fondo respondida: por qué el ecosistema de Angular/TypeScript nació mejor diseñado — y por qué esa ventaja ya no es tan grande como hace dos años.</div>
+  <div class="badge-row">
+    <span class="badge o">npm / npx a fondo</span>
+    <span class="badge b">Angular 22 (jun. 2026)</span>
+    <span class="badge g">uv — el nuevo estándar Python</span>
+    <span class="badge p">Por qué npm nació mejor</span>
+    <span class="badge t">Tabla comparativa completa</span>
+  </div>
+</header>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="st('vision')">🧭 VISIÓN</button>
+  <button class="tab-btn" onclick="st('npm')">📦 NPM / NPX</button>
+  <button class="tab-btn" onclick="st('angular')">🅰️ ARRANQUE ANGULAR</button>
+  <button class="tab-btn" onclick="st('python')">🐍 ARRANQUE PYTHON</button>
+  <button class="tab-btn" onclick="st('porque')">⚖️ POR QUÉ NPM NACIÓ MEJOR</button>
+  <button class="tab-btn" onclick="st('tabla')">🔒 TABLA COMPARATIVA</button>
+  <button class="tab-btn" onclick="st('flujo')">🛠️ CLONAR EN OTRA MÁQUINA</button>
+  <button class="tab-btn" onclick="st('cheatsheet')">📋 CHEATSHEET</button>
+</div>
+
+<!-- ═══════════════════════ VISIÓN ═══════════ -->
+<div id="tab-vision" class="tab-panel active">
+
+<div class="sec" data-n="★">DOS ECOSISTEMAS, DOS HISTORIAS MUY DISTINTAS</div>
+
+<div class="note b">
+  <strong>npm nació en 2010 junto con Node.js — como parte del mismo proyecto, diseñado desde el día uno.</strong> Python nació en 1991, casi 20 años antes de que "gestión de paquetes" fuera un problema con solución conocida. Su packaging se construyó en capas sueltas durante tres décadas, por grupos distintos, sin coordinación central. De ahí viene toda la fragmentación que has visto (pip, venv, pyenv, poetry, conda...).
+</div>
+
+<div class="flow">
+  <div class="fbox b">Angular/npm<sub>diseño unificado desde 2010</sub></div>
+  <span class="farr">vs</span>
+  <div class="fbox o">Python<sub>30 años de capas sueltas</sub></div>
+</div>
+
+<div class="quote">
+  <div class="quote-t">"Python packaging has been a mess for decades. Every few years, a new tool promises to fix it. Most of them don't."</div>
+  <div class="quote-a">Resumen habitual del problema — hasta hace muy poco</div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ El giro de 2026: esa ventaja de npm ya no es tan grande</div>
+  <div class="insight-b"><strong>uv</strong> (de Astral, la empresa detrás de Ruff, adquirida por OpenAI en marzo de 2026) ha consolidado casi todo el stack de Python en una sola herramienta — reemplaza pip, venv, pyenv, poetry y pipx a la vez. No es casualidad que se parezca al diseño de npm: Python tardó 35 años más en llegar a un diseño coherente, no es que fuera imposible de lograr.</div>
+</div>
+
+<div class="sec" data-n="1">EL MAPA RÁPIDO</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">npm install</div><div class="card-bd">Instala una dependencia de forma permanente en tu proyecto, la anota en <code>package.json</code>.</div></div>
+  <div class="card"><div class="card-hd b">npx</div><div class="card-bd">Ejecuta un paquete sin instalarlo de forma permanente — de usar y tirar.</div></div>
+  <div class="card"><div class="card-hd g">uv add</div><div class="card-bd">El equivalente Python a <code>npm install</code> — instala, anota en <code>pyproject.toml</code> y sincroniza el entorno, todo en un paso.</div></div>
+  <div class="card"><div class="card-hd p">uv sync</div><div class="card-bd">El equivalente Python a <code>npm ci</code> — instala exactamente lo que dice el lockfile, para reproducibilidad total.</div></div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ NPM/NPX ══════════ -->
+<div id="tab-npm" class="tab-panel">
+
+<div class="sec" data-n="★">NPM INSTALL VS. NPX — LA DIFERENCIA REAL</div>
+
+<table class="tbl">
+  <tr><th>Comando</th><th>Qué hace</th><th>Cuándo usarlo</th></tr>
+  <tr><td class="cat"><code>npm install &lt;paquete&gt;</code></td><td>Descarga la dependencia, la instala en <code>node_modules/</code> y la anota en <code>package.json</code> + <code>package-lock.json</code> (permanente)</td><td>Vas a usar esa librería en tu código, ahora y en el futuro</td></tr>
+  <tr><td class="cat"><code>npx &lt;paquete&gt;</code></td><td>Ejecuta un binario sin instalarlo de forma permanente — lo descarga a una caché temporal si no lo tienes, lo corre, y no toca tu <code>package.json</code></td><td>Una herramienta de un solo uso: generar un proyecto, correr un script puntual, probar una CLI</td></tr>
+</table>
+
+<pre><span class="cm"># Instala Angular CLI de forma permanente como dependencia del proyecto</span>
+npm install --save-dev @angular/cli
+
+<span class="cm"># Ejecuta ng new SIN instalar el CLI de forma permanente</span>
+npx @angular/cli new mi-proyecto</pre>
+
+<div class="sec" data-n="1">LOS DOS ARCHIVOS QUE LO SOSTIENEN TODO</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">package.json</div><div class="card-bd">El manifiesto: qué dependencias necesitas, en qué rango de versiones (<code>^1.2.3</code>, <code>~1.2.3</code>), scripts del proyecto (<code>npm run build</code>), metadatos.</div></div>
+  <div class="card"><div class="card-hd b">package-lock.json</div><div class="card-bd">El lockfile: las versiones EXACTAS que se resolvieron la última vez, con hashes de integridad — garantiza que todo el mundo instala lo mismo, byte a byte.</div></div>
+</div>
+
+<div class="sec" data-n="2">SEMVER — QUÉ SIGNIFICA CADA SÍMBOLO</div>
+
+<table class="tbl">
+  <tr><th>Notación</th><th>Qué permite actualizar</th></tr>
+  <tr><td class="cat"><code>1.2.3</code></td><td>Versión exacta, sin margen</td></tr>
+  <tr><td class="cat"><code>~1.2.3</code></td><td>Solo parches: <code>1.2.4</code>, <code>1.2.9</code> — nunca <code>1.3.0</code></td></tr>
+  <tr><td class="cat"><code>^1.2.3</code></td><td>Parches y minor: hasta <code>1.9.9</code> — nunca <code>2.0.0</code></td></tr>
+</table>
+
+<div class="sec" data-n="3">NPM INSTALL VS. NPM CI</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Usa npm ci en CI/CD, no npm install</div>
+  <div class="danger-b"><code>npm install</code> puede actualizar el lockfile si <code>package.json</code> cambió. <code>npm ci</code> borra <code>node_modules/</code> por completo e instala <strong>exactamente</strong> lo que dice <code>package-lock.json</code> — si no coincide con <code>package.json</code>, falla en vez de improvisar. Es más rápido y 100% reproducible: lo que usa cualquier pipeline de integración continua serio.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ ANGULAR ══════════ -->
+<div id="tab-angular" class="tab-panel">
+
+<div class="sec" data-n="★">CREAR UN PROYECTO — NG NEW</div>
+
+<div class="note b">
+  <strong>Angular 22</strong> (junio de 2026) es la versión estable actual. Desde Angular 19, los componentes son <strong>standalone por defecto</strong> — ya no hace falta escribir <code>standalone: true</code>; para volver al modelo antiguo de NgModules hay que poner explícitamente <code>standalone: false</code>. Se ha invertido la lógica respecto a hace unos años.
+</div>
+
+<pre><span class="cm"># Instala el CLI de forma puntual y crea el proyecto en un solo paso</span>
+npx @angular/cli<span class="kw">@</span>latest new mi-app
+
+cd mi-app
+ng serve</pre>
+
+<div class="sec" data-n="1">QUÉ GENERA NG NEW</div>
+
+<table class="tbl">
+  <tr><th>Archivo</th><th>Para qué sirve</th></tr>
+  <tr><td class="cat"><code>angular.json</code></td><td>Configuración del workspace: qué builder usa (esbuild), presupuestos de tamaño de bundle, rutas de assets, y todos los proyectos (apps + librerías) que convivan en el mismo workspace</td></tr>
+  <tr><td class="cat"><code>package.json</code></td><td>El mismo concepto de npm, pero con un matiz propio de Angular — ver más abajo</td></tr>
+  <tr><td class="cat"><code>tsconfig.json</code></td><td>Configuración del compilador de TypeScript, compartida por toda la app</td></tr>
+  <tr><td class="cat"><code>src/</code></td><td>El código de la aplicación en sí</td></tr>
+</table>
+
+<div class="sec" data-n="2">EL MATIZ PROPIO DE ANGULAR EN PACKAGE.JSON</div>
+
+<div class="note g">
+  Angular exige que <strong>todos</strong> los paquetes <code>@angular/*</code> estén en la misma versión exacta entre sí — <code>@angular/core</code>, <code>@angular/common</code>, <code>@angular/router</code>... todos con <code>~22.1.0</code>, nunca mezclados. Por eso Angular tiene su propio comando de actualización en vez de dejarlo a <code>npm update</code> suelto.
+</div>
+
+<pre><span class="cm">// Fragmento típico de package.json en un proyecto Angular</span>
+{
+  <span class="st">"dependencies"</span>: {
+    <span class="st">"@angular/core"</span>: <span class="st">"~22.1.0"</span>,
+    <span class="st">"@angular/common"</span>: <span class="st">"~22.1.0"</span>,
+    <span class="st">"@angular/router"</span>: <span class="st">"~22.1.0"</span>,
+    <span class="st">"rxjs"</span>: <span class="st">"~7.8.0"</span>
+  }
+}</pre>
+
+<div class="sec" data-n="3">NG UPDATE — LA VENTAJA DE TENER UN CLI PROPIO</div>
+
+<div class="insight">
+  <div class="insight-t">✅ Actualización coordinada con migraciones automáticas de código</div>
+  <div class="insight-b"><code>ng update</code> no es un <code>npm update</code> con otro nombre — actualiza todos los paquetes <code>@angular/*</code> a la vez, a la misma versión, y aplica <strong>schematics</strong> (migraciones automáticas de código) para adaptar tu código a los breaking changes de la nueva versión. Esto es algo que npm, por sí solo, no sabe hacer — es una capa que Angular construyó encima.</div>
+</div>
+
+<pre>ng update @angular/core @angular/cli</pre>
+
+</div>
+
+<!-- ═══════════════════════ PYTHON ═══════════ -->
+<div id="tab-python" class="tab-panel">
+
+<div class="sec" data-n="★">LA FRAGMENTACIÓN HISTÓRICA — POR QUÉ HABÍA TANTAS HERRAMIENTAS</div>
+
+<table class="tbl">
+  <tr><th>Herramienta</th><th>Qué resolvía (y solo eso)</th></tr>
+  <tr><td class="cat">pip</td><td>Instalar paquetes desde PyPI — nada de entornos ni versiones de Python</td></tr>
+  <tr><td class="cat">virtualenv / venv</td><td>Aislar las dependencias de un proyecto de las de otro — nada de instalación ni versiones</td></tr>
+  <tr><td class="cat">pyenv</td><td>Tener varias versiones de Python instaladas a la vez — nada de paquetes ni entornos</td></tr>
+  <tr><td class="cat">pip-tools</td><td>Generar un lockfile a partir de <code>requirements.in</code> — pip solo no lo hacía</td></tr>
+  <tr><td class="cat">Poetry / Pipenv</td><td>Intentos de unificar todo lo anterior — cada uno con su propio formato, sin ser el estándar</td></tr>
+</table>
+
+<div class="note o">
+  Cuatro problemas distintos, cuatro (o más) herramientas distintas, cada una con su propio formato de configuración. Aprender una no te servía para las otras tres.
+</div>
+
+<div class="sec" data-n="1">UV — EL ESTÁNDAR DE 2026</div>
+
+<div class="note g">
+  <strong>uv</strong> (Astral, escrito en Rust, adquirida por OpenAI en marzo de 2026) resuelve los cuatro problemas con un solo binario, 10-100 veces más rápido que pip. Es, a día de hoy, la recomendación por defecto para cualquier proyecto Python nuevo.
+</div>
+
+<pre><span class="cm"># Instalar uv (una sola vez, a nivel de sistema)</span>
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+<span class="cm"># Crear un proyecto nuevo</span>
+uv init mi-proyecto
+cd mi-proyecto
+
+<span class="cm"># Añadir una dependencia — instala, actualiza pyproject.toml,</span>
+<span class="cm"># regenera uv.lock y sincroniza .venv, todo en un solo paso</span>
+uv add anthropic langchain langgraph
+
+<span class="cm"># Ejecutar código dentro del entorno — sin activar nada a mano</span>
+uv run python main.py</pre>
+
+<div class="sec" data-n="2">GESTIONAR VERSIONES DE PYTHON (SIN PYENV)</div>
+
+<pre><span class="cm"># Instala una versión concreta de Python</span>
+uv python install 3.12
+
+<span class="cm"># Fija qué versión usa este proyecto (escribe .python-version)</span>
+uv python pin 3.12</pre>
+
+<div class="sec" data-n="3">EJECUTAR UNA HERRAMIENTA SIN INSTALARLA (EL NPX DE PYTHON)</div>
+
+<pre><span class="cm"># Equivalente a "npx create-react-app"</span>
+uvx ruff check .</pre>
+
+<div class="sec" data-n="4">SI TE ENCUENTRAS CÓDIGO LEGADO</div>
+
+<div class="note y">
+  Vas a seguir viendo <code>requirements.txt</code> + <code>pip install -r requirements.txt</code> en proyectos antiguos durante años — es la forma más extendida históricamente. <code>uv</code> lo lee y lo soporta como capa de compatibilidad, y también migra un proyecto Poetry existente: <code>uv sync</code> dentro de un repo con <code>pyproject.toml</code> de Poetry genera su propio <code>uv.lock</code> sin fricción.
+</div>
+
+</div>
+
+<!-- ═══════════════════════ POR QUÉ ══════════ -->
+<div id="tab-porque" class="tab-panel">
+
+<div class="sec" data-n="★">LA CRONOLOGÍA QUE EXPLICA TODO</div>
+
+<div class="steps">
+  <div class="step"><div class="step-b"><strong>1991</strong> — Nace Python. No existe "gestión de paquetes" como concepto resuelto en ningún lenguaje todavía.</div></div>
+  <div class="step"><div class="step-b"><strong>1998-2004</strong> — distutils y luego setuptools intentan resolver la instalación de paquetes, de forma independiente al núcleo del lenguaje.</div></div>
+  <div class="step"><div class="step-b"><strong>2007-2008</strong> — virtualenv y pip aparecen por separado, de comunidades distintas, para resolver problemas distintos (aislamiento vs. instalación).</div></div>
+  <div class="step"><div class="step-b"><strong>2010</strong> — <strong>Node.js y npm nacen juntos</strong>, como un único proyecto: registro central, CLI y lockfile pensados desde el primer día, con los aciertos y errores de Perl (CPAN) y Ruby (RubyGems) ya visibles para copiar o evitar.</div></div>
+  <div class="step"><div class="step-b"><strong>2012-2020</strong> — Python va incorporando venv a su librería estándar, estandariza el formato wheel, y llega a <code>pyproject.toml</code> (PEP 518 en 2016, PEP 621 en 2020) como intento tardío de unificación.</div></div>
+  <div class="step"><div class="step-b"><strong>2018</strong> — Poetry aparece como el primer intento serio de "todo en uno" — pero con su propio formato, compitiendo con el estándar oficial en vez de ser el estándar.</div></div>
+  <div class="step"><div class="step-b"><strong>2024-2026</strong> — <code>uv</code> llega y, por fin, consolida todo en una herramienta única y rápida — 35 años después de que Python naciera.</div></div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ La lección real, no la de "JS es mejor diseñado"</div>
+  <div class="insight-b">npm no ganó por mejor ingeniería en abstracto — ganó por <strong>nacer 19 años más tarde</strong>, cuando ya se sabía qué funcionaba en otros lenguajes y se pudo diseñar todo de una vez. Python cargaba con 20 años de código ya instalado en el mundo cuando llegó el momento de intentar unificar — eso hace el problema estructuralmente más difícil de arreglar de golpe, no es cuestión de talento de los equipos.</div>
+</div>
+
+<div class="note p">
+  <strong>Dato curioso de cierre:</strong> <code>uv</code> está escrito en Rust y su diseño toma tanto o más prestado de <strong>Cargo</strong> (el gestor de paquetes de Rust) como de npm directamente. El principio de diseño ganador —todo-en-uno, lockfile+registro+CLI coherentes desde el origen— es el mismo que ya acertó npm en 2010.
+</div>
+
+</div>
+
+<!-- ═══════════════════════ TABLA ═════════════ -->
+<div id="tab-tabla" class="tab-panel">
+
+<div class="sec" data-n="★">QUÉ ARCHIVO/COMANDO HACE QUÉ, LADO A LADO</div>
+
+<table class="tbl">
+  <tr><th>Función</th><th>Angular / npm</th><th>Python / uv</th></tr>
+  <tr><td class="cat">Manifiesto de dependencias</td><td><code>package.json</code></td><td><code>pyproject.toml</code></td></tr>
+  <tr><td class="cat">Lockfile (versiones exactas)</td><td><code>package-lock.json</code></td><td><code>uv.lock</code></td></tr>
+  <tr><td class="cat">Carpeta de dependencias instaladas</td><td><code>node_modules/</code></td><td><code>.venv/</code></td></tr>
+  <tr><td class="cat">Instalar todo desde el lock (reproducible)</td><td><code>npm ci</code></td><td><code>uv sync</code></td></tr>
+  <tr><td class="cat">Añadir una dependencia nueva</td><td><code>npm install paquete</code></td><td><code>uv add paquete</code></td></tr>
+  <tr><td class="cat">Ejecutar sin instalar permanentemente</td><td><code>npx paquete</code></td><td><code>uvx paquete</code></td></tr>
+  <tr><td class="cat">Gestionar la versión del lenguaje</td><td>Node vía <code>nvm</code> (fuera de npm)</td><td><code>uv python install</code> / <code>uv python pin</code></td></tr>
+  <tr><td class="cat">Ejecutar dentro del entorno sin activarlo</td><td>No aplica — Node no aísla por proyecto igual</td><td><code>uv run &lt;comando&gt;</code></td></tr>
+  <tr><td class="cat">CLI propio de framework con migraciones</td><td><code>ng update</code> (Angular)</td><td>No hay equivalente estándar — cada framework lo resuelve a su manera</td></tr>
+</table>
+
+<div class="note b">
+  Fíjate en la última fila: es la única donde Angular sigue teniendo algo que Python, en general, no tiene — un CLI de framework que coordina versiones y migra código automáticamente. Eso no es mérito de npm, es mérito de Angular como framework construido encima.
+</div>
+
+</div>
+
+<!-- ═══════════════════════ FLUJO ═════════════ -->
+<div id="tab-flujo" class="tab-panel">
+
+<div class="sec" data-n="★">DE CLONAR EL REPO A TENERLO CORRIENDO — LOS DOS CASOS</div>
+
+<div class="sec" data-n="1">ANGULAR</div>
+
+<div class="steps">
+  <div class="step"><div class="step-b"><code>git clone &lt;repo&gt;</code> — te trae <code>package.json</code> y <code>package-lock.json</code>, nunca <code>node_modules/</code> (va en <code>.gitignore</code>).</div></div>
+  <div class="step"><div class="step-b"><code>npm ci</code> — no <code>npm install</code>. Instala exactamente lo que dice el lockfile, sin sorpresas ni actualizaciones inesperadas.</div></div>
+  <div class="step"><div class="step-b"><code>ng serve</code> — arranca el servidor de desarrollo.</div></div>
+</div>
+
+<div class="sec" data-n="2">PYTHON</div>
+
+<div class="steps">
+  <div class="step"><div class="step-b"><code>git clone &lt;repo&gt;</code> — te trae <code>pyproject.toml</code> y <code>uv.lock</code>, nunca <code>.venv/</code> (también va en <code>.gitignore</code>).</div></div>
+  <div class="step"><div class="step-b"><code>uv sync</code> — lee ambos archivos, crea <code>.venv</code> si no existe, e instala exactamente lo que dice el lock, incluidas dependencias transitivas.</div></div>
+  <div class="step"><div class="step-b"><code>uv run python main.py</code> — ejecuta dentro del entorno correcto, sin que tengas que activarlo a mano con <code>source .venv/bin/activate</code>.</div></div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ El paralelismo que por fin existe en 2026</div>
+  <div class="insight-b"><code>npm ci</code> y <code>uv sync</code> son, por primera vez, el mismo concepto exacto en los dos ecosistemas: instalación reproducible desde un lockfile, sin margen de interpretación. Hace tres años esta tabla no se podía escribir con tanta simetría del lado de Python.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ CHEATSHEET ═══════ -->
+<div id="tab-cheatsheet" class="tab-panel">
+
+<div class="sec" data-n="★">TODOS LOS COMANDOS, LADO A LADO</div>
+
+<table class="tbl">
+  <tr><th>Acción</th><th>npm / Angular</th><th>uv / Python</th></tr>
+  <tr><td class="cat">Crear proyecto nuevo</td><td><code>npx @angular/cli new app</code></td><td><code>uv init proyecto</code></td></tr>
+  <tr><td class="cat">Añadir dependencia</td><td><code>npm install paquete</code></td><td><code>uv add paquete</code></td></tr>
+  <tr><td class="cat">Añadir dependencia de desarrollo</td><td><code>npm install -D paquete</code></td><td><code>uv add --dev paquete</code></td></tr>
+  <tr><td class="cat">Instalar todo (reproducible)</td><td><code>npm ci</code></td><td><code>uv sync</code></td></tr>
+  <tr><td class="cat">Ejecutar sin instalar</td><td><code>npx paquete</code></td><td><code>uvx paquete</code></td></tr>
+  <tr><td class="cat">Correr un script del proyecto</td><td><code>npm run build</code></td><td><code>uv run &lt;comando&gt;</code></td></tr>
+  <tr><td class="cat">Actualizar el framework/lockfile</td><td><code>ng update</code></td><td><code>uv lock --upgrade</code></td></tr>
+  <tr><td class="cat">Fijar versión del lenguaje</td><td>(vía <code>nvm</code>, externo)</td><td><code>uv python pin 3.12</code></td></tr>
+  <tr><td class="cat">Ver versión del CLI/framework</td><td><code>ng version</code></td><td><code>uv --version</code></td></tr>
+</table>
+
+<div class="sec" data-n="1">ENLACES OFICIALES</div>
+
+<table class="tbl">
+  <tr><th>Recurso</th><th>Enlace</th></tr>
+  <tr><td class="cat">Angular — Docs oficiales</td><td><a href="https://angular.dev" target="_blank">angular.dev</a></td></tr>
+  <tr><td class="cat">Angular — npm packages reference</td><td><a href="https://angular.dev/reference/configs/npm-packages" target="_blank">angular.dev/reference/configs/npm-packages</a></td></tr>
+  <tr><td class="cat">npm — Docs oficiales</td><td><a href="https://docs.npmjs.com" target="_blank">docs.npmjs.com</a></td></tr>
+  <tr><td class="cat">uv — Docs oficiales (Astral)</td><td><a href="https://docs.astral.sh/uv/" target="_blank">docs.astral.sh/uv</a></td></tr>
+  <tr><td class="cat">pyproject.toml — especificación (PEP 621)</td><td><a href="https://peps.python.org/pep-0621/" target="_blank">peps.python.org/pep-0621</a></td></tr>
+</table>
+
+<div class="note y">
+  <strong>Vigencia:</strong> Angular sigue un ciclo de versión mayor cada 6 meses (mayo/noviembre) — confirma con <code>ng version</code> cuál corre tu proyecto. El ecosistema de <code>uv</code> se mueve rápido; confirma comandos exactos contra <code>uv --help</code> en tu versión instalada.
+</div>
+
+</div>
+
+</div>
+
+<script>
+function st(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
