@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG, LangChain y LangGraph · Guía completa</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Clash+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--surface:#fff;--surface2:#edeae0;--border:#cfc8b4;--ink:#1a1410;--ink2:#4a3f30;--muted:#8a7a65;--accent:#c1440e;--accent2:#2a6e4e;--accent3:#1a4a8a;--yellow:#e8a020;--purple:#7a3acd;--teal:#0e7c7b;--mono:'IBM Plex Mono',monospace;--display:'Clash Display','IBM Plex Mono',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh}body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}.container{max-width:1180px;margin:0 auto;padding:48px 28px 100px}@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+header{border-bottom:3px solid var(--ink);padding-bottom:26px;margin-bottom:34px}.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);border:2px solid var(--accent);padding:3px 10px;margin-bottom:14px;transform:rotate(-0.7deg)}h1{font-family:var(--display);font-size:clamp(26px,4.5vw,48px);font-weight:800;line-height:1;letter-spacing:-1.5px;margin-bottom:12px}h1 em{font-style:normal;color:var(--accent)}h1 .v{color:var(--accent2)}.subtitle{font-size:12px;color:var(--muted);line-height:1.8;max-width:720px;margin-bottom:16px}.badge-row{display:flex;flex-wrap:wrap;gap:8px}.badge{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1.5px solid}.badge.o{color:var(--accent);border-color:var(--accent)}.badge.g{color:var(--accent2);border-color:var(--accent2)}.badge.b{color:var(--accent3);border-color:var(--accent3)}.badge.p{color:var(--purple);border-color:var(--purple)}.badge.y{color:var(--yellow);border-color:var(--yellow)}.badge.t{color:var(--teal);border-color:var(--teal)}
+.tab-nav{display:flex;flex-wrap:wrap;border:2px solid var(--ink);border-radius:5px;overflow:hidden;margin-bottom:36px}.tab-btn{font-family:var(--mono);font-size:9.5px;font-weight:700;padding:10px 12px;cursor:pointer;border:none;background:transparent;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;transition:all .15s;border-right:2px solid var(--ink);white-space:nowrap;flex:1;min-width:fit-content}.tab-btn:last-child{border-right:none}.tab-btn:hover{background:var(--surface2);color:var(--ink)}.tab-btn.active{background:var(--ink);color:var(--bg)}.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s ease both}
+.sec{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:30px 0 14px;display:flex;align-items:center;gap:12px}.sec:first-child{margin-top:0}.sec::before{content:attr(data-n);display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;background:var(--ink);color:var(--bg);font-size:10px;border-radius:3px;flex-shrink:0}
+.note{border-left:4px solid;padding:13px 17px;margin:13px 0;font-size:12px;line-height:1.75;color:var(--ink2);border-radius:0 4px 4px 0}.note strong{display:block;margin-bottom:4px}.note code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:11px}.note.o{border-color:var(--accent);background:rgba(193,68,14,.05)}.note.o strong{color:var(--accent)}.note.g{border-color:var(--accent2);background:rgba(42,110,78,.05)}.note.g strong{color:var(--accent2)}.note.b{border-color:var(--accent3);background:rgba(26,74,138,.05)}.note.b strong{color:var(--accent3)}.note.y{border-color:var(--yellow);background:rgba(232,160,32,.05)}.note.y strong{color:var(--yellow)}.note.p{border-color:var(--purple);background:rgba(122,58,205,.05)}.note.p strong{color:var(--purple)}.note.t{border-color:var(--teal);background:rgba(14,124,123,.05)}.note.t strong{color:var(--teal)}
+a{color:var(--accent3)}a:hover{color:var(--accent)}
+pre{background:#fafaf7;border:2px solid var(--border);border-radius:6px;padding:16px;overflow-x:auto;font-family:var(--mono);font-size:11.5px;line-height:1.8;color:var(--ink);margin:13px 0}.kw{color:#c1440e;font-weight:600}.cl{color:#2a6e4e;font-weight:600}.fn{color:#0369a1;font-weight:600}.st{color:#8a4a00}.cm{color:#9a8a75;font-style:italic}
+.tbl{width:100%;border-collapse:collapse;border:2px solid var(--ink);overflow:hidden;margin:13px 0;border-radius:4px}.tbl th{background:var(--ink);color:var(--bg);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;padding:10px 13px;text-align:left}.tbl td{padding:10px 13px;font-size:12px;border-bottom:1px solid var(--border);line-height:1.6;vertical-align:top}.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(0,0,0,.015)}.tbl td code{background:rgba(0,0,0,.07);padding:1px 5px;border-radius:2px;font-size:10.5px}.tbl td.cat{font-weight:700;color:var(--muted);background:var(--surface2);border-right:1px solid var(--border);white-space:nowrap;font-size:11px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin:14px 0}.card{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .2s}.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.07)}.card-hd{padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px}.card-hd.g{background:rgba(42,110,78,.1);color:var(--accent2)}.card-hd.o{background:rgba(193,68,14,.1);color:var(--accent)}.card-hd.b{background:rgba(26,74,138,.1);color:var(--accent3)}.card-hd.p{background:rgba(122,58,205,.1);color:var(--purple)}.card-hd.y{background:rgba(232,160,32,.1);color:var(--yellow)}.card-hd.t{background:rgba(14,124,123,.1);color:var(--teal)}.card-bd{padding:13px;font-size:12px;line-height:1.75;color:var(--ink2)}
+.insight{background:rgba(42,110,78,.04);border:2px solid var(--accent2);border-radius:8px;padding:17px 21px;margin:17px 0}.insight-t{color:var(--accent2);font-weight:700;font-size:13px;margin-bottom:7px}.insight-b{font-size:12px;color:var(--ink2);line-height:1.75}.danger{background:rgba(193,68,14,.04);border:2px solid var(--accent);border-radius:8px;padding:17px 21px;margin:17px 0}.danger-t{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:7px}.danger-b{font-size:12px;color:var(--ink2);line-height:1.75}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:16px 0}.fbox{border:2px solid var(--ink);border-radius:5px;padding:9px 13px;font-size:11px;font-weight:700;text-align:center;min-width:90px}.fbox sub{display:block;font-size:9px;opacity:.75;font-weight:400;margin-top:2px}.fbox.o{background:var(--accent);color:#fff;border-color:var(--accent)}.fbox.g{background:var(--accent2);color:#fff;border-color:var(--accent2)}.fbox.b{background:var(--accent3);color:#fff;border-color:var(--accent3)}.fbox.p{background:var(--purple);color:#fff;border-color:var(--purple)}.fbox.y{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}.fbox.s{background:var(--surface2);color:var(--ink)}.farr{font-size:18px;color:var(--muted);flex-shrink:0}
+.steps{counter-reset:step;margin:14px 0}.step{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)}.step:last-child{border-bottom:none}.step::before{counter-increment:step;content:counter(step);flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}.step-b{font-size:12px;line-height:1.7;color:var(--ink2);padding-top:3px}.step-b strong{color:var(--ink)}
+.quote{border-left:4px solid var(--purple);background:rgba(122,58,205,.03);padding:16px 20px;margin:16px 0;border-radius:0 6px 6px 0}.quote-t{font-size:13px;line-height:1.8;color:var(--ink2);font-style:italic;margin-bottom:8px}.quote-a{font-size:11px;font-weight:700;color:var(--purple)}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="stamp">Guía completa · RAG · LangChain · LangGraph · Agosto 2026</div>
+  <h1>RAG, <span class="v">LangChain</span> <em>y LangGraph</em><br>El ecosistema más allá de Claude</h1>
+  <div class="subtitle">Ya conoces la capa nativa de Claude (API, Agent SDK, MCP) y la capa de VS Code (Copilot). Esta es la tercera capa: el ecosistema multi-proveedor para dar memoria externa a un LLM (RAG) y orquestar agentes complejos con control explícito (LangGraph). Sintaxis verificada contra la API estable de 2026 — la mayoría de tutoriales que circulan usan patrones ya deprecados.</div>
+  <div class="badge-row">
+    <span class="badge o">RAG explicado a fondo</span>
+    <span class="badge b">LangChain (LCEL)</span>
+    <span class="badge g">LangGraph v1 (sintaxis actual)</span>
+    <span class="badge p">Cuándo usar cada cosa</span>
+    <span class="badge t">Conecta con tu TFM (FMI)</span>
+  </div>
+</header>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="st('vision')">🧭 VISIÓN</button>
+  <button class="tab-btn" onclick="st('rag')">📚 RAG</button>
+  <button class="tab-btn" onclick="st('langchain')">🦜 LANGCHAIN</button>
+  <button class="tab-btn" onclick="st('langgraph')">🕸️ LANGGRAPH</button>
+  <button class="tab-btn" onclick="st('ecosistema')">🧰 ECOSISTEMA</button>
+  <button class="tab-btn" onclick="st('openclaw')">🦞 OPENCLAW</button>
+  <button class="tab-btn" onclick="st('cuando')">⚖️ CUÁNDO USAR QUÉ</button>
+  <button class="tab-btn" onclick="st('flujo')">🛠️ FLUJO COMPLETO</button>
+  <button class="tab-btn" onclick="st('cheatsheet')">📋 CHEATSHEET</button>
+</div>
+
+<!-- ═══════════════════════ VISIÓN ═══════════ -->
+<div id="tab-vision" class="tab-panel active">
+
+<div class="sec" data-n="★">TRES PROBLEMAS DISTINTOS, TRES HERRAMIENTAS DISTINTAS</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ El error de vocabulario más común: mezclar los tres</div>
+  <div class="danger-b">RAG no es un framework — es una <strong>técnica</strong>. LangChain es un <strong>framework</strong> que te ayuda a implementar esa técnica (entre otras cosas). LangGraph es una <strong>librería de orquestación</strong> construida por el mismo equipo, para un problema distinto: bucles, ramas y estado explícito — no cadenas lineales. Puedes usar RAG sin LangChain, LangChain sin RAG, y LangGraph sin ninguno de los dos.</div>
+</div>
+
+<div class="flow">
+  <div class="fbox o">RAG<sub>dar memoria externa al modelo</sub></div>
+  <span class="farr">+</span>
+  <div class="fbox b">LangChain<sub>encadenar piezas (LCEL)</sub></div>
+  <span class="farr">+</span>
+  <div class="fbox g">LangGraph<sub>controlar el bucle del agente</sub></div>
+</div>
+
+<div class="note b">
+  <strong>Por qué esto no sustituye lo que ya sabes, lo complementa.</strong> Claude API/Agent SDK/MCP y Copilot resuelven "cómo interactúo con un modelo y sus herramientas". Este ecosistema resuelve dos preguntas distintas: <strong>"¿de dónde saca el modelo información que no tiene?"</strong> (RAG) y <strong>"¿cómo controlo un flujo de trabajo complejo, con bucles y múltiples proveedores de LLM?"</strong> (LangChain/LangGraph).
+</div>
+
+<div class="sec" data-n="1">LOS 4 CONCEPTOS EN UNA FRASE CADA UNO</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">RAG</div><div class="card-bd">Recuperar información externa relevante y metérsela al modelo en el prompt antes de que responda — en vez de reentrenarlo.</div></div>
+  <div class="card"><div class="card-hd b">LangChain</div><div class="card-bd">Framework para encadenar prompts, modelos, retrievers y parsers con una sintaxis común, sea cual sea el proveedor de LLM.</div></div>
+  <div class="card"><div class="card-hd g">LangGraph</div><div class="card-bd">Modela el flujo de un agente como un grafo de estados — nodos, aristas, y aristas condicionales que permiten ciclos.</div></div>
+  <div class="card"><div class="card-hd p">Vector DB</div><div class="card-bd">Base de datos especializada en buscar por similitud semántica, no por coincidencia exacta — la pieza que hace posible RAG.</div></div>
+</div>
+
+<div class="quote">
+  <div class="quote-t">"LangChain es el framework base con los bloques (modelos, prompts, cadenas, memoria, tools, retrievers) para flujos lineales. LangGraph extiende LangChain para aplicaciones complejas, con estado y multi-agente, representando el flujo como un grafo con ramas, bucles y transiciones condicionales."</div>
+  <div class="quote-a">La distinción oficial entre los dos frameworks, en una frase</div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ Dato que conecta esto con tu TFM</div>
+  <div class="insight-b">Lo que hiciste a mano en FMI — orquestar varios agentes con estado compartido y decisiones condicionales sobre qué paso viene después — es exactamente lo que LangGraph formaliza como primitiva de "grafo de estados". No es una casualidad de diseño: es el mismo problema que resolviste, con una librería que ya lo tiene resuelto de fábrica.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ RAG ══════════════ -->
+<div id="tab-rag" class="tab-panel">
+
+<div class="sec" data-n="★">EL PROBLEMA QUE RESUELVE</div>
+
+<div class="note o">
+  Un LLM tiene dos límites: su <strong>conocimiento se congela</strong> en la fecha de corte del entrenamiento, y su <strong>ventana de contexto es finita</strong> — no puedes meterle toda tu documentación interna en cada prompt. RAG conecta el modelo con datos externos (privados, actualizados, específicos de tu empresa) <strong>sin reentrenarlo</strong>: recupera solo lo relevante para cada pregunta concreta.
+</div>
+
+<div class="sec" data-n="1">LA TUBERÍA (PIPELINE), PASO A PASO</div>
+
+<div class="flow">
+  <div class="fbox s">Documentos</div>
+  <span class="farr">→</span>
+  <div class="fbox s">Chunking</div>
+  <span class="farr">→</span>
+  <div class="fbox b">Embeddings</div>
+  <span class="farr">→</span>
+  <div class="fbox p">Vector DB</div>
+</div>
+<div class="flow">
+  <div class="fbox o">Pregunta<sub>del usuario</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox b">Embedding<sub>de la pregunta</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox p">Búsqueda por<br>similitud</div>
+  <span class="farr">→</span>
+  <div class="fbox g">Top-k chunks<sub>más relevantes</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox g">Prompt<br>aumentado</div>
+  <span class="farr">→</span>
+  <div class="fbox o">Respuesta</div>
+</div>
+
+<div class="steps">
+  <div class="step"><div class="step-b"><strong>Ingesta y chunking:</strong> tus documentos (PDFs, docs internos, tickets) se trocean en fragmentos manejables.</div></div>
+  <div class="step"><div class="step-b"><strong>Embeddings:</strong> cada chunk se convierte en un vector numérico que representa su significado, usando un modelo de embeddings.</div></div>
+  <div class="step"><div class="step-b"><strong>Almacenamiento:</strong> esos vectores se guardan en una base de datos vectorial, indexados para búsqueda rápida.</div></div>
+  <div class="step"><div class="step-b"><strong>En tiempo de consulta:</strong> la pregunta del usuario también se convierte en vector, y se buscan los chunks más parecidos por similitud (normalmente coseno).</div></div>
+  <div class="step"><div class="step-b"><strong>Aumento del prompt:</strong> los chunks recuperados se insertan como contexto junto a la pregunta original.</div></div>
+  <div class="step"><div class="step-b"><strong>Generación:</strong> el modelo responde basándose en ese contexto — no solo en lo que "recuerda" de su entrenamiento.</div></div>
+</div>
+
+<div class="sec" data-n="2">CHUNKING — LA DECISIÓN QUE MÁS IMPACTA LA CALIDAD</div>
+
+<table class="tbl">
+  <tr><th>Estrategia</th><th>Qué hace</th><th>Cuándo usarla</th></tr>
+  <tr><td class="cat">Fixed-size</td><td>Corta cada N caracteres/tokens, con solapamiento (overlap) entre chunks</td><td>Rápido de implementar, punto de partida razonable</td></tr>
+  <tr><td class="cat">Recursive character</td><td>Intenta cortar por párrafo o frase antes que a lo bruto, respetando la estructura del texto</td><td>Documentación general, casi siempre mejor que fixed-size</td></tr>
+  <tr><td class="cat">Semántica</td><td>Agrupa frases por similitud de significado antes de cortar, no por longitud</td><td>Contenido denso donde cortar mal a mitad de una idea es costoso</td></tr>
+  <tr><td class="cat">Por documento/sección</td><td>Respeta encabezados y estructura real del documento (Markdown, HTML)</td><td>Documentación técnica ya bien estructurada</td></tr>
+</table>
+
+<div class="sec" data-n="3">RETRIEVAL AVANZADO</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd b">Hybrid search</div><div class="card-bd">Combina búsqueda semántica (vectores) con búsqueda por palabra clave (BM25) — captura tanto significado como términos exactos que el embedding puede diluir.</div></div>
+  <div class="card"><div class="card-hd g">Re-ranking</div><div class="card-bd">Recupera más candidatos de los necesarios y usa un segundo modelo, más preciso pero más lento, para reordenar solo esos pocos.</div></div>
+  <div class="card"><div class="card-hd p">Contextual retrieval</div><div class="card-bd">Técnica de Anthropic: añade contexto explicativo a cada chunk antes de indexarlo, para que tenga sentido aislado de su documento original.</div></div>
+</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ RAG reduce las alucinaciones, no las elimina</div>
+  <div class="danger-b">Si el retrieval falla — el chunk relevante no se recupera, o se recupera uno irrelevante — el modelo puede alucinar igual, o mezclar contexto que no viene a cuento como si fuera la respuesta. RAG es tan bueno como su retrieval, no más.</div>
+</div>
+
+<div class="sec" data-n="4">EJEMPLO MÍNIMO CON LANGCHAIN</div>
+
+<pre><span class="kw">from</span> langchain_anthropic <span class="kw">import</span> ChatAnthropic
+<span class="kw">from</span> langchain_core.vectorstores <span class="kw">import</span> InMemoryVectorStore
+<span class="kw">from</span> langchain_voyageai <span class="kw">import</span> VoyageAIEmbeddings
+
+embeddings = VoyageAIEmbeddings(model=<span class="st">"voyage-3"</span>)
+vectorstore = InMemoryVectorStore(embeddings)
+vectorstore.add_texts([<span class="st">"..."</span>, <span class="st">"..."</span>])  <span class="cm"># tus chunks</span>
+
+retriever = vectorstore.as_retriever(search_kwargs={<span class="st">"k"</span>: <span class="st">3</span>})
+docs = retriever.invoke(<span class="st">"¿cómo se configura el rate limiting?"</span>)
+
+model = ChatAnthropic(model=<span class="st">"claude-sonnet-5"</span>)
+context = <span class="st">"\n\n"</span>.join(d.page_content <span class="kw">for</span> d <span class="kw">in</span> docs)
+response = model.invoke(<span class="kw">f</span><span class="st">"Contexto:\n{context}\n\nPregunta: ¿cómo se configura el rate limiting?"</span>)</pre>
+
+<div class="note y">
+  Voyage AI es el proveedor de embeddings que recomienda Anthropic — buen punto de partida si ya estás en su ecosistema.
+</div>
+
+<div class="sec" data-n="5">MÁS EJEMPLOS — CON CHROMA (PERSISTENTE EN DISCO)</div>
+
+<div class="note b">
+  <code>InMemoryVectorStore</code> se pierde al reiniciar el proceso — sirve para probar, no para producción. Chroma persiste en disco: el paquete correcto es <code>langchain_chroma</code>, <strong>no</strong> <code>langchain_community.vectorstores.Chroma</code> (deprecado desde la versión 0.2.9 de LangChain).
+</div>
+
+<pre><span class="kw">from</span> langchain_chroma <span class="kw">import</span> Chroma
+<span class="kw">from</span> langchain_text_splitters <span class="kw">import</span> RecursiveCharacterTextSplitter
+<span class="kw">from</span> langchain_voyageai <span class="kw">import</span> VoyageAIEmbeddings
+
+splitter = RecursiveCharacterTextSplitter(chunk_size=<span class="st">800</span>, chunk_overlap=<span class="st">100</span>)
+chunks = splitter.split_text(documento_largo)
+
+embeddings = VoyageAIEmbeddings(model=<span class="st">"voyage-3"</span>)
+vectorstore = Chroma.from_texts(
+    chunks, embeddings,
+    persist_directory=<span class="st">"./chroma_db"</span>  <span class="cm"># sobrevive a un reinicio del proceso</span>
+)
+
+retriever = vectorstore.as_retriever(search_kwargs={<span class="st">"k"</span>: <span class="st">4</span>})</pre>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Chroma tiene un historial de roturas de compatibilidad</div>
+  <div class="danger-b">Chroma reescribió su servidor en Rust (chromadb 1.x), lo que ha causado incompatibilidades documentadas con versiones de <code>langchain-chroma</code> que esperaban el servidor anterior. Si usas Chroma en modo cliente-servidor (no embebido), fija las versiones de ambos paquetes juntas y comprueba la matriz de compatibilidad antes de actualizar cualquiera de los dos.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ LANGCHAIN ════════ -->
+<div id="tab-langchain" class="tab-panel">
+
+<div class="sec" data-n="★">QUÉ ES</div>
+
+<div class="note b">
+  Framework open-source (Python y JS) creado por Harrison Chase en 2022, con más de 600 integraciones. Da bloques reutilizables — modelos, prompts, cadenas, memoria, tools, retrievers — para no reescribir el "pegamento" entre un LLM y el resto de tu aplicación cada vez. Versión estable actual: <strong>LangChain 1.2</strong> (requiere Python 3.10+).
+</div>
+
+<div class="sec" data-n="1">LCEL — LA SINTAXIS MODERNA (EL OPERADOR |)</div>
+
+<div class="note g">
+  LCEL (LangChain Expression Language) es la forma actual de construir cadenas, con el operador <code>|</code> conectando piezas — sustituye a clases antiguas como <code>LLMChain</code>, ya deprecadas.
+</div>
+
+<pre><span class="kw">from</span> langchain_core.prompts <span class="kw">import</span> ChatPromptTemplate
+<span class="kw">from</span> langchain_core.output_parsers <span class="kw">import</span> StrOutputParser
+<span class="kw">from</span> langchain_anthropic <span class="kw">import</span> ChatAnthropic
+
+prompt = ChatPromptTemplate.from_template(<span class="st">"Resume esto en una frase: {texto}"</span>)
+model = ChatAnthropic(model=<span class="st">"claude-sonnet-5"</span>)
+parser = StrOutputParser()
+
+chain = prompt | model | parser   <span class="cm"># esto es LCEL</span>
+resultado = chain.invoke({<span class="st">"texto"</span>: <span class="st">"..."</span>})</pre>
+
+<div class="sec" data-n="2">LOS BLOQUES BASE</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">PromptTemplate</div><div class="card-bd">Plantilla de prompt con variables — el equivalente a un prompt file, pero definido en código.</div></div>
+  <div class="card"><div class="card-hd b">Chains (LCEL)</div><div class="card-bd">Composición de piezas con <code>|</code>: prompt → modelo → parser → lo que necesites.</div></div>
+  <div class="card"><div class="card-hd g">Retrievers</div><div class="card-bd">Interfaz común para consultar cualquier vector store, sin acoplarte a un proveedor concreto.</div></div>
+  <div class="card"><div class="card-hd p">Memory</div><div class="card-bd">Gestión del historial de conversación — qué se recuerda entre turnos y cómo se resume.</div></div>
+</div>
+
+<div class="sec" data-n="3">CREAR UN AGENTE — LA SINTAXIS ACTUAL (NO LA QUE VERÁS EN LA MAYORÍA DE TUTORIALES)</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ La mayoría de tutoriales de LangChain están desactualizados</div>
+  <div class="danger-b">Un análisis de abril de 2026 encontró que la mayoría de tutoriales de LangGraph mejor posicionados en Google todavía usan <code>create_react_agent</code> de <code>langgraph.prebuilt</code> — deprecado desde octubre de 2025. La forma actual es <code>create_agent</code> desde <code>langchain.agents</code>.</div>
+</div>
+
+<pre><span class="cm"># ✅ Sintaxis actual (LangChain/LangGraph v1, 2026)</span>
+<span class="kw">from</span> langchain.agents <span class="kw">import</span> create_agent
+<span class="kw">from</span> langchain_anthropic <span class="kw">import</span> ChatAnthropic
+
+<span class="kw">def</span> buscar_incidencia(id: str) -> str:
+    <span class="st">"""Busca el estado de una incidencia por su ID."""</span>
+    <span class="kw">return</span> <span class="kw">f</span><span class="st">"Incidencia {id}: en progreso"</span>
+
+agent = create_agent(
+    ChatAnthropic(model=<span class="st">"claude-sonnet-5"</span>),
+    tools=[buscar_incidencia],
+    system_prompt=<span class="st">"Eres un asistente de soporte técnico."</span>,
+)
+
+resultado = agent.invoke({<span class="st">"messages"</span>: [{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"¿Estado de INC-4521?"</span>}]})</pre>
+
+<div class="note y">
+  <code>create_agent</code> corre por debajo sobre LangGraph — no es una alternativa a LangGraph, es una capa de conveniencia construida encima, con un sistema de middleware añadido.
+</div>
+
+<div class="sec" data-n="4">MÁS EJEMPLOS — CADENA RAG COMPLETA CON LCEL</div>
+
+<div class="note g">
+  El patrón idiomático para combinar retriever + prompt + modelo en una sola cadena, en vez de concatenar el contexto a mano como en el ejemplo mínimo de la pestaña RAG.
+</div>
+
+<pre><span class="kw">from</span> langchain_core.runnables <span class="kw">import</span> RunnablePassthrough
+<span class="kw">from</span> langchain_core.output_parsers <span class="kw">import</span> StrOutputParser
+<span class="kw">from</span> langchain_core.prompts <span class="kw">import</span> ChatPromptTemplate
+<span class="kw">from</span> langchain_anthropic <span class="kw">import</span> ChatAnthropic
+
+prompt = ChatPromptTemplate.from_template(
+    <span class="st">"Contexto:\n{context}\n\nPregunta: {question}"</span>
+)
+model = ChatAnthropic(model=<span class="st">"claude-sonnet-5"</span>)
+
+<span class="cm"># "retriever" viene del ejemplo de Chroma en la pestaña RAG</span>
+rag_chain = (
+    {<span class="st">"context"</span>: retriever, <span class="st">"question"</span>: RunnablePassthrough()}
+    | prompt
+    | model
+    | StrOutputParser()
+)
+
+respuesta = rag_chain.invoke(<span class="st">"¿cómo se configura el rate limiting?"</span>)</pre>
+
+<div class="note y">
+  <code>RunnablePassthrough()</code> deja pasar la pregunta original sin tocarla, mientras <code>retriever</code> la transforma en contexto en paralelo — ambas ramas del diccionario se resuelven antes de llegar al <code>prompt</code>.
+</div>
+
+<div class="sec" data-n="5">LA CRÍTICA HONESTA</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Sobre-abstracción para casos simples</div>
+  <div class="danger-b">Si solo necesitas 1-2 llamadas a Claude, la API cruda (lo que ya sabes de tu preparación CCDV-F) es más simple, más rápida y menos frágil ante cambios de versión que meter LangChain de por medio. LangChain gana cuando necesitas <strong>cambiar de proveedor fácilmente</strong> o ensamblar una <strong>RAG estándar rápido</strong> con integraciones ya hechas — no como capa por defecto para todo.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ LANGGRAPH ════════ -->
+<div id="tab-langgraph" class="tab-panel">
+
+<div class="sec" data-n="★">POR QUÉ EXISTE — EL LÍMITE DE LAS CADENAS LINEALES</div>
+
+<div class="note p">
+  Las chains de LangChain son lineales: A → B → C, sin vuelta atrás. Los agentes reales necesitan <strong>ciclos</strong> (reintentar, iterar hasta que algo pase el test), <strong>ramas condicionales</strong> (según el resultado, ir a un sitio u otro) y <strong>estado explícito y persistente</strong>. LangGraph — del mismo equipo, estable desde octubre de 2025 (v1.0) — modela esto como un grafo: nodos (pasos de cómputo) conectados por aristas (control de flujo), compartiendo un objeto de estado común.
+</div>
+
+<div class="flow">
+  <div class="fbox b">Nodo A</div>
+  <span class="farr">→</span>
+  <div class="fbox y">¿Condición?</div>
+  <span class="farr">→</span>
+  <div class="fbox g">Nodo B</div>
+</div>
+<div class="flow" style="margin-top:-8px">
+  <div class="fbox s">&nbsp;</div>
+  <span class="farr">↑ vuelve a A si falla ↑</span>
+</div>
+
+<div class="sec" data-n="1">CONCEPTOS CLAVE</div>
+
+<table class="tbl">
+  <tr><th>Concepto</th><th>Qué es</th></tr>
+  <tr><td class="cat">State</td><td>Un <code>TypedDict</code> (o similar) compartido — cada nodo lo lee y devuelve las actualizaciones que quiere fusionar</td></tr>
+  <tr><td class="cat">Node</td><td>Una función que recibe el estado y devuelve cambios sobre él — puede ser una llamada a un LLM, una tool, lo que sea</td></tr>
+  <tr><td class="cat">Edge</td><td>Una transición fija: al terminar el nodo A, siempre se ejecuta el nodo B</td></tr>
+  <tr><td class="cat">Conditional edge</td><td>Una función "router" decide a qué nodo ir según el estado actual — esto es lo que permite bucles y ramas</td></tr>
+  <tr><td class="cat">Checkpoint</td><td>Persistencia del estado en cada paso — permite pausar, reanudar, o recuperar un flujo tras un reinicio</td></tr>
+</table>
+
+<div class="sec" data-n="2">EJEMPLO — GRAFO CON RAMA CONDICIONAL (SINTAXIS ACTUAL)</div>
+
+<pre><span class="kw">from</span> typing <span class="kw">import</span> TypedDict
+<span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, START, END
+
+<span class="kw">class</span> EstadoRevision(TypedDict):
+    codigo: str
+    valido: bool
+
+<span class="kw">def</span> revisar(state: EstadoRevision) -> EstadoRevision:
+    state[<span class="st">"valido"</span>] = <span class="st">"TODO"</span> <span class="kw">not in</span> state[<span class="st">"codigo"</span>]
+    <span class="kw">return</span> state
+
+<span class="kw">def</span> decidir_ruta(state: EstadoRevision) -> str:
+    <span class="kw">return</span> <span class="st">"aprobar"</span> <span class="kw">if</span> state[<span class="st">"valido"</span>] <span class="kw">else</span> <span class="st">"pedir_cambios"</span>
+
+<span class="kw">def</span> aprobar(state: EstadoRevision) -> EstadoRevision:
+    <span class="kw">print</span>(<span class="st">"✅ Aprobado"</span>); <span class="kw">return</span> state
+
+<span class="kw">def</span> pedir_cambios(state: EstadoRevision) -> EstadoRevision:
+    <span class="kw">print</span>(<span class="st">"🔁 Necesita cambios"</span>); <span class="kw">return</span> state
+
+graph = StateGraph(EstadoRevision)
+graph.add_node(<span class="st">"revisar"</span>, revisar)
+graph.add_node(<span class="st">"aprobar"</span>, aprobar)
+graph.add_node(<span class="st">"pedir_cambios"</span>, pedir_cambios)
+
+graph.add_edge(START, <span class="st">"revisar"</span>)
+graph.add_conditional_edges(<span class="st">"revisar"</span>, decidir_ruta, {
+    <span class="st">"aprobar"</span>: <span class="st">"aprobar"</span>,
+    <span class="st">"pedir_cambios"</span>: <span class="st">"pedir_cambios"</span>
+})
+graph.add_edge(<span class="st">"aprobar"</span>, END)
+graph.add_edge(<span class="st">"pedir_cambios"</span>, END)
+
+workflow = graph.compile()
+workflow.invoke({<span class="st">"codigo"</span>: <span class="st">"def foo(): pass"</span>, <span class="st">"valido"</span>: <span class="kw">False</span>})</pre>
+
+<div class="insight">
+  <div class="insight-t">✅ Esto es literalmente lo que diseñaste a mano en FMI</div>
+  <div class="insight-b">Un nodo que evalúa, una función de decisión que enruta según el resultado, y la posibilidad de volver atrás si algo no pasa la validación — es el mismo patrón de tu framework de migración de intención, aquí con la primitiva ya resuelta por la librería en vez de construida desde cero.</div>
+</div>
+
+<div class="sec" data-n="3">HUMAN-IN-THE-LOOP Y PERSISTENCIA</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">interrupt_before</div><div class="card-bd">Pausa el grafo antes de un nodo concreto para esperar tu aprobación — igual que el freno de mano de un agente con demasiada autonomía.</div></div>
+  <div class="card"><div class="card-hd b">Checkpointer</div><div class="card-bd">Guarda el estado en cada paso (memoria o Postgres) — el flujo sobrevive a un reinicio y puede reanudarse donde se quedó.</div></div>
+  <div class="card"><div class="card-hd g">Fan-out paralelo</div><div class="card-bd">Varios nodos pueden ejecutarse en paralelo cuando no dependen entre sí, en vez de uno detrás de otro.</div></div>
+</div>
+
+<div class="sec" data-n="4">PATRONES MULTIAGENTE</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd p">Supervisor</div><div class="card-bd">Un agente coordinador decide a qué agente especializado delegar cada parte de la tarea.</div></div>
+  <div class="card"><div class="card-hd t">Jerárquico</div><div class="card-bd">Equipos de agentes, cada uno con su propio supervisor, reportando a un nivel superior — útil para tareas muy grandes.</div></div>
+  <div class="card"><div class="card-hd y">Red (peer-to-peer)</div><div class="card-bd">Los agentes se pueden pasar el control entre sí directamente, sin un coordinador central fijo.</div></div>
+</div>
+
+<div class="sec" data-n="5">MÁS EJEMPLOS — PATRÓN SUPERVISOR</div>
+
+<div class="note p">
+  Un <code>create_agent</code> compilado es en sí mismo un grafo — puede usarse directamente como nodo dentro de un <code>StateGraph</code> más grande. Este es el patrón recomendado para construir sistemas multiagente.
+</div>
+
+<pre><span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, START, END
+<span class="kw">from</span> langchain.agents <span class="kw">import</span> create_agent
+
+<span class="kw">class</span> EstadoEquipo(TypedDict):
+    tarea: str
+    resultado: str
+
+agente_backend = create_agent(model, tools=[tool_backend],
+                                system_prompt=<span class="st">"Eres experto en APIs y bases de datos."</span>)
+agente_frontend = create_agent(model, tools=[tool_frontend],
+                                 system_prompt=<span class="st">"Eres experto en componentes Angular."</span>)
+
+<span class="kw">def</span> supervisor(state: EstadoEquipo) -> str:
+    <span class="cm"># Enruta según el contenido de la tarea — en producción, esto</span>
+    <span class="cm"># sería otra llamada al modelo clasificando la petición</span>
+    <span class="kw">return</span> <span class="st">"backend"</span> <span class="kw">if</span> <span class="st">"api"</span> <span class="kw">in</span> state[<span class="st">"tarea"</span>].lower() <span class="kw">else</span> <span class="st">"frontend"</span>
+
+graph = StateGraph(EstadoEquipo)
+graph.add_node(<span class="st">"backend"</span>, agente_backend)
+graph.add_node(<span class="st">"frontend"</span>, agente_frontend)
+graph.add_conditional_edges(START, supervisor, {
+    <span class="st">"backend"</span>: <span class="st">"backend"</span>,
+    <span class="st">"frontend"</span>: <span class="st">"frontend"</span>,
+})
+graph.add_edge(<span class="st">"backend"</span>, END)
+graph.add_edge(<span class="st">"frontend"</span>, END)
+
+equipo = graph.compile()</pre>
+
+<div class="note y">
+  Simplificado con fines didácticos — un supervisor real casi siempre enruta con otra llamada al modelo (clasificación de la tarea), no con una condición de texto como el ejemplo.
+</div>
+
+</div>
+
+<!-- ═══════════════════════ ECOSISTEMA ═══════ -->
+<div id="tab-ecosistema" class="tab-panel">
+
+<div class="sec" data-n="1">LLAMAINDEX — LA ALTERNATIVA ESPECIALIZADA EN DATOS</div>
+
+<div class="note b">
+  Donde LangChain es un framework de propósito general (chains, agentes, memoria, integraciones de todo tipo), LlamaIndex nació enfocado casi exclusivamente en <strong>indexación y recuperación de datos</strong> — RAG es su caso de uso central, no uno más entre muchos. Si tu proyecto es "sobre todo RAG" y poco más, suele requerir menos código boilerplate que montarlo en LangChain.
+</div>
+
+<div class="sec" data-n="2">BASES DE DATOS VECTORIALES</div>
+
+<table class="tbl">
+  <tr><th>Vector DB</th><th>Cuándo tiene sentido</th></tr>
+  <tr><td class="cat">Chroma</td><td>Local, ligera, ideal para prototipos y desarrollo — la que verás en casi todos los tutoriales</td></tr>
+  <tr><td class="cat">Pinecone</td><td>Gestionada en la nube, pensada para escalar en producción sin operar tú la infraestructura</td></tr>
+  <tr><td class="cat">Weaviate</td><td>Open-source, soporta búsqueda híbrida (semántica + palabra clave) de fábrica</td></tr>
+  <tr><td class="cat">pgvector</td><td>Extensión de PostgreSQL — si ya usas Postgres, evita añadir una base de datos nueva al stack</td></tr>
+</table>
+
+<div class="sec" data-n="3">MODELOS DE EMBEDDINGS</div>
+
+<table class="tbl">
+  <tr><th>Modelo</th><th>Nota</th></tr>
+  <tr><td class="cat">Voyage AI</td><td>El que recomienda Anthropic — buena integración si ya usas Claude</td></tr>
+  <tr><td class="cat">OpenAI text-embedding-3</td><td>Muy usado, buena relación calidad/coste, independiente de qué LLM uses después</td></tr>
+  <tr><td class="cat">Cohere embed</td><td>Fuerte en búsqueda multilingüe</td></tr>
+</table>
+
+<div class="sec" data-n="4">EVALUACIÓN — RAGAS</div>
+
+<div class="note g">
+  RAGAS (RAG Assessment) es un framework para medir la calidad de un pipeline RAG con métricas concretas en vez de "a ojo": <strong>faithfulness</strong> (¿la respuesta se sostiene en el contexto recuperado, o se lo inventa?), <strong>answer relevance</strong> (¿responde realmente a la pregunta?), y <strong>context precision/recall</strong> (¿el retrieval trajo los chunks correctos, ni de más ni de menos?).
+</div>
+
+<div class="note p">
+  <strong>Una capa distinta, con pestaña propia:</strong> OpenClaw no es una librería que incrustas en tu código como LangChain/LangGraph — es una plataforma que despliegas, siempre encendida. Detalle completo en la pestaña 🦞 OPENCLAW.
+</div>
+
+</div>
+
+<!-- ═══════════════════════ OPENCLAW ═════════ -->
+<div id="tab-openclaw" class="tab-panel">
+
+<div class="sec" data-n="★">QUÉ ES Y DE DÓNDE VIENE</div>
+
+<div class="note p">
+  <strong>OpenClaw no es una librería que importas en tu código — es una plataforma que despliegas.</strong> Framework de agentes open-source, <strong>agnóstico de modelo</strong> (Claude, GPT, Gemini, Grok, Mistral, DeepSeek, o modelos locales vía Ollama), que corre como servicio 24/7 en tu propio hardware o en la nube. Nació en noviembre de 2025 como "Clawdbot" (del desarrollador austríaco Peter Steinberger) y se asentó en el nombre OpenClaw en enero de 2026. Se ha convertido en uno de los proyectos open-source de más rápido crecimiento de la historia reciente.
+</div>
+
+<div class="note y">
+  <strong>Con matiz, no como certeza absoluta:</strong> las fuentes consultadas no coinciden del todo entre sí — unas mencionan un paso intermedio breve por el nombre "Moltbot" antes de OpenClaw, otras no lo recogen; el número de estrellas en GitHub varía entre ~145.000 y ~250.000 según la fuente y el momento en que se midió. Dato real: crecimiento excepcionalmente rápido. Cifra exacta: no verificable con precisión a día de hoy.
+</div>
+
+<div class="sec" data-n="1">ARQUITECTURA — GATEWAY, HEARTBEAT Y BUCLE DE RAZONAMIENTO</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">Gateway central</div><div class="card-bd">Un único proceso multiplexa WebSocket y HTTP en un solo puerto — gestiona el ciclo de vida de sesiones, el despacho de herramientas y el enrutado entre canales.</div></div>
+  <div class="card"><div class="card-hd b">Heartbeat</div><div class="card-bd">Ciclo de sondeo programado — el agente se despierta solo para monitorizar archivos o bases de datos, sin que nadie le hable primero. Proactivo, no solo reactivo.</div></div>
+  <div class="card"><div class="card-hd g">Bucle de razonamiento</div><div class="card-bd">El mismo patrón que ya conoces: el modelo recibe historial + system prompt, genera llamadas a herramientas, las ejecuta, y reenvía el contexto actualizado hasta que una respuesta de solo texto termina el ciclo.</div></div>
+</div>
+
+<div class="sec" data-n="2">ESTRUCTURA DE UN WORKSPACE (ILUSTRATIVA)</div>
+
+<div class="note b">
+  Documentada en guías de la comunidad — la ruta exacta y el formato (JSON vs YAML) varían entre fuentes y versiones. Antes de fiarte a ciegas, valida con <code>openclaw doctor</code> contra tu instalación real.
+</div>
+
+<pre>~/.openclaw/
+├── openclaw.json          <span class="cm"># configuración principal</span>
+├── credentials/            <span class="cm"># claves de API — permisos restringidos (chmod 600)</span>
+├── workspace/
+│   ├── AGENTS.md            <span class="cm"># definición de agentes</span>
+│   ├── SOUL.md               <span class="cm"># personalidad/comportamiento base</span>
+│   ├── USER.md                <span class="cm"># contexto sobre ti</span>
+│   ├── TOOLS.md                 <span class="cm"># herramientas disponibles</span>
+│   ├── HEARTBEAT.md              <span class="cm"># qué hacer en cada ciclo proactivo</span>
+│   ├── memory/                     <span class="cm"># memoria persistente entre sesiones</span>
+│   └── skills/                       <span class="cm"># AgentSkill instaladas</span></pre>
+
+<div class="sec" data-n="3">INTEGRACIÓN CON CANALES DE MENSAJERÍA</div>
+
+<div class="note g">
+  WhatsApp, Telegram, Discord, Slack, Signal, iMessage y 20+ canales más — le hablas por donde ya hablas con la gente, no por un chat aparte. Cada canal se activa/desactiva de forma independiente en la configuración.
+</div>
+
+<div class="sec" data-n="4">AGENTSKILL Y CLAWHUB</div>
+
+<div class="note t">
+  El mismo concepto de "skill" que ya viste en Claude y Copilot — un procedimiento empaquetado y reutilizable — aquí con su propio registro de instalación llamado <strong>ClawHub</strong>. Las skills se instalan en la carpeta <code>skills/</code> del workspace y el agente las descubre automáticamente.
+</div>
+
+<div class="sec" data-n="5">MODELOS SOPORTADOS</div>
+
+<table class="tbl">
+  <tr><th>Proveedor</th><th>Modelos</th></tr>
+  <tr><td class="cat">Anthropic</td><td>Claude Opus, Sonnet, Haiku</td></tr>
+  <tr><td class="cat">OpenAI</td><td>Familias GPT-4 y GPT-5</td></tr>
+  <tr><td class="cat">Google</td><td>Gemini 2.5 Pro y Flash</td></tr>
+  <tr><td class="cat">xAI</td><td>Modelos Grok</td></tr>
+  <tr><td class="cat">Mistral</td><td>Mistral Large, Codestral</td></tr>
+  <tr><td class="cat">DeepSeek</td><td>V3, R1</td></tr>
+  <tr><td class="cat">Local</td><td>Cualquier modelo vía Ollama o endpoint compatible con la API de OpenAI</td></tr>
+</table>
+
+<div class="sec" data-n="6">AUTOALOJADO VS. OPENCLAW CLOUD</div>
+
+<div class="note y">
+  Además de autoalojarlo, existe una oferta gestionada ("OpenClaw Cloud"). Según guías de la comunidad, para muchos usuarios sale más barato que comprar hardware dedicado solo para correrlo en local — la decisión depende de cuánto valores la privacidad total y el control frente a la comodidad de no operar tú la infraestructura.
+</div>
+
+<div class="sec" data-n="7">SEGURIDAD — BUENAS PRÁCTICAS Y RIESGOS DOCUMENTADOS</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ La superficie de riesgo es real, no teórica</div>
+  <div class="danger-b">Varios papers de investigación de seguridad de 2026 documentan vulnerabilidades concretas en distintas fases de ejecución — procesamiento del prompt de usuario, uso de herramientas y recuperación de memoria — precisamente por la amplitud de su superficie de acción (múltiples canales, acceso a recursos del sistema operativo). Antes de darle acceso a canales corporativos o datos sensibles, esto merece una evaluación de seguridad propia, no solo confiar en que "es open-source y muy popular".</div>
+</div>
+
+<div class="grid">
+  <div class="card"><div class="card-hd o">Mínimo privilegio</div><div class="card-bd">Mapea solo las carpetas que el agente necesita de verdad. Nunca tu carpeta de usuario completa ni tus claves SSH — usa un workspace dedicado y aislado.</div></div>
+  <div class="card"><div class="card-hd b">Aprobación humana selectiva</div><div class="card-bd">Leer un archivo puede auto-aprobarse; escribir o ejecutar un comando de shell debería exigir confirmación manual antes de correr.</div></div>
+  <div class="card"><div class="card-hd g">Prompt injection</div><div class="card-bd">Si le pides que resuma una web y esa página contiene texto oculto diseñado para manipular al modelo, el agente puede intentar seguir esas instrucciones como si fueran tuyas.</div></div>
+  <div class="card"><div class="card-hd p">Higiene de credenciales</div><div class="card-bd"><code>chmod 600</code> en el archivo de configuración y en <code>credentials/</code>, verificar que el puerto del Gateway solo escucha en localhost, y revisar logs en busca de claves expuestas.</div></div>
+</div>
+
+<div class="note b">
+  Comandos de diagnóstico mencionados en guías de la comunidad: <code>openclaw doctor</code> (valida la configuración), <code>openclaw doctor --fix</code> (corrige problemas detectados), <code>openclaw security audit --deep</code> (auditoría de seguridad).
+</div>
+
+<div class="sec" data-n="8">PROBLEMA ACTUAL — EL BLOQUEO DE ABRIL DE 2026</div>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Anthropic bloqueó el uso de tokens OAuth de suscripción desde herramientas de terceros</div>
+  <div class="danger-b">El <strong>4 de abril de 2026</strong>, Anthropic bloqueó de forma inmediata y del lado del servidor que herramientas de terceros —incluido OpenClaw— usaran los tokens OAuth de las suscripciones Claude (Pro $20/mes, Max $200/mes). Mucha gente enrutaba su suscripción personal a través de OpenClaw para evitar pagar por token vía API; ese atajo dejó de funcionar de la noche a la mañana. Boris Cherny, responsable de Claude Code en Anthropic, lo justificó así: <em>"nuestro modelo de suscripción no estaba diseñado para el patrón de uso de estas herramientas de terceros — meten una tensión desproporcionada en nuestros sistemas"</em>.</div>
+</div>
+
+<div class="insight">
+  <div class="insight-t">✅ Lo que NO significa este bloqueo</div>
+  <div class="insight-b">Puedes seguir usando Claude desde OpenClaw sin ningún problema — con <strong>clave de API normal, pagando por token</strong>, no con el atajo de la suscripción. La propia documentación de proveedores de OpenClaw ya gestiona esto (modelos <code>claude-opus-5</code>, <code>claude-fable-5</code>, etc. vía API key directa).</div>
+</div>
+
+<div class="note y">
+  <strong>Ventana de precio relevante ahora mismo:</strong> el precio introductorio de Claude de $2/$10 (millón de tokens entrada/salida) rige hasta el 31 de agosto de 2026 — sube a $3/$15 estándar a partir del 1 de septiembre.
+</div>
+
+<div class="note o">
+  <strong>Dato sin confirmar, tratar con cautela:</strong> circula una afirmación (de una fuente poco solvente) de que Claude Code escanea mensajes de commit y bloquea o cobra extra si mencionan "OpenClaw". No lo he podido corroborar en ninguna fuente seria — se menciona aquí como rumor no verificado, no como hecho.
+</div>
+
+<div class="sec" data-n="9">OPENCODE — HERRAMIENTA COMPLEMENTARIA, NO UN BACKEND ALTERNATIVO</div>
+
+<div class="note g">
+  OpenCode <strong>no sustituye a OpenClaw ni es una forma de "reconectar" con Claude Code</strong> — es un agente de código de terminal (TUI) distinto, open-source y agnóstico de modelo (75+ proveedores soportados). La distinción real: <strong>"OpenCode escribe tu código, OpenClaw opera tus sistemas"</strong> — son complementarios, no sustitutos entre sí.
+</div>
+
+<table class="tbl">
+  <tr><th>Herramienta</th><th>Qué hace</th></tr>
+  <tr><td class="cat">OpenCode</td><td>Sesión interactiva en terminal: lees el repo, describes una tarea, edita archivos, ejecuta tests, itera contigo delante — como un Claude Code abierto y multi-proveedor</td></tr>
+  <tr><td class="cat">OpenClaw</td><td>Gateway siempre encendido: agentes con memoria, horarios, canales — actúa mientras tú haces otra cosa</td></tr>
+</table>
+
+<div class="note p">
+  <strong>La integración real entre ambos:</strong> <code>opencode-controller</code> es una skill verificada de OpenClaw (instalable desde ClawHub) que deja que un agente de OpenClaw lance y controle sesiones de OpenCode desde dentro, exponiendo comandos <code>/opencode</code>. Como no toca el sistema de archivos ni la terminal directamente por sí misma —delega en OpenCode—, es una de las skills más seguras del catálogo.
+</div>
+
+<div class="sec" data-n="10">EJEMPLO — CONECTAR OPENCLAW A QWEN 3.8 (MODELO MÁS BARATO)</div>
+
+<div class="note b">
+  Qwen3.8-Max (Alibaba) se lanzó el 3 de agosto de 2026 — modelo MoE de 2,4 billones de parámetros, ventana de 1M tokens, con precio de <strong>$2/$6 por millón de tokens</strong> (entrada/salida) — más barato que Claude incluso con el precio introductorio que expira hoy. Expone un endpoint <strong>compatible con la API de OpenAI</strong>, que es justo lo que OpenClaw sabe consumir de fábrica.
+</div>
+
+<pre><span class="cm">// ~/.openclaw/openclaw.json (fragmento relevante)</span>
+{
+  <span class="st">"providers"</span>: {
+    <span class="st">"qwen"</span>: {
+      <span class="st">"api"</span>: <span class="st">"openai-completions"</span>,
+      <span class="st">"baseUrl"</span>: <span class="st">"https://dashscope-intl.aliyuncs.com/compatible-mode/v1"</span>,
+      <span class="st">"apiKeyEnv"</span>: <span class="st">"DASHSCOPE_API_KEY"</span>
+    }
+  },
+  <span class="st">"models"</span>: {
+    <span class="st">"qwen3.8-max"</span>: {
+      <span class="st">"provider"</span>: <span class="st">"qwen"</span>,
+      <span class="st">"model"</span>: <span class="st">"qwen3.8-max"</span>
+    }
+  },
+  <span class="st">"agents"</span>: {
+    <span class="st">"default"</span>: { <span class="st">"model"</span>: <span class="st">"qwen3.8-max"</span> }
+  }
+}</pre>
+
+<pre><span class="cm"># Terminal — antes de arrancar OpenClaw</span>
+<span class="kw">export</span> DASHSCOPE_API_KEY=<span class="st">"sk-tu-clave-de-model-studio"</span>
+
+<span class="cm"># Verifica que el proveedor responde antes de confiar en él</span>
+openclaw doctor</pre>
+
+<div class="danger">
+  <div class="danger-t">⚠️ Dos matices que rompen esto si los ignoras</div>
+  <div class="danger-b">1) La clave de API de Alibaba Model Studio <strong>no es portable entre regiones</strong> — si tu clave se generó en la consola de Pekín, usa el <code>baseUrl</code> de esa región, no el internacional (Singapur) del ejemplo. 2) El nombre exacto de las claves del JSON (<code>providers</code>, <code>apiKeyEnv</code>, etc.) sigue el patrón documentado por guías de la comunidad de OpenClaw — verifica siempre contra <code>openclaw doctor</code> en tu versión instalada antes de darlo por bueno, porque el esquema puede variar entre releases.</div>
+</div>
+
+<div class="note y">
+  <strong>Por qué esto conecta con el resto de la guía:</strong> es exactamente el patrón "modelo barato para lo rutinario, modelo potente solo cuando hace falta" que mencionamos en la sección de MCP y en la pestaña de CUÁNDO USAR QUÉ — Qwen 3.8 a $2/$6 es un candidato natural para el heartbeat y tareas de bajo riesgo, reservando Claude o un modelo frontera para lo que de verdad lo exija.
+</div>
+
+</div>
+
+<!-- ═══════════════════════ CUÁNDO USAR QUÉ ══ -->
+<div id="tab-cuando" class="tab-panel">
+
+<div class="sec" data-n="★">EL MAPA COMPLETO DE TODO LO QUE HAS APRENDIDO</div>
+
+<div class="note b">
+  Cinco capas, cinco problemas distintos. Ninguna sustituye a las demás — se combinan según lo que necesites.
+</div>
+
+<table class="tbl">
+  <tr><th>Herramienta</th><th>Cuándo usarla</th><th>Ejemplo</th></tr>
+  <tr><td class="cat">Claude API cruda</td><td>Control total, 1-2 llamadas, o cuando no quieres una dependencia de framework de por medio</td><td>Un script que clasifica tickets de soporte</td></tr>
+  <tr><td class="cat">Claude Agent SDK</td><td>Agente que se queda dentro del ecosistema Claude, con el bucle ya resuelto por Anthropic</td><td>Un agente de terminal que refactoriza código</td></tr>
+  <tr><td class="cat">Copilot (agent mode / MCP)</td><td>Tareas embebidas en el propio editor, sobre tu código y tu workspace</td><td>Generar tests, revisar un PR, triar una incidencia</td></tr>
+  <tr><td class="cat">LangChain</td><td>RAG estándar rápido, o necesitas poder cambiar de proveedor de LLM/vector DB sin reescribir todo</td><td>Chatbot sobre la documentación interna de ISOLution</td></tr>
+  <tr><td class="cat">LangGraph</td><td>Flujo de agente complejo: bucles, ramas condicionales, aprobación humana, múltiples agentes coordinados</td><td>Pipeline de revisión de código con reintentos hasta pasar validación</td></tr>
+  <tr><td class="cat">OpenClaw</td><td>Agente siempre-encendido, proactivo, integrado en canales de mensajería — no una librería que incrustas, sino un servicio que despliegas</td><td>Asistente personal/de equipo que monitoriza incidencias y avisa por Slack sin que nadie le pregunte</td></tr>
+</table>
+
+<div class="insight">
+  <div class="insight-t">✅ La pregunta de control, en una frase</div>
+  <div class="insight-b">¿Necesitas <strong>portabilidad entre proveedores</strong> o un <strong>flujo con bucles y estado explícito</strong>? Si no, la opción más simple (API cruda o Agent SDK) casi siempre gana. Añade LangChain/LangGraph cuando el problema real lo pida — no como capa por defecto.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ FLUJO COMPLETO ═══ -->
+<div id="tab-flujo" class="tab-panel">
+
+<div class="sec" data-n="★">EL CASO: ASISTENTE SOBRE LA DOCUMENTACIÓN INTERNA DE ISOLUTION</div>
+
+<div class="note b">
+  <strong>El escenario:</strong> un asistente que responde preguntas de soporte usando la documentación interna de ISOLution (RAG), pero que <strong>no contesta a ciegas</strong> — si su propia confianza en la respuesta es baja, pausa y espera que un humano la revise antes de entregarla. Combina las tres piezas de esta guía en un único flujo real, de principio a fin.
+</div>
+
+<div class="flow">
+  <div class="fbox s">START</div>
+  <span class="farr">→</span>
+  <div class="fbox b">retrieve<sub>busca en la doc</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox b">generate<sub>responde + confianza</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox y">¿confianza ≥ 0.75?</div>
+</div>
+<div class="flow" style="margin-top:-8px">
+  <div class="fbox s">&nbsp;</div>
+  <span class="farr">↓ sí</span>
+  <div class="fbox g">responder<sub>END</sub></div>
+  <span class="farr" style="margin-left:20px">↓ no</span>
+  <div class="fbox p">revisión humana<sub>interrupt()</sub></div>
+  <span class="farr">→</span>
+  <div class="fbox g">END</div>
+</div>
+
+<div class="sec" data-n="1">FASE 1 — INGESTA (se ejecuta una vez, no en cada pregunta)</div>
+
+<div class="note o">
+  Chunking recursivo (el que recomendamos en la pestaña RAG para documentación general), embeddings con Voyage AI, y un vector store en memoria para el ejemplo — en producción sería Chroma, Pinecone o pgvector.
+</div>
+
+<pre><span class="kw">from</span> langchain_text_splitters <span class="kw">import</span> RecursiveCharacterTextSplitter
+<span class="kw">from</span> langchain_core.vectorstores <span class="kw">import</span> InMemoryVectorStore
+<span class="kw">from</span> langchain_voyageai <span class="kw">import</span> VoyageAIEmbeddings
+
+splitter = RecursiveCharacterTextSplitter(chunk_size=<span class="st">800</span>, chunk_overlap=<span class="st">100</span>)
+chunks = splitter.split_text(documentacion_isolution)  <span class="cm"># tu documentación interna, ya cargada</span>
+
+embeddings = VoyageAIEmbeddings(model=<span class="st">"voyage-3"</span>)
+vectorstore = InMemoryVectorStore(embeddings)
+vectorstore.add_texts(chunks)
+retriever = vectorstore.as_retriever(search_kwargs={<span class="st">"k"</span>: <span class="st">4</span>})</pre>
+
+<div class="sec" data-n="2">FASE 2 — ESTADO DEL GRAFO</div>
+
+<div class="note g">
+  El <code>TypedDict</code> que viaja entre nodos — cada campo es algo que un nodo lee o escribe, tal como viste en la pestaña LANGGRAPH.
+</div>
+
+<pre><span class="kw">from</span> typing <span class="kw">import</span> TypedDict, Optional
+
+<span class="kw">class</span> EstadoAsistente(TypedDict):
+    pregunta: str
+    contexto: str
+    respuesta: str
+    confianza: float
+    aprobado_por_humano: Optional[bool]</pre>
+
+<div class="sec" data-n="3">FASE 3 — LOS NODOS</div>
+
+<div class="note p">
+  Tres nodos: uno recupera contexto (RAG), otro genera la respuesta y se autoevalúa, y el tercero pausa el grafo con <code>interrupt()</code> cuando la confianza es baja — el mismo patrón de aprobación humana que viste como tarjeta en LANGGRAPH, aquí implementado de verdad.
+</div>
+
+<pre><span class="kw">from</span> langchain_anthropic <span class="kw">import</span> ChatAnthropic
+<span class="kw">from</span> langgraph.types <span class="kw">import</span> interrupt, Command
+
+model = ChatAnthropic(model=<span class="st">"claude-sonnet-5"</span>)
+
+<span class="kw">def</span> retrieve(state: EstadoAsistente) -> dict:
+    docs = retriever.invoke(state[<span class="st">"pregunta"</span>])
+    <span class="kw">return</span> {<span class="st">"contexto"</span>: <span class="st">"\n\n"</span>.join(d.page_content <span class="kw">for</span> d <span class="kw">in</span> docs)}
+
+<span class="kw">def</span> generate(state: EstadoAsistente) -> dict:
+    prompt = (
+        <span class="kw">f</span><span class="st">"Contexto de la documentación de ISOLution:\n{state['contexto']}\n\n"</span>
+        <span class="kw">f</span><span class="st">"Pregunta: {state['pregunta']}\n\n"</span>
+        <span class="st">"Responde SOLO con lo que dice el contexto. Si no tienes "</span>
+        <span class="st">"suficiente información, dilo explícitamente. Termina "</span>
+        <span class="st">"SIEMPRE con una línea: CONFIANZA: &lt;número entre 0 y 1&gt;"</span>
+    )
+    salida = model.invoke(prompt).content
+    texto, confianza_str = salida.rsplit(<span class="st">"CONFIANZA:"</span>, <span class="st">1</span>)
+    <span class="kw">return</span> {<span class="st">"respuesta"</span>: texto.strip(), <span class="st">"confianza"</span>: <span class="kw">float</span>(confianza_str.strip())}
+
+<span class="kw">def</span> decidir_ruta(state: EstadoAsistente) -> str:
+    <span class="kw">return</span> <span class="st">"responder"</span> <span class="kw">if</span> state[<span class="st">"confianza"</span>] >= <span class="st">0.75</span> <span class="kw">else</span> <span class="st">"revision_humana"</span>
+
+<span class="kw">def</span> revision_humana(state: EstadoAsistente) -> dict:
+    decision = interrupt({
+        <span class="st">"pregunta"</span>: state[<span class="st">"pregunta"</span>],
+        <span class="st">"respuesta_propuesta"</span>: state[<span class="st">"respuesta"</span>],
+        <span class="st">"confianza"</span>: state[<span class="st">"confianza"</span>],
+    })
+    <span class="cm"># "decision" es el valor que llega cuando el humano reanuda con Command(resume=...)</span>
+    <span class="kw">return</span> {
+        <span class="st">"respuesta"</span>: decision.get(<span class="st">"respuesta_editada"</span>, state[<span class="st">"respuesta"</span>]),
+        <span class="st">"aprobado_por_humano"</span>: <span class="kw">True</span>,
+    }</pre>
+
+<div class="danger">
+  <div class="danger-t">⚠️ El código antes de interrupt() se re-ejecuta al reanudar</div>
+  <div class="danger-b">Si <code>revision_humana</code> tuviera efectos secundarios (escribir en una base de datos, enviar un email) antes de llamar a <code>interrupt()</code>, se ejecutarían dos veces: una al pausar, otra al reanudar. Por eso el nodo de arriba no hace nada más que pasar datos — cualquier efecto secundario real iría después del <code>interrupt()</code>, no antes.</div>
+</div>
+
+<div class="sec" data-n="4">FASE 4 — CONSTRUCCIÓN DEL GRAFO</div>
+
+<pre><span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, START, END
+<span class="kw">from</span> langgraph.checkpoint.memory <span class="kw">import</span> MemorySaver
+
+graph = StateGraph(EstadoAsistente)
+graph.add_node(<span class="st">"retrieve"</span>, retrieve)
+graph.add_node(<span class="st">"generate"</span>, generate)
+graph.add_node(<span class="st">"revision_humana"</span>, revision_humana)
+
+graph.add_edge(START, <span class="st">"retrieve"</span>)
+graph.add_edge(<span class="st">"retrieve"</span>, <span class="st">"generate"</span>)
+graph.add_conditional_edges(<span class="st">"generate"</span>, decidir_ruta, {
+    <span class="st">"responder"</span>: END,
+    <span class="st">"revision_humana"</span>: <span class="st">"revision_humana"</span>,
+})
+graph.add_edge(<span class="st">"revision_humana"</span>, END)
+
+<span class="cm"># El checkpointer es obligatorio para que interrupt() funcione —</span>
+<span class="cm"># sin él no hay estado que pausar ni que reanudar.</span>
+checkpointer = MemorySaver()  <span class="cm"># en producción: PostgresSaver</span>
+app = graph.compile(checkpointer=checkpointer)</pre>
+
+<div class="sec" data-n="5">FASE 5 — EJECUCIÓN, INCLUYENDO LA PAUSA Y REANUDACIÓN</div>
+
+<pre>config = {<span class="st">"configurable"</span>: {<span class="st">"thread_id"</span>: <span class="st">"consulta-482"</span>}}
+
+resultado = app.invoke(
+    {<span class="st">"pregunta"</span>: <span class="st">"¿Cómo configuro una alerta de severidad crítica?"</span>},
+    config
+)
+
+<span class="kw">if</span> <span class="st">"__interrupt__"</span> <span class="kw">in</span> resultado:
+    <span class="cm"># El grafo se ha pausado — esto es lo que vería el humano revisor</span>
+    <span class="kw">print</span>(<span class="st">"Necesita revisión:"</span>, resultado[<span class="st">"__interrupt__"</span>])
+
+    <span class="cm"># ... el humano revisa y decide reanudar con su respuesta editada ...</span>
+    resultado_final = app.invoke(
+        Command(resume={<span class="st">"respuesta_editada"</span>: <span class="st">"Ve a Configuración → Alertas → Nueva regla..."</span>}),
+        config  <span class="cm"># MISMO thread_id — si no, el grafo pausado nunca recibe la respuesta</span>
+    )
+    <span class="kw">print</span>(resultado_final[<span class="st">"respuesta"</span>])
+<span class="kw">else</span>:
+    <span class="cm"># Confianza alta — respondió sin pasar por revisión</span>
+    <span class="kw">print</span>(resultado[<span class="st">"respuesta"</span>])</pre>
+
+<div class="insight">
+  <div class="insight-t">✅ Por qué está diseñado así</div>
+  <div class="insight-b">Cada decisión de este ejemplo conecta con algo que ya viste: <strong>chunking recursivo</strong> (pestaña RAG) porque es documentación general no muy estructurada; <strong>arista condicional</strong> (pestaña LANGGRAPH) porque la ruta depende de un dato que solo se conoce en tiempo de ejecución, la confianza; y <strong>checkpointer + interrupt()</strong> porque un asistente que puede equivocarse necesita un freno de mano real, no solo la promesa de que "normalmente acierta". Es la misma filosofía de mínimo privilegio que viste en los agentes de Copilot, aplicada aquí como umbral de confianza en vez de restricción de herramientas.</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════ CHEATSHEET ═══════ -->
+<div id="tab-cheatsheet" class="tab-panel">
+
+<div class="sec" data-n="★">GLOSARIO Y ENLACES — REFERENCIA RÁPIDA</div>
+
+<table class="tbl">
+  <tr><th>Término</th><th>Definición corta</th></tr>
+  <tr><td class="cat">RAG</td><td>Técnica: recuperar contexto externo relevante antes de generar la respuesta</td></tr>
+  <tr><td class="cat">Embedding</td><td>Representación numérica (vector) del significado de un texto</td></tr>
+  <tr><td class="cat">Chunking</td><td>Trocear documentos largos en fragmentos manejables antes de indexarlos</td></tr>
+  <tr><td class="cat">Vector store</td><td>Base de datos que busca por similitud semántica, no coincidencia exacta</td></tr>
+  <tr><td class="cat">LCEL</td><td>Sintaxis de LangChain con el operador <code>|</code> para componer cadenas</td></tr>
+  <tr><td class="cat">create_agent</td><td>Función actual (LangChain 1.x) para crear un agente — sustituye a <code>create_react_agent</code>, deprecada</td></tr>
+  <tr><td class="cat">StateGraph</td><td>Clase base de LangGraph para construir un grafo de estados manualmente</td></tr>
+  <tr><td class="cat">Conditional edge</td><td>Arista de LangGraph cuyo destino depende de una función que lee el estado</td></tr>
+  <tr><td class="cat">Checkpointer</td><td>Mecanismo de persistencia de estado en LangGraph — permite pausar/reanudar</td></tr>
+  <tr><td class="cat">RAGAS</td><td>Framework de evaluación de calidad de un pipeline RAG</td></tr>
+  <tr><td class="cat">interrupt()</td><td>Pausa un nodo de LangGraph y espera input humano — obligatorio un checkpointer para que funcione</td></tr>
+  <tr><td class="cat">Command(resume=...)</td><td>Reanuda un grafo pausado, entregando el valor al <code>interrupt()</code> que lo detuvo</td></tr>
+  <tr><td class="cat">thread_id</td><td>Identificador de la conversación/ejecución en el config — debe ser el mismo al pausar y al reanudar</td></tr>
+  <tr><td class="cat">OpenClaw</td><td>Runtime de agente self-hosted, siempre-encendido, agnóstico de modelo, integrado en canales de mensajería</td></tr>
+  <tr><td class="cat">Heartbeat (OpenClaw)</td><td>Ciclo de sondeo que despierta al agente de forma proactiva, sin prompt humano previo</td></tr>
+  <tr><td class="cat">ClawHub</td><td>Registro/marketplace de skills instalables para OpenClaw</td></tr>
+  <tr><td class="cat">OpenCode</td><td>Agente de código de terminal (TUI), open-source y multi-proveedor — complementario a OpenClaw, no un sustituto</td></tr>
+  <tr><td class="cat">opencode-controller</td><td>Skill de OpenClaw que permite lanzar y controlar sesiones de OpenCode desde dentro de un agente</td></tr>
+  <tr><td class="cat">Qwen3.8-Max</td><td>Modelo MoE de Alibaba (agosto 2026), endpoint compatible con OpenAI, alternativa más barata a Claude</td></tr>
+</table>
+
+<div class="sec" data-n="1">DOCUMENTACIÓN OFICIAL</div>
+
+<table class="tbl">
+  <tr><th>Recurso</th><th>Enlace</th></tr>
+  <tr><td class="cat">LangChain — Docs</td><td><a href="https://docs.langchain.com" target="_blank">docs.langchain.com</a></td></tr>
+  <tr><td class="cat">LangGraph — Docs</td><td><a href="https://docs.langchain.com/oss/python/langgraph/overview" target="_blank">docs.langchain.com/.../langgraph</a></td></tr>
+  <tr><td class="cat">LangGraph v1 — Guía de migración</td><td><a href="https://docs.langchain.com/oss/python/migrate/langgraph-v1" target="_blank">docs.langchain.com/.../migrate/langgraph-v1</a></td></tr>
+  <tr><td class="cat">LlamaIndex — Docs</td><td><a href="https://docs.llamaindex.ai" target="_blank">docs.llamaindex.ai</a></td></tr>
+  <tr><td class="cat">Anthropic — Contextual Retrieval</td><td><a href="https://www.anthropic.com/news/contextual-retrieval" target="_blank">anthropic.com/news/contextual-retrieval</a></td></tr>
+  <tr><td class="cat">LangGraph — Interrupts (human-in-the-loop)</td><td><a href="https://docs.langchain.com/oss/python/langgraph/interrupts" target="_blank">docs.langchain.com/.../langgraph/interrupts</a></td></tr>
+  <tr><td class="cat">RAGAS — Docs</td><td><a href="https://docs.ragas.io" target="_blank">docs.ragas.io</a></td></tr>
+  <tr><td class="cat">OpenClaw — Repositorio</td><td><a href="https://github.com/openclaw/openclaw" target="_blank">github.com/openclaw/openclaw</a></td></tr>
+</table>
+
+<div class="note y">
+  <strong>Vigencia:</strong> LangChain/LangGraph cambian de API más rápido que Claude o Copilot — LangGraph v1 es de octubre de 2025 y ya dejó obsoletos patrones muy extendidos. Antes de copiar un ejemplo de un tutorial suelto por internet, confirma contra la guía de migración oficial que no esté usando algo ya deprecado.
+</div>
+
+</div>
+
+</div>
+
+<script>
+function st(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
